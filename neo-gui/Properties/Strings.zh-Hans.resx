@@ -147,6 +147,9 @@
   <data name="DeleteConfirmation" xml:space="preserve">
     <value>删除确认</value>
   </data>
+  <data name="DownloadNewVersion" xml:space="preserve">
+    <value>发现新版本</value>
+  </data>
   <data name="EnterRemarkMessage" xml:space="preserve">
     <value>请输入备注信息，该信息将被记录在区块链上</value>
   </data>

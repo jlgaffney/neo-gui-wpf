@@ -20,8 +20,8 @@ namespace Neo.UI
 
         private void RestoreAccountsDialog_Load(object sender, EventArgs e)
         {
-            IEnumerable<KeyPair> keys = Program.CurrentWallet.GetKeys();
-            keys = keys.Where(account => Program.CurrentWallet.GetContracts(account.PublicKeyHash).All(contract => !contract.IsStandard));
+            IEnumerable<KeyPair> keys = App.CurrentWallet.GetKeys();
+            keys = keys.Where(account => App.CurrentWallet.GetContracts(account.PublicKeyHash).All(contract => !contract.IsStandard));
             IEnumerable<VerificationContract> contracts = keys.Select(p => VerificationContract.CreateSignatureContract(p.PublicKey));
             listView1.Items.AddRange(contracts.Select(p => new ListViewItem(p.Address)
             {

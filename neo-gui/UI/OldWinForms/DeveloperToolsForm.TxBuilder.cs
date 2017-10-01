@@ -21,8 +21,8 @@ namespace Neo.UI
                 TransactionType.IssueTransaction,
                 TransactionType.InvocationTransaction,
             });
-            button6.Enabled = Program.CurrentWallet != null;
-            button7.Enabled = Program.CurrentWallet != null;
+            button6.Enabled = App.CurrentWallet != null;
+            button7.Enabled = App.CurrentWallet != null;
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -77,7 +77,7 @@ namespace Neo.UI
         private void button7_Click(object sender, EventArgs e)
         {
             TransactionWrapper wrapper = (TransactionWrapper)propertyGrid1.SelectedObject;
-            Transaction tx = Program.CurrentWallet.MakeTransaction(wrapper.Unwrap());
+            Transaction tx = App.CurrentWallet.MakeTransaction(wrapper.Unwrap());
             if (tx == null)
             {
                 MessageBox.Show(Strings.InsufficientFunds);

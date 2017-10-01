@@ -17,7 +17,7 @@ namespace Neo.UI
 
         private void CertificateRequestWizard_Load(object sender, EventArgs e)
         {
-            comboBox1.Items.AddRange(Program.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p => Program.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey).ToArray());
+            comboBox1.Items.AddRange(App.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p => App.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey).ToArray());
         }
 
         private void textBox_TextChanged(object sender, EventArgs e)
@@ -29,7 +29,7 @@ namespace Neo.UI
         {
             if (saveFileDialog1.ShowDialog() != DialogResult.OK) return;
             ECPoint point = (ECPoint)comboBox1.SelectedItem;
-            KeyPair key = Program.CurrentWallet.GetKey(point);
+            KeyPair key = App.CurrentWallet.GetKey(point);
             byte[] pubkey = point.EncodePoint(false).Skip(1).ToArray();
             byte[] prikey;
             using (key.Decrypt())

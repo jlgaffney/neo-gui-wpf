@@ -147,6 +147,9 @@
   <data name="DeleteConfirmation" xml:space="preserve">
     <value>Confirmation</value>
   </data>
+  <data name="DownloadNewVersion" xml:space="preserve">
+    <value>Download New Version</value>
+  </data>
   <data name="EnterRemarkMessage" xml:space="preserve">
     <value>Enter remark here, which will be recorded on the blockchain</value>
   </data>

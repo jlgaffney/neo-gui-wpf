@@ -14,7 +14,7 @@ namespace Neo.UI
             InitializeComponent();
             if (asset == null)
             {
-                foreach (UInt256 asset_id in Program.CurrentWallet.FindUnspentCoins().Select(p => p.Output.AssetId).Distinct())
+                foreach (UInt256 asset_id in App.CurrentWallet.FindUnspentCoins().Select(p => p.Output.AssetId).Distinct())
                 {
                     AssetState state = Blockchain.Default.GetAssetState(asset_id);
                     comboBox1.Items.Add(new AssetDescriptor(state));

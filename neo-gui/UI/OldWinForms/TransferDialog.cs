@@ -40,7 +40,7 @@ namespace Neo.UI
             }
             else
             {
-                UInt160[] addresses = Program.CurrentWallet.GetAddresses().ToArray();
+                UInt160[] addresses = App.CurrentWallet.GetAddresses().ToArray();
                 HashSet<UInt160> sAttributes = new HashSet<UInt160>();
                 using (ScriptBuilder sb = new ScriptBuilder())
                 {
@@ -110,7 +110,7 @@ namespace Neo.UI
             tx.Attributes = attributes.ToArray();
             tx.Outputs = txOutListBox1.Items.Where(p => p.AssetId is UInt256).Select(p => p.ToTxOutput()).ToArray();
             if (tx is ContractTransaction ctx)
-                tx = Program.CurrentWallet.MakeTransaction(ctx);
+                tx = App.CurrentWallet.MakeTransaction(ctx);
             return tx;
         }
 

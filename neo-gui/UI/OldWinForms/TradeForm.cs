@@ -40,7 +40,7 @@ namespace Neo.UI
             JObject json = new JObject();
             json["vin"] = tx.Inputs.Select(p => p.ToJson()).ToArray();
             json["vout"] = tx.Outputs.Select((p, i) => p.ToJson((ushort)i)).ToArray();
-            json["change_address"] = Wallet.ToAddress(Program.CurrentWallet.GetChangeAddress());
+            json["change_address"] = Wallet.ToAddress(App.CurrentWallet.GetChangeAddress());
             return json;
         }
 
@@ -65,7 +65,7 @@ namespace Neo.UI
 
         private void button1_Click(object sender, EventArgs e)
         {
-            ContractTransaction tx = Program.CurrentWallet.MakeTransaction(new ContractTransaction
+            ContractTransaction tx = App.CurrentWallet.MakeTransaction(new ContractTransaction
             {
                 Outputs = txOutListBox1.Items.Select(p => p.ToTxOutput()).ToArray()
             }, fee: Fixed8.Zero);
@@ -110,7 +110,7 @@ namespace Neo.UI
             }
             try
             {
-                if (inputs.Select(p => Blockchain.Default.GetTransaction(p.PrevHash).Outputs[p.PrevIndex].ScriptHash).Distinct().Any(p => Program.CurrentWallet.ContainsAddress(p)))
+                if (inputs.Select(p => Blockchain.Default.GetTransaction(p.PrevHash).Outputs[p.PrevIndex].ScriptHash).Distinct().Any(p => App.CurrentWallet.ContainsAddress(p)))
                 {
                     MessageBox.Show(Strings.TradeFailedInvalidDataMessage, Strings.Failed, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
@@ -121,7 +121,7 @@ namespace Neo.UI
                 MessageBox.Show(Strings.TradeFailedNoSyncMessage, Strings.Failed, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            outputs = outputs.Where(p => Program.CurrentWallet.ContainsAddress(p.ScriptHash));
+            outputs = outputs.Where(p => App.CurrentWallet.ContainsAddress(p.ScriptHash));
             using (TradeVerificationDialog dialog = new TradeVerificationDialog(outputs))
             {
                 button3.Enabled = dialog.ShowDialog() == DialogResult.OK;
@@ -147,12 +147,12 @@ namespace Neo.UI
                     Outputs = tx1.Outputs.Concat(tx2.Outputs).ToArray()
                 });
             }
-            Program.CurrentWallet.Sign(context);
+            App.CurrentWallet.Sign(context);
             if (context.Completed)
             {
                 context.Verifiable.Scripts = context.GetScripts();
                 ContractTransaction tx = (ContractTransaction)context.Verifiable;
-                Program.CurrentWallet.SaveTransaction(tx);
+                App.CurrentWallet.SaveTransaction(tx);
                 Program.LocalNode.Relay(tx);
                 InformationBox.Show(tx.Hash.ToString(), Strings.TradeSuccessMessage, Strings.TradeSuccessCaption);
             }

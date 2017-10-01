@@ -25,7 +25,7 @@ namespace Neo.UI
 
         private void ImportCustomContractDialog_Load(object sender, EventArgs e)
         {
-            comboBox1.Items.AddRange(Program.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p => Program.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey).ToArray());
+            comboBox1.Items.AddRange(App.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p => App.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey).ToArray());
         }
 
         private void Input_Changed(object sender, EventArgs e)

@@ -117,10 +117,10 @@ namespace Neo.UI
         private void Blockchain_PersistCompleted(object sender, Block block)
         {
             persistence_time = DateTime.Now;
-            if (Program.CurrentWallet != null)
+            if (App.CurrentWallet != null)
             {
                 check_nep5_balance = true;
-                if (Program.CurrentWallet.GetCoins().Any(p => !p.State.HasFlag(CoinState.Spent) && p.Output.AssetId.Equals(Blockchain.GoverningToken.Hash)) == true)
+                if (App.CurrentWallet.GetCoins().Any(p => !p.State.HasFlag(CoinState.Spent) && p.Output.AssetId.Equals(Blockchain.GoverningToken.Hash)) == true)
                     balance_changed = true;
             }
             CurrentWallet_TransactionsChanged(null, Enumerable.Empty<TransactionInfo>());
@@ -128,40 +128,40 @@ namespace Neo.UI
 
         private void ChangeWallet(UserWallet wallet)
         {
-            if (Program.CurrentWallet != null)
+            if (App.CurrentWallet != null)
             {
-                Program.CurrentWallet.BalanceChanged -= CurrentWallet_BalanceChanged;
-                Program.CurrentWallet.TransactionsChanged -= CurrentWallet_TransactionsChanged;
-                Program.CurrentWallet.Dispose();
+                App.CurrentWallet.BalanceChanged -= CurrentWallet_BalanceChanged;
+                App.CurrentWallet.TransactionsChanged -= CurrentWallet_TransactionsChanged;
+                App.CurrentWallet.Dispose();
             }
-            Program.CurrentWallet = wallet;
+            App.CurrentWallet = wallet;
             listView3.Items.Clear();
-            if (Program.CurrentWallet != null)
+            if (App.CurrentWallet != null)
             {
-                CurrentWallet_TransactionsChanged(null, Program.CurrentWallet.LoadTransactions());
-                Program.CurrentWallet.BalanceChanged += CurrentWallet_BalanceChanged;
-                Program.CurrentWallet.TransactionsChanged += CurrentWallet_TransactionsChanged;
+                CurrentWallet_TransactionsChanged(null, App.CurrentWallet.LoadTransactions());
+                App.CurrentWallet.BalanceChanged += CurrentWallet_BalanceChanged;
+                App.CurrentWallet.TransactionsChanged += CurrentWallet_TransactionsChanged;
             }
-            修改密码CToolStripMenuItem.Enabled = Program.CurrentWallet != null;
-            重建钱包数据库RToolStripMenuItem.Enabled = Program.CurrentWallet != null;
-            restoreAccountsToolStripMenuItem.Enabled = Program.CurrentWallet != null;
-            交易TToolStripMenuItem.Enabled = Program.CurrentWallet != null;
-            提取小蚁币CToolStripMenuItem.Enabled = Program.CurrentWallet != null;
-            requestCertificateToolStripMenuItem.Enabled = Program.CurrentWallet != null;
-            注册资产RToolStripMenuItem.Enabled = Program.CurrentWallet != null;
-            资产分发IToolStripMenuItem.Enabled = Program.CurrentWallet != null;
-            deployContractToolStripMenuItem.Enabled = Program.CurrentWallet != null;
-            invokeContractToolStripMenuItem.Enabled = Program.CurrentWallet != null;
-            选举EToolStripMenuItem.Enabled = Program.CurrentWallet != null;
-            创建新地址NToolStripMenuItem.Enabled = Program.CurrentWallet != null;
-            导入私钥IToolStripMenuItem.Enabled = Program.CurrentWallet != null;
-            创建智能合约SToolStripMenuItem.Enabled = Program.CurrentWallet != null;
+            修改密码CToolStripMenuItem.Enabled = App.CurrentWallet != null;
+            重建钱包数据库RToolStripMenuItem.Enabled = App.CurrentWallet != null;
+            restoreAccountsToolStripMenuItem.Enabled = App.CurrentWallet != null;
+            交易TToolStripMenuItem.Enabled = App.CurrentWallet != null;
+            提取小蚁币CToolStripMenuItem.Enabled = App.CurrentWallet != null;
+            requestCertificateToolStripMenuItem.Enabled = App.CurrentWallet != null;
+            注册资产RToolStripMenuItem.Enabled = App.CurrentWallet != null;
+            资产分发IToolStripMenuItem.Enabled = App.CurrentWallet != null;
+            deployContractToolStripMenuItem.Enabled = App.CurrentWallet != null;
+            invokeContractToolStripMenuItem.Enabled = App.CurrentWallet != null;
+            选举EToolStripMenuItem.Enabled = App.CurrentWallet != null;
+            创建新地址NToolStripMenuItem.Enabled = App.CurrentWallet != null;
+            导入私钥IToolStripMenuItem.Enabled = App.CurrentWallet != null;
+            创建智能合约SToolStripMenuItem.Enabled = App.CurrentWallet != null;
             listView1.Items.Clear();
-            if (Program.CurrentWallet != null)
+            if (App.CurrentWallet != null)
             {
-                foreach (UInt160 scriptHash in Program.CurrentWallet.GetAddresses().ToArray())
+                foreach (UInt160 scriptHash in App.CurrentWallet.GetAddresses().ToArray())
                 {
-                    VerificationContract contract = Program.CurrentWallet.GetContract(scriptHash);
+                    VerificationContract contract = App.CurrentWallet.GetContract(scriptHash);
                     if (contract == null)
                         AddAddressToListView(scriptHash);
                     else
@@ -237,14 +237,14 @@ namespace Neo.UI
 
         private void ImportBlocks(Stream stream)
         {
-            LevelDBBlockchain blockchain = (LevelDBBlockchain)Blockchain.Default;
+            var blockchain = (LevelDBBlockchain)Blockchain.Default;
             blockchain.VerifyBlocks = false;
-            using (BinaryReader r = new BinaryReader(stream))
+            using (var reader = new BinaryReader(stream))
             {
-                uint count = r.ReadUInt32();
+                uint count = reader.ReadUInt32();
                 for (int height = 0; height < count; height++)
                 {
-                    byte[] array = r.ReadBytes(r.ReadInt32());
+                    byte[] array = reader.ReadBytes(reader.ReadInt32());
                     if (height > Blockchain.Default.Height)
                     {
                         Block block = array.AsSerializable<Block>();
@@ -263,19 +263,19 @@ namespace Neo.UI
                 const string acc_zip_path = acc_path + ".zip";
                 if (File.Exists(acc_path))
                 {
-                    using (FileStream fs = new FileStream(acc_path, FileMode.Open, FileAccess.Read, FileShare.None))
+                    using (var fileStream = new FileStream(acc_path, FileMode.Open, FileAccess.Read, FileShare.None))
                     {
-                        ImportBlocks(fs);
+                        ImportBlocks(fileStream);
                     }
                     File.Delete(acc_path);
                 }
                 else if (File.Exists(acc_zip_path))
                 {
-                    using (FileStream fs = new FileStream(acc_zip_path, FileMode.Open, FileAccess.Read, FileShare.None))
-                    using (ZipArchive zip = new ZipArchive(fs, ZipArchiveMode.Read))
-                    using (Stream zs = zip.GetEntry(acc_path).Open())
+                    using (var fileStream = new FileStream(acc_zip_path, FileMode.Open, FileAccess.Read, FileShare.None))
+                    using (var zip = new ZipArchive(fileStream, ZipArchiveMode.Read))
+                    using (var zipStream = zip.GetEntry(acc_path).Open())
                     {
-                        ImportBlocks(zs);
+                        ImportBlocks(zipStream);
                     }
                     File.Delete(acc_zip_path);
                 }
@@ -305,14 +305,14 @@ namespace Neo.UI
                 toolStripProgressBar1.Value = persistence_span.Seconds;
                 toolStripProgressBar1.Style = ProgressBarStyle.Blocks;
             }
-            if (Program.CurrentWallet != null)
+            if (App.CurrentWallet != null)
             {
-                if (Program.CurrentWallet.WalletHeight <= Blockchain.Default.Height + 1)
+                if (App.CurrentWallet.WalletHeight <= Blockchain.Default.Height + 1)
                 {
                     if (balance_changed)
                     {
-                        IEnumerable<Coin> coins = Program.CurrentWallet?.GetCoins().Where(p => !p.State.HasFlag(CoinState.Spent)) ?? Enumerable.Empty<Coin>();
-                        Fixed8 bonus_available = Blockchain.CalculateBonus(Program.CurrentWallet.GetUnclaimedCoins().Select(p => p.Reference));
+                        IEnumerable<Coin> coins = App.CurrentWallet?.GetCoins().Where(p => !p.State.HasFlag(CoinState.Spent)) ?? Enumerable.Empty<Coin>();
+                        Fixed8 bonus_available = Blockchain.CalculateBonus(App.CurrentWallet.GetUnclaimedCoins().Select(p => p.Reference));
                         Fixed8 bonus_unavailable = Blockchain.CalculateBonus(coins.Where(p => p.State.HasFlag(CoinState.Confirmed) && p.Output.AssetId.Equals(Blockchain.GoverningToken.Hash)).Select(p => p.Reference), Blockchain.Default.Height + 1);
                         Fixed8 bonus = bonus_available + bonus_unavailable;
                         var assets = coins.GroupBy(p => p.Output.AssetId, (k, g) => new
@@ -445,19 +445,19 @@ namespace Neo.UI
                 }
                 if (check_nep5_balance && persistence_span > TimeSpan.FromSeconds(2))
                 {
-                    UInt160[] addresses = Program.CurrentWallet.GetAddresses().ToArray();
+                    UInt160[] addresses = App.CurrentWallet.GetAddresses().ToArray();
                     foreach (string s in Settings.Default.NEP5Watched)
                     {
                         UInt160 script_hash = UInt160.Parse(s);
                         byte[] script;
-                        using (ScriptBuilder sb = new ScriptBuilder())
+                        using (var builder = new ScriptBuilder())
                         {
                             foreach (UInt160 address in addresses)
-                                sb.EmitAppCall(script_hash, "balanceOf", address);
-                            sb.Emit(OpCode.DEPTH, OpCode.PACK);
-                            sb.EmitAppCall(script_hash, "decimals");
-                            sb.EmitAppCall(script_hash, "name");
-                            script = sb.ToArray();
+                                builder.EmitAppCall(script_hash, "balanceOf", address);
+                            builder.Emit(OpCode.DEPTH, OpCode.PACK);
+                            builder.EmitAppCall(script_hash, "decimals");
+                            builder.EmitAppCall(script_hash, "name");
+                            script = builder.ToArray();
                         }
                         ApplicationEngine engine = ApplicationEngine.Run(script);
                         if (engine.State.HasFlag(VMState.FAULT)) continue;
@@ -510,7 +510,7 @@ namespace Neo.UI
 
         private void 创建钱包数据库NToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (CreateWalletDialog dialog = new CreateWalletDialog())
+            using (var dialog = new CreateWalletDialog())
             {
                 if (dialog.ShowDialog() != DialogResult.OK) return;
                 ChangeWallet(UserWallet.Create(dialog.WalletPath, dialog.Password));
@@ -521,7 +521,7 @@ namespace Neo.UI
 
         private void 打开钱包数据库OToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (OpenWalletDialog dialog = new OpenWalletDialog())
+            using (var dialog = new OpenWalletDialog())
             {
                 if (dialog.ShowDialog() != DialogResult.OK) return;
                 if (UserWallet.GetVersion(dialog.WalletPath) < Version.Parse("1.3.5"))
@@ -554,10 +554,10 @@ namespace Neo.UI
 
         private void 修改密码CToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (ChangePasswordDialog dialog = new ChangePasswordDialog())
+            using (var dialog = new ChangePasswordDialog())
             {
                 if (dialog.ShowDialog() != DialogResult.OK) return;
-                if (Program.CurrentWallet.ChangePassword(dialog.OldPassword, dialog.NewPassword))
+                if (App.CurrentWallet.ChangePassword(dialog.OldPassword, dialog.NewPassword))
                     MessageBox.Show(Strings.ChangePasswordSuccessful);
                 else
                     MessageBox.Show(Strings.PasswordIncorrect);
@@ -568,17 +568,17 @@ namespace Neo.UI
         {
             listView2.Items.Clear();
             listView3.Items.Clear();
-            Program.CurrentWallet.Rebuild();
+            App.CurrentWallet.Rebuild();
         }
 
         private void restoreAccountsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (RestoreAccountsDialog dialog = new RestoreAccountsDialog())
+            using (var dialog = new RestoreAccountsDialog())
             {
                 if (dialog.ShowDialog() != DialogResult.OK) return;
-                foreach (VerificationContract contract in dialog.GetContracts())
+                foreach (var contract in dialog.GetContracts())
                 {
-                    Program.CurrentWallet.AddContract(contract);
+                    App.CurrentWallet.AddContract(contract);
                     AddContractToListView(contract, true);
                 }
             }
@@ -592,14 +592,14 @@ namespace Neo.UI
         private void 转账TToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Transaction tx;
-            using (TransferDialog dialog = new TransferDialog())
+            using (var dialog = new TransferDialog())
             {
                 if (dialog.ShowDialog() != DialogResult.OK) return;
                 tx = dialog.GetTransaction();
             }
             if (tx is InvocationTransaction itx)
             {
-                using (InvokeContractDialog dialog = new InvokeContractDialog(itx))
+                using (var dialog = new InvokeContractDialog(itx))
                 {
                     if (dialog.ShowDialog() != DialogResult.OK) return;
                     tx = dialog.GetTransaction();
@@ -610,7 +610,7 @@ namespace Neo.UI
 
         private void 交易TToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            using (TradeForm form = new TradeForm())
+            using (var form = new TradeForm())
             {
                 form.ShowDialog();
             }
@@ -618,7 +618,7 @@ namespace Neo.UI
 
         private void 签名SToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (SigningDialog dialog = new SigningDialog())
+            using (var dialog = new SigningDialog())
             {
                 dialog.ShowDialog();
             }
@@ -631,7 +631,7 @@ namespace Neo.UI
 
         private void requestCertificateToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (CertificateRequestWizard wizard = new UI.CertificateRequestWizard())
+            using (var wizard = new UI.CertificateRequestWizard())
             {
                 wizard.ShowDialog();
             }
@@ -640,12 +640,12 @@ namespace Neo.UI
         private void 注册资产RToolStripMenuItem_Click(object sender, EventArgs e)
         {
             InvocationTransaction tx;
-            using (AssetRegisterDialog dialog = new AssetRegisterDialog())
+            using (var dialog = new AssetRegisterDialog())
             {
                 if (dialog.ShowDialog() != DialogResult.OK) return;
                 tx = dialog.GetTransaction();
             }
-            using (InvokeContractDialog dialog = new InvokeContractDialog(tx))
+            using (var dialog = new InvokeContractDialog(tx))
             {
                 if (dialog.ShowDialog() != DialogResult.OK) return;
                 tx = dialog.GetTransaction();
@@ -655,7 +655,7 @@ namespace Neo.UI
 
         private void 资产分发IToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (IssueDialog dialog = new IssueDialog())
+            using (var dialog = new IssueDialog())
             {
                 if (dialog.ShowDialog() != DialogResult.OK) return;
                 Helper.SignAndShowInformation(dialog.GetTransaction());
@@ -665,12 +665,12 @@ namespace Neo.UI
         private void deployContractToolStripMenuItem_Click(object sender, EventArgs e)
         {
             InvocationTransaction tx;
-            using (DeployContractDialog dialog = new DeployContractDialog())
+            using (var dialog = new DeployContractDialog())
             {
                 if (dialog.ShowDialog() != DialogResult.OK) return;
                 tx = dialog.GetTransaction();
             }
-            using (InvokeContractDialog dialog = new InvokeContractDialog(tx))
+            using (var dialog = new InvokeContractDialog(tx))
             {
                 if (dialog.ShowDialog() != DialogResult.OK) return;
                 tx = dialog.GetTransaction();
@@ -680,7 +680,7 @@ namespace Neo.UI
 
         private void invokeContractToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (InvokeContractDialog dialog = new InvokeContractDialog())
+            using (var dialog = new InvokeContractDialog())
             {
                 if (dialog.ShowDialog() != DialogResult.OK) return;
                 Helper.SignAndShowInformation(dialog.GetTransaction());
@@ -690,12 +690,12 @@ namespace Neo.UI
         private void 选举EToolStripMenuItem_Click(object sender, EventArgs e)
         {
             InvocationTransaction tx;
-            using (ElectionDialog dialog = new ElectionDialog())
+            using (var dialog = new ElectionDialog())
             {
                 if (dialog.ShowDialog() != DialogResult.OK) return;
                 tx = dialog.GetTransaction();
             }
-            using (InvokeContractDialog dialog = new InvokeContractDialog(tx))
+            using (var dialog = new InvokeContractDialog(tx))
             {
                 if (dialog.ShowDialog() != DialogResult.OK) return;
                 tx = dialog.GetTransaction();
@@ -705,7 +705,7 @@ namespace Neo.UI
 
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (OptionsDialog dialog = new OptionsDialog())
+            using (var dialog = new OptionsDialog())
             {
                 dialog.ShowDialog();
             }
@@ -747,8 +747,8 @@ namespace Neo.UI
         private void 创建新地址NToolStripMenuItem_Click(object sender, EventArgs e)
         {
             listView1.SelectedIndices.Clear();
-            KeyPair key = Program.CurrentWallet.CreateKey();
-            foreach (VerificationContract contract in Program.CurrentWallet.GetContracts(key.PublicKeyHash))
+            KeyPair key = App.CurrentWallet.CreateKey();
+            foreach (var contract in App.CurrentWallet.GetContracts(key.PublicKeyHash))
             {
                 AddContractToListView(contract, true);
             }
@@ -756,7 +756,7 @@ namespace Neo.UI
 
         private void importWIFToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (ImportPrivateKeyDialog dialog = new ImportPrivateKeyDialog())
+            using (var dialog = new ImportPrivateKeyDialog())
             {
                 if (dialog.ShowDialog() != DialogResult.OK) return;
                 listView1.SelectedIndices.Clear();
@@ -765,13 +765,13 @@ namespace Neo.UI
                     KeyPair key;
                     try
                     {
-                        key = Program.CurrentWallet.Import(wif);
+                        key = App.CurrentWallet.Import(wif);
                     }
                     catch (FormatException)
                     {
                         continue;
                     }
-                    foreach (VerificationContract contract in Program.CurrentWallet.GetContracts(key.PublicKeyHash))
+                    foreach (VerificationContract contract in App.CurrentWallet.GetContracts(key.PublicKeyHash))
                     {
                         AddContractToListView(contract, true);
                     }
@@ -781,12 +781,12 @@ namespace Neo.UI
 
         private void importCertificateToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (SelectCertificateDialog dialog = new SelectCertificateDialog())
+            using (var dialog = new SelectCertificateDialog())
             {
                 if (dialog.ShowDialog() != DialogResult.OK) return;
                 listView1.SelectedIndices.Clear();
-                KeyPair key = Program.CurrentWallet.Import(dialog.SelectedCertificate);
-                foreach (VerificationContract contract in Program.CurrentWallet.GetContracts(key.PublicKeyHash))
+                KeyPair key = App.CurrentWallet.Import(dialog.SelectedCertificate);
+                foreach (var contract in App.CurrentWallet.GetContracts(key.PublicKeyHash))
                 {
                     AddContractToListView(contract, true);
                 }
@@ -797,7 +797,7 @@ namespace Neo.UI
         {
             string text = InputBox.Show(Strings.Address, Strings.ImportWatchOnlyAddress);
             if (string.IsNullOrEmpty(text)) return;
-            using (StringReader reader = new StringReader(text))
+            using (var reader = new StringReader(text))
             {
                 while (true)
                 {
@@ -814,7 +814,7 @@ namespace Neo.UI
                     {
                         continue;
                     }
-                    Program.CurrentWallet.AddWatchOnly(scriptHash);
+                    App.CurrentWallet.AddWatchOnly(scriptHash);
                     AddAddressToListView(scriptHash, true);
                 }
             }
@@ -822,16 +822,16 @@ namespace Neo.UI
 
         private void 多方签名MToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (CreateMultiSigContractDialog dialog = new CreateMultiSigContractDialog())
+            using (var dialog = new CreateMultiSigContractDialog())
             {
                 if (dialog.ShowDialog() != DialogResult.OK) return;
-                VerificationContract contract = dialog.GetContract();
+                var contract = dialog.GetContract();
                 if (contract == null)
                 {
                     MessageBox.Show(Strings.AddContractFailedMessage);
                     return;
                 }
-                Program.CurrentWallet.AddContract(contract);
+                App.CurrentWallet.AddContract(contract);
                 listView1.SelectedIndices.Clear();
                 AddContractToListView(contract, true);
             }
@@ -839,7 +839,7 @@ namespace Neo.UI
 
         private void lockToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (CreateLockAccountDialog dialog = new CreateLockAccountDialog())
+            using (var dialog = new CreateLockAccountDialog())
             {
                 if (dialog.ShowDialog() != DialogResult.OK) return;
                 VerificationContract contract = dialog.GetContract();
@@ -848,7 +848,7 @@ namespace Neo.UI
                     MessageBox.Show(Strings.AddContractFailedMessage);
                     return;
                 }
-                Program.CurrentWallet.AddContract(contract);
+                App.CurrentWallet.AddContract(contract);
                 listView1.SelectedIndices.Clear();
                 AddContractToListView(contract, true);
             }
@@ -856,11 +856,11 @@ namespace Neo.UI
 
         private void 自定义CToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (ImportCustomContractDialog dialog = new ImportCustomContractDialog())
+            using (var dialog = new ImportCustomContractDialog())
             {
                 if (dialog.ShowDialog() != DialogResult.OK) return;
                 VerificationContract contract = dialog.GetContract();
-                Program.CurrentWallet.AddContract(contract);
+                App.CurrentWallet.AddContract(contract);
                 listView1.SelectedIndices.Clear();
                 AddContractToListView(contract, true);
             }
@@ -869,8 +869,8 @@ namespace Neo.UI
         private void 查看私钥VToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Contract contract = (Contract)listView1.SelectedItems[0].Tag;
-            KeyPair key = Program.CurrentWallet.GetKeyByScriptHash(contract.ScriptHash);
-            using (ViewPrivateKeyDialog dialog = new ViewPrivateKeyDialog(key, contract.ScriptHash))
+            KeyPair key = App.CurrentWallet.GetKeyByScriptHash(contract.ScriptHash);
+            using (var dialog = new ViewPrivateKeyDialog(key, contract.ScriptHash))
             {
                 dialog.ShowDialog();
             }
@@ -878,8 +878,8 @@ namespace Neo.UI
 
         private void viewContractToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            VerificationContract contract = (VerificationContract)listView1.SelectedItems[0].Tag;
-            using (ViewContractDialog dialog = new ViewContractDialog(contract))
+            var contract = (VerificationContract)listView1.SelectedItems[0].Tag;
+            using (var dialog = new ViewContractDialog(contract))
             {
                 dialog.ShowDialog();
             }
@@ -888,13 +888,13 @@ namespace Neo.UI
         private void voteToolStripMenuItem_Click(object sender, EventArgs e)
         {
             InvocationTransaction tx;
-            Contract contract = (Contract)listView1.SelectedItems[0].Tag;
-            using (VotingDialog dialog = new VotingDialog(contract.ScriptHash))
+            var contract = (Contract)listView1.SelectedItems[0].Tag;
+            using (var dialog = new VotingDialog(contract.ScriptHash))
             {
                 if (dialog.ShowDialog() != DialogResult.OK) return;
                 tx = dialog.GetTransaction();
             }
-            using (InvokeContractDialog dialog = new InvokeContractDialog(tx))
+            using (var dialog = new InvokeContractDialog(tx))
             {
                 if (dialog.ShowDialog() != DialogResult.OK) return;
                 tx = dialog.GetTransaction();
@@ -920,7 +920,7 @@ namespace Neo.UI
             {
                 UInt160 scriptHash = (tag as UInt160) ?? ((Contract)tag).ScriptHash;
                 listView1.Items.RemoveByKey(Wallet.ToAddress(scriptHash));
-                Program.CurrentWallet.DeleteAddress(scriptHash);
+                App.CurrentWallet.DeleteAddress(scriptHash);
             }
             balance_changed = true;
         }
@@ -955,14 +955,14 @@ namespace Neo.UI
             var delete = listView2.SelectedItems.OfType<ListViewItem>().Select(p => p.Tag as AssetState).Where(p => p != null).Select(p => new
             {
                 Asset = p,
-                Value = Program.CurrentWallet.GetAvailable(p.AssetId)
+                Value = App.CurrentWallet.GetAvailable(p.AssetId)
             }).ToArray();
             if (delete.Length == 0) return;
             if (MessageBox.Show($"{Strings.DeleteAssetConfirmationMessage}\n"
                 + string.Join("\n", delete.Select(p => $"{p.Asset.GetName()}:{p.Value}"))
                 , Strings.DeleteConfirmation, MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) != DialogResult.Yes)
                 return;
-            ContractTransaction tx = Program.CurrentWallet.MakeTransaction(new ContractTransaction
+            ContractTransaction tx = App.CurrentWallet.MakeTransaction(new ContractTransaction
             {
                 Outputs = delete.Select(p => new TransactionOutput
                 {
@@ -1003,10 +1003,7 @@ namespace Neo.UI
 
         private void toolStripStatusLabel3_Click(object sender, EventArgs e)
         {
-            using (UpdateDialog dialog = new UpdateDialog((XDocument)toolStripStatusLabel3.Tag))
-            {
-                dialog.ShowDialog();
-            }
+            
         }
     }
 }

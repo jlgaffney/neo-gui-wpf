@@ -15,7 +15,7 @@ namespace Neo.UI
 
         private void CalculateBonusUnavailable(uint height)
         {
-            var unspent = Program.CurrentWallet.FindUnspentCoins()
+            var unspent = App.CurrentWallet.FindUnspentCoins()
                 .Where(p => p.Output.AssetId.Equals(Blockchain.GoverningToken.Hash))
                 .Select(p => p.Reference)
                 ;
@@ -37,7 +37,7 @@ namespace Neo.UI
 
         private void ClaimForm_Load(object sender, EventArgs e)
         {
-            Fixed8 bonus_available = Blockchain.CalculateBonus(Program.CurrentWallet.GetUnclaimedCoins().Select(p => p.Reference));
+            Fixed8 bonus_available = Blockchain.CalculateBonus(App.CurrentWallet.GetUnclaimedCoins().Select(p => p.Reference));
             textBox1.Text = bonus_available.ToString();
             if (bonus_available == Fixed8.Zero) button1.Enabled = false;
             CalculateBonusUnavailable(Blockchain.Default.Height + 1);
@@ -63,7 +63,7 @@ namespace Neo.UI
 
         private void button1_Click(object sender, EventArgs e)
         {
-            CoinReference[] claims = Program.CurrentWallet.GetUnclaimedCoins().Select(p => p.Reference).ToArray();
+            CoinReference[] claims = App.CurrentWallet.GetUnclaimedCoins().Select(p => p.Reference).ToArray();
             if (claims.Length == 0) return;
             Helper.SignAndShowInformation(new ClaimTransaction
             {
@@ -76,7 +76,7 @@ namespace Neo.UI
                     {
                         AssetId = Blockchain.UtilityToken.Hash,
                         Value = Blockchain.CalculateBonus(claims),
-                        ScriptHash = Program.CurrentWallet.GetChangeAddress()
+                        ScriptHash = App.CurrentWallet.GetChangeAddress()
                     }
                 }
             });

@@ -1,23 +1,23 @@
-﻿using Neo.Properties;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
-using System.Windows.Forms;
+using System.Windows.Navigation;
 using System.Xml.Linq;
+using NeoResources = Neo.Properties.Resources;
 
-namespace Neo.UI
+namespace Neo.UI.Views.Updater
 {
-    internal partial class UpdateDialog : Form
+    public partial class UpdateDialogView
     {
         private readonly WebClient web = new WebClient();
         private readonly string download_url;
         private string download_path;
 
-        public UpdateDialog(XDocument xdoc)
+        public UpdateDialogView(XDocument xdoc)
         {
             InitializeComponent();
             Version latest = Version.Parse(xdoc.Element("update").Attribute("latest").Value);
@@ -48,26 +48,26 @@ namespace Neo.UI
                 di.Delete();
                 Directory.Move("update2", di.Name);
             }
-            File.WriteAllBytes("update.bat", Resources.UpdateBat);
+            File.WriteAllBytes("update.bat", NeoResources.UpdateBat);
             Close();
-            if (Program.MainForm != null) Program.MainForm.Close();
+            App.CloseMainWindowIfOpen();
             Process.Start("update.bat");
         }
 
-        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void linkLabel1_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
             Process.Start("https://neo.org/");
         }
 
-        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void linkLabel2_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
             Process.Start(download_url);
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            button1.Enabled = false;
-            button2.Enabled = false;
+            button1.IsEnabled = false;
+            button2.IsEnabled = false;
             download_path = "update.zip";
             web.DownloadFileAsync(new Uri(download_url), download_path);
         }

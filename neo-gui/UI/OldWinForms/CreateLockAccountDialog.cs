@@ -14,7 +14,7 @@ namespace Neo.UI
         public CreateLockAccountDialog()
         {
             InitializeComponent();
-            comboBox1.Items.AddRange(Program.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p => Program.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey).ToArray());
+            comboBox1.Items.AddRange(App.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p => App.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey).ToArray());
         }
 
         public VerificationContract GetContract()

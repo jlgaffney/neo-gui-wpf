@@ -45,11 +45,11 @@ namespace Neo.UI
                 MessageBox.Show(Strings.UnsynchronizedBlock);
                 return;
             }
-            Program.CurrentWallet.Sign(context);
+            App.CurrentWallet.Sign(context);
             if (context.Completed)
             {
                 context.Verifiable.Scripts = context.GetScripts();
-                Program.CurrentWallet.SaveTransaction(tx);
+                App.CurrentWallet.SaveTransaction(tx);
                 Program.LocalNode.Relay(tx);
                 InformationBox.Show(tx.Hash.ToString(), Strings.SendTxSucceedMessage, Strings.SendTxSucceedTitle);
             }

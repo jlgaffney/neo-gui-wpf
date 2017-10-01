@@ -40,14 +40,14 @@ namespace Neo.UI
         {
             if (AssetId is UInt256 asset_id)
             {
-                return new BigDecimal(Program.CurrentWallet.GetAvailable(asset_id).GetData(), 8);
+                return new BigDecimal(App.CurrentWallet.GetAvailable(asset_id).GetData(), 8);
             }
             else
             {
                 byte[] script;
                 using (ScriptBuilder sb = new ScriptBuilder())
                 {
-                    foreach (UInt160 account in Program.CurrentWallet.GetContracts().Select(p => p.ScriptHash))
+                    foreach (UInt160 account in App.CurrentWallet.GetContracts().Select(p => p.ScriptHash))
                         sb.EmitAppCall((UInt160)AssetId, "balanceOf", account);
                     sb.Emit(OpCode.DEPTH, OpCode.PACK);
                     script = sb.ToArray();

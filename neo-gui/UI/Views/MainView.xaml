@@ -1,0 +1,186 @@
+﻿<Window x:Class="Neo.UI.Views.MainView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:Neo.UI.ViewModels"
+        Title="neo-gui" Height="520" Width="740"
+        Loaded="Window_Loaded" Closing="Window_Closing">
+    <Window.DataContext>
+        <vm:MainViewModel />
+    </Window.DataContext>
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibility"/>
+    </Window.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        
+        <Menu Grid.Row="0">
+            <MenuItem Header="_Wallet">
+                <MenuItem Header="_New Wallet Database…" Command="{Binding CreateWalletCommand}" />
+                <MenuItem Header="_Open Wallet Database…" Command="{Binding OpenWalletCommand}" />
+
+                <Separator />
+
+                <MenuItem Header="_Change Password…" Command="{Binding ChangePasswordCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
+                <MenuItem Header="Rebuild _Index" Command="{Binding RebuildIndexCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
+                <MenuItem Header="_Restore Accounts…" Command="{Binding RestoreAccountCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
+
+                <Separator />
+
+                <MenuItem Header="E_xit" Command="{Binding ExitCommand}" />
+            </MenuItem>
+            <MenuItem Header="_Transaction" IsEnabled="{Binding AccountMenuItemsEnabled}">
+                <MenuItem Header="_Transfer…" Command="{Binding TransferCommand}" />
+                <MenuItem Header="Transactions(_X)…" Command="{Binding ShowTransactionDialogCommand}" />
+
+                <Separator />
+
+                <MenuItem Header="_Signature…" Command="{Binding ShowSigningDialogCommand}" />
+            </MenuItem>
+            <MenuItem Header="_Advanced">
+                <MenuItem Header="_NeoGas Claim…" Command="{Binding ClaimCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
+
+                <Separator />
+
+                <MenuItem Header="Request _Certificate…" Command="{Binding RequestCertificateCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
+                <MenuItem Header="Asset _Registration…" Command="{Binding RegisterAssetCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
+                <MenuItem Header="Asset D_istribution…" Command="{Binding DistributeAssetCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
+
+                <Separator />
+
+                <MenuItem Header="_Deploy Contract…" Command="{Binding DeployContractCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
+                <MenuItem Header="In_voke Contract…" Command="{Binding InvokeContractCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
+
+                <Separator />
+
+                <MenuItem Header="_Election…" Command="{Binding ShowElectionDialogCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
+
+                <Separator />
+
+                <MenuItem Header="_Options…" Command="{Binding ShowOptionsDialogCommand}" />
+            </MenuItem>
+            <MenuItem Header="_Help">
+                <MenuItem Header="_Check for Help" Command="{Binding CheckForHelpCommand}" />
+                <MenuItem Header="Official _Web" Command="{Binding ShowOfficialWebsiteCommand}" />
+
+                <Separator />
+
+                <MenuItem Header="Developer _Tool" InputGestureText="F12" Command="{Binding ShowDeveloperToolsCommand}" />
+
+                <Separator />
+
+                <MenuItem Header="_About NEO" Command="{Binding AboutNEOCommand}" />
+            </MenuItem>
+        </Menu>
+
+        <TabControl Grid.Row="1">
+            <TabItem Header="Account">
+                <ListBox ItemsSource="{Binding Accounts}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <ListBox.GroupStyle>
+                        <x:Static Member='GroupStyle.Default' />
+                    </ListBox.GroupStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition SharedSizeGroup="col1" Width="180"/>
+                                    <ColumnDefinition SharedSizeGroup="col2" Width="80"/>
+                                    <ColumnDefinition SharedSizeGroup="col3" Width="80"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding Address}"/>
+                                <TextBlock Text="{Binding NEO}" Grid.Column="1"/>
+                                <TextBlock Text="{Binding GAS}" Grid.Column="2"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+
+
+
+
+
+
+                <!--<ListView ItemsSource="{Binding Accounts}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Address" Width="180" DisplayMemberBinding="{Binding Address}" />
+                            <GridViewColumn Header="NEO" Width="80" DisplayMemberBinding="{Binding NEO}" />
+                            <GridViewColumn Header="NeoGas" Width="80" DisplayMemberBinding="{Binding NeoGas}" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>-->
+            </TabItem>
+            <TabItem Header="Asset">
+                <ListView ItemsSource="{Binding Assets}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Asset" Width="120" DisplayMemberBinding="{Binding Asset}" />
+                            <GridViewColumn Header="Type" Width="72" DisplayMemberBinding="{Binding Type}" />
+                            <GridViewColumn Header="Balance" Width="120" DisplayMemberBinding="{Binding Balance}" />
+                            <GridViewColumn Header="Issuer" Width="260" DisplayMemberBinding="{Binding Issuer}" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </TabItem>
+            <TabItem Header="Transaction History">
+                <ListView ItemsSource="{Binding Transactions}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Time" Width="80" DisplayMemberBinding="{Binding Time}" />
+                            <GridViewColumn Header="Transaction ID" Width="320" DisplayMemberBinding="{Binding Id}" />
+                            <GridViewColumn Header="confirm" Width="54" DisplayMemberBinding="{Binding Confirmations}" />
+                            <GridViewColumn Header="Transaction Type" Width="120" DisplayMemberBinding="{Binding Type}" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </TabItem>
+        </TabControl>
+
+        <StatusBar Grid.Row="2" Height="24">
+            <StatusBarItem HorizontalAlignment="Left" Margin="0 0 8 0">
+                <StatusBarItem.Content>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Height:" Margin="0 0 8 0" />
+
+                        <TextBlock Text="{Binding BlockHeight}" />
+                    </StackPanel>
+                </StatusBarItem.Content>
+            </StatusBarItem>
+
+            <StatusBarItem HorizontalAlignment="Left" Margin="0 0 8 0">
+                <StatusBarItem.Content>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Connected:" Margin="0 0 8 0" />
+
+                        <TextBlock Text="{Binding NodeCount}" />
+                    </StackPanel>
+                </StatusBarItem.Content>
+            </StatusBarItem>
+
+            <StatusBarItem Visibility="{Binding NewVersionVisible, Converter={StaticResource BooleanToVisibility}, FallbackValue=Hidden}">
+                <StatusBarItem.Content>
+                    <TextBlock>
+                        <Hyperlink Command="{Binding ShowUpdateDialogCommand}">
+                            <TextBlock Text="{Binding NewVersionLabel}" />
+                        </Hyperlink>
+                    </TextBlock>
+                </StatusBarItem.Content>
+            </StatusBarItem>
+
+            <StatusBarItem HorizontalAlignment="Right">
+                <StatusBarItem.Content>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Waiting for next block:" Margin="0 0 8 0" />
+                        <ProgressBar Minimum="0" Maximum="15" SmallChange="1" Value="{Binding BlockProgress}" IsIndeterminate="{Binding BlockProgressIndeterminate}" Height="14" Width="100" />
+                    </StackPanel>
+                </StatusBarItem.Content>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</Window>

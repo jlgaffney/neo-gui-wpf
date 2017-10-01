@@ -21,7 +21,7 @@ namespace Neo.UI
                 return;
             }
             ContractParametersContext context = ContractParametersContext.Parse(textBox1.Text);
-            if (!Program.CurrentWallet.Sign(context))
+            if (!App.CurrentWallet.Sign(context))
             {
                 MessageBox.Show(Strings.SigningFailedKeyNotFoundMessage);
                 return;

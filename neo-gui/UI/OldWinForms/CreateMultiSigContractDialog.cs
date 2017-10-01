@@ -19,7 +19,7 @@ namespace Neo.UI
             ECPoint[] publicKeys = listBox1.Items.OfType<string>().Select(p => ECPoint.DecodePoint(p.HexToBytes(), ECCurve.Secp256r1)).ToArray();
             foreach (ECPoint publicKey in publicKeys)
             {
-                KeyPair key = Program.CurrentWallet.GetKey(publicKey.EncodePoint(true).ToScriptHash());
+                KeyPair key = App.CurrentWallet.GetKey(publicKey.EncodePoint(true).ToScriptHash());
                 if (key != null)
                 {
                     return VerificationContract.CreateMultiSigContract(key.PublicKeyHash, (int)numericUpDown2.Value, publicKeys);

@@ -1,9 +1,8 @@
 ﻿using Neo.Core;
 using Neo.Implementations.Blockchains.LevelDB;
-using Neo.Implementations.Wallets.EntityFramework;
 using Neo.Network;
 using Neo.Properties;
-using Neo.UI;
+using Neo.UI.Views.Updater;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -19,8 +18,6 @@ namespace Neo
     internal static class Program
     {
         public static LocalNode LocalNode;
-        public static UserWallet CurrentWallet;
-        public static MainForm MainForm;
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
@@ -91,10 +88,10 @@ namespace Neo
                 Version minimum = Version.Parse(xdoc.Element("update").Attribute("minimum").Value);
                 if (version < minimum)
                 {
-                    using (UpdateDialog dialog = new UpdateDialog(xdoc))
-                    {
-                        dialog.ShowDialog();
-                    }
+                    var updateDialog = new UpdateDialogView(xdoc);
+
+                    updateDialog.ShowDialog();
+
                     return;
                 }
             }
@@ -105,11 +102,15 @@ namespace Neo
                 {
                     LocalNode.LoadState(fs);
                 }
-            using (Blockchain.RegisterBlockchain(new LevelDBBlockchain(Settings.Default.DataDirectoryPath)))
+            //using (Blockchain.RegisterBlockchain(new LevelDBBlockchain(Settings.Default.DataDirectoryPath)))
             using (LocalNode = new LocalNode())
             {
                 LocalNode.UpnpEnabled = true;
-                Application.Run(MainForm = new MainForm(xdoc));
+
+                // Start NEO GUI Application
+                var app = new App(xdoc);
+
+                app.Run();
             }
             using (FileStream fs = new FileStream(PeerStatePath, FileMode.Create, FileAccess.Write, FileShare.None))
             {

@@ -16,7 +16,7 @@ namespace Neo.UI
         {
             if (listBox1.SelectedIndex < 0) return;
             listBox2.Items.Clear();
-            if (Program.CurrentWallet == null) return;
+            if (App.CurrentWallet == null) return;
             UInt160 hash = Wallet.ToScriptHash((string)listBox1.SelectedItem);
             listBox2.Items.AddRange(context.GetParameters(hash).ToArray());
         }

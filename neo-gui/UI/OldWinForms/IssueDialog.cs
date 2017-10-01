@@ -21,7 +21,7 @@ namespace Neo.UI
         public IssueTransaction GetTransaction()
         {
             if (txOutListBox1.Asset == null) return null;
-            return Program.CurrentWallet.MakeTransaction(new IssueTransaction
+            return App.CurrentWallet.MakeTransaction(new IssueTransaction
             {
                 Version = 1,
                 Outputs = txOutListBox1.Items.GroupBy(p => p.ScriptHash).Select(g => new TransactionOutput
