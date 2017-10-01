@@ -312,11 +312,21 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="UI\AssetDescriptor.cs" />
+    <Compile Include="UI\Messages\CloseWindowMessage.cs" />
+    <Compile Include="UI\Messages\CreateWalletMessage.cs" />
     <Compile Include="UI\Models\AccountItem.cs" />
     <Compile Include="UI\Models\AssetItem.cs" />
     <Compile Include="UI\Models\TransactionItem.cs" />
+    <Compile Include="UI\Controls\NeoWindow.cs" />
+    <Compile Include="UI\MVVM\EventAggregator.cs" />
+    <Compile Include="UI\MVVM\IHandle.cs" />
     <Compile Include="UI\MVVM\RelayCommand.cs" />
     <Compile Include="UI\MVVM\ViewModelBase.cs" />
+    <Compile Include="UI\ViewModels\Dialogs\CreateWalletViewModel.cs" />
+    <Compile Include="UI\ViewModels\Updater\UpdateViewModel.cs" />
+    <Compile Include="UI\Views\Dialogs\CreateWalletView.xaml.cs">
+      <DependentUpon>CreateWalletView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
@@ -457,12 +467,6 @@
     <Compile Include="UI\OldWinForms\ContractDetailsDialog.Designer.cs">
       <DependentUpon>ContractDetailsDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\OldWinForms\CreateWalletDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\OldWinForms\CreateWalletDialog.designer.cs">
-      <DependentUpon>CreateWalletDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\OldWinForms\DeveloperToolsForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -483,12 +487,6 @@
     </Compile>
     <Compile Include="UI\OldWinForms\InformationBox.Designer.cs">
       <DependentUpon>InformationBox.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\OldWinForms\MainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\OldWinForms\MainForm.Designer.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -536,8 +534,8 @@
       <DependentUpon>VotingDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\ViewModels\MainViewModel.cs" />
-    <Compile Include="UI\Views\Updater\UpdateDialogView.xaml.cs">
-      <DependentUpon>UpdateDialogView.xaml</DependentUpon>
+    <Compile Include="UI\Views\Updater\UpdateView.xaml.cs">
+      <DependentUpon>UpdateView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Wrappers\ClaimTransactionWrapper.cs" />
     <Compile Include="UI\Wrappers\CoinReferenceWrapper.cs" />
@@ -645,13 +643,6 @@
     <EmbeddedResource Include="UI\OldWinForms\CreateMultiSigContractDialog.zh-Hans.resx">
       <DependentUpon>CreateMultiSigContractDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\CreateWalletDialog.es-ES.resx">
-      <DependentUpon>CreateWalletDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\CreateWalletDialog.zh-Hans.resx">
-      <DependentUpon>CreateWalletDialog.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\DeployContractDialog.es-ES.resx">
       <DependentUpon>DeployContractDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -736,14 +727,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\IssueDialog.zh-Hans.resx">
       <DependentUpon>IssueDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\MainForm.es-ES.resx">
-      <DependentUpon>MainForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\MainForm.zh-Hans.resx">
-      <DependentUpon>MainForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\OpenWalletDialog.es-ES.resx">
       <DependentUpon>OpenWalletDialog.cs</DependentUpon>
@@ -837,13 +820,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\SigningDialog.resx">
       <DependentUpon>SigningDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\CreateWalletDialog.resx">
-      <DependentUpon>CreateWalletDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\MainForm.resx">
-      <DependentUpon>MainForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\TransferDialog.resx">
@@ -957,11 +933,15 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="UI\Views\Dialogs\CreateWalletView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\Views\MainView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Views\Updater\UpdateDialogView.xaml">
+    <Page Include="UI\Views\Updater\UpdateView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

@@ -3,29 +3,52 @@ using Neo.Properties;
 using Neo.SmartContract;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows.Forms;
+using MessageBox = System.Windows.MessageBox;
+
+using Neo.UI.Controls;
 
 namespace Neo.UI
 {
     internal static class Helper
     {
-        private static Dictionary<Type, Form> tool_forms = new Dictionary<Type, Form>();
+        private static Dictionary<Type, Form> toolForms = new Dictionary<Type, Form>();
+
+        private static Dictionary<Type, NeoWindow> toolWindows = new Dictionary<Type, NeoWindow>();
 
         private static void Helper_FormClosing(object sender, FormClosingEventArgs e)
         {
-            tool_forms.Remove(sender.GetType());
+            toolForms.Remove(sender.GetType());
         }
 
-        public static void Show<T>() where T : Form, new()
+        public static void ShowForm<T>() where T : Form, new()
         {
             Type t = typeof(T);
-            if (!tool_forms.ContainsKey(t))
+            if (!toolForms.ContainsKey(t))
             {
-                tool_forms.Add(t, new T());
-                tool_forms[t].FormClosing += Helper_FormClosing;
+                toolForms.Add(t, new T());
+                toolForms[t].FormClosing += Helper_FormClosing;
             }
-            tool_forms[t].Show();
-            tool_forms[t].Activate();
+            toolForms[t].Show();
+            toolForms[t].Activate();
+        }
+
+        private static void Helper_WindowClosing(object sender, CancelEventArgs e)
+        {
+            toolWindows.Remove(sender.GetType());
+        }
+
+        public static void Show<T>() where T : NeoWindow, new()
+        {
+            Type t = typeof(T);
+            if (!toolWindows.ContainsKey(t))
+            {
+                toolWindows.Add(t, new T());
+                toolWindows[t].Closing += Helper_WindowClosing;
+            }
+            toolWindows[t].Show();
+            toolWindows[t].Activate();
         }
 
         public static void SignAndShowInformation(Transaction tx)

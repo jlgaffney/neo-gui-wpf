@@ -12,16 +12,11 @@ namespace Neo
     {
         public static UserWallet CurrentWallet;
 
-        public App(XDocument xdoc) : base()
+        internal App(XDocument xdoc) : base()
         {
             this.MainWindow = new MainView(xdoc);
 
             this.MainWindow.Show();
-        }
-
-        internal static void CloseMainWindowIfOpen()
-        {
-            if (Current.MainWindow != null) Current.MainWindow.Close();
         }
     }
 }

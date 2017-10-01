@@ -17,28 +17,30 @@ namespace Neo
 {
     internal static class Program
     {
+        private const string PeerStatePath = "peers.dat";
+
         public static LocalNode LocalNode;
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            using (FileStream fs = new FileStream("error.log", FileMode.Create, FileAccess.Write, FileShare.None))
-            using (StreamWriter w = new StreamWriter(fs))
+            using (var fileStream = new FileStream("error.log", FileMode.Create, FileAccess.Write, FileShare.None))
+            using (var writer = new StreamWriter(fileStream))
             {
-                PrintErrorLogs(w, (Exception)e.ExceptionObject);
+                PrintErrorLogs(writer, (Exception) e.ExceptionObject);
             }
         }
 
         private static bool InstallCertificate()
         {
             if (!Settings.Default.InstallCertificate) return true;
-            using (X509Store store = new X509Store(StoreName.Root, StoreLocation.LocalMachine))
-            using (X509Certificate2 cert = new X509Certificate2(Resources.OnchainCertificate))
+            using (var store = new X509Store(StoreName.Root, StoreLocation.LocalMachine))
+            using (var cert = new X509Certificate2(Resources.OnchainCertificate))
             {
                 store.Open(OpenFlags.ReadOnly);
                 if (store.Certificates.Contains(cert)) return true;
             }
-            using (X509Store store = new X509Store(StoreName.Root, StoreLocation.LocalMachine))
-            using (X509Certificate2 cert = new X509Certificate2(Resources.OnchainCertificate))
+            using (var store = new X509Store(StoreName.Root, StoreLocation.LocalMachine))
+            using (var cert = new X509Certificate2(Resources.OnchainCertificate))
             {
                 try
                 {
@@ -84,23 +86,22 @@ namespace Neo
             catch { }
             if (xdoc != null)
             {
-                Version version = Assembly.GetExecutingAssembly().GetName().Version;
-                Version minimum = Version.Parse(xdoc.Element("update").Attribute("minimum").Value);
+                var version = Assembly.GetExecutingAssembly().GetName().Version;
+                var minimum = Version.Parse(xdoc.Element("update").Attribute("minimum").Value);
                 if (version < minimum)
                 {
-                    var updateDialog = new UpdateDialogView(xdoc);
+                    var updateDialog = new UpdateView(xdoc);
 
                     updateDialog.ShowDialog();
-
                     return;
                 }
             }
             if (!InstallCertificate()) return;
-            const string PeerStatePath = "peers.dat";
+            
             if (File.Exists(PeerStatePath))
-                using (FileStream fs = new FileStream(PeerStatePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (var fileStream = new FileStream(PeerStatePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    LocalNode.LoadState(fs);
+                    LocalNode.LoadState(fileStream);
                 }
             using (Blockchain.RegisterBlockchain(new LevelDBBlockchain(Settings.Default.DataDirectoryPath)))
             using (LocalNode = new LocalNode())
@@ -112,9 +113,9 @@ namespace Neo
 
                 app.Run();
             }
-            using (FileStream fs = new FileStream(PeerStatePath, FileMode.Create, FileAccess.Write, FileShare.None))
+            using (var fileStream = new FileStream(PeerStatePath, FileMode.Create, FileAccess.Write, FileShare.None))
             {
-                LocalNode.SaveState(fs);
+                LocalNode.SaveState(fileStream);
             }
         }
 
@@ -125,10 +126,10 @@ namespace Neo
             writer.WriteLine(ex.StackTrace);
             if (ex is AggregateException ex2)
             {
-                foreach (Exception inner in ex2.InnerExceptions)
+                foreach (var innerException in ex2.InnerExceptions)
                 {
                     writer.WriteLine();
-                    PrintErrorLogs(writer, inner);
+                    PrintErrorLogs(writer, innerException);
                 }
             }
             else if (ex.InnerException != null)

@@ -1,17 +1,4 @@
-﻿using Neo.Core;
-using Neo.Cryptography;
-using Neo.Cryptography.ECC;
-using Neo.Implementations.Blockchains.LevelDB;
-using Neo.Implementations.Wallets.EntityFramework;
-using Neo.IO;
-using Neo.Properties;
-using Neo.SmartContract;
-using Neo.UI.Models;
-using Neo.UI.MVVM;
-using Neo.UI.Views.Updater;
-using Neo.VM;
-using Neo.Wallets;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -33,9 +20,26 @@ using Clipboard = System.Windows.Clipboard;
 using MessageBox = System.Windows.MessageBox;
 using Timer = System.Timers.Timer;
 
+using Neo.Core;
+using Neo.Cryptography;
+using Neo.Cryptography.ECC;
+using Neo.Implementations.Blockchains.LevelDB;
+using Neo.Implementations.Wallets.EntityFramework;
+using Neo.IO;
+using Neo.Properties;
+using Neo.SmartContract;
+using Neo.UI.Controls;
+using Neo.UI.Messages;
+using Neo.UI.Models;
+using Neo.UI.MVVM;
+using Neo.UI.Views.Updater;
+using Neo.VM;
+using Neo.Wallets;
+
 namespace Neo.UI.ViewModels
 {
-    public class MainViewModel : ViewModelBase
+    public class MainViewModel : ViewModelBase,
+        IHandle<CreateWalletMessage>
     {
         private static readonly UInt160 RecycleScriptHash = new[] { (byte)OpCode.PUSHT }.ToScriptHash();
 
@@ -71,10 +75,11 @@ namespace Neo.UI.ViewModels
             this.assets = new ObservableCollection<AssetItem>();
             this.pastTransactions = new ObservableCollection<TransactionItem>();
 
+            EventAggregator.Current.Subscribe(this);
 
             this.SetupUIUpdateTimer();
 
-            this.StartUIUpdateTimer();            
+            this.StartUIUpdateTimer();
         }
 
         #region Public Properties
@@ -344,6 +349,9 @@ namespace Neo.UI.ViewModels
 
         #endregion New Version Properties
 
+        public override void OnViewAttached(NeoWindow attachedView)
+        {            
+        }
 
         public AccountItem GetAccount(string address)
         {
@@ -865,17 +873,27 @@ namespace Neo.UI.ViewModels
 
         #endregion UI Update Methods
 
+        #region Message Handlers
+
+        public void Handle(CreateWalletMessage message)
+        {
+            if (string.IsNullOrEmpty(message.WalletPath) || string.IsNullOrEmpty(message.Password)) return;
+
+            var wallet = UserWallet.Create(message.WalletPath, message.Password);
+
+            ChangeWallet(wallet);
+            Settings.Default.LastWalletPath = message.WalletPath;
+            Settings.Default.Save();
+        }
+
+        #endregion Message Handlers
+
         #region Main Menu Command Methods
 
         private void CreateWallet()
         {
-            using (var dialog = new CreateWalletDialog())
-            {
-                if (dialog.ShowDialog() != DialogResult.OK) return;
-                ChangeWallet(UserWallet.Create(dialog.WalletPath, dialog.Password));
-                Settings.Default.LastWalletPath = dialog.WalletPath;
-                Settings.Default.Save();
-            }
+            var view = new CreateWalletView();
+            view.ShowDialog();
         }
 
         private void OpenWallet()
@@ -952,7 +970,7 @@ namespace Neo.UI.ViewModels
 
         private void Exit()
         {
-            App.CloseMainWindowIfOpen();
+            EventAggregator.Current.Publish(new CloseWindowMessage());
         }
 
         private void Transfer()
@@ -992,7 +1010,7 @@ namespace Neo.UI.ViewModels
 
         private void Claim()
         {
-            Helper.Show<ClaimForm>();
+            Helper.ShowForm<ClaimForm>();
         }
 
         private void RequestCertificate()
@@ -1089,7 +1107,7 @@ namespace Neo.UI.ViewModels
 
         private void ShowDeveloperTools()
         {
-            Helper.Show<DeveloperToolsForm>();
+            Helper.ShowForm<DeveloperToolsForm>();
         }
 
         private void ShowAboutNEODialog()
@@ -1350,7 +1368,7 @@ namespace Neo.UI.ViewModels
         {
             if (this.NewVersionXml == null) return;
 
-            var dialog = new UpdateDialogView(this.NewVersionXml);
+            var dialog = new UpdateView(this.NewVersionXml);
 
             dialog.ShowDialog();
         }

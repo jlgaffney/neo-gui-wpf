@@ -5,6 +5,8 @@ using System.Windows;
 using System.Xml.Linq;
 
 using Neo.Properties;
+using Neo.UI.Messages;
+using Neo.UI.MVVM;
 using Neo.UI.ViewModels;
 
 namespace Neo.UI.Views
@@ -12,7 +14,7 @@ namespace Neo.UI.Views
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainView
+    public partial class MainView : IHandle<CloseWindowMessage>
     {
         private readonly MainViewModel viewModel;
 
@@ -20,20 +22,24 @@ namespace Neo.UI.Views
         {
             InitializeComponent();
 
-            if (xdoc == null) return;
-            
-            var version = Assembly.GetExecutingAssembly().GetName().Version;
-            var latest = Version.Parse(xdoc.Element("update").Attribute("latest").Value);
+            EventAggregator.Current.Subscribe(this);
 
-            if (version >= latest) return;
-            
             this.viewModel = this.DataContext as MainViewModel;
 
-            if (this.viewModel != null)
+            if (xdoc != null)
             {
-                this.viewModel.NewVersionXml = xdoc;
-                this.viewModel.NewVersionLabel = $"{Strings.DownloadNewVersion}: {latest}";
-                this.viewModel.NewVersionVisible = true;
+                var version = Assembly.GetExecutingAssembly().GetName().Version;
+                var latest = Version.Parse(xdoc.Element("update").Attribute("latest").Value);
+
+                if (version < latest)
+                {
+                    if (this.viewModel != null)
+                    {
+                        this.viewModel.NewVersionXml = xdoc;
+                        this.viewModel.NewVersionLabel = $"{Strings.DownloadNewVersion}: {latest}";
+                        this.viewModel.NewVersionVisible = true;
+                    }
+                }
             }
         }
 
@@ -49,6 +55,13 @@ namespace Neo.UI.Views
             if (this.viewModel == null) return;
 
             this.viewModel.Close();
+        }
+
+        public void Handle(CloseWindowMessage message)
+        {
+            EventAggregator.Current.Unsubscribe(this);
+
+            this.Close();
         }
     }
 }
