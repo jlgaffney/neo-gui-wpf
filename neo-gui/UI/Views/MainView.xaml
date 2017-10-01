@@ -11,22 +11,24 @@
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibility"/>
     </Window.Resources>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        
+
+        <!-- Tool Strip Menu -->
         <Menu Grid.Row="0">
             <MenuItem Header="_Wallet">
-                <MenuItem Header="_New Wallet Database…" Command="{Binding CreateWalletCommand}" />
-                <MenuItem Header="_Open Wallet Database…" Command="{Binding OpenWalletCommand}" />
+                <MenuItem Header="_New Wallet…" Command="{Binding CreateWalletCommand}" />
+                <MenuItem Header="_Open Wallet…" Command="{Binding OpenWalletCommand}" />
+                <MenuItem Header="_Close Wallet…" Command="{Binding CloseWalletCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
 
                 <Separator />
 
-                <MenuItem Header="_Change Password…" Command="{Binding ChangePasswordCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
+                <MenuItem Header="Change _Password…" Command="{Binding ChangePasswordCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
                 <MenuItem Header="Rebuild _Index" Command="{Binding RebuildIndexCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
                 <MenuItem Header="_Restore Accounts…" Command="{Binding RestoreAccountCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
 
@@ -79,45 +81,52 @@
         </Menu>
 
         <TabControl Grid.Row="1">
+            <!-- Account Tab -->
             <TabItem Header="Account">
-                <ListBox ItemsSource="{Binding Accounts}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                    <ListBox.GroupStyle>
-                        <x:Static Member='GroupStyle.Default' />
-                    </ListBox.GroupStyle>
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition SharedSizeGroup="col1" Width="180"/>
-                                    <ColumnDefinition SharedSizeGroup="col2" Width="80"/>
-                                    <ColumnDefinition SharedSizeGroup="col3" Width="80"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="{Binding Address}"/>
-                                <TextBlock Text="{Binding NEO}" Grid.Column="1"/>
-                                <TextBlock Text="{Binding GAS}" Grid.Column="2"/>
-                            </Grid>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-
-
-
-
-
-
-
-                <!--<ListView ItemsSource="{Binding Accounts}">
+                <ListView ItemsSource="{Binding Accounts}" SelectedItem="{Binding SelectedAccount}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="Address" Width="180" DisplayMemberBinding="{Binding Address}" />
-                            <GridViewColumn Header="NEO" Width="80" DisplayMemberBinding="{Binding NEO}" />
-                            <GridViewColumn Header="NeoGas" Width="80" DisplayMemberBinding="{Binding NeoGas}" />
+                            <GridViewColumn Header="Address" Width="260" DisplayMemberBinding="{Binding Address}" />
+                            <GridViewColumn Header="NEO" Width="60" DisplayMemberBinding="{Binding NEO}" />
+                            <GridViewColumn Header="NeoGas" Width="60" DisplayMemberBinding="{Binding NeoGas}" />
                         </GridView>
                     </ListView.View>
-                </ListView>-->
+
+                    <ListView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Create _New Address" Command="{Binding CreateNewAddressCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
+                            <MenuItem Header="_Import" IsEnabled="{Binding AccountMenuItemsEnabled}">
+                                <MenuItem Header="Import from _WIF…" Command="{Binding ImportFromWIFCommand}" />
+                                <MenuItem Header="Import from _Certificate…" Command="{Binding ImportFromCertificateCommand}" />
+
+                                <Separator />
+
+                                <MenuItem Header="Import Watch-Only _Address…" Command="{Binding ImportWatchOnlyAddressCommand}" />
+                            </MenuItem>
+                            <MenuItem Header="Create Contract _Address" IsEnabled="{Binding AccountMenuItemsEnabled}">
+                                <MenuItem Header="_Multi-Signature…" Command="{Binding CreateMultiSignatureContractAddressCommand}" />
+                                <MenuItem Header="_Lock…" Command="{Binding CreateLockContractAddressCommand}" />
+
+                                <Separator />
+
+                                <MenuItem Header="_Custom…" Command="{Binding CreateCustomContractAddressCommand}" />
+                            </MenuItem>
+
+                            <Separator />
+
+                            <MenuItem Header="View _Private Key" Command="{Binding ViewPrivateKeyCommand}" IsEnabled="{Binding ViewPrivateKeyEnabled}" />
+                            <MenuItem Header="View C_ontract" Command="{Binding ViewContractCommand}" IsEnabled="{Binding ViewContractEnabled}" />
+                            <MenuItem Header="_Vote…" Command="{Binding ShowVotingDialogCommand}" IsEnabled="{Binding ShowVotingDialogEnabled}" />
+                            <MenuItem Header="_Copy to Clipboard" Command="{Binding CopyAddressToClipboardCommand}" IsEnabled="{Binding CopyAddressToClipboardEnabled}" />
+                            <MenuItem Header="_Delete…" Command="{Binding DeleteAccountCommand}" IsEnabled="{Binding DeleteAccountEnabled}" />
+                        </ContextMenu>
+                    </ListView.ContextMenu>
+                </ListView>
             </TabItem>
+
+            <!-- Asset Tab -->
             <TabItem Header="Asset">
-                <ListView ItemsSource="{Binding Assets}">
+                <ListView ItemsSource="{Binding Assets}" SelectedItem="{Binding SelectedAsset}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Asset" Width="120" DisplayMemberBinding="{Binding Asset}" />
@@ -126,10 +135,19 @@
                             <GridViewColumn Header="Issuer" Width="260" DisplayMemberBinding="{Binding Issuer}" />
                         </GridView>
                     </ListView.View>
+
+                    <ListView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="View _Certificate" Command="{Binding ViewCertificateCommand}" IsEnabled="{Binding ViewCertificateEnabled}" />
+                            <MenuItem Header="_Delete…" Command="{Binding DeleteAssetCommand}" IsEnabled="{Binding DeleteAssetEnabled}" />
+                        </ContextMenu>
+                    </ListView.ContextMenu>
                 </ListView>
             </TabItem>
+
+            <!-- Transaction Tab -->
             <TabItem Header="Transaction History">
-                <ListView ItemsSource="{Binding Transactions}">
+                <ListView ItemsSource="{Binding Transactions}" SelectedItem="{Binding SelectedTransaction}">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Time" Width="80" DisplayMemberBinding="{Binding Time}" />
@@ -138,10 +156,17 @@
                             <GridViewColumn Header="Transaction Type" Width="120" DisplayMemberBinding="{Binding Type}" />
                         </GridView>
                     </ListView.View>
+
+                    <ListView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="_Copy TXID" Command="{Binding CopyTransactionIdCommand}" IsEnabled="{Binding CopyTransactionIdEnabled}" />
+                        </ContextMenu>
+                    </ListView.ContextMenu>
                 </ListView>
             </TabItem>
         </TabControl>
 
+        <!-- Status Strip -->
         <StatusBar Grid.Row="2" Height="24">
             <StatusBarItem HorizontalAlignment="Left" Margin="0 0 8 0">
                 <StatusBarItem.Content>
@@ -163,7 +188,7 @@
                 </StatusBarItem.Content>
             </StatusBarItem>
 
-            <StatusBarItem Visibility="{Binding NewVersionVisible, Converter={StaticResource BooleanToVisibility}, FallbackValue=Hidden}">
+            <StatusBarItem HorizontalAlignment="Left" Visibility="{Binding NewVersionVisible, Converter={StaticResource BooleanToVisibility}, FallbackValue=Hidden}">
                 <StatusBarItem.Content>
                     <TextBlock>
                         <Hyperlink Command="{Binding ShowUpdateDialogCommand}">

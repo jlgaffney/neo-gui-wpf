@@ -8,14 +8,12 @@ using Neo.Properties;
 using Neo.SmartContract;
 using Neo.UI.Models;
 using Neo.UI.MVVM;
-using Neo.UI.Views;
 using Neo.UI.Views.Updater;
 using Neo.VM;
 using Neo.Wallets;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -26,7 +24,6 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Xml.Linq;
@@ -34,6 +31,7 @@ using System.Xml.Linq;
 using Application = System.Windows.Application;
 using Clipboard = System.Windows.Clipboard;
 using MessageBox = System.Windows.MessageBox;
+using Timer = System.Timers.Timer;
 
 namespace Neo.UI.ViewModels
 {
@@ -58,16 +56,12 @@ namespace Neo.UI.ViewModels
         private bool blockProgressIndeterminate;
         private int blockProgress;
 
-        private bool viewPrivateKeyEnabled;
-        private bool viewContractEnabled;
-        private bool voteEnabled;
-        private bool copyToClipboardEnabled;
-        private bool deleteEnabled;
-        private bool viewCertificateEnabled;
-
 
         private string newVersionLabel;
         private bool newVersionVisible;
+
+        private Timer uiUpdateTimer;
+        private object uiUpdateTimerLock = new object();
 
         public MainViewModel()
         {
@@ -76,6 +70,11 @@ namespace Neo.UI.ViewModels
             this.accounts = new ObservableCollection<AccountItem>();
             this.assets = new ObservableCollection<AssetItem>();
             this.pastTransactions = new ObservableCollection<TransactionItem>();
+
+
+            this.SetupUIUpdateTimer();
+
+            this.StartUIUpdateTimer();            
         }
 
         #region Public Properties
@@ -88,7 +87,7 @@ namespace Neo.UI.ViewModels
 
         public bool AccountMenuItemsEnabled => App.CurrentWallet != null;
 
-        public string BlockHeight => "0/0";//$"{Blockchain.Default.Height}/{Blockchain.Default.HeaderHeight}";
+        public string BlockHeight => $"{Blockchain.Default.Height}/{Blockchain.Default.HeaderHeight}";
         public int NodeCount => Program.LocalNode.RemoteNodeCount;
 
         public AccountItem SelectedAccount
@@ -101,6 +100,13 @@ namespace Neo.UI.ViewModels
                 this.selectedAccount = value;
 
                 NotifyPropertyChanged();
+
+                // Update dependent properties
+                NotifyPropertyChanged(nameof(this.ViewPrivateKeyEnabled));
+                NotifyPropertyChanged(nameof(this.ViewContractEnabled));
+                NotifyPropertyChanged(nameof(this.ShowVotingDialogEnabled));
+                NotifyPropertyChanged(nameof(this.CopyAddressToClipboardEnabled));
+                NotifyPropertyChanged(nameof(this.DeleteAccountEnabled));
             }
         }
 
@@ -114,6 +120,10 @@ namespace Neo.UI.ViewModels
                 this.selectedAsset = value;
 
                 NotifyPropertyChanged();
+
+                // Update dependent properties
+                NotifyPropertyChanged(nameof(this.ViewCertificateEnabled));
+                NotifyPropertyChanged(nameof(this.DeleteAssetEnabled));
             }
         }
 
@@ -127,6 +137,9 @@ namespace Neo.UI.ViewModels
                 this.selectedTransaction = value;
 
                 NotifyPropertyChanged();
+
+                // Update dependent properties
+                NotifyPropertyChanged(nameof(this.CopyTransactionIdEnabled));
             }
         }
 
@@ -156,91 +169,68 @@ namespace Neo.UI.ViewModels
             }
         }
 
-        public bool ViewPrivateKeyEnabled
-        {
-            get { return this.viewPrivateKeyEnabled; }
-            set
-            {
-                if (this.viewPrivateKeyEnabled == value) return;
+        public bool ViewPrivateKeyEnabled =>
+            this.SelectedAccount != null &&
+            this.SelectedAccount.Contract != null &&
+            this.SelectedAccount.Contract.IsStandard;
 
-                this.viewPrivateKeyEnabled = value;
+        public bool ViewContractEnabled =>
+            this.SelectedAccount != null &&
+            this.SelectedAccount.Contract != null;
 
-                NotifyPropertyChanged();
-            }
-        }
+        public bool ShowVotingDialogEnabled =>
+            this.SelectedAccount != null &&
+            this.SelectedAccount.Contract != null &&
+            this.SelectedAccount.NEO > Fixed8.Zero;
 
-        public bool ViewContractEnabled
-        {
-            get { return this.viewContractEnabled; }
-            set
-            {
-                if (this.viewContractEnabled == value) return;
+        public bool CopyAddressToClipboardEnabled => this.SelectedAccount != null;
 
-                this.viewContractEnabled = value;
-
-                NotifyPropertyChanged();
-            }
-        }
-
-        public bool VoteEnabled
-        {
-            get { return this.voteEnabled; }
-            set
-            {
-                if (this.voteEnabled == value) return;
-
-                this.voteEnabled = value;
-
-                NotifyPropertyChanged();
-            }
-        }
-
-        public bool CopyToClipboardEnabled
-        {
-            get { return this.copyToClipboardEnabled; }
-            set
-            {
-                if (this.copyToClipboardEnabled == value) return;
-
-                this.copyToClipboardEnabled = value;
-
-                NotifyPropertyChanged();
-            }
-        }
-
-        public bool DeleteEnabled
-        {
-            get { return this.deleteEnabled; }
-            set
-            {
-                if (this.deleteEnabled == value) return;
-
-                this.deleteEnabled = value;
-
-                NotifyPropertyChanged();
-            }
-        }
+        public bool DeleteAccountEnabled => this.SelectedAccount != null;
 
         public bool ViewCertificateEnabled
         {
-            get { return this.viewCertificateEnabled; }
-            set
+            get
             {
-                if (this.viewCertificateEnabled == value) return;
+                if (this.SelectedAsset == null) return false;
 
-                this.viewCertificateEnabled = value;
+                if (this.SelectedAsset.State == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    var queryResult = GetCertificateQueryResult(this.SelectedAsset.State);
 
-                NotifyPropertyChanged();
+                    if (queryResult == null)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return queryResult.Type == CertificateQueryResultType.Good ||
+                            queryResult.Type == CertificateQueryResultType.Expired ||
+                                queryResult.Type == CertificateQueryResultType.Invalid;
+                    }
+                }
             }
         }
 
+        public bool DeleteAssetEnabled => this.SelectedAsset != null &&
+            (this.SelectedAsset.State == null ||
+                (this.SelectedAsset.State.AssetType != AssetType.GoverningToken &&
+                this.SelectedAsset.State.AssetType != AssetType.UtilityToken));
+
+        public bool CopyTransactionIdEnabled => this.SelectedTransaction != null;
+
         #endregion Public Properies
 
-        #region Commands
+        #region Tool Strip Menu Commands
 
         public ICommand CreateWalletCommand => new RelayCommand(this.CreateWallet);
 
         public ICommand OpenWalletCommand => new RelayCommand(this.OpenWallet);
+
+        public ICommand CloseWalletCommand => new RelayCommand(this.CloseWallet);
 
         public ICommand ChangePasswordCommand => new RelayCommand(this.ChangePassword);
 
@@ -282,7 +272,45 @@ namespace Neo.UI.ViewModels
 
         public ICommand ShowUpdateDialogCommand => new RelayCommand(this.ShowUpdateDialog);
 
-        #endregion Commands
+        #endregion Tool Strip Menu Commands
+
+        #region Context Menu Commands
+         
+        /*
+         * Account Context Menu Commands
+         */
+        public ICommand CreateNewAddressCommand => new RelayCommand(this.CreateNewKey);
+                            
+        public ICommand ImportFromWIFCommand => new RelayCommand(this.ImportWIFPrivateKey);
+        public ICommand ImportFromCertificateCommand => new RelayCommand(this.ImportCertificate);
+
+        public ICommand ImportWatchOnlyAddressCommand => new RelayCommand(this.ImportWatchOnlyAddress);
+        
+        public ICommand CreateMultiSignatureContractAddressCommand => new RelayCommand(this.CreateMultiSignatureContract);
+        public ICommand CreateLockContractAddressCommand => new RelayCommand(this.CreateLockAddress);
+
+        public ICommand CreateCustomContractAddressCommand => new RelayCommand(this.ImportCustomContract);
+
+        public ICommand ViewPrivateKeyCommand => new RelayCommand(this.ViewPrivateKey);
+        public ICommand ViewContractCommand => new RelayCommand(this.ViewContract);
+        public ICommand ShowVotingDialogCommand => new RelayCommand(this.ShowVotingDialog);
+        public ICommand CopyAddressToClipboardCommand => new RelayCommand(this.CopyAddressToClipboard);
+        public ICommand DeleteAccountCommand => new RelayCommand(this.DeleteAccount);
+
+
+        /*
+         * Asset Context Menu Commands
+         */
+        public ICommand ViewCertificateCommand => new RelayCommand(this.ViewCertificate);
+        public ICommand DeleteAssetCommand => new RelayCommand(this.DeleteAsset);
+
+
+        /*
+         * Asset Context Menu Commands
+         */
+        public ICommand CopyTransactionIdCommand => new RelayCommand(this.CopyTransactionId);
+
+        #endregion Context Menu Commands
 
         #region New Version Properties
 
@@ -561,18 +589,63 @@ namespace Neo.UI.ViewModels
                 Program.LocalNode.Start(Settings.Default.NodePort, Settings.Default.WsPort);
             });
         }
-        
+
         public void Close()
         {
             Blockchain.PersistCompleted -= Blockchain_PersistCompleted;
-            ChangeWallet(null);
+            this.CloseWallet();
         }
 
         #endregion Blockchain Methods
 
         #region UI Update Methods
 
-        private void TimerTick()
+        private void SetupUIUpdateTimer()
+        {
+            lock (this.uiUpdateTimerLock)
+            {
+                if (this.uiUpdateTimer != null)
+                {
+                    // Stop previous timer
+                    this.uiUpdateTimer.Stop();
+
+                    this.uiUpdateTimer.Elapsed -= this.UpdateUI;
+
+                    this.uiUpdateTimer.Dispose();
+
+                    this.uiUpdateTimer = null;
+                }
+
+                var timer = new Timer
+                {
+                    Interval = 500,
+                    Enabled = true,
+                    AutoReset = true
+                };
+
+                timer.Elapsed += this.UpdateUI;
+
+                this.uiUpdateTimer = timer;
+            }            
+        }
+
+        private void StartUIUpdateTimer()
+        {
+            lock (this.uiUpdateTimerLock)
+            {
+                this.uiUpdateTimer.Start();
+            }
+        }
+
+        private void StopUIUpdateTimer()
+        {
+            lock (this.uiUpdateTimerLock)
+            {
+                this.uiUpdateTimer.Start();
+            }
+        }
+
+        private void UpdateUI(object sender, System.Timers.ElapsedEventArgs e)
         {
             var persistenceSpan = DateTime.Now - this.persistenceTime;
 
@@ -669,7 +742,7 @@ namespace Neo.UI.ViewModels
                         this.Assets.Add(new AssetItem
                         {
                             Name = asset_name,
-                            Type = AssetTypeToString(asset.Asset.AssetType),
+                            Type = asset.Asset.AssetType.ToString(),
                             Issuer = $"{Strings.UnknownIssuer}[{asset.Asset.Owner}]",
                             Value = value_text
                         });
@@ -838,6 +911,11 @@ namespace Neo.UI.ViewModels
                 Settings.Default.LastWalletPath = dialog.WalletPath;
                 Settings.Default.Save();
             }
+        }
+        
+        public void CloseWallet()
+        {
+            this.ChangeWallet(null);
         }
 
         private void ChangePassword()
@@ -1033,7 +1111,7 @@ namespace Neo.UI.ViewModels
             }
         }
 
-        private void ImportPrivateKey()
+        private void ImportWIFPrivateKey()
         {
             using (var dialog = new ImportPrivateKeyDialog())
             {
@@ -1116,7 +1194,7 @@ namespace Neo.UI.ViewModels
             }
         }
 
-        private void CreateLockAccount()
+        private void CreateLockAddress()
         {
             using (var dialog = new CreateLockAccountDialog())
             {
@@ -1267,83 +1345,7 @@ namespace Neo.UI.ViewModels
         }
 
         #endregion Transaction Menu Command Methods
-
-        #region Context Menu Methods
-
-        private void AccountContextMenu_Opening()
-        {
-            /*查看私钥VToolStripMenuItem.IsEnabled =
-                this.SelectedAccount != null &&
-                this.SelectedAccount.Contract != null &&
-                this.SelectedAccount.Contract.IsStandard;
-            viewContractToolStripMenuItem.IsEnabled =
-                this.SelectedAccount != null &&
-                this.SelectedAccount.Contract != null;
-            voteToolStripMenuItem.IsEnabled =
-                this.SelectedAccount != null &&
-                this.SelectedAccount.Contract != null &&
-                this.SelectedAccount.NEO > Fixed8.Zero;
-            复制到剪贴板CToolStripMenuItem.IsEnabled = this.SelectedAccount != null;
-            删除DToolStripMenuItem.IsEnabled = this.SelectedAccount != null;*/
-
-            this.ViewPrivateKeyEnabled =
-            this.SelectedAccount != null &&
-            this.SelectedAccount.Contract != null &&
-            this.SelectedAccount.Contract.IsStandard;
-
-            this.ViewContractEnabled =
-                this.SelectedAccount != null &&
-                this.SelectedAccount.Contract != null;
-
-            this.VoteEnabled =
-                this.SelectedAccount != null &&
-                this.SelectedAccount.Contract != null &&
-                this.SelectedAccount.NEO > Fixed8.Zero;
-
-            this.CopyToClipboardEnabled = this.SelectedAccount != null;
-
-            this.DeleteEnabled = this.SelectedAccount != null;
-        }
-
-        private void AssetContextMenu_Opening()
-        {
-            this.ViewCertificateEnabled = this.SelectedAsset != null;
-            if (this.ViewCertificateEnabled)
-            {
-                if (this.SelectedAsset.State == null)
-                {
-                    this.ViewCertificateEnabled = false;
-                }
-                else
-                {
-                    var queryResult = GetCertificateQueryResult(this.SelectedAsset.State);
-
-                    if (queryResult == null)
-                    {
-                        this.ViewCertificateEnabled = false;
-                    }
-                    else
-                    {
-                        var type = queryResult.Type;
-                        this.ViewCertificateEnabled =
-                            type == CertificateQueryResultType.Good ||
-                                type == CertificateQueryResultType.Expired ||
-                                    type == CertificateQueryResultType.Invalid;
-                    }
-                }                
-            }
-
-            this.DeleteEnabled = this.SelectedAsset != null;
-            if (this.DeleteEnabled)
-            {
-                this.DeleteEnabled = this.SelectedAsset.State == null ||
-                    (this.SelectedAsset.State.AssetType != AssetType.GoverningToken &&
-                        this.SelectedAsset.State.AssetType != AssetType.UtilityToken);
-            }
-        }
-
-        #endregion Context Menu Methods
-
+        
         private void ShowUpdateDialog()
         {
             if (this.NewVersionXml == null) return;
@@ -1372,11 +1374,6 @@ namespace Neo.UI.ViewModels
             if (this.SelectedTransaction == null) return;
             var url = string.Format(Settings.Default.Urls.TransactionUrl, this.SelectedTransaction.Id.Substring(2));
             Process.Start(url);
-        }
-
-        private string AssetTypeToString(AssetType type)
-        {
-            return type.ToString();
         }
 
         private CertificateQueryResult GetCertificateQueryResult(AssetState asset)

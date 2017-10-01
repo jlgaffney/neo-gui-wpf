@@ -102,7 +102,7 @@ namespace Neo
                 {
                     LocalNode.LoadState(fs);
                 }
-            //using (Blockchain.RegisterBlockchain(new LevelDBBlockchain(Settings.Default.DataDirectoryPath)))
+            using (Blockchain.RegisterBlockchain(new LevelDBBlockchain(Settings.Default.DataDirectoryPath)))
             using (LocalNode = new LocalNode())
             {
                 LocalNode.UpnpEnabled = true;

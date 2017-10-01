@@ -1,36 +1,11 @@
-﻿using Neo.Core;
-using Neo.Cryptography;
-using Neo.Implementations.Blockchains.LevelDB;
-using Neo.Implementations.Wallets.EntityFramework;
-using Neo.IO;
-using Neo.Properties;
-using Neo.SmartContract;
-using Neo.UI.Views;
-using Neo.UI.Views.Updater;
-using Neo.UI.ViewModels;
-using Neo.VM;
-using Neo.Wallets;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Numerics;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Forms;
 using System.Xml.Linq;
 
-using Clipboard = System.Windows.Clipboard;
-using ListViewItem = System.Windows.Controls.ListViewItem;
-using MessageBox = System.Windows.MessageBox;
+using Neo.Properties;
+using Neo.UI.ViewModels;
 
 namespace Neo.UI.Views
 {
@@ -44,6 +19,7 @@ namespace Neo.UI.Views
         public MainView(XDocument xdoc = null)
         {
             InitializeComponent();
+
             if (xdoc == null) return;
             
             var version = Assembly.GetExecutingAssembly().GetName().Version;
