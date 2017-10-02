@@ -10,7 +10,7 @@
     </controls:NeoWindow.DataContext>
 
     <controls:NeoWindow.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibility"/>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </controls:NeoWindow.Resources>
 
     <controls:NeoWindow.InputBindings>
@@ -193,7 +193,7 @@
                 </StatusBarItem.Content>
             </StatusBarItem>
 
-            <StatusBarItem HorizontalAlignment="Left" Visibility="{Binding NewVersionVisible, Converter={StaticResource BooleanToVisibility}, FallbackValue=Hidden}">
+            <StatusBarItem HorizontalAlignment="Left" Visibility="{Binding NewVersionVisible, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Hidden}">
                 <StatusBarItem.Content>
                     <TextBlock>
                         <Hyperlink Command="{Binding ShowUpdateDialogCommand}">

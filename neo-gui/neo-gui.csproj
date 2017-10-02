@@ -315,6 +315,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="UI\AssetDescriptor.cs" />
+    <Compile Include="UI\Controls\Development\TransactionPropertyGrid.xaml.cs">
+      <DependentUpon>TransactionPropertyGrid.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Messages\CloseWindowMessage.cs" />
     <Compile Include="UI\Messages\OpenWalletMessage.cs" />
     <Compile Include="UI\Messages\CreateWalletMessage.cs" />
@@ -327,7 +330,8 @@
     <Compile Include="UI\MVVM\RelayCommand.cs" />
     <Compile Include="UI\MVVM\ViewModelBase.cs" />
     <Compile Include="UI\ViewModels\Accounts\ViewContractViewModel.cs" />
-    <Compile Include="UI\ViewModels\Development\DeveloperToolsViewModel.cs" />
+    <Compile Include="UI\ViewModels\Development\ContractParametersViewModel.cs" />
+    <Compile Include="UI\ViewModels\Development\TransactionBuilderViewModel.cs" />
     <Compile Include="UI\ViewModels\Wallets\ClaimViewModel.cs" />
     <Compile Include="UI\ViewModels\Wallets\ChangePasswordViewModel.cs" />
     <Compile Include="UI\ViewModels\Accounts\ViewPrivateKeyViewModel.cs" />
@@ -338,10 +342,15 @@
     <Compile Include="UI\Views\Accounts\ViewPrivateKeyView.xaml.cs">
       <DependentUpon>ViewPrivateKeyView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Views\Development\TransactionBuilderView.xaml.cs">
+      <DependentUpon>TransactionBuilderView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Views\Development\ContractParametersView.xaml.cs">
+      <DependentUpon>ContractParametersView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Views\Development\DeveloperToolsView.xaml.cs">
       <DependentUpon>DeveloperToolsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Views\Development\TransactionPropertyGrid.cs" />
     <Compile Include="UI\Views\Wallets\ChangePasswordView.xaml.cs">
       <DependentUpon>ChangePasswordView.xaml</DependentUpon>
     </Compile>
@@ -849,11 +858,23 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="UI\Controls\Development\TransactionPropertyGrid.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\Views\Accounts\ViewContractView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Views\Accounts\ViewPrivateKeyView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Views\Development\TransactionBuilderView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Views\Development\ContractParametersView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

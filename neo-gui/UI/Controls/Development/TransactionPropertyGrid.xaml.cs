@@ -1,33 +1,24 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Forms;
-using System.Windows.Forms.Integration;
+﻿using System.Windows;
 
-namespace Neo.UI.Views.Development
+namespace Neo.UI.Controls.Development
 {
     /// <summary>
-    /// Wrapper control which hosts a WinForms PropertyGrid control
-    /// and provides dependency properties to allow property binding.
+    /// Interaction logic for TransactionPropertyGrid.xaml
     /// </summary>
-    public class TransactionPropertyGrid : WindowsFormsHost
+    public partial class TransactionPropertyGrid
     {
-        private readonly PropertyGrid propertyGrid;
-
         public TransactionPropertyGrid()
         {
-            this.propertyGrid = new PropertyGrid();
-
-            this.Child = this.propertyGrid;
+            InitializeComponent();
         }
 
         // Dependency Property
         public static readonly DependencyProperty TransactionWrapperProperty =
             DependencyProperty.Register("TransactionWrapper",
                 typeof(object), typeof(TransactionPropertyGrid),
-                    new FrameworkPropertyMetadata(null,
-                        OnTransactionWrapperPropertyChanged,
-                        OnCoerceTransactionWrapperProperty));
+                new FrameworkPropertyMetadata(null,
+                    OnTransactionWrapperPropertyChanged,
+                    OnCoerceTransactionWrapperProperty));
 
         // .NET Property wrapper
         // TODO Fix bug in functionality
@@ -39,9 +30,9 @@ namespace Neo.UI.Views.Development
 
         private void SetSelectedObject(object value)
         {
-            if (this.propertyGrid.SelectedObject == value) return;
+            if (this.PropertyGrid.SelectedObject == value) return;
 
-            this.propertyGrid.SelectedObject = value;
+            this.PropertyGrid.SelectedObject = value;
         }
 
         private static void OnTransactionWrapperPropertyChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)

@@ -2,97 +2,18 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:controls="clr-namespace:Neo.UI.Controls"
-             xmlns:developmentVm="clr-namespace:Neo.UI.ViewModels.Development"
-             xmlns:forms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
-             xmlns:formsIntegration="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
              xmlns:development="clr-namespace:Neo.UI.Views.Development"
              Title="Neo Developer Tools" Width="660" Height="480" ResizeMode="NoResize">
-    <controls:NeoWindow.DataContext>
-        <developmentVm:DeveloperToolsViewModel />
-    </controls:NeoWindow.DataContext>
-
     <Grid>
         <TabControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <!-- Transaction Builder Tab -->
             <TabItem Header="Tx Builder">
-                <Grid Margin="10 6 10 10"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    
-                    <ComboBox Grid.Row="0" Grid.Column="0" ItemsSource="{Binding TransactionTypes}" SelectedItem="{Binding SelectedTransactionType}" Margin="0 0 0 8" />
-
-                    <development:TransactionPropertyGrid Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TransactionWrapper="{Binding TransactionWrapper}" />
-                    <!--<formsIntegration:WindowsFormsHost Grid.Row="1" Grid.Column="0">
-                        !- TODO Bind TransactionWrapper to SelectedObject -
-                        <forms:PropertyGrid>
-
-                        </forms:PropertyGrid>
-                    </formsIntegration:WindowsFormsHost>-->
-
-                    <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Orientation="Vertical" IsEnabled="{Binding SidePanelEnabled}" Margin="10 0 0 0" VerticalAlignment="Bottom">
-                        <Button Content="Transaction Remark" Margin="0 0 0 8" Padding="12 2" Command="{Binding TransactionRemarkCommand}" />
-                        <Button Content="Setup Outputs" Margin="0 0 0 8" Padding="12 2" Command="{Binding SetupOutputsCommand}" IsEnabled="{Binding SetupOutputsEnabled}" />
-                        <Button Content="Find Unspent Coins" Margin="0 0 0 8" Padding="12 2" Command="{Binding FindUnspentCoinsCommand}" IsEnabled="{Binding FindUnspentCoinsEnabled}" />
-                        <Button Content="Get Parameters Context" Padding="12 2" Command="{Binding GetParametersContextCommand}" />
-                    </StackPanel>
-                </Grid>
+                <development:TransactionBuilderView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
             </TabItem>
 
             <!-- Contract Parameters Tab -->
             <TabItem Header="Contract Parameters">
-                <Grid Margin="8" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-
-                    <GroupBox Grid.Row="0" Grid.Column="0" Header="ScriptHash" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                        <ListView HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                            
-                        </ListView>
-                    </GroupBox>
-
-                    <GroupBox Grid.Row="0" Grid.Column="1" Header="Parameters" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                        <ListView HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-
-                        </ListView>
-                    </GroupBox>
-
-                    <Grid Grid.Row="0" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="2.2*" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-
-                        <GroupBox Grid.Row="0" Header="Current Value">
-                            <TextBox HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-                        </GroupBox>
-                        
-                        <GroupBox Grid.Row="1" Header="New Value">
-                            <TextBox HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-                        </GroupBox>
-                    </Grid>
-
-                    <DockPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="0 8 0 0" HorizontalAlignment="Stretch">
-                        <Button Content="Load" Width="68" Margin="0 0 8 0"  HorizontalAlignment="Left" />
-                        <Button Content="Show" Width="68" HorizontalAlignment="Left" />
-                        
-                        <Button Content="Update" Width="68" HorizontalAlignment="Right" />
-                    </DockPanel>
-                </Grid>
+                <development:ContractParametersView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
             </TabItem>
         </TabControl>
     </Grid>

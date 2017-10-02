@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -13,18 +12,15 @@ using Neo.UI.Wrappers;
 
 namespace Neo.UI.ViewModels.Development
 {
-    public class DeveloperToolsViewModel : ViewModelBase
+    public class TransactionBuilderViewModel : ViewModelBase
     {
         private TransactionType selectedTransactionType;
 
         private TransactionWrapper transactionWrapper;
 
-        public DeveloperToolsViewModel()
-        {
-            
-        }
 
-        public TransactionType[] TransactionTypes => new []
+
+        public TransactionType[] TransactionTypes => new[]
         {
             TransactionType.ContractTransaction,
             TransactionType.ClaimTransaction,
@@ -59,7 +55,7 @@ namespace Neo.UI.ViewModels.Development
 
                 Debug.Assert(value is TransactionWrapper);
 
-                this.transactionWrapper = (TransactionWrapper) value;
+                this.transactionWrapper = (TransactionWrapper)value;
 
                 //(TransactionWrapper)propertyGrid1.SelectedObject;
                 NotifyPropertyChanged();
@@ -87,6 +83,8 @@ namespace Neo.UI.ViewModels.Development
 
         #endregion Commands
 
+        // TODO Second tab of developer tools
+
         private TransactionWrapper GetNewTransactionWrapper()
         {
             var typeName = $"{typeof(TransactionWrapper).Namespace}.{this.SelectedTransactionType}Wrapper";
@@ -95,12 +93,12 @@ namespace Neo.UI.ViewModels.Development
 
             Debug.Assert(instance is TransactionWrapper);
 
-            return (TransactionWrapper) instance;
+            return (TransactionWrapper)instance;
         }
 
         private void TransactionRemark()
         {
-            var tx = (TransactionWrapper) this.TransactionWrapper;
+            var tx = (TransactionWrapper)this.TransactionWrapper;
             var attribute = tx.Attributes.FirstOrDefault(p => p.Usage == TransactionAttributeUsage.Remark);
             var found = attribute != null;
             if (!found)
@@ -126,7 +124,7 @@ namespace Neo.UI.ViewModels.Development
             {
                 if (dialog.ShowDialog() != DialogResult.OK) return;
                 var output = dialog.GetOutput();
-                var transaction = (TransactionWrapper) this.TransactionWrapper;
+                var transaction = (TransactionWrapper)this.TransactionWrapper;
                 transaction.Outputs.Add(new TransactionOutputWrapper
                 {
                     AssetId = (UInt256)output.AssetId,
@@ -138,7 +136,7 @@ namespace Neo.UI.ViewModels.Development
 
         private void FindUnspentCoins()
         {
-            var wrapper = (TransactionWrapper) this.TransactionWrapper;
+            var wrapper = (TransactionWrapper)this.TransactionWrapper;
             var transaction = App.CurrentWallet.MakeTransaction(wrapper.Unwrap());
             if (transaction == null)
             {
@@ -153,7 +151,7 @@ namespace Neo.UI.ViewModels.Development
 
         private void GetParametersContext()
         {
-            var wrapper = (TransactionWrapper) this.TransactionWrapper;
+            var wrapper = (TransactionWrapper)this.TransactionWrapper;
             var context = new ContractParametersContext(wrapper.Unwrap());
             InformationBox.Show(context.ToString(), "ParametersContext", "ParametersContext");
         }
