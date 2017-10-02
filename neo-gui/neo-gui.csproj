@@ -280,6 +280,7 @@
       <HintPath>..\packages\System.Xml.ReaderWriter.4.3.0\lib\net46\System.Xml.ReaderWriter.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
+    <Reference Include="WindowsFormsIntegration" />
     <Reference Include="Xamarin.Forms.Core, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Xamarin.Forms.2.3.4.247\lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.Core.dll</HintPath>
     </Reference>
@@ -326,6 +327,7 @@
     <Compile Include="UI\MVVM\RelayCommand.cs" />
     <Compile Include="UI\MVVM\ViewModelBase.cs" />
     <Compile Include="UI\ViewModels\Accounts\ViewContractViewModel.cs" />
+    <Compile Include="UI\ViewModels\Development\DeveloperToolsViewModel.cs" />
     <Compile Include="UI\ViewModels\Wallets\ClaimViewModel.cs" />
     <Compile Include="UI\ViewModels\Wallets\ChangePasswordViewModel.cs" />
     <Compile Include="UI\ViewModels\Accounts\ViewPrivateKeyViewModel.cs" />
@@ -336,6 +338,10 @@
     <Compile Include="UI\Views\Accounts\ViewPrivateKeyView.xaml.cs">
       <DependentUpon>ViewPrivateKeyView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Views\Development\DeveloperToolsView.xaml.cs">
+      <DependentUpon>DeveloperToolsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Views\Development\TransactionPropertyGrid.cs" />
     <Compile Include="UI\Views\Wallets\ChangePasswordView.xaml.cs">
       <DependentUpon>ChangePasswordView.xaml</DependentUpon>
     </Compile>
@@ -476,20 +482,6 @@
     <Compile Include="UI\OldWinForms\ContractDetailsDialog.Designer.cs">
       <DependentUpon>ContractDetailsDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\OldWinForms\DeveloperToolsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\OldWinForms\DeveloperToolsForm.Designer.cs">
-      <DependentUpon>DeveloperToolsForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\OldWinForms\DeveloperToolsForm.TxBuilder.cs">
-      <DependentUpon>DeveloperToolsForm.cs</DependentUpon>
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\OldWinForms\DeveloperToolsForm.ContractParameters.cs">
-      <DependentUpon>DeveloperToolsForm.cs</DependentUpon>
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="UI\Helper.cs" />
     <Compile Include="UI\OldWinForms\InformationBox.cs">
       <SubType>Form</SubType>
@@ -624,16 +616,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\DeployContractDialog.zh-Hans.resx">
       <DependentUpon>DeployContractDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\DeveloperToolsForm.es-ES.resx">
-      <DependentUpon>DeveloperToolsForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\DeveloperToolsForm.resx">
-      <DependentUpon>DeveloperToolsForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\DeveloperToolsForm.zh-Hans.resx">
-      <DependentUpon>DeveloperToolsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\ElectionDialog.es-ES.resx">
       <DependentUpon>ElectionDialog.cs</DependentUpon>
@@ -874,6 +856,10 @@
     <Page Include="UI\Views\Accounts\ViewPrivateKeyView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Views\Development\DeveloperToolsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Views\Wallets\ChangePasswordView.xaml">
       <Generator>MSBuild:Compile</Generator>

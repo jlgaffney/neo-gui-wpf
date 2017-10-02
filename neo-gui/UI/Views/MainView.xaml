@@ -13,6 +13,10 @@
         <BooleanToVisibilityConverter x:Key="BooleanToVisibility"/>
     </controls:NeoWindow.Resources>
 
+    <controls:NeoWindow.InputBindings>
+        <KeyBinding Key="F12" Command="{Binding ShowDeveloperToolsCommand}"/>
+    </controls:NeoWindow.InputBindings>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

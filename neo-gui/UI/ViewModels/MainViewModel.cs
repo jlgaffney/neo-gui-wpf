@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
-using System.Xml.Linq;
 
 using Application = System.Windows.Application;
 using Clipboard = System.Windows.Clipboard;
@@ -33,6 +32,7 @@ using Neo.UI.Models;
 using Neo.UI.MVVM;
 using Neo.UI.Views;
 using Neo.UI.Views.Accounts;
+using Neo.UI.Views.Development;
 using Neo.UI.Views.Updater;
 using Neo.UI.Views.Wallets;
 using Neo.VM;
@@ -1128,7 +1128,7 @@ namespace Neo.UI.ViewModels
 
         private static void ShowDeveloperTools()
         {
-            Helper.ShowForm<DeveloperToolsForm>();
+             Helper.Show<DeveloperToolsView>();
         }
 
         private static void ShowAboutNeoDialog()
