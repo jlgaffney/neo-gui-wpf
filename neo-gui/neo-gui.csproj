@@ -518,12 +518,6 @@
     <Compile Include="UI\OldWinForms\ViewContractDialog.Designer.cs">
       <DependentUpon>ViewContractDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\OldWinForms\ViewPrivateKeyDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\OldWinForms\ViewPrivateKeyDialog.designer.cs">
-      <DependentUpon>ViewPrivateKeyDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\OldWinForms\VotingDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -793,15 +787,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\ViewContractDialog.zh-Hans.resx">
       <DependentUpon>ViewContractDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\ViewPrivateKeyDialog.es-ES.resx">
-      <DependentUpon>ViewPrivateKeyDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\ViewPrivateKeyDialog.resx">
-      <DependentUpon>ViewPrivateKeyDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\ViewPrivateKeyDialog.zh-Hans.resx">
-      <DependentUpon>ViewPrivateKeyDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\VotingDialog.es-ES.resx">
       <DependentUpon>VotingDialog.cs</DependentUpon>
