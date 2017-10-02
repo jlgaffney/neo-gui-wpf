@@ -1,11 +1,11 @@
-﻿<controls:NeoWindow x:Class="Neo.UI.Views.Dialogs.CreateWalletView"
+﻿<controls:NeoWindow x:Class="Neo.UI.Views.Wallets.CreateWalletView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:Neo.UI.Controls"
-        xmlns:dialogsVm="clr-namespace:Neo.UI.ViewModels.Dialogs"
+        xmlns:wallets="clr-namespace:Neo.UI.ViewModels.Wallets"
         Title="New Wallet" Width="525" SizeToContent="Height" ResizeMode="NoResize">
     <controls:NeoWindow.DataContext>
-        <dialogsVm:CreateWalletViewModel />
+        <wallets:CreateWalletViewModel />
     </controls:NeoWindow.DataContext>
     
     <Grid Margin="12">

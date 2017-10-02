@@ -77,7 +77,7 @@
 
                 <Separator />
 
-                <MenuItem Header="_About NEO" Command="{Binding AboutNEOCommand}" />
+                <MenuItem Header="_About NEO" Command="{Binding AboutNeoCommand}" />
             </MenuItem>
         </Menu>
 

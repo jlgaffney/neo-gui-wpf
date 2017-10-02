@@ -6,38 +6,38 @@ using System.Windows.Input;
 using Neo.UI.Controls;
 using Neo.UI.MVVM;
 
-namespace Neo.UI.ViewModels
+namespace Neo.UI.ViewModels.Wallets
 {
     public class ClaimViewModel : ViewModelBase
     {
-        private Fixed8 availableGAS = Fixed8.Zero;
-        private Fixed8 unavailableGAS = Fixed8.Zero;
+        private Fixed8 availableGas = Fixed8.Zero;
+        private Fixed8 unavailableGas = Fixed8.Zero;
 
         private bool claimEnabled;
 
         #region Public Properties
 
-        public Fixed8 AvailableGAS
+        public Fixed8 AvailableGas
         {
-            get => this.availableGAS;
+            get => this.availableGas;
             set
             {
-                if (this.availableGAS == value) return;
+                if (this.availableGas == value) return;
 
-                this.availableGAS = value;
+                this.availableGas = value;
 
                 NotifyPropertyChanged();
             }
         }
 
-        public Fixed8 UnavailableGAS
+        public Fixed8 UnavailableGas
         {
-            get => this.unavailableGAS;
+            get => this.unavailableGas;
             set
             {
-                if (this.unavailableGAS == value) return;
+                if (this.unavailableGas == value) return;
 
-                this.unavailableGAS = value;
+                this.unavailableGas = value;
 
                 NotifyPropertyChanged();
             }
@@ -83,7 +83,7 @@ namespace Neo.UI.ViewModels
         private void CalculateBonusAvailable()
         {
             var bonusAvailable = Blockchain.CalculateBonus(App.CurrentWallet.GetUnclaimedCoins().Select(p => p.Reference));
-            this.AvailableGAS = bonusAvailable;
+            this.AvailableGas = bonusAvailable;
 
             if (bonusAvailable == Fixed8.Zero)
             {
@@ -112,7 +112,7 @@ namespace Neo.UI.ViewModels
                 }
             }
 
-            this.UnavailableGAS = Blockchain.CalculateBonus(references, height);
+            this.UnavailableGas = Blockchain.CalculateBonus(references, height);
         }        
 
         private void Claim()

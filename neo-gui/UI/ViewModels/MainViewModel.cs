@@ -32,8 +32,9 @@ using Neo.UI.Messages;
 using Neo.UI.Models;
 using Neo.UI.MVVM;
 using Neo.UI.Views;
-using Neo.UI.Views.Dialogs;
+using Neo.UI.Views.Accounts;
 using Neo.UI.Views.Updater;
+using Neo.UI.Views.Wallets;
 using Neo.VM;
 using Neo.Wallets;
 
@@ -272,7 +273,7 @@ namespace Neo.UI.ViewModels
 
         public ICommand ShowDeveloperToolsCommand => new RelayCommand(ShowDeveloperTools);
 
-        public ICommand AboutNEOCommand => new RelayCommand(ShowAboutNEODialog);
+        public ICommand AboutNeoCommand => new RelayCommand(ShowAboutNeoDialog);
 
         public ICommand ShowUpdateDialogCommand => new RelayCommand(this.ShowUpdateDialog);
 
@@ -318,11 +319,9 @@ namespace Neo.UI.ViewModels
 
         #region New Version Properties
 
-        public XDocument NewVersionXml { get; set; }
-
         public string NewVersionLabel
         {
-            get { return this.newVersionLabel; }
+            get => this.newVersionLabel;
             set
             {
                 if (this.newVersionLabel == value) return;
@@ -335,7 +334,7 @@ namespace Neo.UI.ViewModels
 
         public bool NewVersionVisible
         {
-            get { return this.newVersionVisible; }
+            get => this.newVersionVisible;
             set
             {
                 if (this.newVersionVisible == value) return;
@@ -544,6 +543,33 @@ namespace Neo.UI.ViewModels
 
         #region Blockchain Methods
 
+        private void ImportBlocksIfRequired()
+        {
+            const string acc_path = "chain.acc";
+            const string acc_zip_path = acc_path + ".zip";
+
+            // Check if blocks need importing
+            if (File.Exists(acc_path))
+            {
+                // Import blocks
+                using (var fileStream = new FileStream(acc_path, FileMode.Open, FileAccess.Read, FileShare.None))
+                {
+                    ImportBlocks(fileStream);
+                }
+                File.Delete(acc_path);
+            }
+            else if (File.Exists(acc_zip_path))
+            {
+                using (var fileStream = new FileStream(acc_zip_path, FileMode.Open, FileAccess.Read, FileShare.None))
+                using (var zip = new ZipArchive(fileStream, ZipArchiveMode.Read))
+                using (var zipStream = zip.GetEntry(acc_path).Open())
+                {
+                    ImportBlocks(zipStream);
+                }
+                File.Delete(acc_zip_path);
+            }
+        }
+
         private void ImportBlocks(Stream stream)
         {
             var blockchain = (LevelDBBlockchain)Blockchain.Default;
@@ -568,27 +594,13 @@ namespace Neo.UI.ViewModels
         {
             Task.Run(() =>
             {
-                const string acc_path = "chain.acc";
-                const string acc_zip_path = acc_path + ".zip";
-                if (File.Exists(acc_path))
-                {
-                    using (var fileStream = new FileStream(acc_path, FileMode.Open, FileAccess.Read, FileShare.None))
-                    {
-                        ImportBlocks(fileStream);
-                    }
-                    File.Delete(acc_path);
-                }
-                else if (File.Exists(acc_zip_path))
-                {
-                    using (var fileStream = new FileStream(acc_zip_path, FileMode.Open, FileAccess.Read, FileShare.None))
-                    using (var zip = new ZipArchive(fileStream, ZipArchiveMode.Read))
-                    using (var zipStream = zip.GetEntry(acc_path).Open())
-                    {
-                        ImportBlocks(zipStream);
-                    }
-                    File.Delete(acc_zip_path);
-                }
+                CheckForNewerVersion();
+
+                ImportBlocksIfRequired();
+                
                 Blockchain.PersistCompleted += Blockchain_PersistCompleted;
+
+                // Start node
                 Program.LocalNode.Start(Settings.Default.NodePort, Settings.Default.WsPort);
             });
         }
@@ -597,6 +609,17 @@ namespace Neo.UI.ViewModels
         {
             Blockchain.PersistCompleted -= Blockchain_PersistCompleted;
             this.CloseWallet();
+        }
+
+        private void CheckForNewerVersion()
+        {
+            var latestVersion = VersionHelper.LatestVersion;
+            var currentVersion = VersionHelper.CurrentVersion;
+
+            if (latestVersion <= currentVersion) return;
+            
+            this.NewVersionLabel = $"{Strings.DownloadNewVersion}: {latestVersion}";
+            this.NewVersionVisible = true;
         }
 
         #endregion Blockchain Methods
@@ -1108,7 +1131,7 @@ namespace Neo.UI.ViewModels
             Helper.ShowForm<DeveloperToolsForm>();
         }
 
-        private static void ShowAboutNEODialog()
+        private static void ShowAboutNeoDialog()
         {
             MessageBox.Show($"{Strings.AboutMessage} {Strings.AboutVersion}{Assembly.GetExecutingAssembly().GetName().Version}", Strings.About);
         }
@@ -1363,9 +1386,7 @@ namespace Neo.UI.ViewModels
         
         private void ShowUpdateDialog()
         {
-            if (this.NewVersionXml == null) return;
-
-            var dialog = new UpdateView(this.NewVersionXml);
+            var dialog = new UpdateView();
 
             dialog.ShowDialog();
         }

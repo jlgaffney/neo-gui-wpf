@@ -1,10 +1,4 @@
-﻿using System;
-using System.Linq;
-
-using Neo.Core;
-using Neo.UI.ViewModels;
-
-namespace Neo.UI.Views
+﻿namespace Neo.UI.Views.Wallets
 {
     /// <summary>
     /// Interaction logic for ClaimView.xaml

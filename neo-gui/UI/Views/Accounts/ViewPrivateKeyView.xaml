@@ -1,11 +1,11 @@
-﻿<controls:NeoWindow x:Class="Neo.UI.Views.Dialogs.ViewPrivateKeyView"
+﻿<controls:NeoWindow x:Class="Neo.UI.Views.Accounts.ViewPrivateKeyView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:Neo.UI.Controls"
-        xmlns:dialogsVm="clr-namespace:Neo.UI.ViewModels.Dialogs"
+        xmlns:accountsVm="clr-namespace:Neo.UI.ViewModels.Accounts"
         Title="View Private Key" SizeToContent="WidthAndHeight" ResizeMode="NoResize">
     <controls:NeoWindow.DataContext>
-        <dialogsVm:ViewPrivateKeyViewModel />
+        <accountsVm:ViewPrivateKeyViewModel />
     </controls:NeoWindow.DataContext>
     
     <Grid Margin="8">

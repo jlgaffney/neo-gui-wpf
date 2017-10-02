@@ -1,11 +1,11 @@
-﻿<controls:NeoWindow x:Class="Neo.UI.Views.ClaimView"
+﻿<controls:NeoWindow x:Class="Neo.UI.Views.Wallets.ClaimView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:controls="clr-namespace:Neo.UI.Controls"
-             xmlns:vm="clr-namespace:Neo.UI.ViewModels"
+             xmlns:walletsVm="clr-namespace:Neo.UI.ViewModels.Wallets"
              Title="NeoGas Claim" Width="300" SizeToContent="Height" ResizeMode="NoResize">
     <controls:NeoWindow.DataContext>
-        <vm:ClaimViewModel />
+        <walletsVm:ClaimViewModel />
     </controls:NeoWindow.DataContext>
     
     <Grid Margin="12">
@@ -22,10 +22,10 @@
         </Grid.ColumnDefinitions>
 
         <Label Grid.Row="0" Grid.Column="0" Content="Available:" HorizontalAlignment="Right" />
-        <Label Grid.Row="0" Grid.Column="1" Content="{Binding AvailableGAS}" HorizontalAlignment="Left" />
+        <Label Grid.Row="0" Grid.Column="1" Content="{Binding AvailableGas}" HorizontalAlignment="Left" />
 
         <Label Grid.Row="1" Grid.Column="0" Content="Unavailable:" HorizontalAlignment="Right" />
-        <Label Grid.Row="1" Grid.Column="1" Content="{Binding UnavailableGAS}" HorizontalAlignment="Left" />
+        <Label Grid.Row="1" Grid.Column="1" Content="{Binding UnavailableGas}" HorizontalAlignment="Left" />
 
         <Button Grid.Row="2" Grid.Column="2" Content="Claim All" IsEnabled="{Binding ClaimEnabled}" Padding="6 2" HorizontalAlignment="Right" />
     </Grid>

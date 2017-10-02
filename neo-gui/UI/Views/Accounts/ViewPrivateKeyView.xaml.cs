@@ -1,7 +1,7 @@
-﻿using Neo.UI.ViewModels.Dialogs;
+﻿using Neo.UI.ViewModels.Accounts;
 using Neo.Wallets;
 
-namespace Neo.UI.Views.Dialogs
+namespace Neo.UI.Views.Accounts
 {
     public partial class ViewPrivateKeyView
     {

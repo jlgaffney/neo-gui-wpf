@@ -295,6 +295,8 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="BigDecimal.cs" />
+    <Compile Include="PeerState.cs" />
+    <Compile Include="RootCertificate.cs" />
     <Compile Include="Cryptography\CertificateQueryResult.cs" />
     <Compile Include="Cryptography\CertificateQueryResultType.cs" />
     <Compile Include="Cryptography\CertificateQueryService.cs" />
@@ -323,29 +325,29 @@
     <Compile Include="UI\MVVM\IHandle.cs" />
     <Compile Include="UI\MVVM\RelayCommand.cs" />
     <Compile Include="UI\MVVM\ViewModelBase.cs" />
-    <Compile Include="UI\ViewModels\ClaimViewModel.cs" />
-    <Compile Include="UI\ViewModels\Dialogs\ChangePasswordViewModel.cs" />
-    <Compile Include="UI\ViewModels\Dialogs\ViewPrivateKeyViewModel.cs" />
+    <Compile Include="UI\ViewModels\Wallets\ClaimViewModel.cs" />
+    <Compile Include="UI\ViewModels\Wallets\ChangePasswordViewModel.cs" />
+    <Compile Include="UI\ViewModels\Accounts\ViewPrivateKeyViewModel.cs" />
     <Compile Include="UI\ViewModels\OptionsViewModel.cs" />
-    <Compile Include="UI\Views\Dialogs\ViewPrivateKeyView.xaml.cs">
+    <Compile Include="UI\Views\Accounts\ViewPrivateKeyView.xaml.cs">
       <DependentUpon>ViewPrivateKeyView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Views\Dialogs\ChangePasswordView.xaml.cs">
+    <Compile Include="UI\Views\Wallets\ChangePasswordView.xaml.cs">
       <DependentUpon>ChangePasswordView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Views\OptionsView.xaml.cs">
       <DependentUpon>OptionsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Views\ClaimView.xaml.cs">
+    <Compile Include="UI\Views\Wallets\ClaimView.xaml.cs">
       <DependentUpon>ClaimView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\ViewModels\Dialogs\CreateWalletViewModel.cs" />
-    <Compile Include="UI\ViewModels\Dialogs\OpenWalletViewModel.cs" />
+    <Compile Include="UI\ViewModels\Wallets\CreateWalletViewModel.cs" />
+    <Compile Include="UI\ViewModels\Wallets\OpenWalletViewModel.cs" />
     <Compile Include="UI\ViewModels\Updater\UpdateViewModel.cs" />
-    <Compile Include="UI\Views\Dialogs\CreateWalletView.xaml.cs">
+    <Compile Include="UI\Views\Wallets\CreateWalletView.xaml.cs">
       <DependentUpon>CreateWalletView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Views\Dialogs\OpenWalletView.xaml.cs">
+    <Compile Include="UI\Views\Wallets\OpenWalletView.xaml.cs">
       <DependentUpon>OpenWalletView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Views\MainView.xaml.cs">
@@ -541,6 +543,7 @@
     <Compile Include="UI\Wrappers\TransactionWrapper.cs" />
     <Compile Include="UI\Wrappers\UIntBaseConverter.cs" />
     <Compile Include="UI\Wrappers\WitnessWrapper.cs" />
+    <Compile Include="VersionHelper.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -876,11 +879,11 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="UI\Views\Dialogs\ViewPrivateKeyView.xaml">
+    <Page Include="UI\Views\Accounts\ViewPrivateKeyView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Views\Dialogs\ChangePasswordView.xaml">
+    <Page Include="UI\Views\Wallets\ChangePasswordView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -888,15 +891,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Views\ClaimView.xaml">
+    <Page Include="UI\Views\Wallets\ClaimView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\Views\Dialogs\CreateWalletView.xaml">
+    <Page Include="UI\Views\Wallets\CreateWalletView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Views\Dialogs\OpenWalletView.xaml">
+    <Page Include="UI\Views\Wallets\OpenWalletView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -910,6 +913,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UI\Converters\" />
+    <Folder Include="UI\ViewModels\Assets\" />
+    <Folder Include="UI\ViewModels\Transactions\" />
+    <Folder Include="UI\Views\Assets\" />
+    <Folder Include="UI\Views\Transactions\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

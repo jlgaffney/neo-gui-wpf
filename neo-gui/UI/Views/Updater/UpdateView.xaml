@@ -22,13 +22,13 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             
-            <Label Name="label1" Grid.Column="0" Content="Newest Version:"/>
+            <Label Name="label1" Grid.Column="0" Content="Newest Version:" VerticalAlignment="Center"/>
 
-            <TextBox Grid.Column="1" Text="{Binding LatestVersionValue}" HorizontalAlignment="Stretch" />
+            <TextBox Grid.Column="1" IsReadOnly="True" Text="{Binding LatestVersionValue, Mode=OneWay}" Margin="4" Padding="2" HorizontalAlignment="Stretch" />
         </Grid>
 
         <GroupBox Grid.Row="1" Header="Change logs">
-            <TextBox Text="{Binding Changes}" IsReadOnly="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+            <TextBox Text="{Binding Changes, Mode=OneWay}" IsReadOnly="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                 HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" />
         </GroupBox>
 

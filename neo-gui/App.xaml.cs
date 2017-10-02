@@ -12,9 +12,9 @@ namespace Neo
     {
         public static UserWallet CurrentWallet;
 
-        internal App(XDocument xdoc) : base()
+        internal App()
         {
-            this.MainWindow = new MainView(xdoc);
+            this.MainWindow = new MainView();
 
             this.MainWindow.Show();
         }

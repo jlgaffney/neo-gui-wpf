@@ -18,27 +18,11 @@ namespace Neo.UI.Views
     {
         private readonly MainViewModel viewModel;
 
-        public MainView(XDocument xdoc = null)
+        public MainView()
         {
             InitializeComponent();
 
             this.viewModel = this.DataContext as MainViewModel;
-
-            if (xdoc != null)
-            {
-                var version = Assembly.GetExecutingAssembly().GetName().Version;
-                var latest = Version.Parse(xdoc.Element("update").Attribute("latest").Value);
-
-                if (version < latest)
-                {
-                    if (this.viewModel != null)
-                    {
-                        this.viewModel.NewVersionXml = xdoc;
-                        this.viewModel.NewVersionLabel = $"{Strings.DownloadNewVersion}: {latest}";
-                        this.viewModel.NewVersionVisible = true;
-                    }
-                }
-            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

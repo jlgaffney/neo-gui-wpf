@@ -4,7 +4,7 @@ using System.Windows.Input;
 using Neo.UI.Messages;
 using Neo.UI.MVVM;
 
-namespace Neo.UI.ViewModels.Dialogs
+namespace Neo.UI.ViewModels.Wallets
 {
     public class CreateWalletViewModel : ViewModelBase
     {

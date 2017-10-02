@@ -1,9 +1,9 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-using Neo.UI.ViewModels.Dialogs;
+using Neo.UI.ViewModels.Wallets;
 
-namespace Neo.UI.Views.Dialogs
+namespace Neo.UI.Views.Wallets
 {
     public partial class CreateWalletView
     {

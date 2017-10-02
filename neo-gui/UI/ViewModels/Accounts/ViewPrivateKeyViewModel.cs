@@ -2,7 +2,7 @@
 using Neo.UI.MVVM;
 using Neo.Wallets;
 
-namespace Neo.UI.ViewModels.Dialogs
+namespace Neo.UI.ViewModels.Accounts
 {
     public class ViewPrivateKeyViewModel : ViewModelBase
     {

@@ -3,9 +3,9 @@ using System.Windows;
 using System.Windows.Controls;
 
 using Neo.Properties;
-using Neo.UI.ViewModels.Dialogs;
+using Neo.UI.ViewModels.Wallets;
 
-namespace Neo.UI.Views.Dialogs
+namespace Neo.UI.Views.Wallets
 {
     /// <summary>
     /// Interaction logic for OpenWalletView.xaml

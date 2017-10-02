@@ -16,35 +16,39 @@ namespace Neo.UI.ViewModels.Updater
 {
     public class UpdateViewModel : ViewModelBase
     {
-        private readonly WebClient web = new WebClient();
-        private string downloadUrl;
-        private string downloadPath;
+        private const string downloadPath = "update.zip";
 
-        private Version latestVersion;
-        private string changes;
+        private readonly WebClient web = new WebClient();
+
+        private readonly Version latestVersion;
+        private readonly string downloadUrl;
 
         private int updateDownloadProgress;
 
         private bool buttonsEnabled;
 
+        public UpdateViewModel()
+        {
+            // Setup update information
+            this.latestVersion = VersionHelper.LatestVersion;
+
+            VersionHelper.GetLatestReleaseInfo(out var releaseChanges, out var releaseDownloadUrl);
+            this.Changes = releaseChanges;
+            this.downloadUrl = releaseDownloadUrl;
+            
+            web.DownloadProgressChanged += Web_DownloadProgressChanged;
+            web.DownloadFileCompleted += Web_DownloadFileCompleted;
+
+            this.ButtonsEnabled = true;
+        }
+
         public string LatestVersionValue => this.latestVersion.ToString();
 
-        public string Changes
-        {
-            get { return this.changes; }
-            set
-            {
-                if (this.changes == value) return;
-
-                this.changes = value;
-
-                NotifyPropertyChanged();
-            }
-        }
+        public string Changes { get; }
 
         public int UpdateDownloadProgress
         {
-            get { return this.updateDownloadProgress; }
+            get => this.updateDownloadProgress;
             set
             {
                 if (this.updateDownloadProgress == value) return;
@@ -57,7 +61,7 @@ namespace Neo.UI.ViewModels.Updater
 
         public bool ButtonsEnabled
         {
-            get { return this.buttonsEnabled; }
+            get => this.buttonsEnabled;
             set
             {
                 if (this.buttonsEnabled == value) return;
@@ -68,13 +72,15 @@ namespace Neo.UI.ViewModels.Updater
             }
         }
 
-        public ICommand GoToOfficialWebsiteCommand => new RelayCommand(this.GoToOfficialWebsite);
+        public ICommand GoToOfficialWebsiteCommand => new RelayCommand(GoToOfficialWebsite);
 
         public ICommand GoToDownloadPageCommand => new RelayCommand(this.GoToDownloadPage);
 
         public ICommand UpdateCommand => new RelayCommand(this.Update);
 
-        private void GoToOfficialWebsite()
+        public ICommand CloseCommand => new RelayCommand(this.TryClose);
+
+        private static void GoToOfficialWebsite()
         {
             Process.Start("https://neo.org/");
         }
@@ -86,31 +92,11 @@ namespace Neo.UI.ViewModels.Updater
 
         #region Update Downloader Methods
 
-        public void SetUpdateInfo(XDocument newVersionXml)
-        {
-            Debug.Assert(this.latestVersion != null);
-
-            var latest = Version.Parse(newVersionXml.Element("update").Attribute("latest").Value);
-
-            this.latestVersion = latest;
-
-            var release = newVersionXml.Element("update").Elements("release").First(p => p.Attribute("version").Value == latest.ToString());
-
-            this.Changes = release.Element("changes").Value.Replace("\n", Environment.NewLine);
-            this.downloadUrl = release.Attribute("file").Value;
-
-            web.DownloadProgressChanged += Web_DownloadProgressChanged;
-            web.DownloadFileCompleted += Web_DownloadFileCompleted;
-
-            this.ButtonsEnabled = true;
-        }
-
         private void Update()
         {
             this.ButtonsEnabled = false;
             
-            this.downloadPath = "update.zip";
-            web.DownloadFileAsync(new Uri(this.downloadUrl), this.downloadPath);
+            web.DownloadFileAsync(new Uri(this.downloadUrl), downloadPath);
         }
 
         private void Web_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)

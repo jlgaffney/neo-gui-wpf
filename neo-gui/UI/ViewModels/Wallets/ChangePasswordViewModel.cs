@@ -3,7 +3,7 @@ using System.Windows.Input;
 using Neo.Properties;
 using Neo.UI.MVVM;
 
-namespace Neo.UI.ViewModels.Dialogs
+namespace Neo.UI.ViewModels.Wallets
 {
     public class ChangePasswordViewModel : ViewModelBase
     {
