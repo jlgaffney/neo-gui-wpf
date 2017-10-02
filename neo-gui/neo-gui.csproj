@@ -325,7 +325,11 @@
     <Compile Include="UI\MVVM\ViewModelBase.cs" />
     <Compile Include="UI\ViewModels\ClaimViewModel.cs" />
     <Compile Include="UI\ViewModels\Dialogs\ChangePasswordViewModel.cs" />
+    <Compile Include="UI\ViewModels\Dialogs\ViewPrivateKeyViewModel.cs" />
     <Compile Include="UI\ViewModels\OptionsViewModel.cs" />
+    <Compile Include="UI\Views\Dialogs\ViewPrivateKeyView.xaml.cs">
+      <DependentUpon>ViewPrivateKeyView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Views\Dialogs\ChangePasswordView.xaml.cs">
       <DependentUpon>ChangePasswordView.xaml</DependentUpon>
     </Compile>
@@ -887,6 +891,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="UI\Views\Dialogs\ViewPrivateKeyView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\Views\Dialogs\ChangePasswordView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

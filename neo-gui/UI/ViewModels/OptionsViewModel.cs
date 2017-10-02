@@ -8,8 +8,6 @@ namespace Neo.UI.ViewModels
 {
     public class OptionsViewModel : ViewModelBase
     {
-        private NeoWindow view;
-
         private string nep5ContractsList;
 
         public string NEP5ContractsList
@@ -56,33 +54,33 @@ namespace Neo.UI.ViewModels
 
         public ICommand ApplyCommand => new RelayCommand(this.Apply);
 
-        public override void OnViewAttached(object view)
+        public override void OnWindowAttached(NeoWindow window)
         {
-            this.view = view as NeoWindow;
+            base.OnWindowAttached(window);
 
             var nep5ContractsLines = Settings.Default.NEP5Watched.OfType<string>().ToArray();
 
             // Concatenate lines
-            var nep5ContractsList = string.Empty;
+            var contractsList = string.Empty;
 
             foreach (var line in nep5ContractsLines)
             {
-                nep5ContractsList += line + "\n";
+                contractsList += line + "\n";
             }
 
-            this.NEP5ContractsList = nep5ContractsList;
+            this.NEP5ContractsList = contractsList;
         }
 
         public void Ok()
         {
             // TODO Should this do more than just close?
 
-            this.view?.Close();
+            this.TryClose();
         }
 
         public void Cancel()
         {
-            this.view?.Close();
+            this.TryClose();
         }
 
         public void Apply()

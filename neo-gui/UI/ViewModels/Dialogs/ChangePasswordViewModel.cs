@@ -1,16 +1,12 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 using Neo.Properties;
-using Neo.UI.Controls;
-using Neo.UI.Messages;
 using Neo.UI.MVVM;
 
 namespace Neo.UI.ViewModels.Dialogs
 {
     public class ChangePasswordViewModel : ViewModelBase
     {
-        private NeoWindow view;
-
         private string oldPassword;
         private string newPassword;
         private string reEnteredNewPassword;
@@ -23,11 +19,6 @@ namespace Neo.UI.ViewModels.Dialogs
         public ICommand OkCommand => new RelayCommand(this.Ok);
 
         public ICommand CancelCommand => new RelayCommand(this.Cancel);
-
-        public override void OnViewAttached(object view)
-        {
-            this.view = view as NeoWindow;
-        }
 
         public void UpdateOldPassword(string updatedPassword)
         {
@@ -68,7 +59,7 @@ namespace Neo.UI.ViewModels.Dialogs
             {
                 MessageBox.Show(Strings.ChangePasswordSuccessful);
 
-                this.view?.Close();
+                this.TryClose();
             }
             else
             {
@@ -78,7 +69,7 @@ namespace Neo.UI.ViewModels.Dialogs
 
         private void Cancel()
         {
-            this.view?.Close();
+            this.TryClose();
         }
     }
 }

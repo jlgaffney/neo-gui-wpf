@@ -1,11 +1,12 @@
-﻿<Window x:Class="Neo.UI.Views.Updater.UpdateView"
+﻿<controls:NeoWindow x:Class="Neo.UI.Views.Updater.UpdateView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:updaterVm="clr-namespace:Neo.UI.ViewModels.Updater"
+        xmlns:controls="clr-namespace:Neo.UI.Controls"
         Title="Update Available" Height="350" Width="525">
-    <Window.DataContext>
+    <controls:NeoWindow.DataContext>
         <updaterVm:UpdateViewModel />
-    </Window.DataContext>
+    </controls:NeoWindow.DataContext>
     
     <Grid Margin="12">
         <Grid.RowDefinitions>
@@ -49,4 +50,4 @@
             <Button Content="Close" Width="72" Command="{Binding CloseCommand}" IsEnabled="{Binding ButtonsEnabled}" />
         </StackPanel>
     </Grid>
-</Window>
+</controls:NeoWindow>

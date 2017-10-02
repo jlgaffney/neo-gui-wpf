@@ -10,8 +10,6 @@ namespace Neo.UI.ViewModels
 {
     public class ClaimViewModel : ViewModelBase
     {
-        private NeoWindow view;
-
         private Fixed8 availableGAS = Fixed8.Zero;
         private Fixed8 unavailableGAS = Fixed8.Zero;
 
@@ -62,9 +60,9 @@ namespace Neo.UI.ViewModels
 
         public ICommand ClaimCommand => new RelayCommand(this.Claim);
 
-        public override void OnViewAttached(object view)
+        public override void OnWindowAttached(NeoWindow window)
         {
-            this.view = view as NeoWindow;
+            base.OnWindowAttached(window);
 
             // Calculate bonus GAS
             this.CalculateBonusAvailable();
@@ -73,7 +71,7 @@ namespace Neo.UI.ViewModels
 
             Blockchain.PersistCompleted += Blockchain_PersistCompleted;
 
-            this.view.Closing += (sender, e) =>
+            window.Closing += (sender, e) =>
             { Blockchain.PersistCompleted -= Blockchain_PersistCompleted; };
         }
 
@@ -137,7 +135,7 @@ namespace Neo.UI.ViewModels
                 }
             });
 
-            this.view?.Close();
+            this.TryClose();
         }
     }
 }

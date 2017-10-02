@@ -1,7 +1,6 @@
 ﻿using Microsoft.Win32;
 using System.Windows.Input;
 
-using Neo.UI.Controls;
 using Neo.UI.Messages;
 using Neo.UI.MVVM;
 
@@ -9,15 +8,13 @@ namespace Neo.UI.ViewModels.Dialogs
 {
     public class CreateWalletViewModel : ViewModelBase
     {
-        private NeoWindow view;
-
         private string walletPath;
         private string password;
         private string reEnteredPassword;
 
         public string WalletPath
         {
-            get { return this.walletPath; }
+            get => this.walletPath;
             set
             {
                 if (this.walletPath == value) return;
@@ -54,11 +51,6 @@ namespace Neo.UI.ViewModels.Dialogs
 
         public ICommand ConfirmCommand => new RelayCommand(this.Confirm);
 
-        public override void OnViewAttached(object attachedView)
-        {
-            this.view = attachedView as NeoWindow;
-        }
-
         public void UpdatePassword(string updatedPassword)
         {
             this.password = updatedPassword;
@@ -93,7 +85,7 @@ namespace Neo.UI.ViewModels.Dialogs
         {
             EventAggregator.Current.Publish(new CreateWalletMessage(this.WalletPath, this.password));
 
-            this.view?.Close();
+            this.TryClose();
         }
     }
 }

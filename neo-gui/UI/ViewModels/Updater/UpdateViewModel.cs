@@ -145,11 +145,10 @@ namespace Neo.UI.ViewModels.Updater
 
             File.WriteAllBytes("update.bat", NeoResources.UpdateBat);
 
-            // Start update
-            Process.Start("update.bat");
+            this.TryClose();
 
-            // Close windows
-            EventAggregator.Current.Publish(new CloseWindowMessage());
+            // Update application
+            EventAggregator.Current.Publish(new UpdateApplicationMessage("update.bat"));
         }
 
         #endregion Update Downloader Methods

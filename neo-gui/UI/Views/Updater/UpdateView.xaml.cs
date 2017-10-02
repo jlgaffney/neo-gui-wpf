@@ -6,7 +6,7 @@ using Neo.UI.ViewModels.Updater;
 
 namespace Neo.UI.Views.Updater
 {
-    public partial class UpdateView : IHandle<CloseWindowMessage>
+    public partial class UpdateView
     {
         public UpdateView(XDocument xdoc)
         {
@@ -18,15 +18,6 @@ namespace Neo.UI.Views.Updater
             {
                 viewModel.SetUpdateInfo(xdoc);
             }
-
-            EventAggregator.Current.Subscribe(this);
-        }
-
-        public void Handle(CloseWindowMessage message)
-        {
-            EventAggregator.Current.Unsubscribe(this);
-
-            this.Close();
         }
     }
 }

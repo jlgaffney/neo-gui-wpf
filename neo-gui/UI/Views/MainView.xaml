@@ -1,16 +1,17 @@
-﻿<Window x:Class="Neo.UI.Views.MainView"
+﻿<controls:NeoWindow x:Class="Neo.UI.Views.MainView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:Neo.UI.ViewModels"
+        xmlns:controls="clr-namespace:Neo.UI.Controls"
         Title="neo-gui" Height="520" Width="740"
         Loaded="Window_Loaded" Closing="Window_Closing">
-    <Window.DataContext>
+    <controls:NeoWindow.DataContext>
         <vm:MainViewModel />
-    </Window.DataContext>
+    </controls:NeoWindow.DataContext>
 
-    <Window.Resources>
+    <controls:NeoWindow.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibility"/>
-    </Window.Resources>
+    </controls:NeoWindow.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -208,4 +209,4 @@
             </StatusBarItem>
         </StatusBar>
     </Grid>
-</Window>
+</controls:NeoWindow>

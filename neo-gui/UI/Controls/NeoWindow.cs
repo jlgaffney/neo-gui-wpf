@@ -14,7 +14,7 @@ namespace Neo.UI.Controls
 
                 if (viewModel != null)
                 {
-                    viewModel.OnViewAttached(this);
+                    viewModel.OnWindowAttached(this);
                 }
             };            
         }

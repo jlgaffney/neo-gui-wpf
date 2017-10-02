@@ -14,15 +14,13 @@ namespace Neo.UI.Views
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainView : IHandle<CloseWindowMessage>
+    public partial class MainView
     {
         private readonly MainViewModel viewModel;
 
         public MainView(XDocument xdoc = null)
         {
             InitializeComponent();
-
-            EventAggregator.Current.Subscribe(this);
 
             this.viewModel = this.DataContext as MainViewModel;
 
@@ -55,13 +53,6 @@ namespace Neo.UI.Views
             if (this.viewModel == null) return;
 
             this.viewModel.Close();
-        }
-
-        public void Handle(CloseWindowMessage message)
-        {
-            EventAggregator.Current.Unsubscribe(this);
-
-            this.Close();
         }
     }
 }

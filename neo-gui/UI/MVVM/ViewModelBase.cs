@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using System.ComponentModel;
+using Neo.UI.Controls;
 
 namespace Neo.UI.MVVM
 {
@@ -7,7 +8,17 @@ namespace Neo.UI.MVVM
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public virtual void OnViewAttached(object view) { }
+        private NeoWindow window;
+
+        public virtual void OnWindowAttached(NeoWindow window)
+        {
+            this.window = window;
+        }
+
+        public virtual void TryClose()
+        {
+            this.window?.Close();
+        }
 
         protected virtual void NotifyPropertyChanged([CallerMemberName] string propertyName = null)
         {

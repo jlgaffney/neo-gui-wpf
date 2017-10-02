@@ -40,16 +40,13 @@ using Neo.Wallets;
 namespace Neo.UI.ViewModels
 {
     public class MainViewModel : ViewModelBase,
+        IHandle<UpdateApplicationMessage>,
         IHandle<CreateWalletMessage>,
         IHandle<OpenWalletMessage>
     {
         private static readonly UInt160 RecycleScriptHash = new[] { (byte)OpCode.PUSHT }.ToScriptHash();
 
         private readonly Dictionary<ECPoint, CertificateQueryResult> certificateQueryResultCache;
-
-        private readonly ObservableCollection<AccountItem> accounts;
-        private readonly ObservableCollection<AssetItem> assets;
-        private readonly ObservableCollection<TransactionItem> pastTransactions;
 
         private AccountItem selectedAccount;
         private AssetItem selectedAsset;
@@ -67,15 +64,15 @@ namespace Neo.UI.ViewModels
         private bool newVersionVisible;
 
         private Timer uiUpdateTimer;
-        private object uiUpdateTimerLock = new object();
+        private readonly object uiUpdateTimerLock = new object();
 
         public MainViewModel()
         {
             this.certificateQueryResultCache = new Dictionary<ECPoint, CertificateQueryResult>();
 
-            this.accounts = new ObservableCollection<AccountItem>();
-            this.assets = new ObservableCollection<AssetItem>();
-            this.pastTransactions = new ObservableCollection<TransactionItem>();
+            this.Accounts = new ObservableCollection<AccountItem>();
+            this.Assets = new ObservableCollection<AssetItem>();
+            this.Transactions = new ObservableCollection<TransactionItem>();
 
             EventAggregator.Current.Subscribe(this);
 
@@ -86,11 +83,11 @@ namespace Neo.UI.ViewModels
 
         #region Public Properties
 
-        public ObservableCollection<AccountItem> Accounts => this.accounts;
+        public ObservableCollection<AccountItem> Accounts { get; }
 
-        public ObservableCollection<AssetItem> Assets => this.assets;
+        public ObservableCollection<AssetItem> Assets { get; }
 
-        public ObservableCollection<TransactionItem> Transactions => this.pastTransactions;
+        public ObservableCollection<TransactionItem> Transactions { get; }
 
         public bool AccountMenuItemsEnabled => App.CurrentWallet != null;
 
@@ -245,7 +242,7 @@ namespace Neo.UI.ViewModels
 
         public ICommand RestoreAccountsCommand => new RelayCommand(this.RestoreAccounts);
 
-        public ICommand ExitCommand => new RelayCommand(Exit);
+        public ICommand ExitCommand => new RelayCommand(this.Exit);
 
         public ICommand TransferCommand => new RelayCommand(Transfer);
 
@@ -873,6 +870,15 @@ namespace Neo.UI.ViewModels
 
         #region Message Handlers
 
+        public void Handle(UpdateApplicationMessage message)
+        {
+            // Close window
+            this.TryClose();
+            
+            // Start update
+            Process.Start(message.UpdateScriptPath);
+        }
+
         public void Handle(CreateWalletMessage message)
         {
             if (string.IsNullOrEmpty(message.WalletPath) || string.IsNullOrEmpty(message.Password)) return;
@@ -962,9 +968,9 @@ namespace Neo.UI.ViewModels
             }
         }
 
-        private static void Exit()
+        private void Exit()
         {
-            EventAggregator.Current.Publish(new CloseWindowMessage());
+            this.TryClose();
         }
 
         private static void Transfer()
@@ -1239,10 +1245,9 @@ namespace Neo.UI.ViewModels
 
             var contract = this.SelectedAccount.Contract;
             var key = App.CurrentWallet.GetKeyByScriptHash(contract.ScriptHash);
-            using (var dialog = new ViewPrivateKeyDialog(key, contract.ScriptHash))
-            {
-                dialog.ShowDialog();
-            }
+
+            var view = new ViewPrivateKeyView(key, contract.ScriptHash);
+            view.ShowDialog();
         }
 
         private void ViewContract()
