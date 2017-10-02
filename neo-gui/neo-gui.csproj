@@ -325,10 +325,14 @@
     <Compile Include="UI\MVVM\IHandle.cs" />
     <Compile Include="UI\MVVM\RelayCommand.cs" />
     <Compile Include="UI\MVVM\ViewModelBase.cs" />
+    <Compile Include="UI\ViewModels\Accounts\ViewContractViewModel.cs" />
     <Compile Include="UI\ViewModels\Wallets\ClaimViewModel.cs" />
     <Compile Include="UI\ViewModels\Wallets\ChangePasswordViewModel.cs" />
     <Compile Include="UI\ViewModels\Accounts\ViewPrivateKeyViewModel.cs" />
     <Compile Include="UI\ViewModels\OptionsViewModel.cs" />
+    <Compile Include="UI\Views\Accounts\ViewContractView.xaml.cs">
+      <DependentUpon>ViewContractView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Views\Accounts\ViewPrivateKeyView.xaml.cs">
       <DependentUpon>ViewPrivateKeyView.xaml</DependentUpon>
     </Compile>
@@ -514,12 +518,6 @@
       <DependentUpon>TransferDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\TxOutListBoxItem.cs" />
-    <Compile Include="UI\OldWinForms\ViewContractDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\OldWinForms\ViewContractDialog.Designer.cs">
-      <DependentUpon>ViewContractDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\OldWinForms\VotingDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -781,16 +779,6 @@
       <DependentUpon>TransferDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\ViewContractDialog.es-ES.resx">
-      <DependentUpon>ViewContractDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\ViewContractDialog.resx">
-      <DependentUpon>ViewContractDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\ViewContractDialog.zh-Hans.resx">
-      <DependentUpon>ViewContractDialog.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\VotingDialog.es-ES.resx">
       <DependentUpon>VotingDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -879,6 +867,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="UI\Views\Accounts\ViewContractView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\Views\Accounts\ViewPrivateKeyView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

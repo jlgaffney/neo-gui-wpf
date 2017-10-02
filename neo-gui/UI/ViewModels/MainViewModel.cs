@@ -616,7 +616,7 @@ namespace Neo.UI.ViewModels
             var latestVersion = VersionHelper.LatestVersion;
             var currentVersion = VersionHelper.CurrentVersion;
 
-            if (latestVersion <= currentVersion) return;
+            if (latestVersion == null || latestVersion <= currentVersion) return;
             
             this.NewVersionLabel = $"{Strings.DownloadNewVersion}: {latestVersion}";
             this.NewVersionVisible = true;
@@ -1278,10 +1278,9 @@ namespace Neo.UI.ViewModels
             if (this.SelectedAccount == null || this.SelectedAccount.Contract == null) return;
 
             var contract = this.SelectedAccount.Contract;
-            using (var dialog = new ViewContractDialog(contract))
-            {
-                dialog.ShowDialog();
-            }
+
+            var view = new ViewContractView(contract);
+            view.ShowDialog();
         }
 
         private void ShowVotingDialog()

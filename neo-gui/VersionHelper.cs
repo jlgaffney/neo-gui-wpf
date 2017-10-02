@@ -88,7 +88,11 @@ namespace Neo
 
             if (UpdateXmlDocument == null) return false;
 
-            var latestVersionStr = LatestVersion.ToString();
+            var latestVersion = LatestVersion;
+
+            if (latestVersion == null) return false;
+
+            var latestVersionStr = latestVersion.ToString();
 
             var updateElement = UpdateXmlDocument.Element("update");
 

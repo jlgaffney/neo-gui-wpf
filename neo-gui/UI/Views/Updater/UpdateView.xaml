@@ -29,7 +29,7 @@
 
         <GroupBox Grid.Row="1" Header="Change logs">
             <TextBox Text="{Binding Changes, Mode=OneWay}" IsReadOnly="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" />
+                HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" />
         </GroupBox>
 
         <ProgressBar Name="progressBar1" Grid.Row="2" HorizontalAlignment="Stretch" Height="24" Margin="0 8" />
