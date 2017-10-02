@@ -3,7 +3,7 @@ using System.Windows.Controls;
 
 using Neo.UI.ViewModels.Dialogs;
 
-namespace Neo.UI.Views.Updater
+namespace Neo.UI.Views.Dialogs
 {
     public partial class CreateWalletView
     {

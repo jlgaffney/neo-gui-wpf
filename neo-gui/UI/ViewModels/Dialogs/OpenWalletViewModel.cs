@@ -4,16 +4,17 @@ using System.Windows.Input;
 using Neo.UI.Controls;
 using Neo.UI.Messages;
 using Neo.UI.MVVM;
+using Neo.UI.Views.Dialogs;
 
 namespace Neo.UI.ViewModels.Dialogs
 {
-    public class CreateWalletViewModel : ViewModelBase
+    public class OpenWalletViewModel : ViewModelBase
     {
-        private NeoWindow view;
+        private OpenWalletView view;
 
         private string walletPath;
         private string password;
-        private string reEnteredPassword;
+        private bool repairMode;
 
         public string WalletPath
         {
@@ -31,17 +32,24 @@ namespace Neo.UI.ViewModels.Dialogs
             }
         }
 
+        public bool RepairMode
+        {
+            get { return this.repairMode; }
+            set
+            {
+                if (this.repairMode == value) return;
+
+                this.repairMode = value;
+
+                NotifyPropertyChanged();
+            }
+        }
+
         public bool ConfirmEnabled
         {
             get
             {
-                if (string.IsNullOrEmpty(this.WalletPath) || string.IsNullOrEmpty(this.password) || string.IsNullOrEmpty(this.reEnteredPassword))
-                {
-                    return false;
-                }
-
-                // Check user re-entered password
-                if (this.password != this.reEnteredPassword)
+                if (string.IsNullOrEmpty(this.WalletPath) || string.IsNullOrEmpty(this.password))
                 {
                     return false;
                 }
@@ -56,7 +64,7 @@ namespace Neo.UI.ViewModels.Dialogs
 
         public override void OnViewAttached(object attachedView)
         {
-            this.view = attachedView as NeoWindow;
+            this.view = attachedView as OpenWalletView;
         }
 
         public void UpdatePassword(string updatedPassword)
@@ -67,31 +75,23 @@ namespace Neo.UI.ViewModels.Dialogs
             NotifyPropertyChanged(nameof(this.ConfirmEnabled));
         }
 
-        public void UpdateReEnteredPassword(string updatedReEnteredPassword)
-        {
-            this.reEnteredPassword = updatedReEnteredPassword;
-
-            // Update dependent property
-            NotifyPropertyChanged(nameof(this.ConfirmEnabled));
-        }
-
         private void GetWalletPath()
         {
-            var saveFileDialog = new SaveFileDialog
+            var openFileDialog = new OpenFileDialog
             {
                 DefaultExt = "db3",
                 Filter = "Wallet File|*.db3"
             };
 
-            if (saveFileDialog.ShowDialog() == true)
+            if (openFileDialog.ShowDialog() == true)
             {
-                this.WalletPath = saveFileDialog.FileName;
+                this.WalletPath = openFileDialog.FileName;
             }
         }
 
         private void Confirm()
         {
-            EventAggregator.Current.Publish(new CreateWalletMessage(this.WalletPath, this.password));
+            EventAggregator.Current.Publish(new OpenWalletMessage(this.WalletPath, this.password, this.RepairMode));
 
             this.view?.Close();
         }

@@ -28,10 +28,11 @@ using Neo.Implementations.Wallets.EntityFramework;
 using Neo.IO;
 using Neo.Properties;
 using Neo.SmartContract;
-using Neo.UI.Controls;
 using Neo.UI.Messages;
 using Neo.UI.Models;
 using Neo.UI.MVVM;
+using Neo.UI.Views;
+using Neo.UI.Views.Dialogs;
 using Neo.UI.Views.Updater;
 using Neo.VM;
 using Neo.Wallets;
@@ -39,7 +40,8 @@ using Neo.Wallets;
 namespace Neo.UI.ViewModels
 {
     public class MainViewModel : ViewModelBase,
-        IHandle<CreateWalletMessage>
+        IHandle<CreateWalletMessage>,
+        IHandle<OpenWalletMessage>
     {
         private static readonly UInt160 RecycleScriptHash = new[] { (byte)OpCode.PUSHT }.ToScriptHash();
 
@@ -97,7 +99,7 @@ namespace Neo.UI.ViewModels
 
         public AccountItem SelectedAccount
         {
-            get { return this.selectedAccount; }
+            get => this.selectedAccount;
             set
             {
                 if (this.selectedAccount == value) return;
@@ -134,7 +136,7 @@ namespace Neo.UI.ViewModels
 
         public TransactionItem SelectedTransaction
         {
-            get { return this.selectedTransaction; }
+            get => this.selectedTransaction;
             set
             {
                 if (this.selectedTransaction == value) return;
@@ -231,49 +233,49 @@ namespace Neo.UI.ViewModels
 
         #region Tool Strip Menu Commands
 
-        public ICommand CreateWalletCommand => new RelayCommand(this.CreateWallet);
+        public ICommand CreateWalletCommand => new RelayCommand(CreateWallet);
 
-        public ICommand OpenWalletCommand => new RelayCommand(this.OpenWallet);
+        public ICommand OpenWalletCommand => new RelayCommand(OpenWallet);
 
         public ICommand CloseWalletCommand => new RelayCommand(this.CloseWallet);
 
-        public ICommand ChangePasswordCommand => new RelayCommand(this.ChangePassword);
+        public ICommand ChangePasswordCommand => new RelayCommand(ChangePassword);
 
         public ICommand RebuildIndexCommand => new RelayCommand(this.RebuildIndex);
 
         public ICommand RestoreAccountsCommand => new RelayCommand(this.RestoreAccounts);
 
-        public ICommand ExitCommand => new RelayCommand(this.Exit);
+        public ICommand ExitCommand => new RelayCommand(Exit);
 
-        public ICommand TransferCommand => new RelayCommand(this.Transfer);
+        public ICommand TransferCommand => new RelayCommand(Transfer);
 
-        public ICommand ShowTransactionDialogCommand => new RelayCommand(this.ShowTransactionDialog);
+        public ICommand ShowTransactionDialogCommand => new RelayCommand(ShowTransactionDialog);
         
-        public ICommand ShowSigningDialogCommand => new RelayCommand(this.ShowSigningDialog);
+        public ICommand ShowSigningDialogCommand => new RelayCommand(ShowSigningDialog);
 
-        public ICommand ClaimCommand => new RelayCommand(this.Claim);
+        public ICommand ClaimCommand => new RelayCommand(Claim);
 
-        public ICommand RequestCertificateCommand => new RelayCommand(this.RequestCertificate);
+        public ICommand RequestCertificateCommand => new RelayCommand(RequestCertificate);
 
-        public ICommand RegisterAssetCommand => new RelayCommand(this.RegisterAsset);
+        public ICommand RegisterAssetCommand => new RelayCommand(RegisterAsset);
 
-        public ICommand DistributeAssetCommand => new RelayCommand(this.DistributeAsset);
+        public ICommand DistributeAssetCommand => new RelayCommand(DistributeAsset);
 
-        public ICommand DeployContractCommand => new RelayCommand(this.DeployContract);
+        public ICommand DeployContractCommand => new RelayCommand(DeployContract);
 
-        public ICommand InvokeContractCommand => new RelayCommand(this.InvokeContract);
+        public ICommand InvokeContractCommand => new RelayCommand(InvokeContract);
 
-        public ICommand ShowElectionDialogCommand => new RelayCommand(this.ShowElectionDialog);
+        public ICommand ShowElectionDialogCommand => new RelayCommand(ShowElectionDialog);
 
-        public ICommand ShowOptionsDialogCommand => new RelayCommand(this.ShowOptionsDialog);
+        public ICommand ShowOptionsDialogCommand => new RelayCommand(ShowOptionsDialog);
 
-        public ICommand CheckForHelpCommand => new RelayCommand(this.CheckForHelp);
+        public ICommand CheckForHelpCommand => new RelayCommand(CheckForHelp);
 
-        public ICommand ShowOfficialWebsiteCommand => new RelayCommand(this.ShowOfficialWebsite);
+        public ICommand ShowOfficialWebsiteCommand => new RelayCommand(ShowOfficialWebsite);
 
-        public ICommand ShowDeveloperToolsCommand => new RelayCommand(this.ShowDeveloperTools);
+        public ICommand ShowDeveloperToolsCommand => new RelayCommand(ShowDeveloperTools);
 
-        public ICommand AboutNEOCommand => new RelayCommand(this.ShowAboutNEODialog);
+        public ICommand AboutNEOCommand => new RelayCommand(ShowAboutNEODialog);
 
         public ICommand ShowUpdateDialogCommand => new RelayCommand(this.ShowUpdateDialog);
 
@@ -348,10 +350,6 @@ namespace Neo.UI.ViewModels
         }
 
         #endregion New Version Properties
-
-        public override void OnViewAttached(NeoWindow attachedView)
-        {            
-        }
 
         public AccountItem GetAccount(string address)
         {
@@ -886,49 +884,51 @@ namespace Neo.UI.ViewModels
             Settings.Default.Save();
         }
 
+        public void Handle(OpenWalletMessage message)
+        {
+            if (UserWallet.GetVersion(message.WalletPath) < Version.Parse("1.3.5"))
+            {
+                if (MessageBox.Show(Strings.MigrateWalletMessage, Strings.MigrateWalletCaption,
+                    MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes)
+                        != MessageBoxResult.Yes) return;
+
+                var path_old = Path.ChangeExtension(message.WalletPath, ".old.db3");
+                var path_new = Path.ChangeExtension(message.WalletPath, ".new.db3");
+                UserWallet.Migrate(message.WalletPath, path_new);
+                File.Move(message.WalletPath, path_old);
+                File.Move(path_new, message.WalletPath);
+                MessageBox.Show($"{Strings.MigrateWalletSucceedMessage}\n{path_old}");
+            }
+            UserWallet wallet;
+            try
+            {
+                wallet = UserWallet.Open(message.WalletPath, message.Password);
+            }
+            catch (CryptographicException)
+            {
+                MessageBox.Show(Strings.PasswordIncorrect);
+                return;
+            }
+            if (message.RepairMode) wallet.Rebuild();
+            ChangeWallet(wallet);
+            Settings.Default.LastWalletPath = message.WalletPath;
+            Settings.Default.Save();
+        }
+
         #endregion Message Handlers
 
         #region Main Menu Command Methods
 
-        private void CreateWallet()
+        private static void CreateWallet()
         {
             var view = new CreateWalletView();
             view.ShowDialog();
         }
 
-        private void OpenWallet()
+        private static void OpenWallet()
         {
-            using (var dialog = new OpenWalletDialog())
-            {
-                if (dialog.ShowDialog() != DialogResult.OK) return;
-                if (UserWallet.GetVersion(dialog.WalletPath) < Version.Parse("1.3.5"))
-                {
-                    if (MessageBox.Show(Strings.MigrateWalletMessage, Strings.MigrateWalletCaption,
-                        MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes)
-                            != MessageBoxResult.Yes) return;
-
-                    var path_old = Path.ChangeExtension(dialog.WalletPath, ".old.db3");
-                    var path_new = Path.ChangeExtension(dialog.WalletPath, ".new.db3");
-                    UserWallet.Migrate(dialog.WalletPath, path_new);
-                    File.Move(dialog.WalletPath, path_old);
-                    File.Move(path_new, dialog.WalletPath);
-                    MessageBox.Show($"{Strings.MigrateWalletSucceedMessage}\n{path_old}");
-                }
-                UserWallet wallet;
-                try
-                {
-                    wallet = UserWallet.Open(dialog.WalletPath, dialog.Password);
-                }
-                catch (CryptographicException)
-                {
-                    MessageBox.Show(Strings.PasswordIncorrect);
-                    return;
-                }
-                if (dialog.RepairMode) wallet.Rebuild();
-                ChangeWallet(wallet);
-                Settings.Default.LastWalletPath = dialog.WalletPath;
-                Settings.Default.Save();
-            }
+            var view = new OpenWalletView();
+            view.ShowDialog();
         }
         
         public void CloseWallet()
@@ -936,16 +936,10 @@ namespace Neo.UI.ViewModels
             this.ChangeWallet(null);
         }
 
-        private void ChangePassword()
+        private static void ChangePassword()
         {
-            using (var dialog = new ChangePasswordDialog())
-            {
-                if (dialog.ShowDialog() != DialogResult.OK) return;
-                if (App.CurrentWallet.ChangePassword(dialog.OldPassword, dialog.NewPassword))
-                    MessageBox.Show(Strings.ChangePasswordSuccessful);
-                else
-                    MessageBox.Show(Strings.PasswordIncorrect);
-            }
+            var view = new ChangePasswordView();
+            view.ShowDialog();
         }
 
         private void RebuildIndex()
@@ -968,12 +962,12 @@ namespace Neo.UI.ViewModels
             }
         }
 
-        private void Exit()
+        private static void Exit()
         {
             EventAggregator.Current.Publish(new CloseWindowMessage());
         }
 
-        private void Transfer()
+        private static void Transfer()
         {
             Transaction tx;
             using (var dialog = new TransferDialog())
@@ -992,7 +986,7 @@ namespace Neo.UI.ViewModels
             Helper.SignAndShowInformation(tx);
         }
 
-        private void ShowTransactionDialog()
+        private static void ShowTransactionDialog()
         {
             using (var form = new TradeForm())
             {
@@ -1000,7 +994,7 @@ namespace Neo.UI.ViewModels
             }
         }
 
-        private void ShowSigningDialog()
+        private static void ShowSigningDialog()
         {
             using (var dialog = new SigningDialog())
             {
@@ -1008,12 +1002,12 @@ namespace Neo.UI.ViewModels
             }
         }
 
-        private void Claim()
+        private static void Claim()
         {
-            Helper.ShowForm<ClaimForm>();
+            Helper.Show<ClaimView>();
         }
 
-        private void RequestCertificate()
+        private static void RequestCertificate()
         {
             using (var wizard = new CertificateRequestWizard())
             {
@@ -1021,7 +1015,7 @@ namespace Neo.UI.ViewModels
             }
         }
 
-        private void RegisterAsset()
+        private static void RegisterAsset()
         {
             InvocationTransaction tx;
             using (var dialog = new AssetRegisterDialog())
@@ -1037,7 +1031,7 @@ namespace Neo.UI.ViewModels
             Helper.SignAndShowInformation(tx);
         }
 
-        private void DistributeAsset()
+        private static void DistributeAsset()
         {
             using (var dialog = new IssueDialog())
             {
@@ -1046,7 +1040,7 @@ namespace Neo.UI.ViewModels
             }
         }
 
-        private void DeployContract()
+        private static void DeployContract()
         {
             InvocationTransaction tx;
             using (var dialog = new DeployContractDialog())
@@ -1062,7 +1056,7 @@ namespace Neo.UI.ViewModels
             Helper.SignAndShowInformation(tx);
         }
 
-        private void InvokeContract()
+        private static void InvokeContract()
         {
             using (var dialog = new InvokeContractDialog())
             {
@@ -1071,7 +1065,7 @@ namespace Neo.UI.ViewModels
             }
         }
 
-        private void ShowElectionDialog()
+        private static void ShowElectionDialog()
         {
             InvocationTransaction tx;
             using (var dialog = new ElectionDialog())
@@ -1087,30 +1081,28 @@ namespace Neo.UI.ViewModels
             Helper.SignAndShowInformation(tx);
         }
 
-        private void ShowOptionsDialog()
+        private static void ShowOptionsDialog()
         {
-            using (var dialog = new OptionsDialog())
-            {
-                dialog.ShowDialog();
-            }
+            var view = new OptionsView();
+            view.ShowDialog();
         }
 
-        private void CheckForHelp()
+        private static void CheckForHelp()
         {
             // TODO Implement
         }
 
-        private void ShowOfficialWebsite()
+        private static void ShowOfficialWebsite()
         {
             Process.Start("https://neo.org/");
         }
 
-        private void ShowDeveloperTools()
+        private static void ShowDeveloperTools()
         {
             Helper.ShowForm<DeveloperToolsForm>();
         }
 
-        private void ShowAboutNEODialog()
+        private static void ShowAboutNEODialog()
         {
             MessageBox.Show($"{Strings.AboutMessage} {Strings.AboutVersion}{Assembly.GetExecutingAssembly().GetName().Version}", Strings.About);
         }
@@ -1176,7 +1168,7 @@ namespace Neo.UI.ViewModels
             {
                 while (true)
                 {
-                    string address = reader.ReadLine();
+                    var address = reader.ReadLine();
                     if (address == null) break;
                     address = address.Trim();
                     if (string.IsNullOrEmpty(address)) continue;

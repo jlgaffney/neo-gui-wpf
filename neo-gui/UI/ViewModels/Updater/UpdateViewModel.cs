@@ -74,10 +74,6 @@ namespace Neo.UI.ViewModels.Updater
 
         public ICommand UpdateCommand => new RelayCommand(this.Update);
 
-        public override void OnViewAttached(NeoWindow attachedView)
-        {
-        }
-
         private void GoToOfficialWebsite()
         {
             Process.Start("https://neo.org/");

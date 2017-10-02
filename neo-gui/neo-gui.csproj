@@ -313,6 +313,7 @@
     </Compile>
     <Compile Include="UI\AssetDescriptor.cs" />
     <Compile Include="UI\Messages\CloseWindowMessage.cs" />
+    <Compile Include="UI\Messages\OpenWalletMessage.cs" />
     <Compile Include="UI\Messages\CreateWalletMessage.cs" />
     <Compile Include="UI\Models\AccountItem.cs" />
     <Compile Include="UI\Models\AssetItem.cs" />
@@ -322,10 +323,26 @@
     <Compile Include="UI\MVVM\IHandle.cs" />
     <Compile Include="UI\MVVM\RelayCommand.cs" />
     <Compile Include="UI\MVVM\ViewModelBase.cs" />
+    <Compile Include="UI\ViewModels\ClaimViewModel.cs" />
+    <Compile Include="UI\ViewModels\Dialogs\ChangePasswordViewModel.cs" />
+    <Compile Include="UI\ViewModels\OptionsViewModel.cs" />
+    <Compile Include="UI\Views\Dialogs\ChangePasswordView.xaml.cs">
+      <DependentUpon>ChangePasswordView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Views\OptionsView.xaml.cs">
+      <DependentUpon>OptionsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Views\ClaimView.xaml.cs">
+      <DependentUpon>ClaimView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\ViewModels\Dialogs\CreateWalletViewModel.cs" />
+    <Compile Include="UI\ViewModels\Dialogs\OpenWalletViewModel.cs" />
     <Compile Include="UI\ViewModels\Updater\UpdateViewModel.cs" />
     <Compile Include="UI\Views\Dialogs\CreateWalletView.xaml.cs">
       <DependentUpon>CreateWalletView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Views\Dialogs\OpenWalletView.xaml.cs">
+      <DependentUpon>OpenWalletView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
@@ -347,18 +364,6 @@
     </Compile>
     <Compile Include="UI\OldWinForms\CertificateRequestWizard.Designer.cs">
       <DependentUpon>CertificateRequestWizard.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\OldWinForms\ChangePasswordDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\OldWinForms\ChangePasswordDialog.Designer.cs">
-      <DependentUpon>ChangePasswordDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\OldWinForms\ClaimForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\OldWinForms\ClaimForm.Designer.cs">
-      <DependentUpon>ClaimForm.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\OldWinForms\CreateLockAccountDialog.cs">
       <SubType>Form</SubType>
@@ -413,12 +418,6 @@
     </Compile>
     <Compile Include="UI\OldWinForms\IssueDialog.Designer.cs">
       <DependentUpon>IssueDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\OldWinForms\OptionsDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\OldWinForms\OptionsDialog.Designer.cs">
-      <DependentUpon>OptionsDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\OldWinForms\ParametersEditor.cs">
       <SubType>Form</SubType>
@@ -490,12 +489,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UI\OldWinForms\OpenWalletDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\OldWinForms\OpenWalletDialog.designer.cs">
-      <DependentUpon>OpenWalletDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\OldWinForms\SelectCertificateDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -594,26 +587,6 @@
     <EmbeddedResource Include="UI\OldWinForms\CertificateRequestWizard.zh-Hans.resx">
       <DependentUpon>CertificateRequestWizard.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\ChangePasswordDialog.es-ES.resx">
-      <DependentUpon>ChangePasswordDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\ChangePasswordDialog.resx">
-      <DependentUpon>ChangePasswordDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\ChangePasswordDialog.zh-Hans.resx">
-      <DependentUpon>ChangePasswordDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\ClaimForm.es-ES.resx">
-      <DependentUpon>ClaimForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\ClaimForm.resx">
-      <DependentUpon>ClaimForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\ClaimForm.zh-Hans.resx">
-      <DependentUpon>ClaimForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\ContractDetailsDialog.es-ES.resx">
       <DependentUpon>ContractDetailsDialog.cs</DependentUpon>
@@ -727,25 +700,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\IssueDialog.zh-Hans.resx">
       <DependentUpon>IssueDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\OpenWalletDialog.es-ES.resx">
-      <DependentUpon>OpenWalletDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\OpenWalletDialog.resx">
-      <DependentUpon>OpenWalletDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\OpenWalletDialog.zh-Hans.resx">
-      <DependentUpon>OpenWalletDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\OptionsDialog.es-ES.resx">
-      <DependentUpon>OptionsDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\OptionsDialog.resx">
-      <DependentUpon>OptionsDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\OptionsDialog.zh-Hans.resx">
-      <DependentUpon>OptionsDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\ParametersEditor.es-ES.resx">
       <DependentUpon>ParametersEditor.cs</DependentUpon>
@@ -933,9 +887,25 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="UI\Views\Dialogs\ChangePasswordView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Views\OptionsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Views\ClaimView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\Views\Dialogs\CreateWalletView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Views\Dialogs\OpenWalletView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Views\MainView.xaml">
       <Generator>MSBuild:Compile</Generator>

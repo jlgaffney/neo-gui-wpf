@@ -1,15 +1,18 @@
 ﻿namespace Neo.UI.Messages
 {
-    public class CreateWalletMessage
+    public class OpenWalletMessage
     {
-        public CreateWalletMessage(string walletPath, string password)
+        public OpenWalletMessage(string walletPath, string password, bool repairMode)
         {
             this.WalletPath = walletPath;
             this.Password = password;
+            this.RepairMode = repairMode;
         }
 
         public string WalletPath { get; }
 
         public string Password { get; }
+
+        public bool RepairMode { get; }
     }
 }
