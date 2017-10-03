@@ -101,7 +101,7 @@
                         <ContextMenu>
                             <MenuItem Header="Create _New Address" Command="{Binding CreateNewAddressCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
                             <MenuItem Header="_Import" IsEnabled="{Binding AccountMenuItemsEnabled}">
-                                <MenuItem Header="Import from _WIF…" Command="{Binding ImportFromWIFCommand}" />
+                                <MenuItem Header="Import from _WIF…" Command="{Binding ImportWifPrivateKeyCommand}" />
                                 <MenuItem Header="Import from _Certificate…" Command="{Binding ImportFromCertificateCommand}" />
 
                                 <Separator />

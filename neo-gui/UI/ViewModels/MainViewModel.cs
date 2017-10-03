@@ -288,7 +288,7 @@ namespace Neo.UI.ViewModels
          */
         public ICommand CreateNewAddressCommand => new RelayCommand(this.CreateNewKey);
                             
-        public ICommand ImportFromWIFCommand => new RelayCommand(this.ImportWIFPrivateKey);
+        public ICommand ImportWifPrivateKeyCommand => new RelayCommand(this.ImportWifPrivateKey);
         public ICommand ImportFromCertificateCommand => new RelayCommand(this.ImportCertificate);
 
         public ICommand ImportWatchOnlyAddressCommand => new RelayCommand(this.ImportWatchOnlyAddress);
@@ -1162,27 +1162,37 @@ namespace Neo.UI.ViewModels
             }
         }
 
-        private void ImportWIFPrivateKey()
+        private void ImportWifPrivateKey()
         {
-            using (var dialog = new ImportPrivateKeyDialog())
+            var view = new ImportPrivateKeyView();
+            view.ShowDialog();
+
+            var wifStrings = view.WifStrings;
+
+            if (wifStrings == null) return;
+
+            var wifStringList = wifStrings.ToList();
+
+            if (!wifStringList.Any()) return;
+
+            // Import private keys
+            this.SelectedAccount = null;
+
+            foreach (var wif in wifStringList)
             {
-                if (dialog.ShowDialog() != DialogResult.OK) return;
-                this.SelectedAccount = null;
-                foreach (var wif in dialog.WifStrings)
+                KeyPair key;
+                try
                 {
-                    KeyPair key;
-                    try
-                    {
-                        key = App.CurrentWallet.Import(wif);
-                    }
-                    catch (FormatException)
-                    {
-                        continue;
-                    }
-                    foreach (var contract in App.CurrentWallet.GetContracts(key.PublicKeyHash))
-                    {
-                        AddContract(contract, true);
-                    }
+                    key = App.CurrentWallet.Import(wif);
+                }
+                catch (FormatException)
+                {
+                    // Skip WIF line
+                    continue;
+                }
+                foreach (var contract in App.CurrentWallet.GetContracts(key.PublicKeyHash))
+                {
+                    AddContract(contract, true);
                 }
             }
         }

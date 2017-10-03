@@ -296,6 +296,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="BigDecimal.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="PeerState.cs" />
     <Compile Include="RootCertificate.cs" />
     <Compile Include="Cryptography\CertificateQueryResult.cs" />
@@ -329,6 +330,7 @@
     <Compile Include="UI\MVVM\IHandle.cs" />
     <Compile Include="UI\MVVM\RelayCommand.cs" />
     <Compile Include="UI\MVVM\ViewModelBase.cs" />
+    <Compile Include="UI\ViewModels\Accounts\ImportPrivateKeyViewModel.cs" />
     <Compile Include="UI\ViewModels\Accounts\ViewContractViewModel.cs" />
     <Compile Include="UI\ViewModels\Contracts\InvokeContractViewModel.cs" />
     <Compile Include="UI\ViewModels\Development\ContractParametersViewModel.cs" />
@@ -340,6 +342,9 @@
     <Compile Include="UI\ViewModels\OptionsViewModel.cs" />
     <Compile Include="UI\Views\Accounts\ViewContractView.xaml.cs">
       <DependentUpon>ViewContractView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Views\Accounts\ImportPrivateKeyView.xaml.cs">
+      <DependentUpon>ImportPrivateKeyView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Views\Accounts\ViewPrivateKeyView.xaml.cs">
       <DependentUpon>ViewPrivateKeyView.xaml</DependentUpon>
@@ -421,12 +426,6 @@
     </Compile>
     <Compile Include="UI\OldWinForms\ImportCustomContractDialog.Designer.cs">
       <DependentUpon>ImportCustomContractDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\OldWinForms\ImportPrivateKeyDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\OldWinForms\ImportPrivateKeyDialog.designer.cs">
-      <DependentUpon>ImportPrivateKeyDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\OldWinForms\InputBox.cs">
       <SubType>Form</SubType>
@@ -631,15 +630,6 @@
     <EmbeddedResource Include="UI\OldWinForms\ImportCustomContractDialog.zh-Hans.resx">
       <DependentUpon>ImportCustomContractDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\ImportPrivateKeyDialog.es-ES.resx">
-      <DependentUpon>ImportPrivateKeyDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\ImportPrivateKeyDialog.resx">
-      <DependentUpon>ImportPrivateKeyDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\ImportPrivateKeyDialog.zh-Hans.resx">
-      <DependentUpon>ImportPrivateKeyDialog.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\InformationBox.es-ES.resx">
       <DependentUpon>InformationBox.cs</DependentUpon>
     </EmbeddedResource>
@@ -840,6 +830,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Views\Accounts\ViewContractView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Views\Accounts\ImportPrivateKeyView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

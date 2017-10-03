@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Input;
+using Neo.Extensions;
 using Neo.Properties;
 using Neo.UI.Controls;
 using Neo.UI.MVVM;
@@ -23,28 +25,13 @@ namespace Neo.UI.ViewModels
             }
         }
 
-        private string[] NEP5ContractsLines
+        private IEnumerable<string> NEP5ContractsLines
         {
             get
             {
                 if (string.IsNullOrEmpty(this.NEP5ContractsList)) return new string[0];
 
-                var lines = this.NEP5ContractsList.Split('\n');
-
-                // Remove \r character from end of line if present
-                for (int i = 0; i < lines.Length; i++)
-                {
-                    var line = lines[i];
-
-                    if (line[line.Length - 1] == '\r')
-                    {
-                        line = line.Substring(0, line.Length - 1);
-                    }
-
-                    lines[i] = line;
-                }
-
-                return lines;
+                return this.NEP5ContractsList.ToLines();
             }
         }
 
