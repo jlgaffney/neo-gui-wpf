@@ -330,8 +330,10 @@
     <Compile Include="UI\MVVM\RelayCommand.cs" />
     <Compile Include="UI\MVVM\ViewModelBase.cs" />
     <Compile Include="UI\ViewModels\Accounts\ViewContractViewModel.cs" />
+    <Compile Include="UI\ViewModels\Contracts\InvokeContractViewModel.cs" />
     <Compile Include="UI\ViewModels\Development\ContractParametersViewModel.cs" />
     <Compile Include="UI\ViewModels\Development\TransactionBuilderViewModel.cs" />
+    <Compile Include="UI\ViewModels\Voting\ElectionViewModel.cs" />
     <Compile Include="UI\ViewModels\Wallets\ClaimViewModel.cs" />
     <Compile Include="UI\ViewModels\Wallets\ChangePasswordViewModel.cs" />
     <Compile Include="UI\ViewModels\Accounts\ViewPrivateKeyViewModel.cs" />
@@ -342,6 +344,9 @@
     <Compile Include="UI\Views\Accounts\ViewPrivateKeyView.xaml.cs">
       <DependentUpon>ViewPrivateKeyView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Views\Contracts\InvokeContractView.xaml.cs">
+      <DependentUpon>InvokeContractView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Views\Development\TransactionBuilderView.xaml.cs">
       <DependentUpon>TransactionBuilderView.xaml</DependentUpon>
     </Compile>
@@ -350,6 +355,9 @@
     </Compile>
     <Compile Include="UI\Views\Development\DeveloperToolsView.xaml.cs">
       <DependentUpon>DeveloperToolsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Views\Voting\ElectionView.xaml.cs">
+      <DependentUpon>ElectionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Views\Wallets\ChangePasswordView.xaml.cs">
       <DependentUpon>ChangePasswordView.xaml</DependentUpon>
@@ -408,12 +416,6 @@
     <Compile Include="UI\OldWinForms\DeployContractDialog.Designer.cs">
       <DependentUpon>DeployContractDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\OldWinForms\ElectionDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\OldWinForms\ElectionDialog.Designer.cs">
-      <DependentUpon>ElectionDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\OldWinForms\ImportCustomContractDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -431,12 +433,6 @@
     </Compile>
     <Compile Include="UI\OldWinForms\InputBox.Designer.cs">
       <DependentUpon>InputBox.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\OldWinForms\InvokeContractDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\OldWinForms\InvokeContractDialog.Designer.cs">
-      <DependentUpon>InvokeContractDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\OldWinForms\IssueDialog.cs">
       <SubType>Form</SubType>
@@ -626,16 +622,6 @@
     <EmbeddedResource Include="UI\OldWinForms\DeployContractDialog.zh-Hans.resx">
       <DependentUpon>DeployContractDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\ElectionDialog.es-ES.resx">
-      <DependentUpon>ElectionDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\ElectionDialog.resx">
-      <DependentUpon>ElectionDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\ElectionDialog.zh-Hans.resx">
-      <DependentUpon>ElectionDialog.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\ImportCustomContractDialog.es-ES.resx">
       <DependentUpon>ImportCustomContractDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -671,15 +657,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\InputBox.zh-Hans.resx">
       <DependentUpon>InputBox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\InvokeContractDialog.es-ES.resx">
-      <DependentUpon>InvokeContractDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\InvokeContractDialog.resx">
-      <DependentUpon>InvokeContractDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\InvokeContractDialog.zh-Hans.resx">
-      <DependentUpon>InvokeContractDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\IssueDialog.es-ES.resx">
       <DependentUpon>IssueDialog.cs</DependentUpon>
@@ -834,7 +811,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="logo.ico" />
-    <None Include="Resources\search.png" />
+    <Resource Include="Resources\search.png" />
     <None Include="Resources\add2.png" />
     <None Include="Resources\remove.png" />
     <None Include="Resources\add.png" />
@@ -870,6 +847,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\Views\Contracts\InvokeContractView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\Views\Development\TransactionBuilderView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -881,6 +862,10 @@
     <Page Include="UI\Views\Development\DeveloperToolsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Views\Voting\ElectionView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Views\Wallets\ChangePasswordView.xaml">
       <Generator>MSBuild:Compile</Generator>

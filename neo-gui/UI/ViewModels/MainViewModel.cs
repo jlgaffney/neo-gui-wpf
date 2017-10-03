@@ -32,8 +32,10 @@ using Neo.UI.Models;
 using Neo.UI.MVVM;
 using Neo.UI.Views;
 using Neo.UI.Views.Accounts;
+using Neo.UI.Views.Contracts;
 using Neo.UI.Views.Development;
 using Neo.UI.Views.Updater;
+using Neo.UI.Views.Voting;
 using Neo.UI.Views.Wallets;
 using Neo.VM;
 using Neo.Wallets;
@@ -275,7 +277,7 @@ namespace Neo.UI.ViewModels
 
         public ICommand AboutNeoCommand => new RelayCommand(ShowAboutNeoDialog);
 
-        public ICommand ShowUpdateDialogCommand => new RelayCommand(this.ShowUpdateDialog);
+        public ICommand ShowUpdateDialogCommand => new RelayCommand(ShowUpdateDialog);
 
         #endregion Tool Strip Menu Commands
 
@@ -998,21 +1000,25 @@ namespace Neo.UI.ViewModels
 
         private static void Transfer()
         {
-            Transaction tx;
+            Transaction transaction;
             using (var dialog = new TransferDialog())
             {
                 if (dialog.ShowDialog() != DialogResult.OK) return;
-                tx = dialog.GetTransaction();
+
+                transaction = dialog.GetTransaction();
             }
-            if (tx is InvocationTransaction itx)
+
+            if (transaction is InvocationTransaction itx)
             {
-                using (var dialog = new InvokeContractDialog(itx))
-                {
-                    if (dialog.ShowDialog() != DialogResult.OK) return;
-                    tx = dialog.GetTransaction();
-                }
+                var invokeContractView = new InvokeContractView(itx);
+                invokeContractView.ShowDialog();
+
+                transaction = invokeContractView.GetTransaction();
+
+                if (transaction == null) return;
             }
-            Helper.SignAndShowInformation(tx);
+
+            Helper.SignAndShowInformation(transaction);
         }
 
         private static void ShowTransactionDialog()
@@ -1046,18 +1052,21 @@ namespace Neo.UI.ViewModels
 
         private static void RegisterAsset()
         {
-            InvocationTransaction tx;
+            InvocationTransaction transactionResult;
             using (var dialog = new AssetRegisterDialog())
             {
                 if (dialog.ShowDialog() != DialogResult.OK) return;
-                tx = dialog.GetTransaction();
+                transactionResult = dialog.GetTransaction();
             }
-            using (var dialog = new InvokeContractDialog(tx))
-            {
-                if (dialog.ShowDialog() != DialogResult.OK) return;
-                tx = dialog.GetTransaction();
-            }
-            Helper.SignAndShowInformation(tx);
+
+            var invokeContractView = new InvokeContractView(transactionResult);
+            invokeContractView.ShowDialog();
+
+            transactionResult = invokeContractView.GetTransaction();
+
+            if (transactionResult == null) return;
+
+            Helper.SignAndShowInformation(transactionResult);
         }
 
         private static void DistributeAsset()
@@ -1071,43 +1080,46 @@ namespace Neo.UI.ViewModels
 
         private static void DeployContract()
         {
-            InvocationTransaction tx;
+            InvocationTransaction transactionResult;
             using (var dialog = new DeployContractDialog())
             {
                 if (dialog.ShowDialog() != DialogResult.OK) return;
-                tx = dialog.GetTransaction();
+                transactionResult = dialog.GetTransaction();
             }
-            using (var dialog = new InvokeContractDialog(tx))
-            {
-                if (dialog.ShowDialog() != DialogResult.OK) return;
-                tx = dialog.GetTransaction();
-            }
-            Helper.SignAndShowInformation(tx);
+
+            var invokeContractView = new InvokeContractView(transactionResult);
+            invokeContractView.ShowDialog();
+
+            transactionResult = invokeContractView.GetTransaction();
+
+            if (transactionResult == null) return;
+
+            Helper.SignAndShowInformation(transactionResult);
         }
 
         private static void InvokeContract()
         {
-            using (var dialog = new InvokeContractDialog())
-            {
-                if (dialog.ShowDialog() != DialogResult.OK) return;
-                Helper.SignAndShowInformation(dialog.GetTransaction());
-            }
+            var view = new Views.Contracts.InvokeContractView();
+            view.ShowDialog();
         }
 
         private static void ShowElectionDialog()
         {
-            InvocationTransaction tx;
-            using (var dialog = new ElectionDialog())
-            {
-                if (dialog.ShowDialog() != DialogResult.OK) return;
-                tx = dialog.GetTransaction();
-            }
-            using (var dialog = new InvokeContractDialog(tx))
-            {
-                if (dialog.ShowDialog() != DialogResult.OK) return;
-                tx = dialog.GetTransaction();
-            }
-            Helper.SignAndShowInformation(tx);
+            var electionView = new ElectionView();
+            electionView.ShowDialog();
+
+            var transactionResult = electionView.GetTransactionResult();
+
+            if (transactionResult == null) return;
+
+            var invokeContractView = new InvokeContractView(transactionResult);
+            invokeContractView.ShowDialog();
+
+            transactionResult = invokeContractView.GetTransaction();
+
+            if (transactionResult == null) return;
+
+            Helper.SignAndShowInformation(transactionResult);
         }
 
         private static void ShowOptionsDialog()
@@ -1264,7 +1276,7 @@ namespace Neo.UI.ViewModels
 
         private void ViewPrivateKey()
         {
-            if (this.SelectedAccount == null || this.SelectedAccount.Contract == null) return;
+            if (this.SelectedAccount?.Contract == null) return;
 
             var contract = this.SelectedAccount.Contract;
             var key = App.CurrentWallet.GetKeyByScriptHash(contract.ScriptHash);
@@ -1275,7 +1287,7 @@ namespace Neo.UI.ViewModels
 
         private void ViewContract()
         {
-            if (this.SelectedAccount == null || this.SelectedAccount.Contract == null) return;
+            if (this.SelectedAccount?.Contract == null) return;
 
             var contract = this.SelectedAccount.Contract;
 
@@ -1285,21 +1297,25 @@ namespace Neo.UI.ViewModels
 
         private void ShowVotingDialog()
         {
-            if (this.SelectedAccount == null || this.SelectedAccount.Contract == null) return;
+            if (this.SelectedAccount?.Contract == null) return;
 
-            InvocationTransaction tx;
             var contract = this.SelectedAccount.Contract;
+
+            InvocationTransaction transaction;
             using (var dialog = new VotingDialog(contract.ScriptHash))
             {
                 if (dialog.ShowDialog() != DialogResult.OK) return;
-                tx = dialog.GetTransaction();
+                transaction = dialog.GetTransaction();
             }
-            using (var dialog = new InvokeContractDialog(tx))
-            {
-                if (dialog.ShowDialog() != DialogResult.OK) return;
-                tx = dialog.GetTransaction();
-            }
-            Helper.SignAndShowInformation(tx);
+
+            var invokeContractView = new InvokeContractView(transaction);
+            invokeContractView.ShowDialog();
+
+            transaction = invokeContractView.GetTransaction();
+
+            if (transaction == null) return;
+            
+            Helper.SignAndShowInformation(transaction);
         }
 
         private void CopyAddressToClipboard()
@@ -1383,32 +1399,11 @@ namespace Neo.UI.ViewModels
 
         #endregion Transaction Menu Command Methods
         
-        private void ShowUpdateDialog()
+        private static void ShowUpdateDialog()
         {
             var dialog = new UpdateView();
 
             dialog.ShowDialog();
-        }
-
-        private void AccountList_DoubleClick()
-        {
-            if (this.SelectedAccount == null) return;
-            var url = string.Format(Settings.Default.Urls.AddressUrl, this.SelectedAccount.Address);
-            Process.Start(url);
-        }
-
-        private void AssetList_DoubleClick()
-        {
-            if (this.SelectedAsset == null) return;
-            var url = string.Format(Settings.Default.Urls.AssetUrl, this.SelectedAsset.Name.Substring(2));
-            Process.Start(url);
-        }
-
-        private void TransactionList_DoubleClick()
-        {
-            if (this.SelectedTransaction == null) return;
-            var url = string.Format(Settings.Default.Urls.TransactionUrl, this.SelectedTransaction.Id.Substring(2));
-            Process.Start(url);
         }
 
         private CertificateQueryResult GetCertificateQueryResult(AssetState asset)

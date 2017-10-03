@@ -88,7 +88,7 @@
         <TabControl Grid.Row="1">
             <!-- Account Tab -->
             <TabItem Header="Account">
-                <ListView ItemsSource="{Binding Accounts}" SelectedItem="{Binding SelectedAccount}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <ListView ItemsSource="{Binding Accounts}" SelectedItem="{Binding SelectedAccount}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MouseDoubleClick="AccountList_DoubleClick">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Address" Width="260" DisplayMemberBinding="{Binding Address}" />
@@ -131,7 +131,7 @@
 
             <!-- Asset Tab -->
             <TabItem Header="Asset">
-                <ListView ItemsSource="{Binding Assets}" SelectedItem="{Binding SelectedAsset}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <ListView ItemsSource="{Binding Assets}" SelectedItem="{Binding SelectedAsset}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MouseDoubleClick="AssetList_DoubleClick">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Asset" Width="120" DisplayMemberBinding="{Binding Asset}" />
@@ -152,7 +152,7 @@
 
             <!-- Transaction Tab -->
             <TabItem Header="Transaction History">
-                <ListView ItemsSource="{Binding Transactions}" SelectedItem="{Binding SelectedTransaction}">
+                <ListView ItemsSource="{Binding Transactions}" SelectedItem="{Binding SelectedTransaction}" MouseDoubleClick="TransactionList_DoubleClick">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Time" Width="80" DisplayMemberBinding="{Binding Time}" />
