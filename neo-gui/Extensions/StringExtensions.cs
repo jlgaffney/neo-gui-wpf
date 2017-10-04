@@ -1,4 +1,6 @@
-﻿namespace Neo.Extensions
+﻿using System;
+
+namespace Neo.Extensions
 {
     public static class StringExtensions
     {
@@ -22,6 +24,23 @@
             }
 
             return lines;
+        }
+
+        public static string ToMultiLineString(this string[] source)
+        {
+            var value = string.Empty;
+
+            for (int i = 0; i < source.Length; i++)
+            {
+                value += source[i];
+
+                if (i >= source.Length - 1) continue;
+
+                // Append new line characters
+                value += Environment.NewLine;
+            }
+
+            return value;
         }
     }
 }

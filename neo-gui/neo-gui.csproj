@@ -343,6 +343,7 @@
     <Compile Include="UI\ViewModels\Development\ContractParametersViewModel.cs" />
     <Compile Include="UI\ViewModels\Development\TransactionBuilderViewModel.cs" />
     <Compile Include="UI\ViewModels\Voting\ElectionViewModel.cs" />
+    <Compile Include="UI\ViewModels\Voting\VotingViewModel.cs" />
     <Compile Include="UI\ViewModels\Wallets\CertificateRequestViewModel.cs" />
     <Compile Include="UI\ViewModels\Wallets\ClaimViewModel.cs" />
     <Compile Include="UI\ViewModels\Wallets\ChangePasswordViewModel.cs" />
@@ -371,6 +372,9 @@
     </Compile>
     <Compile Include="UI\Views\Development\DeveloperToolsView.xaml.cs">
       <DependentUpon>DeveloperToolsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Views\Voting\VotingView.xaml.cs">
+      <DependentUpon>VotingView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Views\Voting\ElectionView.xaml.cs">
       <DependentUpon>ElectionView.xaml</DependentUpon>
@@ -504,12 +508,6 @@
       <DependentUpon>TransferDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\TxOutListBoxItem.cs" />
-    <Compile Include="UI\OldWinForms\VotingDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\OldWinForms\VotingDialog.Designer.cs">
-      <DependentUpon>VotingDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\ViewModels\MainViewModel.cs" />
     <Compile Include="UI\Views\Updater\UpdateView.xaml.cs">
       <DependentUpon>UpdateView.xaml</DependentUpon>
@@ -690,15 +688,6 @@
       <DependentUpon>TransferDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\VotingDialog.es-ES.resx">
-      <DependentUpon>VotingDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\VotingDialog.resx">
-      <DependentUpon>VotingDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\VotingDialog.zh-Hans.resx">
-      <DependentUpon>VotingDialog.cs</DependentUpon>
-    </EmbeddedResource>
     <None Include="config.testnet.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -821,6 +810,10 @@
     <Page Include="UI\Views\Development\DeveloperToolsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Views\Voting\VotingView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Views\Voting\ElectionView.xaml">
       <Generator>MSBuild:Compile</Generator>

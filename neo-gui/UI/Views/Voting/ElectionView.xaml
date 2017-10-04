@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:Neo.UI.Controls"
         xmlns:votingVm="clr-namespace:Neo.UI.ViewModels.Voting"
-        Title="Election" MinWidth="500" SizeToContent="WidthAndHeight" ResizeMode="NoResize">
+        Title="Election" Width="500" SizeToContent="Height" ResizeMode="NoResize">
     <controls:NeoWindow.DataContext>
         <votingVm:ElectionViewModel />
     </controls:NeoWindow.DataContext>

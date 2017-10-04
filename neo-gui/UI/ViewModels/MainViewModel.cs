@@ -1311,11 +1311,13 @@ namespace Neo.UI.ViewModels
             var contract = this.SelectedAccount.Contract;
 
             InvocationTransaction transaction;
-            using (var dialog = new VotingDialog(contract.ScriptHash))
-            {
-                if (dialog.ShowDialog() != DialogResult.OK) return;
-                transaction = dialog.GetTransaction();
-            }
+
+            var view = new VotingView(contract.ScriptHash);
+            view.ShowDialog();
+
+            transaction = view.GetTransaction();
+
+            if (transaction == null) return;
 
             var invokeContractView = new InvokeContractView(transaction);
             invokeContractView.ShowDialog();
