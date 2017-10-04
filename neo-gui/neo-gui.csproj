@@ -319,6 +319,12 @@
     <Compile Include="UI\Controls\Development\TransactionPropertyGrid.xaml.cs">
       <DependentUpon>TransactionPropertyGrid.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Dialogs\InformationBox.xaml.cs">
+      <DependentUpon>InformationBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialogs\InputBox.xaml.cs">
+      <DependentUpon>InputBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Messages\CloseWindowMessage.cs" />
     <Compile Include="UI\Messages\OpenWalletMessage.cs" />
     <Compile Include="UI\Messages\CreateWalletMessage.cs" />
@@ -805,6 +811,14 @@
     <Page Include="UI\Controls\Development\TransactionPropertyGrid.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Dialogs\InformationBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Dialogs\InputBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Views\Accounts\ViewContractView.xaml">
       <Generator>MSBuild:Compile</Generator>
