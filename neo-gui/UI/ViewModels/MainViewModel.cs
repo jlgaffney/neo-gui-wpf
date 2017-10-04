@@ -1044,10 +1044,8 @@ namespace Neo.UI.ViewModels
 
         private static void RequestCertificate()
         {
-            using (var wizard = new CertificateRequestWizard())
-            {
-                wizard.ShowDialog();
-            }
+            var view = new CertificateRequestView();
+            view.ShowDialog();
         }
 
         private static void RegisterAsset()

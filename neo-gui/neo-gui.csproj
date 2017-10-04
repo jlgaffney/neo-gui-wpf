@@ -332,10 +332,12 @@
     <Compile Include="UI\MVVM\ViewModelBase.cs" />
     <Compile Include="UI\ViewModels\Accounts\ImportPrivateKeyViewModel.cs" />
     <Compile Include="UI\ViewModels\Accounts\ViewContractViewModel.cs" />
+    <Compile Include="UI\ViewModels\Contracts\ContractDetailsViewModel.cs" />
     <Compile Include="UI\ViewModels\Contracts\InvokeContractViewModel.cs" />
     <Compile Include="UI\ViewModels\Development\ContractParametersViewModel.cs" />
     <Compile Include="UI\ViewModels\Development\TransactionBuilderViewModel.cs" />
     <Compile Include="UI\ViewModels\Voting\ElectionViewModel.cs" />
+    <Compile Include="UI\ViewModels\Wallets\CertificateRequestViewModel.cs" />
     <Compile Include="UI\ViewModels\Wallets\ClaimViewModel.cs" />
     <Compile Include="UI\ViewModels\Wallets\ChangePasswordViewModel.cs" />
     <Compile Include="UI\ViewModels\Accounts\ViewPrivateKeyViewModel.cs" />
@@ -348,6 +350,9 @@
     </Compile>
     <Compile Include="UI\Views\Accounts\ViewPrivateKeyView.xaml.cs">
       <DependentUpon>ViewPrivateKeyView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Views\Contracts\ContractDetailsView.xaml.cs">
+      <DependentUpon>ContractDetailsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Views\Contracts\InvokeContractView.xaml.cs">
       <DependentUpon>InvokeContractView.xaml</DependentUpon>
@@ -363,6 +368,9 @@
     </Compile>
     <Compile Include="UI\Views\Voting\ElectionView.xaml.cs">
       <DependentUpon>ElectionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Views\Wallets\CertificateRequestView.xaml.cs">
+      <DependentUpon>CertificateRequestView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Views\Wallets\ChangePasswordView.xaml.cs">
       <DependentUpon>ChangePasswordView.xaml</DependentUpon>
@@ -396,12 +404,6 @@
     </Compile>
     <Compile Include="UI\OldWinForms\BulkPayDialog.Designer.cs">
       <DependentUpon>BulkPayDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\OldWinForms\CertificateRequestWizard.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\OldWinForms\CertificateRequestWizard.Designer.cs">
-      <DependentUpon>CertificateRequestWizard.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\OldWinForms\CreateLockAccountDialog.cs">
       <SubType>Form</SubType>
@@ -479,12 +481,6 @@
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="UI\OldWinForms\ContractDetailsDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\OldWinForms\ContractDetailsDialog.Designer.cs">
-      <DependentUpon>ContractDetailsDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Helper.cs" />
     <Compile Include="UI\OldWinForms\InformationBox.cs">
@@ -572,25 +568,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\BulkPayDialog.zh-Hans.resx">
       <DependentUpon>BulkPayDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\CertificateRequestWizard.es-ES.resx">
-      <DependentUpon>CertificateRequestWizard.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\CertificateRequestWizard.resx">
-      <DependentUpon>CertificateRequestWizard.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\CertificateRequestWizard.zh-Hans.resx">
-      <DependentUpon>CertificateRequestWizard.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\ContractDetailsDialog.es-ES.resx">
-      <DependentUpon>ContractDetailsDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\ContractDetailsDialog.resx">
-      <DependentUpon>ContractDetailsDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\ContractDetailsDialog.zh-Hans.resx">
-      <DependentUpon>ContractDetailsDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\CreateLockAccountDialog.es-ES.resx">
       <DependentUpon>CreateLockAccountDialog.cs</DependentUpon>
@@ -841,6 +818,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\Views\Contracts\ContractDetailsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\Views\Contracts\InvokeContractView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -858,6 +839,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Views\Voting\ElectionView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Views\Wallets\CertificateRequestView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

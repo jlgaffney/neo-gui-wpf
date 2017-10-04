@@ -16,7 +16,7 @@ namespace Neo.UI.ViewModels.Wallets
             !string.IsNullOrEmpty(this.newPassword) &&
                 this.newPassword == this.reEnteredNewPassword;
 
-        public ICommand OkCommand => new RelayCommand(this.Ok);
+        public ICommand ChangePasswordCommand => new RelayCommand(this.ChangePassword);
 
         public ICommand CancelCommand => new RelayCommand(this.Cancel);
 
@@ -44,7 +44,7 @@ namespace Neo.UI.ViewModels.Wallets
             NotifyPropertyChanged(nameof(this.ChangePasswordEnabled));
         }
 
-        private void Ok()
+        private void ChangePassword()
         {
             // Check new password is not the same as old password
             if (this.oldPassword == this.newPassword)

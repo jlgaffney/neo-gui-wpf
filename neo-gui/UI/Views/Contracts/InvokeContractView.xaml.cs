@@ -5,7 +5,7 @@ using Neo.UI.ViewModels.Contracts;
 namespace Neo.UI.Views.Contracts
 {
     /// <summary>
-    /// Interaction logic for DeveloperToolsView.xaml
+    /// Interaction logic for InvokeContractView.xaml
     /// </summary>
     public partial class InvokeContractView
     {
