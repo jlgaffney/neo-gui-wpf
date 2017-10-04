@@ -27,6 +27,7 @@ using Neo.Implementations.Wallets.EntityFramework;
 using Neo.IO;
 using Neo.Properties;
 using Neo.SmartContract;
+using Neo.UI.Dialogs;
 using Neo.UI.Messages;
 using Neo.UI.Models;
 using Neo.UI.MVVM;

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Windows.Forms;
+using Neo.UI.Dialogs;
 
 namespace Neo.UI
 {

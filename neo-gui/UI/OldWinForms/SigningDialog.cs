@@ -3,6 +3,7 @@ using Neo.Properties;
 using Neo.SmartContract;
 using System;
 using System.Windows.Forms;
+using Neo.UI.Dialogs;
 
 namespace Neo.UI
 {

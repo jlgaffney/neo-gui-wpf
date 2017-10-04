@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using MessageBox = System.Windows.MessageBox;
 
 using Neo.UI.Controls;
+using Neo.UI.Dialogs;
 
 namespace Neo.UI
 {

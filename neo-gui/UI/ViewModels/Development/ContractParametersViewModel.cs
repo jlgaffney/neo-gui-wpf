@@ -6,6 +6,7 @@ using System.Windows.Input;
 using Neo.Network;
 using Neo.Properties;
 using Neo.SmartContract;
+using Neo.UI.Dialogs;
 using Neo.UI.MVVM;
 using Neo.Wallets;
 

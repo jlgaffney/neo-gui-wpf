@@ -435,12 +435,6 @@
     <Compile Include="UI\OldWinForms\ImportCustomContractDialog.Designer.cs">
       <DependentUpon>ImportCustomContractDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\OldWinForms\InputBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\OldWinForms\InputBox.Designer.cs">
-      <DependentUpon>InputBox.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\OldWinForms\IssueDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -489,12 +483,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="UI\Helper.cs" />
-    <Compile Include="UI\OldWinForms\InformationBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\OldWinForms\InformationBox.Designer.cs">
-      <DependentUpon>InformationBox.cs</DependentUpon>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\OldWinForms\SelectCertificateDialog.cs">
@@ -612,24 +600,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\ImportCustomContractDialog.zh-Hans.resx">
       <DependentUpon>ImportCustomContractDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\InformationBox.es-ES.resx">
-      <DependentUpon>InformationBox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\InformationBox.resx">
-      <DependentUpon>InformationBox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\InformationBox.zh-Hans.resx">
-      <DependentUpon>InformationBox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\InputBox.es-ES.resx">
-      <DependentUpon>InputBox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\InputBox.resx">
-      <DependentUpon>InputBox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\InputBox.zh-Hans.resx">
-      <DependentUpon>InputBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\IssueDialog.es-ES.resx">
       <DependentUpon>IssueDialog.cs</DependentUpon>

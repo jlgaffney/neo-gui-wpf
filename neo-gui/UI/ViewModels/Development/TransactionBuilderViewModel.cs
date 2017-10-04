@@ -7,6 +7,7 @@ using System.Windows.Input;
 using Neo.Core;
 using Neo.Properties;
 using Neo.SmartContract;
+using Neo.UI.Dialogs;
 using Neo.UI.MVVM;
 using Neo.UI.Wrappers;
 
