@@ -33,6 +33,7 @@ using Neo.UI.Models;
 using Neo.UI.MVVM;
 using Neo.UI.Views;
 using Neo.UI.Views.Accounts;
+using Neo.UI.Views.Assets;
 using Neo.UI.Views.Contracts;
 using Neo.UI.Views.Development;
 using Neo.UI.Views.Updater;
@@ -258,7 +259,7 @@ namespace Neo.UI.ViewModels
 
         public ICommand RequestCertificateCommand => new RelayCommand(RequestCertificate);
 
-        public ICommand RegisterAssetCommand => new RelayCommand(RegisterAsset);
+        public ICommand AssetRegistrationCommand => new RelayCommand(AssetRegistration);
 
         public ICommand DistributeAssetCommand => new RelayCommand(DistributeAsset);
 
@@ -1049,14 +1050,15 @@ namespace Neo.UI.ViewModels
             view.ShowDialog();
         }
 
-        private static void RegisterAsset()
+        private static void AssetRegistration()
         {
-            InvocationTransaction transactionResult;
-            using (var dialog = new AssetRegisterDialog())
-            {
-                if (dialog.ShowDialog() != DialogResult.OK) return;
-                transactionResult = dialog.GetTransaction();
-            }
+            var assetRegistrationView = new AssetRegistrationView();
+            assetRegistrationView.ShowDialog();
+
+            var transactionResult = assetRegistrationView.GetTransaction();
+
+            if (transactionResult == null) return;
+
 
             var invokeContractView = new InvokeContractView(transactionResult);
             invokeContractView.ShowDialog();
@@ -1310,12 +1312,10 @@ namespace Neo.UI.ViewModels
 
             var contract = this.SelectedAccount.Contract;
 
-            InvocationTransaction transaction;
-
             var view = new VotingView(contract.ScriptHash);
             view.ShowDialog();
 
-            transaction = view.GetTransaction();
+            var transaction = view.GetTransaction();
 
             if (transaction == null) return;
 

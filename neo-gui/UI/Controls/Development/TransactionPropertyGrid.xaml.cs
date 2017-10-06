@@ -21,7 +21,6 @@ namespace Neo.UI.Controls.Development
                     OnCoerceTransactionWrapperProperty));
 
         // .NET Property wrapper
-        // TODO Fix bug in functionality
         public object TransactionWrapper
         {
             get => GetValue(TransactionWrapperProperty);

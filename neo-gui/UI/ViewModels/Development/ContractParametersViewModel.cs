@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using Neo.Extensions;
 using Neo.Network;
 using Neo.Properties;
 using Neo.SmartContract;
@@ -52,10 +53,7 @@ namespace Neo.UI.ViewModels.Development
                 if (scriptHash == null) return this.parameters;
 
                 // Get parameters
-                foreach (var parameter in context.GetParameters(scriptHash))
-                {
-                    this.parameters.Add(parameter);
-                }
+                this.parameters.AddRange(context.GetParameters(scriptHash));
 
                 return this.parameters;
             }
@@ -178,10 +176,7 @@ namespace Neo.UI.ViewModels.Development
             this.CurrentValue = string.Empty;
             this.NewValue = string.Empty;
 
-            foreach (var address in context.ScriptHashes.Select(Wallet.ToAddress))
-            {
-                this.ScriptHashAddresses.Add(address);
-            }
+            this.ScriptHashAddresses.AddRange(context.ScriptHashes.Select(Wallet.ToAddress));
 
             this.ShowEnabled = true;
 

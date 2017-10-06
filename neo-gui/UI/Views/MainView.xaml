@@ -55,7 +55,7 @@
                 <Separator />
 
                 <MenuItem Header="Request _Certificate…" Command="{Binding RequestCertificateCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
-                <MenuItem Header="Asset _Registration…" Command="{Binding RegisterAssetCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
+                <MenuItem Header="Asset _Registration…" Command="{Binding AssetRegistrationCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
                 <MenuItem Header="Asset D_istribution…" Command="{Binding DistributeAssetCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
 
                 <Separator />

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows.Input;
 using Neo.Core;
 using Neo.Cryptography.ECC;
+using Neo.Extensions;
 using Neo.SmartContract;
 using Neo.UI.MVVM;
 using Neo.VM;
@@ -20,11 +21,10 @@ namespace Neo.UI.ViewModels.Voting
             if (App.CurrentWallet == null) return;
             
             // Load book keepers
-            foreach (var bookKeeper in App.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p =>
-                App.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey))
-            {
-                this.BookKeepers.Add(bookKeeper);
-            }
+            var bookKeepers = App.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p =>
+                App.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey);
+
+            this.BookKeepers.AddRange(bookKeepers);
         }
 
         public ObservableCollection<ECPoint> BookKeepers { get; }
