@@ -75,7 +75,7 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <TextBox Grid.Row="0" Text="{Binding CustomScript}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                    <TextBox Grid.Row="0" Text="{Binding CustomScript, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                              HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" Margin="0,0,0.333,0"/>
 
                     <Button Grid.Row="1" Content="Load" Width="70" HorizontalAlignment="Right" Margin="0 6 0 0" Command="{Binding LoadCommand}" />
@@ -84,7 +84,7 @@
         </TabControl>
 
         <GroupBox Grid.Row="1" Header="Results">
-            <TextBox Text="{Binding Results}" IsReadOnly="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+            <TextBox Text="{Binding Results, Mode=OneWay}" IsReadOnly="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                      HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible"/>
         </GroupBox>
 

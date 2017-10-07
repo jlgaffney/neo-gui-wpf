@@ -33,7 +33,7 @@
         <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding PayToAddress}" IsReadOnly="{Binding PayToAddressReadOnly}" Margin="0 4" Padding="4" HorizontalAlignment="Stretch" />
 
         <Label Grid.Row="3" Grid.Column="0" Content="Amount:" HorizontalAlignment="Right" VerticalAlignment="Center" />
-        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Amount}" Margin="0 4" Padding="4" HorizontalAlignment="Stretch" />
+        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Amount, UpdateSourceTrigger=PropertyChanged}" Margin="0 4" Padding="4" HorizontalAlignment="Stretch" />
 
         <Button Grid.Row="4" Grid.ColumnSpan="2" Content="OK" Width="60" Margin="0 8 0 0" HorizontalAlignment="Right" Command="{Binding OkCommand}" IsEnabled="{Binding OkEnabled}" />
     </Grid>

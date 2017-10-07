@@ -1274,14 +1274,16 @@ namespace Neo.UI
 
         private void ImportCustomContract()
         {
-            using (var dialog = new ImportCustomContractDialog())
-            {
-                if (dialog.ShowDialog() != DialogResult.OK) return;
-                var contract = dialog.GetContract();
-                App.CurrentWallet.AddContract(contract);
-                this.SelectedAccount = null;
-                AddContract(contract, true);
-            }
+            var view = new ImportCustomContractView();
+            view.ShowDialog();
+
+            var contract = view.GetContract();
+
+            if (contract == null) return;
+
+            App.CurrentWallet.AddContract(contract);
+            this.SelectedAccount = null;
+            AddContract(contract, true);
         }
 
         private void ViewPrivateKey()

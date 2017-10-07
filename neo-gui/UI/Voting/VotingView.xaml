@@ -19,7 +19,7 @@
         <Label Grid.Row="0" Content="{Binding Address}" HorizontalContentAlignment="Center" FontSize="16" Margin="0 4" VerticalAlignment="Center" />
 
         <GroupBox Grid.Row="1" Header="Candidates" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <TextBox Text="{Binding Votes}" AcceptsReturn="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" />
+            <TextBox Text="{Binding Votes, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" />
         </GroupBox>
 
         <DockPanel Grid.Row="2" HorizontalAlignment="Right" Margin="0 8 0 0">

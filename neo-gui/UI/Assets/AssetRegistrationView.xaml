@@ -35,12 +35,12 @@
             <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding AssetTypes}" SelectedItem="{Binding SelectedAssetType}" Margin="0 4" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
 
             <Label Grid.Row="1" Grid.Column="0" Content="Name:" Margin="0 0 4 0" HorizontalAlignment="Right" VerticalAlignment="Center" />
-            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Name}" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
 
             <Label Grid.Row="2" Grid.Column="0" Content="Capped:" Margin="0 0 4 0" HorizontalAlignment="Right" VerticalAlignment="Center" />
             <DockPanel Grid.Row="2" Grid.Column="1">
                 <CheckBox IsChecked="{Binding CappedBool}" Margin="0 0 8 0" VerticalAlignment="Center" />
-                <TextBox Text="{Binding CappedString}" IsEnabled="{Binding CappedBool}" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+                <TextBox Text="{Binding CappedString, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CappedBool}" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
             </DockPanel>
 
             <Label Grid.Row="3" Grid.Column="0" Content="Precision:" Margin="0 0 4 0" HorizontalAlignment="Right" VerticalAlignment="Center" />

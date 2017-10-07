@@ -17,7 +17,7 @@
         <TabControl Grid.Row="0">
             <TabItem Header="NEP-5">
                 <GroupBox Header="NEP-5 Contracts List" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                    <TextBox Text="{Binding NEP5ContractsList}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                    <TextBox Text="{Binding NEP5ContractsList, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                              HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" />
                 </GroupBox>
             </TabItem>

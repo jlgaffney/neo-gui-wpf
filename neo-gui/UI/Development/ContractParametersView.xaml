@@ -41,7 +41,7 @@
         </Grid.RowDefinitions>
 
         <GroupBox Grid.Row="0" Header="Current Value">
-            <TextBox Text="{Binding CurrentValue}" Background="#F0F0F0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            <TextBox Text="{Binding CurrentValue, UpdateSourceTrigger=PropertyChanged}" Background="#F0F0F0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </GroupBox>
 
         <GroupBox Grid.Row="1" Header="New Value">

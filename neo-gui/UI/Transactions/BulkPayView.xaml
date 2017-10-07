@@ -28,9 +28,9 @@
         <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding AssetBalance, Mode=OneWay}" IsReadOnly="True" Margin="0 4" Padding="4" HorizontalAlignment="Stretch" />
 
         <GroupBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Header="Pay to">
-            <TextBox Text="{Binding AddressesAndAmounts}" AcceptsReturn="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" />
+            <TextBox Text="{Binding AddressesAndAmounts, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" />
         </GroupBox>
         
-        <Button Grid.Row="4" Grid.ColumnSpan="2" Content="OK" Width="60" Margin="0 8 0 0" HorizontalAlignment="Right" Command="{Binding OkCommand}" IsEnabled="{Binding OkEnabled}" />
+        <Button Grid.Row="3" Grid.ColumnSpan="2" Content="OK" Width="60" Margin="0 8 0 0" HorizontalAlignment="Right" Command="{Binding OkCommand}" IsEnabled="{Binding OkEnabled}" />
     </Grid>
 </controls:NeoWindow>
