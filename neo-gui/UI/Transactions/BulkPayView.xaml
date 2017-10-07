@@ -1,0 +1,36 @@
+﻿<controls:NeoWindow x:Class="Neo.UI.Transactions.BulkPayView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
+        xmlns:local="clr-namespace:Neo.UI.Transactions"
+        Title="Payment" Width="560" Height="350" ResizeMode="NoResize">
+    <controls:NeoWindow.DataContext>
+        <local:BulkPayViewModel />
+    </controls:NeoWindow.DataContext>
+    
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Label Grid.Row="0" Grid.Column="0" Content="Asset:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Assets}" SelectedItem="{Binding SelectedAsset}" IsEnabled="{Binding AssetSelectionEnabled}" Margin="0 4" HorizontalAlignment="Stretch" />
+
+        <Label Grid.Row="1" Grid.Column="0" Content="Balance:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding AssetBalance, Mode=OneWay}" IsReadOnly="True" Margin="0 4" Padding="4" HorizontalAlignment="Stretch" />
+
+        <GroupBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Header="Pay to">
+            <TextBox Text="{Binding AddressesAndAmounts}" AcceptsReturn="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" />
+        </GroupBox>
+        
+        <Button Grid.Row="4" Grid.ColumnSpan="2" Content="OK" Width="60" Margin="0 8 0 0" HorizontalAlignment="Right" Command="{Binding OkCommand}" IsEnabled="{Binding OkEnabled}" />
+    </Grid>
+</controls:NeoWindow>

@@ -106,12 +106,15 @@ namespace Neo.UI
 
         private void button3_Click(object sender, EventArgs e)
         {
-            using (BulkPayDialog dialog = new BulkPayDialog(Asset))
-            {
-                if (dialog.ShowDialog() != DialogResult.OK) return;
-                listBox1.Items.AddRange(dialog.GetOutputs());
-                ItemsChanged?.Invoke(this, EventArgs.Empty);
-            }
+            var view = new BulkPayView(this.Asset);
+            view.ShowDialog();
+
+            var outputs = view.GetOutputs();
+
+            if (outputs == null || outputs.Length == 0) return;
+
+            listBox1.Items.AddRange(outputs);
+            ItemsChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }

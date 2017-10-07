@@ -347,6 +347,10 @@
     <Compile Include="UI\Contracts\InvokeContractViewModel.cs" />
     <Compile Include="UI\Development\ContractParametersViewModel.cs" />
     <Compile Include="UI\Development\TransactionBuilderViewModel.cs" />
+    <Compile Include="UI\Transactions\BulkPayView.xaml.cs">
+      <DependentUpon>BulkPayView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Transactions\BulkPayViewModel.cs" />
     <Compile Include="UI\Transactions\PayToView.xaml.cs">
       <DependentUpon>PayToView.xaml</DependentUpon>
     </Compile>
@@ -414,12 +418,6 @@
     </Compile>
     <Compile Include="UI\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\OldWinForms\BulkPayDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\OldWinForms\BulkPayDialog.Designer.cs">
-      <DependentUpon>BulkPayDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\OldWinForms\CreateLockAccountDialog.cs">
       <SubType>Form</SubType>
@@ -541,15 +539,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Strings.zh-Hans.resx">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\BulkPayDialog.es-ES.resx">
-      <DependentUpon>BulkPayDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\BulkPayDialog.resx">
-      <DependentUpon>BulkPayDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\BulkPayDialog.zh-Hans.resx">
-      <DependentUpon>BulkPayDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\CreateLockAccountDialog.es-ES.resx">
       <DependentUpon>CreateLockAccountDialog.cs</DependentUpon>
@@ -799,6 +788,10 @@
     <Page Include="UI\Development\DeveloperToolsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Transactions\BulkPayView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Transactions\PayToView.xaml">
       <Generator>MSBuild:Compile</Generator>

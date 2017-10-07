@@ -2,8 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using Neo.Core;
-using Neo.Properties;
+using Neo.Extensions;
 using Neo.UI.Base.MVVM;
 using Neo.Wallets;
 
@@ -144,30 +143,12 @@ namespace Neo.UI.Transactions
             if (asset != null)
             {
                 this.Assets.Add(asset);
-                this.SelectedAsset = this.Assets[0];
+                this.SelectedAsset = asset;
                 this.AssetSelectionEnabled = false;
             }
             else
             {
-                foreach (var assetId in App.CurrentWallet.FindUnspentCoins().Select(p => p.Output.AssetId).Distinct())
-                {
-                    var state = Blockchain.Default.GetAssetState(assetId);
-                    this.Assets.Add(new AssetDescriptor(state));
-                }
-
-                foreach (var s in Settings.Default.NEP5Watched)
-                {
-                    var assetId = UInt160.Parse(s);
-
-                    try
-                    {
-                        this.Assets.Add(new AssetDescriptor(assetId));
-                    }
-                    catch (ArgumentException)
-                    {
-                        continue;
-                    }
-                }
+                this.Assets.AddRange(AssetDescriptor.GetAssets());
 
                 this.AssetSelectionEnabled = this.Assets.Any();
             }

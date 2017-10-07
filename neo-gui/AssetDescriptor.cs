@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Neo.Core;
+using Neo.Properties;
 using Neo.SmartContract;
 using Neo.VM;
 
@@ -58,6 +60,31 @@ namespace Neo
             var engine = ApplicationEngine.Run(script);
             var amount = engine.EvaluationStack.Pop().GetArray().Aggregate(BigInteger.Zero, (x, y) => x + y.GetBigInteger());
             return new BigDecimal(amount, Precision);
+        }
+
+        internal static IEnumerable<AssetDescriptor> GetAssets()
+        {
+            foreach (var assetId in App.CurrentWallet.FindUnspentCoins().Select(p => p.Output.AssetId).Distinct())
+            {
+                var state = Blockchain.Default.GetAssetState(assetId);
+                yield return new AssetDescriptor(state);
+            }
+
+            foreach (var s in Settings.Default.NEP5Watched)
+            {
+                var assetId = UInt160.Parse(s);
+
+                AssetDescriptor asset;
+                try
+                {
+                    asset = new AssetDescriptor(assetId);
+                }
+                catch (ArgumentException)
+                {
+                    continue;
+                }
+                yield return asset;
+            }
         }
 
         public override string ToString()
