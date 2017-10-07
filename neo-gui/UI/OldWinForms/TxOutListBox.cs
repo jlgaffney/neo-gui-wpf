@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
-using Neo.UI.Base;
+using Neo.UI.Transactions;
 
 namespace Neo.UI
 {
@@ -84,12 +84,15 @@ namespace Neo.UI
 
         private void button1_Click(object sender, EventArgs e)
         {
-            using (PayToDialog dialog = new PayToDialog(asset: Asset, scriptHash: ScriptHash))
-            {
-                if (dialog.ShowDialog() != DialogResult.OK) return;
-                listBox1.Items.Add(dialog.GetOutput());
-                ItemsChanged?.Invoke(this, EventArgs.Empty);
-            }
+            var view = new PayToView(this.Asset, this.ScriptHash);
+            view.ShowDialog();
+
+            var output = view.GetOutput();
+
+            if (output == null) return;
+
+            listBox1.Items.Add(output);
+            ItemsChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private void button2_Click(object sender, EventArgs e)

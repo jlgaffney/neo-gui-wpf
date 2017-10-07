@@ -13,18 +13,18 @@ namespace Neo
         public string AssetName;
         public byte Precision;
 
-        public AssetDescriptor(UInt160 asset_id)
+        public AssetDescriptor(UInt160 assetId)
         {
             byte[] script;
             using (var builder = new ScriptBuilder())
             {
-                builder.EmitAppCall(asset_id, "decimals");
-                builder.EmitAppCall(asset_id, "name");
+                builder.EmitAppCall(assetId, "decimals");
+                builder.EmitAppCall(assetId, "name");
                 script = builder.ToArray();
             }
             var engine = ApplicationEngine.Run(script);
             if (engine.State.HasFlag(VMState.FAULT)) throw new ArgumentException();
-            this.AssetId = asset_id;
+            this.AssetId = assetId;
             this.AssetName = engine.EvaluationStack.Pop().GetString();
             this.Precision = (byte)engine.EvaluationStack.Pop().GetBigInteger();
         }
@@ -38,11 +38,12 @@ namespace Neo
 
         public BigDecimal GetAvailable()
         {
-            if (AssetId is UInt256 asset_id)
+            if (AssetId is UInt256 assetId)
             {
-                return new BigDecimal(App.CurrentWallet.GetAvailable(asset_id).GetData(), 8);
+                return new BigDecimal(App.CurrentWallet.GetAvailable(assetId).GetData(), 8);
             }
 
+            // NEP5
             byte[] script;
             using (var builder = new ScriptBuilder())
             {

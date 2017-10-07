@@ -2,7 +2,7 @@
 using Neo.Core;
 using Neo.Wallets;
 
-namespace Neo.UI.Base
+namespace Neo.UI
 {
     internal class TxOutListBoxItem
     {
@@ -18,13 +18,16 @@ namespace Neo.UI.Base
 
         public TransactionOutput ToTxOutput()
         {
-            if (AssetId is UInt256 asset_id && Value.Decimals == 8)
+            if (AssetId is UInt256 assetId && Value.Decimals == 8)
+            {
                 return new TransactionOutput
                 {
-                    AssetId = asset_id,
-                    Value = new Fixed8((long)Value.Value),
+                    AssetId = assetId,
+                    Value = new Fixed8((long) Value.Value),
                     ScriptHash = ScriptHash
                 };
+            }
+
             throw new NotSupportedException();
         }
     }

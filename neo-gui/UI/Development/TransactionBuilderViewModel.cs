@@ -10,6 +10,7 @@ using Neo.SmartContract;
 using Neo.UI.Base.MVVM;
 using Neo.UI.Base.Wrappers;
 using Neo.UI.Base.Dialogs;
+using Neo.UI.Transactions;
 
 namespace Neo.UI.Development
 {
@@ -121,18 +122,20 @@ namespace Neo.UI.Development
 
         private void SetupOutputs()
         {
-            using (var dialog = new PayToDialog())
+            var view = new PayToView();
+            view.ShowDialog();
+
+            var output = view.GetOutput();
+
+            if (output == null) return;
+
+            var transaction = (TransactionWrapper) this.TransactionWrapper;
+            transaction.Outputs.Add(new TransactionOutputWrapper
             {
-                if (dialog.ShowDialog() != DialogResult.OK) return;
-                var output = dialog.GetOutput();
-                var transaction = (TransactionWrapper)this.TransactionWrapper;
-                transaction.Outputs.Add(new TransactionOutputWrapper
-                {
-                    AssetId = (UInt256)output.AssetId,
-                    Value = new Fixed8((long)output.Value.Value),
-                    ScriptHash = output.ScriptHash
-                });
-            }
+                AssetId = (UInt256)output.AssetId,
+                Value = new Fixed8((long)output.Value.Value),
+                ScriptHash = output.ScriptHash
+            });
         }
 
         private void FindUnspentCoins()

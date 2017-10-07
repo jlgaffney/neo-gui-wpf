@@ -347,6 +347,10 @@
     <Compile Include="UI\Contracts\InvokeContractViewModel.cs" />
     <Compile Include="UI\Development\ContractParametersViewModel.cs" />
     <Compile Include="UI\Development\TransactionBuilderViewModel.cs" />
+    <Compile Include="UI\Transactions\PayToView.xaml.cs">
+      <DependentUpon>PayToView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Transactions\PayToViewModel.cs" />
     <Compile Include="UI\Voting\ElectionViewModel.cs" />
     <Compile Include="UI\Voting\VotingViewModel.cs" />
     <Compile Include="UI\Wallets\CertificateRequestViewModel.cs" />
@@ -477,12 +481,6 @@
     <Compile Include="UI\OldWinForms\TxOutListBox.Designer.cs">
       <DependentUpon>TxOutListBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\OldWinForms\PayToDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\OldWinForms\PayToDialog.Designer.cs">
-      <DependentUpon>PayToDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -509,7 +507,7 @@
     <Compile Include="UI\OldWinForms\TransferDialog.Designer.cs">
       <DependentUpon>TransferDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Base\TxOutListBoxItem.cs" />
+    <Compile Include="UI\TxOutListBoxItem.cs" />
     <Compile Include="UI\MainViewModel.cs" />
     <Compile Include="UI\Updater\UpdateView.xaml.cs">
       <DependentUpon>UpdateView.xaml</DependentUpon>
@@ -610,12 +608,6 @@
     <EmbeddedResource Include="UI\OldWinForms\ParametersEditor.zh-Hans.resx">
       <DependentUpon>ParametersEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\PayToDialog.es-ES.resx">
-      <DependentUpon>PayToDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\PayToDialog.zh-Hans.resx">
-      <DependentUpon>PayToDialog.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\RestoreAccountsDialog.es-ES.resx">
       <DependentUpon>RestoreAccountsDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -665,9 +657,6 @@
     <EmbeddedResource Include="UI\OldWinForms\TxOutListBox.resx">
       <DependentUpon>TxOutListBox.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\PayToDialog.resx">
-      <DependentUpon>PayToDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\SelectCertificateDialog.resx">
       <DependentUpon>SelectCertificateDialog.cs</DependentUpon>
@@ -811,6 +800,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UI\Transactions\PayToView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\Voting\VotingView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -853,7 +846,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UI\Base\Converters\" />
-    <Folder Include="UI\Transactions\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
