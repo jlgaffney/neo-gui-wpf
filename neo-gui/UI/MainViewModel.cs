@@ -37,6 +37,7 @@ using Neo.UI.Contracts;
 using Neo.UI.Development;
 using Neo.UI.Messages;
 using Neo.UI.Models;
+using Neo.UI.Transactions;
 using Neo.UI.Updater;
 using Neo.UI.Wallets;
 using Neo.UI.Voting;
@@ -1032,10 +1033,8 @@ namespace Neo.UI
 
         private static void ShowSigningDialog()
         {
-            using (var dialog = new SigningDialog())
-            {
-                dialog.ShowDialog();
-            }
+            var view = new SignatureView();
+            view.ShowDialog();
         }
 
         private static void Claim()

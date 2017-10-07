@@ -351,6 +351,9 @@
     <Compile Include="UI\Contracts\InvokeContractViewModel.cs" />
     <Compile Include="UI\Development\ContractParametersViewModel.cs" />
     <Compile Include="UI\Development\TransactionBuilderViewModel.cs" />
+    <Compile Include="UI\Transactions\SignatureView.xaml.cs">
+      <DependentUpon>SignatureView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Transactions\BulkPayView.xaml.cs">
       <DependentUpon>BulkPayView.xaml</DependentUpon>
     </Compile>
@@ -359,6 +362,7 @@
       <DependentUpon>PayToView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Transactions\PayToViewModel.cs" />
+    <Compile Include="UI\Transactions\SignatureViewModel.cs" />
     <Compile Include="UI\Voting\ElectionViewModel.cs" />
     <Compile Include="UI\Voting\VotingViewModel.cs" />
     <Compile Include="UI\Wallets\CertificateRequestViewModel.cs" />
@@ -491,12 +495,6 @@
     <Compile Include="UI\OldWinForms\SelectCertificateDialog.Designer.cs">
       <DependentUpon>SelectCertificateDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\OldWinForms\SigningDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\OldWinForms\SigningDialog.Designer.cs">
-      <DependentUpon>SigningDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\OldWinForms\TransferDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -602,12 +600,6 @@
       <DependentUpon>SelectCertificateDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\SigningDialog.es-ES.resx">
-      <DependentUpon>SigningDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\SigningDialog.zh-Hans.resx">
-      <DependentUpon>SigningDialog.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\TradeForm.es-ES.resx">
       <DependentUpon>TradeForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -638,10 +630,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\SelectCertificateDialog.resx">
       <DependentUpon>SelectCertificateDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\SigningDialog.resx">
-      <DependentUpon>SigningDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\TransferDialog.resx">
       <DependentUpon>TransferDialog.cs</DependentUpon>
@@ -781,6 +769,10 @@
     <Page Include="UI\Development\DeveloperToolsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Transactions\SignatureView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Transactions\BulkPayView.xaml">
       <Generator>MSBuild:Compile</Generator>
