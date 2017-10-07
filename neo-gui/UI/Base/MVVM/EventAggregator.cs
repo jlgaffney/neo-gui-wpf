@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Neo.UI.MVVM
+namespace Neo.UI.Base.MVVM
 {
     public class EventAggregator
     {
@@ -10,7 +10,7 @@ namespace Neo.UI.MVVM
         // Prevent class from being instantiated outside of class
         private EventAggregator() { }
 
-        private List<IHandle> subscribers = new List<IHandle>();
+        private readonly List<IHandle> subscribers = new List<IHandle>();
 
         public void Subscribe(IHandle model)
         {

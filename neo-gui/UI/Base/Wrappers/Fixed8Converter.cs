@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Globalization;
 
-namespace Neo.UI.Wrappers
+namespace Neo.UI.Base.Wrappers
 {
     internal class Fixed8Converter : TypeConverter
     {

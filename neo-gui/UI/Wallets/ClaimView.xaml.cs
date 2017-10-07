@@ -1,4 +1,4 @@
-﻿namespace Neo.UI.Views.Wallets
+﻿namespace Neo.UI.Wallets
 {
     /// <summary>
     /// Interaction logic for ClaimView.xaml

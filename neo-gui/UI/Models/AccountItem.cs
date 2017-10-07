@@ -6,9 +6,9 @@ namespace Neo.UI.Models
     {
         public string Address { get; set; }
 
-        public Fixed8 NEO { get; set; }
+        public Fixed8 Neo { get; set; }
 
-        public Fixed8 GAS { get; set; }
+        public Fixed8 Gas { get; set; }
 
         public UInt160 ScriptHash { get; set; }
 

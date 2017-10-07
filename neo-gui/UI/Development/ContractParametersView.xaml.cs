@@ -1,4 +1,4 @@
-﻿namespace Neo.UI.Views.Development
+﻿namespace Neo.UI.Development
 {
     /// <summary>
     /// Interaction logic for ContractParametersView.xaml

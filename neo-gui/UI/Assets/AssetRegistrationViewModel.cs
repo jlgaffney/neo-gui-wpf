@@ -5,13 +5,12 @@ using System.Linq;
 using System.Windows.Input;
 using Neo.Core;
 using Neo.Cryptography.ECC;
-using Neo.Extensions;
 using Neo.SmartContract;
-using Neo.UI.MVVM;
+using Neo.UI.Base.MVVM;
 using Neo.VM;
 using Neo.Wallets;
 
-namespace Neo.UI.ViewModels.Assets
+namespace Neo.UI.Assets
 {
     public class AssetRegistrationViewModel : ViewModelBase
     {

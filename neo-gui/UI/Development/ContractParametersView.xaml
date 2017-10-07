@@ -1,10 +1,10 @@
-﻿<Grid x:Class="Neo.UI.Views.Development.ContractParametersView"
+﻿<Grid x:Class="Neo.UI.Development.ContractParametersView"
             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-            xmlns:developmentVm="clr-namespace:Neo.UI.ViewModels.Development"
+            xmlns:local="clr-namespace:Neo.UI.Development"
             Margin="8">
     <Grid.DataContext>
-        <developmentVm:ContractParametersViewModel />
+        <local:ContractParametersViewModel />
     </Grid.DataContext>
 
     <Grid.Resources>

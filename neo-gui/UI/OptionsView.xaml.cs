@@ -1,4 +1,4 @@
-﻿namespace Neo.UI.Views
+﻿namespace Neo.UI
 {
     /// <summary>
     /// Interaction logic for ClaimView.xaml

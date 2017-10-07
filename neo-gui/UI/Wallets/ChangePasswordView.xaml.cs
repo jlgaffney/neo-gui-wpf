@@ -1,9 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-using Neo.UI.ViewModels.Wallets;
-
-namespace Neo.UI.Views.Wallets
+namespace Neo.UI.Wallets
 {
     public partial class ChangePasswordView
     {

@@ -7,11 +7,11 @@ using Neo.Extensions;
 using Neo.Network;
 using Neo.Properties;
 using Neo.SmartContract;
-using Neo.UI.Dialogs;
-using Neo.UI.MVVM;
+using Neo.UI.Base.MVVM;
 using Neo.Wallets;
+using Neo.UI.Base.Dialogs;
 
-namespace Neo.UI.ViewModels.Development
+namespace Neo.UI.Development
 {
     public class ContractParametersViewModel : ViewModelBase
     {

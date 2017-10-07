@@ -1,10 +1,9 @@
 ﻿using Microsoft.Win32;
 using System.Windows.Input;
-
+using Neo.UI.Base.MVVM;
 using Neo.UI.Messages;
-using Neo.UI.MVVM;
 
-namespace Neo.UI.ViewModels.Wallets
+namespace Neo.UI.Wallets
 {
     public class CreateWalletViewModel : ViewModelBase
     {

@@ -1,8 +1,7 @@
 ﻿using System.Windows;
+using Neo.UI.Base.MVVM;
 
-using Neo.UI.MVVM;
-
-namespace Neo.UI.Controls
+namespace Neo.UI.Base.Controls
 {
     public class NeoWindow : Window
     {

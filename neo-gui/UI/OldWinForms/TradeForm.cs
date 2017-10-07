@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using Neo.UI.Dialogs;
+using Neo.UI.Base.Dialogs;
 
 namespace Neo.UI
 {

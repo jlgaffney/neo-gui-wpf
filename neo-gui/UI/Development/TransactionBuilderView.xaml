@@ -1,11 +1,10 @@
-﻿<Grid x:Class="Neo.UI.Views.Development.TransactionBuilderView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:controls="clr-namespace:Neo.UI.Controls"
-             xmlns:developmentControls="clr-namespace:Neo.UI.Controls.Development"
-             xmlns:developmentVm="clr-namespace:Neo.UI.ViewModels.Development">
+﻿<Grid x:Class="Neo.UI.Development.TransactionBuilderView"
+            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+            xmlns:developmentControls="clr-namespace:Neo.UI.Base.Controls.Development"
+            xmlns:local="clr-namespace:Neo.UI.Development">
     <Grid.DataContext>
-        <developmentVm:TransactionBuilderViewModel />
+        <local:TransactionBuilderViewModel />
     </Grid.DataContext>
     
     <Grid.RowDefinitions>

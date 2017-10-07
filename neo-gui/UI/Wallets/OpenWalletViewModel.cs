@@ -1,9 +1,9 @@
 ﻿using System.Windows.Input;
 using Microsoft.Win32;
+using Neo.UI.Base.MVVM;
 using Neo.UI.Messages;
-using Neo.UI.MVVM;
 
-namespace Neo.UI.ViewModels.Wallets
+namespace Neo.UI.Wallets
 {
     public class OpenWalletViewModel : ViewModelBase
     {

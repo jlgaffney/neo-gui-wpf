@@ -1,8 +1,8 @@
-﻿using Neo.Core;
+﻿using System;
+using Neo.Core;
 using Neo.Wallets;
-using System;
 
-namespace Neo.UI
+namespace Neo.UI.Base
 {
     internal class TxOutListBoxItem
     {

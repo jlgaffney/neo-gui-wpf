@@ -1,14 +1,15 @@
-﻿using Neo.Core;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Drawing.Design;
+using Neo.Core;
 
-namespace Neo.UI.Wrappers
+namespace Neo.UI.Base.Wrappers
 {
     internal class InvocationTransactionWrapper : TransactionWrapper
     {
         [Editor(typeof(ScriptEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(HexConverter))]
         public byte[] Script { get; set; }
+
         [TypeConverter(typeof(Fixed8Converter))]
         public Fixed8 Gas { get; set; }
 

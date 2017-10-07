@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Input;
 using Neo.Extensions;
-using Neo.UI.MVVM;
+using Neo.UI.Base.MVVM;
 
-namespace Neo.UI.ViewModels.Accounts
+namespace Neo.UI.Accounts
 {
     public class ImportPrivateKeyViewModel : ViewModelBase
     {

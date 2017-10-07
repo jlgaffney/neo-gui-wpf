@@ -1,8 +1,8 @@
-﻿using System.Runtime.CompilerServices;
-using System.ComponentModel;
-using Neo.UI.Controls;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using Neo.UI.Base.Controls;
 
-namespace Neo.UI.MVVM
+namespace Neo.UI.Base.MVVM
 {
     public abstract class ViewModelBase : INotifyPropertyChanged
     {
@@ -10,9 +10,9 @@ namespace Neo.UI.MVVM
 
         private NeoWindow window;
 
-        public virtual void OnWindowAttached(NeoWindow window)
+        public virtual void OnWindowAttached(NeoWindow attachedWindow)
         {
-            this.window = window;
+            this.window = attachedWindow;
         }
 
         public virtual void TryClose()

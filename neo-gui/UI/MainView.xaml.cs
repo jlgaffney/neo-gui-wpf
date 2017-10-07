@@ -1,17 +1,10 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Diagnostics;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
-using System.Xml.Linq;
-
 using Neo.Properties;
-using Neo.UI.Messages;
-using Neo.UI.MVVM;
-using Neo.UI.ViewModels;
 
-namespace Neo.UI.Views
+namespace Neo.UI
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

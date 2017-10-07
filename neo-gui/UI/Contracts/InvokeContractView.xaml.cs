@@ -1,8 +1,7 @@
 ﻿using System;
 using Neo.Core;
-using Neo.UI.ViewModels.Contracts;
 
-namespace Neo.UI.Views.Contracts
+namespace Neo.UI.Contracts
 {
     /// <summary>
     /// Interaction logic for InvokeContractView.xaml

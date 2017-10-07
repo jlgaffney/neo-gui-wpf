@@ -1,12 +1,12 @@
-﻿<controls:NeoWindow x:Class="Neo.UI.Views.MainView"
+﻿<controls:NeoWindow x:Class="Neo.UI.MainView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="clr-namespace:Neo.UI.ViewModels"
-        xmlns:controls="clr-namespace:Neo.UI.Controls"
+        xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
+        xmlns:local="clr-namespace:Neo.UI"
         Title="neo-gui" Height="520" Width="740"
         Loaded="Window_Loaded" Closing="Window_Closing">
     <controls:NeoWindow.DataContext>
-        <vm:MainViewModel />
+        <local:MainViewModel />
     </controls:NeoWindow.DataContext>
 
     <controls:NeoWindow.Resources>
@@ -92,7 +92,7 @@
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Address" Width="260" DisplayMemberBinding="{Binding Address}" />
-                            <GridViewColumn Header="NEO" Width="60" DisplayMemberBinding="{Binding NEO}" />
+                            <GridViewColumn Header="NEO" Width="60" DisplayMemberBinding="{Binding Neo}" />
                             <GridViewColumn Header="NeoGas" Width="60" DisplayMemberBinding="{Binding NeoGas}" />
                         </GridView>
                     </ListView.View>

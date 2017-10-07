@@ -1,4 +1,5 @@
-﻿using Neo.Core;
+﻿using System.Globalization;
+using Neo.Core;
 using Neo.Implementations.Wallets.EntityFramework;
 using Neo.Properties;
 
@@ -12,7 +13,7 @@ namespace Neo.UI.Models
 
         public string Id => this.Info?.Transaction.Hash.ToString();
 
-        public string Time => this.Info?.Time.ToString();
+        public string Time => this.Info?.Time.ToString(CultureInfo.CurrentUICulture);
 
         public string Type => this.Info == null ? string.Empty : TransactionTypeToString(this.Info.Transaction.Type);
 

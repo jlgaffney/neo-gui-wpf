@@ -27,22 +27,21 @@ using Neo.Implementations.Wallets.EntityFramework;
 using Neo.IO;
 using Neo.Properties;
 using Neo.SmartContract;
-using Neo.UI.Dialogs;
-using Neo.UI.Messages;
-using Neo.UI.Models;
-using Neo.UI.MVVM;
-using Neo.UI.Views;
-using Neo.UI.Views.Accounts;
-using Neo.UI.Views.Assets;
-using Neo.UI.Views.Contracts;
-using Neo.UI.Views.Development;
-using Neo.UI.Views.Updater;
-using Neo.UI.Views.Voting;
-using Neo.UI.Views.Wallets;
 using Neo.VM;
 using Neo.Wallets;
+using Neo.UI.Accounts;
+using Neo.UI.Assets;
+using Neo.UI.Base.Dialogs;
+using Neo.UI.Base.MVVM;
+using Neo.UI.Contracts;
+using Neo.UI.Development;
+using Neo.UI.Messages;
+using Neo.UI.Models;
+using Neo.UI.Updater;
+using Neo.UI.Wallets;
+using Neo.UI.Voting;
 
-namespace Neo.UI.ViewModels
+namespace Neo.UI
 {
     public class MainViewModel : ViewModelBase,
         IHandle<UpdateApplicationMessage>,
@@ -190,7 +189,7 @@ namespace Neo.UI.ViewModels
         public bool ShowVotingDialogEnabled =>
             this.SelectedAccount != null &&
             this.SelectedAccount.Contract != null &&
-            this.SelectedAccount.NEO > Fixed8.Zero;
+            this.SelectedAccount.Neo > Fixed8.Zero;
 
         public bool CopyAddressToClipboardEnabled => this.SelectedAccount != null;
 
@@ -390,8 +389,8 @@ namespace Neo.UI.ViewModels
                 item = new AccountItem
                 {
                     Address = address,
-                    NEO = Fixed8.Zero,
-                    GAS = Fixed8.Zero
+                    Neo = Fixed8.Zero,
+                    Gas = Fixed8.Zero
                 };
 
                 this.Accounts.Add(item);
@@ -416,8 +415,8 @@ namespace Neo.UI.ViewModels
                 item = new AccountItem
                 {
                     Address = contract.Address,
-                    NEO = Fixed8.Zero,
-                    GAS = Fixed8.Zero,
+                    Neo = Fixed8.Zero,
+                    Gas = Fixed8.Zero,
                     Contract = contract
                 };
 
@@ -743,8 +742,8 @@ namespace Neo.UI.ViewModels
                     var script_hash = Wallet.ToScriptHash(account.Address);
                     var neo = balanceNeo.ContainsKey(script_hash) ? balanceNeo[script_hash] : Fixed8.Zero;
                     var gas = balanceGas.ContainsKey(script_hash) ? balanceGas[script_hash] : Fixed8.Zero;
-                    account.NEO = neo;
-                    account.GAS = gas;
+                    account.Neo = neo;
+                    account.Gas = gas;
                 }
                 foreach (var asset in this.Assets.Where(item => item.State != null))
                 {
@@ -1020,7 +1019,7 @@ namespace Neo.UI.ViewModels
                 if (transaction == null) return;
             }
 
-            Helper.SignAndShowInformation(transaction);
+            Base.Helper.SignAndShowInformation(transaction);
         }
 
         private static void ShowTransactionDialog()
@@ -1041,7 +1040,7 @@ namespace Neo.UI.ViewModels
 
         private static void Claim()
         {
-            Helper.Show<ClaimView>();
+            Base.Helper.Show<ClaimView>();
         }
 
         private static void RequestCertificate()
@@ -1067,7 +1066,7 @@ namespace Neo.UI.ViewModels
 
             if (transactionResult == null) return;
 
-            Helper.SignAndShowInformation(transactionResult);
+            Base.Helper.SignAndShowInformation(transactionResult);
         }
 
         private static void DistributeAsset()
@@ -1075,7 +1074,7 @@ namespace Neo.UI.ViewModels
             using (var dialog = new IssueDialog())
             {
                 if (dialog.ShowDialog() != DialogResult.OK) return;
-                Helper.SignAndShowInformation(dialog.GetTransaction());
+                Base.Helper.SignAndShowInformation(dialog.GetTransaction());
             }
         }
 
@@ -1095,12 +1094,12 @@ namespace Neo.UI.ViewModels
 
             if (transactionResult == null) return;
 
-            Helper.SignAndShowInformation(transactionResult);
+            Base.Helper.SignAndShowInformation(transactionResult);
         }
 
         private static void InvokeContract()
         {
-            var view = new Views.Contracts.InvokeContractView();
+            var view = new InvokeContractView();
             view.ShowDialog();
         }
 
@@ -1120,7 +1119,7 @@ namespace Neo.UI.ViewModels
 
             if (transactionResult == null) return;
 
-            Helper.SignAndShowInformation(transactionResult);
+            Base.Helper.SignAndShowInformation(transactionResult);
         }
 
         private static void ShowOptionsDialog()
@@ -1141,7 +1140,7 @@ namespace Neo.UI.ViewModels
 
         private static void ShowDeveloperTools()
         {
-             Helper.Show<DeveloperToolsView>();
+             Base.Helper.Show<DeveloperToolsView>();
         }
 
         private static void ShowAboutNeoDialog()
@@ -1326,7 +1325,7 @@ namespace Neo.UI.ViewModels
 
             if (transaction == null) return;
             
-            Helper.SignAndShowInformation(transaction);
+            Base.Helper.SignAndShowInformation(transaction);
         }
 
         private void CopyAddressToClipboard()
@@ -1395,7 +1394,7 @@ namespace Neo.UI.ViewModels
                 }
             }, fee: Fixed8.Zero);
 
-            Helper.SignAndShowInformation(transaction);
+            Base.Helper.SignAndShowInformation(transaction);
         }
 
         #endregion Asset Menu Command Methods

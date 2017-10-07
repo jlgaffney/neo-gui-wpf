@@ -4,6 +4,7 @@ using Neo.Wallets;
 using System;
 using System.Linq;
 using System.Windows.Forms;
+using Neo.UI.Base;
 
 namespace Neo.UI
 {

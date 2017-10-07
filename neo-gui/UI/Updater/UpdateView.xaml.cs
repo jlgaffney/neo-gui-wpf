@@ -1,4 +1,4 @@
-﻿namespace Neo.UI.Views.Updater
+﻿namespace Neo.UI.Updater
 {
     public partial class UpdateView
     {

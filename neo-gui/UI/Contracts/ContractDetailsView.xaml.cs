@@ -1,7 +1,6 @@
-﻿using Neo.UI.ViewModels.Contracts;
-using Neo.Wallets;
+﻿using Neo.Wallets;
 
-namespace Neo.UI.Views.Contracts
+namespace Neo.UI.Contracts
 {
     /// <summary>
     /// Interaction logic for ContractDetailsView.xaml

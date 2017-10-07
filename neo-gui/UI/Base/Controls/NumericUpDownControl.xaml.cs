@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace Neo.UI.Controls
+namespace Neo.UI.Base.Controls
 {
     /// <summary>
     /// Interaction logic for NumericUpDownControl.xaml

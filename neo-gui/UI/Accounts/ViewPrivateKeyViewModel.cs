@@ -1,8 +1,8 @@
 ﻿using System.Windows.Input;
-using Neo.UI.MVVM;
+using Neo.UI.Base.MVVM;
 using Neo.Wallets;
 
-namespace Neo.UI.ViewModels.Accounts
+namespace Neo.UI.Accounts
 {
     public class ViewPrivateKeyViewModel : ViewModelBase
     {

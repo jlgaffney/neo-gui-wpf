@@ -4,7 +4,7 @@ using System.IO;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 
-namespace Neo.UI.Wrappers
+namespace Neo.UI.Base.Wrappers
 {
     internal class ScriptEditor : FileNameEditor
     {

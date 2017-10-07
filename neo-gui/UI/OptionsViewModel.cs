@@ -3,10 +3,10 @@ using System.Linq;
 using System.Windows.Input;
 using Neo.Extensions;
 using Neo.Properties;
-using Neo.UI.Controls;
-using Neo.UI.MVVM;
+using Neo.UI.Base.Controls;
+using Neo.UI.Base.MVVM;
 
-namespace Neo.UI.ViewModels
+namespace Neo.UI
 {
     public class OptionsViewModel : ViewModelBase
     {

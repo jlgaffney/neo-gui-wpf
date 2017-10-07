@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Neo.UI.Controls.Development
+namespace Neo.UI.Base.Controls.Development
 {
     /// <summary>
     /// Interaction logic for TransactionPropertyGrid.xaml

@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
-using Neo.UI.ViewModels.Accounts;
 
-namespace Neo.UI.Views.Accounts
+namespace Neo.UI.Accounts
 {
     public partial class ImportPrivateKeyView
     {
-        private ImportPrivateKeyViewModel viewModel;
+        private readonly ImportPrivateKeyViewModel viewModel;
 
         public ImportPrivateKeyView()
         {

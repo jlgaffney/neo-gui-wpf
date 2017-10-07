@@ -1,15 +1,17 @@
-﻿using Neo.Core;
+﻿using System.ComponentModel;
+using Neo.Core;
 using Neo.Wallets;
-using System.ComponentModel;
 
-namespace Neo.UI.Wrappers
+namespace Neo.UI.Base.Wrappers
 {
     internal class TransactionOutputWrapper
     {
         [TypeConverter(typeof(UIntBaseConverter))]
         public UInt256 AssetId { get; set; }
+
         [TypeConverter(typeof(Fixed8Converter))]
         public Fixed8 Value { get; set; }
+
         [TypeConverter(typeof(UIntBaseConverter))]
         public UInt160 ScriptHash { get; set; }
 

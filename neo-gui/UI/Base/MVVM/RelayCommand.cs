@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace Neo.UI.MVVM
+namespace Neo.UI.Base.MVVM
 {
     public class RelayCommand : ICommand
     {
-        private Action<object> execute;
-        private Func<object, bool> canExecute;
+        private readonly Action<object> execute;
+        private readonly Func<object, bool> canExecute;
 
         public event EventHandler CanExecuteChanged
         {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
+            add => CommandManager.RequerySuggested += value;
+            remove => CommandManager.RequerySuggested -= value;
         }
 
         public RelayCommand(Action execute, Func<object, bool> canExecute = null) :
-            this((parameters) => execute(), canExecute)
+            this(parameters => execute(), canExecute)
         {
         }
 

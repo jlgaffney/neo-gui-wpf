@@ -5,9 +5,9 @@ using System.Windows.Input;
 using CERTENROLLLib;
 using Microsoft.Win32;
 using Neo.Cryptography.ECC;
-using Neo.UI.MVVM;
+using Neo.UI.Base.MVVM;
 
-namespace Neo.UI.ViewModels.Wallets
+namespace Neo.UI.Wallets
 {
     public class CertificateRequestViewModel : ViewModelBase
     {

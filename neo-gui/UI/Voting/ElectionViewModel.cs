@@ -5,10 +5,10 @@ using Neo.Core;
 using Neo.Cryptography.ECC;
 using Neo.Extensions;
 using Neo.SmartContract;
-using Neo.UI.MVVM;
+using Neo.UI.Base.MVVM;
 using Neo.VM;
 
-namespace Neo.UI.ViewModels.Voting
+namespace Neo.UI.Voting
 {
     public class ElectionViewModel : ViewModelBase
     {

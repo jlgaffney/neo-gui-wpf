@@ -2,11 +2,11 @@
 using System.Windows.Input;
 using Neo.Core;
 using Neo.Extensions;
-using Neo.UI.MVVM;
+using Neo.UI.Base.MVVM;
 using Neo.VM;
 using Neo.Wallets;
 
-namespace Neo.UI.ViewModels.Voting
+namespace Neo.UI.Voting
 {
     public class VotingViewModel : ViewModelBase
     {

@@ -1,7 +1,6 @@
 ﻿using Neo.Core;
-using Neo.UI.ViewModels.Assets;
 
-namespace Neo.UI.Views.Assets
+namespace Neo.UI.Assets
 {
     public partial class AssetRegistrationView
     {

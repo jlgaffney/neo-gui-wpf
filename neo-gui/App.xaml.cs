@@ -1,7 +1,5 @@
-﻿using System.Xml.Linq;
-
-using Neo.Implementations.Wallets.EntityFramework;
-using Neo.UI.Views;
+﻿using Neo.Implementations.Wallets.EntityFramework;
+using Neo.UI;
 
 namespace Neo
 {

@@ -1,7 +1,6 @@
 ﻿using Neo.Core;
-using Neo.UI.ViewModels.Voting;
 
-namespace Neo.UI.Views.Voting
+namespace Neo.UI.Voting
 {
     public partial class VotingView
     {

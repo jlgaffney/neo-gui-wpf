@@ -1,11 +1,12 @@
-﻿<controls:NeoWindow x:Class="Neo.UI.Views.Wallets.CertificateRequestView"
+﻿<controls:NeoWindow x:Class="Neo.UI.Wallets.CertificateRequestView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:controls="clr-namespace:Neo.UI.Controls"
-        xmlns:walletsVm="clr-namespace:Neo.UI.ViewModels.Wallets"
-        Title="Certificate Request Wizard" Width="560" SizeToContent="Height" ResizeMode="NoResize">
+        xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
+        xmlns:local="clr-namespace:Neo.UI.Wallets"
+        Title="Certificate Request Wizard" Width="560"
+        SizeToContent="Height" ResizeMode="NoResize">
     <controls:NeoWindow.DataContext>
-        <walletsVm:CertificateRequestViewModel />
+        <local:CertificateRequestViewModel />
     </controls:NeoWindow.DataContext>
 
     <Grid Margin="12">

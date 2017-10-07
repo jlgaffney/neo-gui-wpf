@@ -1,22 +1,21 @@
-﻿using Neo.Core;
-using Neo.Properties;
-using Neo.SmartContract;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
+using Neo.Core;
+using Neo.Properties;
+using Neo.SmartContract;
+using Neo.UI.Base.Controls;
+using Neo.UI.Base.Dialogs;
 using MessageBox = System.Windows.MessageBox;
 
-using Neo.UI.Controls;
-using Neo.UI.Dialogs;
-
-namespace Neo.UI
+namespace Neo.UI.Base
 {
     internal static class Helper
     {
-        private static Dictionary<Type, Form> toolForms = new Dictionary<Type, Form>();
+        private static readonly Dictionary<Type, Form> toolForms = new Dictionary<Type, Form>();
 
-        private static Dictionary<Type, NeoWindow> toolWindows = new Dictionary<Type, NeoWindow>();
+        private static readonly Dictionary<Type, NeoWindow> toolWindows = new Dictionary<Type, NeoWindow>();
 
         private static void Helper_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -25,14 +24,14 @@ namespace Neo.UI
 
         public static void ShowForm<T>() where T : Form, new()
         {
-            Type t = typeof(T);
-            if (!toolForms.ContainsKey(t))
+            var type = typeof(T);
+            if (!toolForms.ContainsKey(type))
             {
-                toolForms.Add(t, new T());
-                toolForms[t].FormClosing += Helper_FormClosing;
+                toolForms.Add(type, new T());
+                toolForms[type].FormClosing += Helper_FormClosing;
             }
-            toolForms[t].Show();
-            toolForms[t].Activate();
+            toolForms[type].Show();
+            toolForms[type].Activate();
         }
 
         private static void Helper_WindowClosing(object sender, CancelEventArgs e)
@@ -42,14 +41,14 @@ namespace Neo.UI
 
         public static void Show<T>() where T : NeoWindow, new()
         {
-            Type t = typeof(T);
-            if (!toolWindows.ContainsKey(t))
+            var type = typeof(T);
+            if (!toolWindows.ContainsKey(type))
             {
-                toolWindows.Add(t, new T());
-                toolWindows[t].Closing += Helper_WindowClosing;
+                toolWindows.Add(type, new T());
+                toolWindows[type].Closing += Helper_WindowClosing;
             }
-            toolWindows[t].Show();
-            toolWindows[t].Activate();
+            toolWindows[type].Show();
+            toolWindows[type].Activate();
         }
 
         public static void SignAndShowInformation(Transaction tx)
@@ -59,6 +58,7 @@ namespace Neo.UI
                 MessageBox.Show(Strings.InsufficientFunds);
                 return;
             }
+
             ContractParametersContext context;
             try
             {
@@ -69,7 +69,9 @@ namespace Neo.UI
                 MessageBox.Show(Strings.UnsynchronizedBlock);
                 return;
             }
+
             App.CurrentWallet.Sign(context);
+
             if (context.Completed)
             {
                 context.Verifiable.Scripts = context.GetScripts();

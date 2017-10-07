@@ -1,8 +1,8 @@
 ﻿using System.Windows.Input;
-using Neo.UI.MVVM;
+using Neo.UI.Base.MVVM;
 using Neo.Wallets;
 
-namespace Neo.UI.ViewModels.Contracts
+namespace Neo.UI.Contracts
 {
     public class ContractDetailsViewModel : ViewModelBase
     {

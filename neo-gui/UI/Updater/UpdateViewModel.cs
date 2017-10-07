@@ -3,16 +3,13 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Net;
 using System.Windows.Input;
-using System.Xml.Linq;
-using Neo.UI.Controls;
+using Neo.UI.Base.MVVM;
 using Neo.UI.Messages;
-using Neo.UI.MVVM;
 using NeoResources = Neo.Properties.Resources;
 
-namespace Neo.UI.ViewModels.Updater
+namespace Neo.UI.Updater
 {
     public class UpdateViewModel : ViewModelBase
     {

@@ -8,12 +8,11 @@ using Neo.Core;
 using Neo.IO.Json;
 using Neo.Properties;
 using Neo.SmartContract;
-using Neo.UI.Controls;
-using Neo.UI.MVVM;
-using Neo.UI.Views.Contracts;
+using Neo.UI.Base.Controls;
+using Neo.UI.Base.MVVM;
 using Neo.VM;
 
-namespace Neo.UI.ViewModels.Contracts
+namespace Neo.UI.Contracts
 {
     public class InvokeContractViewModel : ViewModelBase
     {

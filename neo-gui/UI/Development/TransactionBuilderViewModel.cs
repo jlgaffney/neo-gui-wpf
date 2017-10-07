@@ -7,11 +7,11 @@ using System.Windows.Input;
 using Neo.Core;
 using Neo.Properties;
 using Neo.SmartContract;
-using Neo.UI.Dialogs;
-using Neo.UI.MVVM;
-using Neo.UI.Wrappers;
+using Neo.UI.Base.MVVM;
+using Neo.UI.Base.Wrappers;
+using Neo.UI.Base.Dialogs;
 
-namespace Neo.UI.ViewModels.Development
+namespace Neo.UI.Development
 {
     public class TransactionBuilderViewModel : ViewModelBase
     {

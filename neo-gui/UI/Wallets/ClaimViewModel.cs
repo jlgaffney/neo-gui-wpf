@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
+using Neo.UI.Base.Controls;
+using Neo.UI.Base.MVVM;
 
-using Neo.UI.Controls;
-using Neo.UI.MVVM;
-
-namespace Neo.UI.ViewModels.Wallets
+namespace Neo.UI.Wallets
 {
     public class ClaimViewModel : ViewModelBase
     {
@@ -119,7 +118,7 @@ namespace Neo.UI.ViewModels.Wallets
         {
             var claims = App.CurrentWallet.GetUnclaimedCoins().Select(p => p.Reference).ToArray();
             if (claims.Length == 0) return;
-            Helper.SignAndShowInformation(new ClaimTransaction
+            Base.Helper.SignAndShowInformation(new ClaimTransaction
             {
                 Claims = claims,
                 Attributes = new TransactionAttribute[0],

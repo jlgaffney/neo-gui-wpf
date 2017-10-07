@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Neo.UI.Dialogs
+namespace Neo.UI.Base.Dialogs
 {
     /// <summary>
     /// Interaction logic for InputBox.xaml

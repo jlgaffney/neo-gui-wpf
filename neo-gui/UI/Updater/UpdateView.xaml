@@ -1,11 +1,11 @@
-﻿<controls:NeoWindow x:Class="Neo.UI.Views.Updater.UpdateView"
+﻿<controls:NeoWindow x:Class="Neo.UI.Updater.UpdateView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:updaterVm="clr-namespace:Neo.UI.ViewModels.Updater"
-        xmlns:controls="clr-namespace:Neo.UI.Controls"
+        xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
+        xmlns:local="clr-namespace:Neo.UI.Updater"
         Title="Update Available" Height="350" Width="525">
     <controls:NeoWindow.DataContext>
-        <updaterVm:UpdateViewModel />
+        <local:UpdateViewModel />
     </controls:NeoWindow.DataContext>
     
     <Grid Margin="12">

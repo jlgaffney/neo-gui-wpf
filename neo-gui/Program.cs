@@ -6,7 +6,7 @@ using Neo.Core;
 using Neo.Implementations.Blockchains.LevelDB;
 using Neo.Network;
 using Neo.Properties;
-using Neo.UI.Views.Updater;
+using Neo.UI.Updater;
 
 namespace Neo
 {

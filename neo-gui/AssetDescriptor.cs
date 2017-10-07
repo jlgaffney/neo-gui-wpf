@@ -1,11 +1,11 @@
-﻿using Neo.Core;
-using Neo.SmartContract;
-using Neo.VM;
-using System;
+﻿using System;
 using System.Linq;
 using System.Numerics;
+using Neo.Core;
+using Neo.SmartContract;
+using Neo.VM;
 
-namespace Neo.UI
+namespace Neo
 {
     internal class AssetDescriptor
     {
@@ -16,13 +16,13 @@ namespace Neo.UI
         public AssetDescriptor(UInt160 asset_id)
         {
             byte[] script;
-            using (ScriptBuilder sb = new ScriptBuilder())
+            using (var builder = new ScriptBuilder())
             {
-                sb.EmitAppCall(asset_id, "decimals");
-                sb.EmitAppCall(asset_id, "name");
-                script = sb.ToArray();
+                builder.EmitAppCall(asset_id, "decimals");
+                builder.EmitAppCall(asset_id, "name");
+                script = builder.ToArray();
             }
-            ApplicationEngine engine = ApplicationEngine.Run(script);
+            var engine = ApplicationEngine.Run(script);
             if (engine.State.HasFlag(VMState.FAULT)) throw new ArgumentException();
             this.AssetId = asset_id;
             this.AssetName = engine.EvaluationStack.Pop().GetString();
@@ -42,20 +42,21 @@ namespace Neo.UI
             {
                 return new BigDecimal(App.CurrentWallet.GetAvailable(asset_id).GetData(), 8);
             }
-            else
+
+            byte[] script;
+            using (var builder = new ScriptBuilder())
             {
-                byte[] script;
-                using (ScriptBuilder sb = new ScriptBuilder())
+                foreach (var account in App.CurrentWallet.GetContracts().Select(p => p.ScriptHash))
                 {
-                    foreach (UInt160 account in App.CurrentWallet.GetContracts().Select(p => p.ScriptHash))
-                        sb.EmitAppCall((UInt160)AssetId, "balanceOf", account);
-                    sb.Emit(OpCode.DEPTH, OpCode.PACK);
-                    script = sb.ToArray();
+                    builder.EmitAppCall((UInt160) AssetId, "balanceOf", account);
                 }
-                ApplicationEngine engine = ApplicationEngine.Run(script);
-                BigInteger amount = engine.EvaluationStack.Pop().GetArray().Aggregate(BigInteger.Zero, (x, y) => x + y.GetBigInteger());
-                return new BigDecimal(amount, Precision);
+
+                builder.Emit(OpCode.DEPTH, OpCode.PACK);
+                script = builder.ToArray();
             }
+            var engine = ApplicationEngine.Run(script);
+            var amount = engine.EvaluationStack.Pop().GetArray().Aggregate(BigInteger.Zero, (x, y) => x + y.GetBigInteger());
+            return new BigDecimal(amount, Precision);
         }
 
         public override string ToString()

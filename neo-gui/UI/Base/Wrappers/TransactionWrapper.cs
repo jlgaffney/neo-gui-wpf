@@ -1,20 +1,24 @@
-﻿using Neo.Core;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using Neo.Core;
 
-namespace Neo.UI.Wrappers
+namespace Neo.UI.Base.Wrappers
 {
     internal abstract class TransactionWrapper
     {
         [Category("Basic")]
         public byte Version { get; set; }
+
         [Category("Basic")]
         public List<TransactionAttributeWrapper> Attributes { get; set; } = new List<TransactionAttributeWrapper>();
+
         [Category("Basic")]
         public List<CoinReferenceWrapper> Inputs { get; set; } = new List<CoinReferenceWrapper>();
+
         [Category("Basic")]
         public List<TransactionOutputWrapper> Outputs { get; set; } = new List<TransactionOutputWrapper>();
+
         [Category("Basic")]
         public List<WitnessWrapper> Scripts { get; set; } = new List<WitnessWrapper>();
 

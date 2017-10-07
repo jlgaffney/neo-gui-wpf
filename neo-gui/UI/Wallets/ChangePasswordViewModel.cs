@@ -1,9 +1,9 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 using Neo.Properties;
-using Neo.UI.MVVM;
+using Neo.UI.Base.MVVM;
 
-namespace Neo.UI.ViewModels.Wallets
+namespace Neo.UI.Wallets
 {
     public class ChangePasswordViewModel : ViewModelBase
     {

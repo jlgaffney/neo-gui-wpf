@@ -1,11 +1,12 @@
-﻿using Neo.Core;
-using System.ComponentModel;
+﻿using System.ComponentModel;
+using Neo.Core;
 
-namespace Neo.UI.Wrappers
+namespace Neo.UI.Base.Wrappers
 {
     internal class TransactionAttributeWrapper
     {
         public TransactionAttributeUsage Usage { get; set; }
+
         [TypeConverter(typeof(HexConverter))]
         public byte[] Data { get; set; }
 

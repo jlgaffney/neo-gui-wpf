@@ -1,11 +1,12 @@
-﻿<controls:NeoWindow x:Class="Neo.UI.Views.Accounts.ViewContractView"
+﻿<controls:NeoWindow x:Class="Neo.UI.Accounts.ViewContractView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:controls="clr-namespace:Neo.UI.Controls"
-        xmlns:accountsVm="clr-namespace:Neo.UI.ViewModels.Accounts"
-        Title="View Contract" Height="460" Width="480" SizeToContent="Height" ResizeMode="CanResizeWithGrip">
+        xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
+        xmlns:local="clr-namespace:Neo.UI.Accounts"
+        Title="View Contract" Height="460" Width="480"
+        SizeToContent="Height" ResizeMode="CanResizeWithGrip">
     <controls:NeoWindow.DataContext>
-        <accountsVm:ViewContractViewModel />
+        <local:ViewContractViewModel />
     </controls:NeoWindow.DataContext>
     
     <Grid Margin="12">
