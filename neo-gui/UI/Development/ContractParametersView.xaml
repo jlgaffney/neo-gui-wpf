@@ -41,11 +41,11 @@
         </Grid.RowDefinitions>
 
         <GroupBox Grid.Row="0" Header="Current Value">
-            <TextBox Text="{Binding CurrentValue, UpdateSourceTrigger=PropertyChanged}" Background="#F0F0F0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            <TextBox Text="{Binding CurrentValue, Mode=OneWay}" IsReadOnly="True" Background="#F0F0F0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" />
         </GroupBox>
 
         <GroupBox Grid.Row="1" Header="New Value">
-            <TextBox BindingGroup="{Binding NewValue}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            <TextBox Text="{Binding NewValue, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" />
         </GroupBox>
     </Grid>
 

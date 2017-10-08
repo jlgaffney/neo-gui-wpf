@@ -337,10 +337,15 @@
     <Compile Include="UI\Base\Dialogs\InputBox.xaml.cs">
       <DependentUpon>InputBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Contracts\DisplayContractParameter.cs" />
+    <Compile Include="UI\Contracts\ParametersEditorView.xaml.cs">
+      <DependentUpon>ParametersEditorView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Contracts\DeployContractView.xaml.cs">
       <DependentUpon>DeployContractView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Contracts\DeployContractViewModel.cs" />
+    <Compile Include="UI\Contracts\ParametersEditorViewModel.cs" />
     <Compile Include="UI\Messages\CloseWindowMessage.cs" />
     <Compile Include="UI\Messages\OpenWalletMessage.cs" />
     <Compile Include="UI\Messages\CreateWalletMessage.cs" />
@@ -453,12 +458,6 @@
     <Compile Include="UI\OldWinForms\IssueDialog.Designer.cs">
       <DependentUpon>IssueDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\OldWinForms\ParametersEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\OldWinForms\ParametersEditor.Designer.cs">
-      <DependentUpon>ParametersEditor.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\OldWinForms\TradeForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -558,15 +557,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\IssueDialog.zh-Hans.resx">
       <DependentUpon>IssueDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\ParametersEditor.es-ES.resx">
-      <DependentUpon>ParametersEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\ParametersEditor.resx">
-      <DependentUpon>ParametersEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\ParametersEditor.zh-Hans.resx">
-      <DependentUpon>ParametersEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\TradeForm.es-ES.resx">
       <DependentUpon>TradeForm.cs</DependentUpon>
@@ -674,6 +664,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Contracts\ParametersEditorView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

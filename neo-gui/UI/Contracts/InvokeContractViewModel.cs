@@ -224,10 +224,8 @@ namespace Neo.UI.Contracts
 
         private void EditParameters()
         {
-            using (var dialog = new ParametersEditor(parameters))
-            {
-                dialog.ShowDialog();
-            }
+            var view = new ParametersEditorView(this.parameters);
+            view.ShowDialog();
 
             UpdateCustomScript();
         }
