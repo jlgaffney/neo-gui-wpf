@@ -470,12 +470,6 @@
     <Compile Include="UI\OldWinForms\TradeForm.Designer.cs">
       <DependentUpon>TradeForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\OldWinForms\TradeVerificationDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\OldWinForms\TradeVerificationDialog.Designer.cs">
-      <DependentUpon>TradeVerificationDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\OldWinForms\WinFormsTxOutListBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -571,15 +565,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\TradeForm.zh-Hans.resx">
       <DependentUpon>TradeForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\TradeVerificationDialog.es-ES.resx">
-      <DependentUpon>TradeVerificationDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\TradeVerificationDialog.resx">
-      <DependentUpon>TradeVerificationDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\TradeVerificationDialog.zh-Hans.resx">
-      <DependentUpon>TradeVerificationDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\WinFormsTxOutListBox.resx">
       <DependentUpon>WinFormsTxOutListBox.cs</DependentUpon>

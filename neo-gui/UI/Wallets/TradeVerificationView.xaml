@@ -3,62 +3,26 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
         xmlns:local="clr-namespace:Neo.UI.Wallets"
-        Title="Certificate Request Wizard" Width="560"
-        SizeToContent="Height" ResizeMode="NoResize">
+        xmlns:ui="clr-namespace:Neo.UI"
+        Title="Transaction Verification"
+        Width="600" Height="500" ResizeMode="NoResize">
     <controls:NeoWindow.DataContext>
-        <local:CertificateRequestViewModel />
+        <local:TradeVerificationViewModel />
     </controls:NeoWindow.DataContext>
 
     <Grid Margin="12">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <GroupBox Grid.Row="0" Header="Account" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="110" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                
-                <Label Grid.Column="0" Content="Public Key:" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                <ComboBox Grid.Column="1" ItemsSource="{Binding PublicKeys}" SelectedItem="{Binding SelectedPublicKey}" Margin="4" Padding="4" HorizontalAlignment="Stretch" />
-            </Grid>
+        <GroupBox Grid.Row="0" Header="Assets you will acquire" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <ui:TxOutListBox Items="{Binding Items}" ItemsChanged="TxOutListBox_OnItemsChanged" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </GroupBox>
 
-        <GroupBox Grid.Row="1" Header="Organization">
-            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="110" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
-                <Label Grid.Row="0" Grid.Column="0" Content="CN:" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding CN, UpdateSourceTrigger=PropertyChanged}" Margin="4" Padding="4" HorizontalAlignment="Stretch" />
-
-                <Label Grid.Row="1" Grid.Column="0" Content="C:" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding C, UpdateSourceTrigger=PropertyChanged}" Margin="4" Padding="4" HorizontalAlignment="Left" Width="200" />
-
-                <Label Grid.Row="2" Grid.Column="0" Content="S:" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding S, UpdateSourceTrigger=PropertyChanged}" Margin="4" Padding="4" HorizontalAlignment="Left" Width="200" />
-
-                <Label Grid.Row="3" Grid.Column="0" Content="SERIALNUMBER:" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding SerialNumber, UpdateSourceTrigger=PropertyChanged}" Margin="4" Padding="4" HorizontalAlignment="Stretch" />
-            </Grid>
-        </GroupBox>
-        
-        <DockPanel Grid.Row="2" HorizontalAlignment="Right" Margin="0 8 0 0">
-            <Button Content="OK" Width="60" Margin="0 0 8 0" Command="{Binding RequestCertificateCommand}" IsEnabled="{Binding RequestCertificateEnabled}" />
-            <Button Content="Cancel" Width="60" Command="{Binding CancelCommand}" />
+        <DockPanel Grid.Row="1" Margin="0 8 0 0" HorizontalAlignment="Right" VerticalAlignment="Stretch">
+            <Button Content="Accept" Width="70" Margin="0 0 8 0" Command="{Binding AcceptCommand}" />
+            <Button Content="Refuse" Width="70" Command="{Binding RefuseCommand}" />
         </DockPanel>
     </Grid>
 </controls:NeoWindow>

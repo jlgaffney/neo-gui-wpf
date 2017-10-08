@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Neo.UI.Base.Dialogs;
+using Neo.UI.Wallets;
 
 namespace Neo.UI
 {
@@ -122,11 +123,13 @@ namespace Neo.UI
                 MessageBox.Show(Strings.TradeFailedNoSyncMessage, Strings.Failed, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+
             outputs = outputs.Where(p => App.CurrentWallet.ContainsAddress(p.ScriptHash));
-            using (TradeVerificationDialog dialog = new TradeVerificationDialog(outputs))
-            {
-                button3.Enabled = dialog.ShowDialog() == DialogResult.OK;
-            }
+
+            var view = new TradeVerificationView(outputs);
+            view.ShowDialog();
+
+            button3.Enabled = view.TradeAccepted;
         }
 
         private void button3_Click(object sender, EventArgs e)

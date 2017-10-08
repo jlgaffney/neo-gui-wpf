@@ -5,13 +5,17 @@ namespace Neo.UI.Wallets
 {
     public partial class TradeVerificationView
     {
+        private readonly TradeVerificationViewModel viewModel;
+
         public TradeVerificationView(IEnumerable<TransactionOutput> outputs)
         {
             InitializeComponent();
 
-            var viewModel = this.DataContext as TradeVerificationViewModel;
+            this.viewModel = this.DataContext as TradeVerificationViewModel;
 
-            viewModel?.SetOutputs(outputs);
+            this.viewModel?.SetOutputs(outputs);
         }
+
+        public bool TradeAccepted => viewModel?.TradeAccepted ?? false;
     }
 }
