@@ -157,7 +157,7 @@ namespace Neo.UI.Development
 
         private void Load()
         {
-            var input = InputBox.Show("ParametersContext", "ParametersContext");
+            if (!InputBox.Show(out var input, "ParametersContext", "ParametersContext")) return;
 
             if (string.IsNullOrEmpty(input)) return;
 

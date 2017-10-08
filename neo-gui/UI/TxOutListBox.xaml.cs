@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using Neo.Core;
+using System.Windows;
 using Neo.UI.Transactions;
 
-namespace Neo.UI.Base.Controls.Transactions
+namespace Neo.UI
 {
     /// <summary>
     /// Interaction logic for TxOutListBox.xaml
@@ -15,11 +14,31 @@ namespace Neo.UI.Base.Controls.Transactions
     {
         public event EventHandler ItemsChanged;
 
+        public TxOutListBox()
+        {
+            InitializeComponent();
+
+            this.ListBox.DataContext = this;
+
+            this.UpdateRemoveButtonEnabled();
+        }
+
+        // Dependency Property
+        public static readonly DependencyProperty ItemsProperty =
+            DependencyProperty.Register("Items",
+                typeof(ObservableCollection<TxOutListBoxItem>), typeof(TxOutListBox),
+                new FrameworkPropertyMetadata(null));
+
+        // .NET Property wrapper
+        internal ObservableCollection<TxOutListBoxItem> Items
+        {
+            get => (ObservableCollection<TxOutListBoxItem>)GetValue(ItemsProperty);
+            set => SetValue(ItemsProperty, value);
+        }
+
         internal AssetDescriptor Asset { get; set; }
 
-        public int ItemCount => this.ListBox.Items.Count;
-
-        internal IEnumerable<TxOutListBoxItem> Items => this.ListBox.Items.OfType<TxOutListBoxItem>();
+        public int ItemCount => this.Items.Count;
 
         public bool ReadOnly
         {
@@ -27,56 +46,38 @@ namespace Neo.UI.Base.Controls.Transactions
             set => this.DockPanel.IsEnabled = !value;
         }
 
-        private UInt160 _script_hash = null;
+        private UInt160 scriptHash = null;
         public UInt160 ScriptHash
         {
-            get => _script_hash;
+            get => scriptHash;
             set
             {
-                _script_hash = value;
+                scriptHash = value;
                 this.BulkPayButton.IsEnabled = value == null;
             }
         }
 
-        public TxOutListBox()
+        private void UpdateRemoveButtonEnabled()
         {
-            InitializeComponent();
+            this.RemoveButton.IsEnabled = this.ListBox.SelectedItem != null;
         }
 
         public void Clear()
         {
-            if (this.ListBox.Items.Count <= 0) return;
+            if (this.Items.Count <= 0) return;
 
-            this.ListBox.Items.Clear();
+            this.Items.Clear();
 
             this.RemoveButton.IsEnabled = false;
 
             ItemsChanged?.Invoke(this, EventArgs.Empty);
-        }
 
-        public void SetItems(IEnumerable<TransactionOutput> outputs)
-        {
-            this.ListBox.Items.Clear();
-
-            foreach (var output in outputs)
-            {
-                var asset = Blockchain.Default.GetAssetState(output.AssetId);
-
-                this.ListBox.Items.Add(new TxOutListBoxItem
-                {
-                    AssetName = $"{asset.GetName()} ({asset.Owner})",
-                    AssetId = output.AssetId,
-                    Value = new BigDecimal(output.Value.GetData(), 8),
-                    ScriptHash = output.ScriptHash
-                });
-            }
-
-            ItemsChanged?.Invoke(this, EventArgs.Empty);
+            this.UpdateRemoveButtonEnabled();
         }
 
         private void ListBox_SelectionChanged(object sender, EventArgs e)
         {
-            this.RemoveButton.IsEnabled = this.ListBox.SelectedItems.Count > 0;
+            this.UpdateRemoveButtonEnabled();
         }
 
         private void AddButton_Click(object sender, EventArgs e)
@@ -88,19 +89,23 @@ namespace Neo.UI.Base.Controls.Transactions
 
             if (output == null) return;
 
-            this.ListBox.Items.Add(output);
+            this.Items.Add(output);
 
             ItemsChanged?.Invoke(this, EventArgs.Empty);
+
+            this.UpdateRemoveButtonEnabled();
         }
 
         private void RemoveButton_Click(object sender, EventArgs e)
         {
-            while (this.ListBox.SelectedItems.Count > 0)
+            while (this.ListBox.SelectedItem != null)
             {
-                this.ListBox.Items.Remove(this.ListBox.SelectedItems[0]);
+                this.Items.Remove((TxOutListBoxItem) this.ListBox.SelectedItem);
             }
 
             ItemsChanged?.Invoke(this, EventArgs.Empty);
+
+            this.UpdateRemoveButtonEnabled();
         }
 
         private void BulkPayButton_Click(object sender, EventArgs e)
@@ -114,10 +119,12 @@ namespace Neo.UI.Base.Controls.Transactions
 
             foreach (var output in outputs)
             {
-                this.ListBox.Items.Add(output);
+                this.Items.Add(output);
             }
 
             ItemsChanged?.Invoke(this, EventArgs.Empty);
+
+            this.UpdateRemoveButtonEnabled();
         }
     }
 }

@@ -30,7 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TradeVerificationDialog));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.txOutListBox1 = new Neo.UI.TxOutListBox();
+            this.txOutListBox1 = new OldWinForms.TxOutListBox();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
@@ -88,6 +88,6 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
-        private TxOutListBox txOutListBox1;
+        private OldWinForms.TxOutListBox txOutListBox1;
     }
 }

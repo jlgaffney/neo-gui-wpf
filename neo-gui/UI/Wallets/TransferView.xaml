@@ -1,0 +1,35 @@
+﻿<controls:NeoWindow x:Class="Neo.UI.Wallets.TransferView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
+        xmlns:local="clr-namespace:Neo.UI.Wallets"
+        xmlns:ui="clr-namespace:Neo.UI"
+        Title="Transfer"
+        Width="600" Height="410" ResizeMode="NoResize">
+    <controls:NeoWindow.DataContext>
+        <local:TransferViewModel />
+    </controls:NeoWindow.DataContext>
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <GroupBox Grid.Row="0" Header="Recipient List" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <ui:TxOutListBox Items="{Binding Items}" ItemsChanged="TxOutListBox_OnItemsChanged" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+
+                <Button ToolTip="Remark" Width="28" Height="24" HorizontalAlignment="Right" VerticalAlignment="Bottom" Command="{Binding RemarkCommand}">
+                    <Image Source="/Resources/remark.png" Width="18" Height="18" />
+                </Button>
+            </Grid>
+            
+        </GroupBox>
+
+        <DockPanel Grid.Row="1" Margin="0 8 0 0" HorizontalAlignment="Right" VerticalAlignment="Stretch">
+            <Button Content="OK" Width="70" Margin="0 0 8 0" Command="{Binding OkCommand}" IsEnabled="{Binding OkEnabled}" />
+            <Button Content="Cancel" Width="70" Command="{Binding CancelCommand}" />
+        </DockPanel>
+    </Grid>
+</controls:NeoWindow>

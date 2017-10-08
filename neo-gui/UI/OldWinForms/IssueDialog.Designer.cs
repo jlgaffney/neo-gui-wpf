@@ -41,7 +41,7 @@
             this.textBox5 = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.txOutListBox1 = new Neo.UI.TxOutListBox();
+            this.txOutListBox1 = new OldWinForms.TxOutListBox();
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
@@ -189,7 +189,7 @@
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;
-        private TxOutListBox txOutListBox1;
+        private OldWinForms.TxOutListBox txOutListBox1;
         private System.Windows.Forms.TextBox textBox5;
     }
 }

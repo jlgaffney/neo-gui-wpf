@@ -1,12 +1,12 @@
-﻿using Neo.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
+using Neo.Core;
 using Neo.UI.Transactions;
 
-namespace Neo.UI
+namespace Neo.UI.OldWinForms
 {
     [DefaultEvent(nameof(ItemsChanged))]
     internal partial class TxOutListBox : UserControl

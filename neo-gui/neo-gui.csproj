@@ -381,6 +381,9 @@
     <Compile Include="UI\Transactions\SignatureViewModel.cs" />
     <Compile Include="UI\Voting\ElectionViewModel.cs" />
     <Compile Include="UI\Voting\VotingViewModel.cs" />
+    <Compile Include="UI\Wallets\TradeVerificationView.xaml.cs">
+      <DependentUpon>TradeVerificationView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Wallets\CertificateRequestViewModel.cs" />
     <Compile Include="UI\Wallets\ClaimViewModel.cs" />
     <Compile Include="UI\Wallets\ChangePasswordViewModel.cs" />
@@ -473,11 +476,11 @@
     <Compile Include="UI\OldWinForms\TradeVerificationDialog.Designer.cs">
       <DependentUpon>TradeVerificationDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\OldWinForms\TxOutListBox.cs">
+    <Compile Include="UI\OldWinForms\WinFormsTxOutListBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UI\OldWinForms\TxOutListBox.Designer.cs">
-      <DependentUpon>TxOutListBox.cs</DependentUpon>
+    <Compile Include="UI\OldWinForms\WinFormsTxOutListBox.Designer.cs">
+      <DependentUpon>WinFormsTxOutListBox.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -487,12 +490,6 @@
     <Compile Include="UI\Base\Helper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UI\OldWinForms\TransferDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\OldWinForms\TransferDialog.Designer.cs">
-      <DependentUpon>TransferDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\TxOutListBoxItem.cs" />
     <Compile Include="UI\MainViewModel.cs" />
     <Compile Include="UI\Updater\UpdateView.xaml.cs">
@@ -511,10 +508,15 @@
     <Compile Include="UI\Base\Wrappers\TransactionWrapper.cs" />
     <Compile Include="UI\Base\Converters\UIntBaseConverter.cs" />
     <Compile Include="UI\Base\Wrappers\WitnessWrapper.cs" />
+    <Compile Include="UI\Wallets\TradeVerificationViewModel.cs" />
+    <Compile Include="UI\Wallets\TransferView.xaml.cs">
+      <DependentUpon>TransferView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Wallets\RestoreAccountsView.xaml.cs">
       <DependentUpon>RestoreAccountsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Wallets\RestoreAccountsViewModel.cs" />
+    <Compile Include="UI\Wallets\TransferViewModel.cs" />
     <Compile Include="VersionHelper.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -579,18 +581,8 @@
     <EmbeddedResource Include="UI\OldWinForms\TradeVerificationDialog.zh-Hans.resx">
       <DependentUpon>TradeVerificationDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\TransferDialog.es-ES.resx">
-      <DependentUpon>TransferDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\TransferDialog.zh-Hans.resx">
-      <DependentUpon>TransferDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\TxOutListBox.resx">
-      <DependentUpon>TxOutListBox.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\TransferDialog.resx">
-      <DependentUpon>TransferDialog.cs</DependentUpon>
+    <EmbeddedResource Include="UI\OldWinForms\WinFormsTxOutListBox.resx">
+      <DependentUpon>WinFormsTxOutListBox.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="config.testnet.json">
@@ -649,10 +641,10 @@
   <ItemGroup>
     <Content Include="logo.ico" />
     <Resource Include="Resources\search.png" />
-    <None Include="Resources\add2.png" />
-    <None Include="Resources\remove.png" />
-    <None Include="Resources\add.png" />
-    <None Include="Resources\remark.png" />
+    <Resource Include="Resources\add2.png" />
+    <Resource Include="Resources\remove.png" />
+    <Resource Include="Resources\add.png" />
+    <Resource Include="Resources\remark.png" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="CERTENROLLLib">
@@ -679,6 +671,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Contracts\DeployContractView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Wallets\TradeVerificationView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Wallets\TransferView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

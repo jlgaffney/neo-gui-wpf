@@ -1,4 +1,4 @@
-﻿namespace Neo.UI
+﻿namespace Neo.UI.OldWinForms
 {
     partial class TxOutListBox
     {

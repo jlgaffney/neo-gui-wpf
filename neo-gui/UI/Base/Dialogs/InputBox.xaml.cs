@@ -18,18 +18,27 @@ namespace Neo.UI.Base.Dialogs
             this.InputTextBox.Text = content;
         }
 
-        public static string Show(string text, string caption, string content = "")
+        private bool IsOk { get; set; }
+
+        public static bool Show(out string result, string text, string caption, string content = "")
         {
+            result = null;
+
             var dialog = new InputBox(text, caption, content);
 
             dialog.ShowDialog();
 
-            return dialog.inputResult;
+            if (!dialog.IsOk) return false;
+
+            result = dialog.inputResult;
+            return true;
         }
 
         private void OkClicked(object sender, RoutedEventArgs e)
         {
             this.inputResult = this.InputTextBox.Text;
+
+            this.IsOk = true;
 
             this.Close();
         }

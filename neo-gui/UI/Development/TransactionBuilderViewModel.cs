@@ -112,8 +112,12 @@ namespace Neo.UI.Development
                 };
             }
             var remark = Encoding.UTF8.GetString(attribute.Data);
-            remark = InputBox.Show(Strings.EnterRemarkMessage, Strings.EnterRemarkTitle, remark);
-            if (remark != null)
+            if (InputBox.Show(out var result, Strings.EnterRemarkMessage, Strings.EnterRemarkTitle, remark))
+            {
+                remark = result;
+            }
+
+            if (!string.IsNullOrEmpty(remark))
             {
                 attribute.Data = Encoding.UTF8.GetBytes(remark);
                 if (!found) tx.Attributes.Add(attribute);

@@ -1005,13 +1005,12 @@ namespace Neo.UI
 
         private static void Transfer()
         {
-            Transaction transaction;
-            using (var dialog = new TransferDialog())
-            {
-                if (dialog.ShowDialog() != DialogResult.OK) return;
+            var view = new TransferView();
+            view.ShowDialog();
 
-                transaction = dialog.GetTransaction();
-            }
+            var transaction = view.GetTransaction();
+
+            if (transaction == null) return;
 
             if (transaction is InvocationTransaction itx)
             {
@@ -1229,8 +1228,10 @@ namespace Neo.UI
 
         private void ImportWatchOnlyAddress()
         {
-            var text = InputBox.Show(Strings.Address, Strings.ImportWatchOnlyAddress);
+            if (!InputBox.Show(out var text, Strings.Address, Strings.ImportWatchOnlyAddress)) return;
+
             if (string.IsNullOrEmpty(text)) return;
+
             using (var reader = new StringReader(text))
             {
                 while (true)
