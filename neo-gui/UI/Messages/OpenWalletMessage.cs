@@ -1,5 +1,6 @@
 ﻿namespace Neo.UI.Messages
 {
+    // TODO Remove class and replace with getters in OpenWalletView
     public class OpenWalletMessage
     {
         public OpenWalletMessage(string walletPath, string password, bool repairMode)

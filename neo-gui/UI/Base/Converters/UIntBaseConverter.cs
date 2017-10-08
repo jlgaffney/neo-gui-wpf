@@ -2,38 +2,36 @@
 using System.ComponentModel;
 using System.Globalization;
 
-namespace Neo.UI.Base.Wrappers
+namespace Neo.UI.Base.Converters
 {
-    internal class HexConverter : TypeConverter
+    internal class UIntBaseConverter : TypeConverter
     {
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {
-            if (sourceType == typeof(String))
-                return true;
-            return false;
+            return sourceType == typeof(string);
         }
 
         public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
         {
-            if (destinationType == typeof(string))
-                return true;
-            return false;
+            return destinationType == typeof(string);
         }
 
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
-            if (value is string s)
-                return s.HexToBytes();
+            if (value is string s) return context.PropertyDescriptor.PropertyType.GetMethod("Parse").Invoke(null, new[] { s });
+
             throw new NotSupportedException();
         }
 
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
-            if (destinationType != typeof(string))
-                throw new NotSupportedException();
-            byte[] array = value as byte[];
-            if (array == null) return null;
-            return array.ToHexString();
+            if (destinationType != typeof(string)) throw new NotSupportedException();
+
+            var i = value as UIntBase;
+
+            if (i == null) return null;
+
+            return i.ToString();
         }
     }
 }

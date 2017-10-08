@@ -2,9 +2,9 @@
 using System.ComponentModel;
 using System.Globalization;
 
-namespace Neo.UI.Base.Wrappers
+namespace Neo.UI.Base.Converters
 {
-    internal class UIntBaseConverter : TypeConverter
+    internal class HexConverter : TypeConverter
     {
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {
@@ -18,7 +18,7 @@ namespace Neo.UI.Base.Wrappers
 
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
-            if (value is string s) return context.PropertyDescriptor.PropertyType.GetMethod("Parse").Invoke(null, new[] { s });
+            if (value is string s) return s.HexToBytes();
 
             throw new NotSupportedException();
         }
@@ -27,11 +27,9 @@ namespace Neo.UI.Base.Wrappers
         {
             if (destinationType != typeof(string)) throw new NotSupportedException();
 
-            var i = value as UIntBase;
+            var array = value as byte[];
 
-            if (i == null) return null;
-
-            return i.ToString();
+            return array?.ToHexString();
         }
     }
 }

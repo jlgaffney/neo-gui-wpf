@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using Neo.Core;
+using Neo.UI.Base.Converters;
 using Neo.Wallets;
 
 namespace Neo.UI.Base.Wrappers

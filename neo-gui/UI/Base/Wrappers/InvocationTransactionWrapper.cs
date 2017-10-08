@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Drawing.Design;
 using Neo.Core;
+using Neo.UI.Base.Converters;
 
 namespace Neo.UI.Base.Wrappers
 {
