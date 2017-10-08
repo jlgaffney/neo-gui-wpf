@@ -461,12 +461,6 @@
     <Compile Include="UI\OldWinForms\ParametersEditor.Designer.cs">
       <DependentUpon>ParametersEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\OldWinForms\RestoreAccountsDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\OldWinForms\RestoreAccountsDialog.Designer.cs">
-      <DependentUpon>RestoreAccountsDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\OldWinForms\TradeForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -517,6 +511,10 @@
     <Compile Include="UI\Base\Wrappers\TransactionWrapper.cs" />
     <Compile Include="UI\Base\Wrappers\UIntBaseConverter.cs" />
     <Compile Include="UI\Base\Wrappers\WitnessWrapper.cs" />
+    <Compile Include="UI\Wallets\RestoreAccountsView.xaml.cs">
+      <DependentUpon>RestoreAccountsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Wallets\RestoreAccountsViewModel.cs" />
     <Compile Include="VersionHelper.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -581,15 +579,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\ParametersEditor.zh-Hans.resx">
       <DependentUpon>ParametersEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\RestoreAccountsDialog.es-ES.resx">
-      <DependentUpon>RestoreAccountsDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\RestoreAccountsDialog.resx">
-      <DependentUpon>RestoreAccountsDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\RestoreAccountsDialog.zh-Hans.resx">
-      <DependentUpon>RestoreAccountsDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\TradeForm.es-ES.resx">
       <DependentUpon>TradeForm.cs</DependentUpon>
@@ -697,6 +686,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Wallets\RestoreAccountsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

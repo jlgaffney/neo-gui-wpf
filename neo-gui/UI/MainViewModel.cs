@@ -252,7 +252,7 @@ namespace Neo.UI
         public ICommand TransferCommand => new RelayCommand(Transfer);
 
         public ICommand ShowTransactionDialogCommand => new RelayCommand(ShowTransactionDialog);
-        
+
         public ICommand ShowSigningDialogCommand => new RelayCommand(ShowSigningDialog);
 
         public ICommand ClaimCommand => new RelayCommand(Claim);
@@ -284,17 +284,17 @@ namespace Neo.UI
         #endregion Tool Strip Menu Commands
 
         #region Context Menu Commands
-         
+
         /*
          * Account Context Menu Commands
          */
         public ICommand CreateNewAddressCommand => new RelayCommand(this.CreateNewKey);
-                            
+
         public ICommand ImportWifPrivateKeyCommand => new RelayCommand(this.ImportWifPrivateKey);
         public ICommand ImportFromCertificateCommand => new RelayCommand(this.ImportCertificate);
 
         public ICommand ImportWatchOnlyAddressCommand => new RelayCommand(this.ImportWatchOnlyAddress);
-        
+
         public ICommand CreateMultiSignatureContractAddressCommand => new RelayCommand(this.CreateMultiSignatureContract);
         public ICommand CreateLockContractAddressCommand => new RelayCommand(this.CreateLockAddress);
 
@@ -601,7 +601,7 @@ namespace Neo.UI
                 CheckForNewerVersion();
 
                 ImportBlocksIfRequired();
-                
+
                 Blockchain.PersistCompleted += Blockchain_PersistCompleted;
 
                 // Start node
@@ -621,7 +621,7 @@ namespace Neo.UI
             var currentVersion = VersionHelper.CurrentVersion;
 
             if (latestVersion == null || latestVersion <= currentVersion) return;
-            
+
             this.NewVersionLabel = $"{Strings.DownloadNewVersion}: {latestVersion}";
             this.NewVersionVisible = true;
         }
@@ -656,7 +656,7 @@ namespace Neo.UI
                 timer.Elapsed += this.UpdateUI;
 
                 this.uiUpdateTimer = timer;
-            }            
+            }
         }
 
         private void StartUIUpdateTimer()
@@ -681,7 +681,7 @@ namespace Neo.UI
 
             this.UpdateBlockProgress(persistenceSpan);
 
-            this.UpdateWallet(persistenceSpan);            
+            this.UpdateWallet(persistenceSpan);
         }
 
         private void UpdateBlockProgress(TimeSpan persistenceSpan)
@@ -706,7 +706,7 @@ namespace Neo.UI
         {
             if (App.CurrentWallet == null) return;
 
-            this.UpdateAssetBalances();            
+            this.UpdateAssetBalances();
 
             this.UpdateNEP5TokenBalances(persistenceSpan);
         }
@@ -901,7 +901,7 @@ namespace Neo.UI
         {
             // Close window
             this.TryClose();
-            
+
             // Start update
             Process.Start(message.UpdateScriptPath);
         }
@@ -963,7 +963,7 @@ namespace Neo.UI
             var view = new OpenWalletView();
             view.ShowDialog();
         }
-        
+
         public void CloseWallet()
         {
             this.ChangeWallet(null);
@@ -984,14 +984,17 @@ namespace Neo.UI
 
         private void RestoreAccounts()
         {
-            using (var dialog = new RestoreAccountsDialog())
+            var view = new RestoreAccountsView();
+            view.ShowDialog();
+
+            var contracts = view.GetContracts();
+
+            if (contracts == null) return;
+
+            foreach (var contract in contracts)
             {
-                if (dialog.ShowDialog() != DialogResult.OK) return;
-                foreach (var contract in dialog.GetContracts())
-                {
-                    App.CurrentWallet.AddContract(contract);
-                    AddContract(contract, true);
-                }
+                App.CurrentWallet.AddContract(contract);
+                AddContract(contract, true);
             }
         }
 
@@ -1139,7 +1142,7 @@ namespace Neo.UI
 
         private static void ShowDeveloperTools()
         {
-             Base.Helper.Show<DeveloperToolsView>();
+            Base.Helper.Show<DeveloperToolsView>();
         }
 
         private static void ShowAboutNeoDialog()
@@ -1337,7 +1340,7 @@ namespace Neo.UI
             transaction = invokeContractView.GetTransaction();
 
             if (transaction == null) return;
-            
+
             Base.Helper.SignAndShowInformation(transaction);
         }
 
@@ -1421,7 +1424,7 @@ namespace Neo.UI
         }
 
         #endregion Transaction Menu Command Methods
-        
+
         private static void ShowUpdateDialog()
         {
             var dialog = new UpdateView();

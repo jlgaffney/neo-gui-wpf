@@ -35,7 +35,7 @@
 
                 <MenuItem Header="Change _Password…" Command="{Binding ChangePasswordCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
                 <MenuItem Header="Rebuild _Index" Command="{Binding RebuildIndexCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
-                <MenuItem Header="_Restore Accounts…" Command="{Binding RestoreAccountCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
+                <MenuItem Header="_Restore Accounts…" Command="{Binding RestoreAccountsCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
 
                 <Separator />
 
