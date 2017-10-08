@@ -331,6 +331,9 @@
     <Compile Include="UI\Base\Controls\NumericUpDownControl.xaml.cs">
       <DependentUpon>NumericUpDownControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\TxOutListBox.xaml.cs">
+      <DependentUpon>TxOutListBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Base\Dialogs\InformationBox.xaml.cs">
       <DependentUpon>InformationBox.xaml</DependentUpon>
     </Compile>
@@ -664,6 +667,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\TxOutListBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
