@@ -1198,15 +1198,27 @@ namespace Neo.UI
 
         private void ImportCertificate()
         {
-            using (var dialog = new SelectCertificateDialog())
+            var view = new SelectCertificateView();
+            view.ShowDialog();
+
+            if (view.SelectedCertificate == null) return;
+
+            this.SelectedAccount = null;
+
+            KeyPair key;
+            try
             {
-                if (dialog.ShowDialog() != DialogResult.OK) return;
-                this.SelectedAccount = null;
-                var key = App.CurrentWallet.Import(dialog.SelectedCertificate);
-                foreach (var contract in App.CurrentWallet.GetContracts(key.PublicKeyHash))
-                {
-                    AddContract(contract, true);
-                }
+                key = App.CurrentWallet.Import(view.SelectedCertificate);
+            }
+            catch
+            {
+                MessageBox.Show("Certificate import failed!");
+                return;
+            }
+
+            foreach (var contract in App.CurrentWallet.GetContracts(key.PublicKeyHash))
+            {
+                AddContract(contract, true);
             }
         }
 

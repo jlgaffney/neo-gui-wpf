@@ -317,10 +317,14 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="AssetDescriptor.cs" />
+    <Compile Include="UI\Accounts\SelectCertificateView.xaml.cs">
+      <DependentUpon>SelectCertificateView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Accounts\ImportCustomContractView.xaml.cs">
       <DependentUpon>ImportCustomContractView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Accounts\ImportCustomContractViewModel.cs" />
+    <Compile Include="UI\Accounts\SelectCertificateViewModel.cs" />
     <Compile Include="UI\Base\Controls\Development\TransactionPropertyGrid.xaml.cs">
       <DependentUpon>TransactionPropertyGrid.xaml</DependentUpon>
     </Compile>
@@ -489,12 +493,6 @@
     <Compile Include="UI\Base\Helper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UI\OldWinForms\SelectCertificateDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\OldWinForms\SelectCertificateDialog.Designer.cs">
-      <DependentUpon>SelectCertificateDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\OldWinForms\TransferDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -593,13 +591,6 @@
     <EmbeddedResource Include="UI\OldWinForms\RestoreAccountsDialog.zh-Hans.resx">
       <DependentUpon>RestoreAccountsDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\SelectCertificateDialog.es-ES.resx">
-      <DependentUpon>SelectCertificateDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\SelectCertificateDialog.zh-Hans.resx">
-      <DependentUpon>SelectCertificateDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\TradeForm.es-ES.resx">
       <DependentUpon>TradeForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -627,9 +618,6 @@
     <EmbeddedResource Include="UI\OldWinForms\TxOutListBox.resx">
       <DependentUpon>TxOutListBox.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\SelectCertificateDialog.resx">
-      <DependentUpon>SelectCertificateDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\TransferDialog.resx">
       <DependentUpon>TransferDialog.cs</DependentUpon>
@@ -714,6 +702,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="UI\Accounts\SelectCertificateView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\Accounts\ImportCustomContractView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
