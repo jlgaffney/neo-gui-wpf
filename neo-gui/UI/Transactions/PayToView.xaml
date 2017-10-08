@@ -30,7 +30,7 @@
         <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding AssetBalance, Mode=OneWay}" IsReadOnly="True" Margin="0 4" Padding="4" HorizontalAlignment="Stretch" />
 
         <Label Grid.Row="2" Grid.Column="0" Content="Pay to:" HorizontalAlignment="Right" VerticalAlignment="Center" />
-        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding PayToAddress}" IsReadOnly="{Binding PayToAddressReadOnly}" Margin="0 4" Padding="4" HorizontalAlignment="Stretch" />
+        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding PayToAddress, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="{Binding PayToAddressReadOnly}" Margin="0 4" Padding="4" HorizontalAlignment="Stretch" />
 
         <Label Grid.Row="3" Grid.Column="0" Content="Amount:" HorizontalAlignment="Right" VerticalAlignment="Center" />
         <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Amount, UpdateSourceTrigger=PropertyChanged}" Margin="0 4" Padding="4" HorizontalAlignment="Stretch" />

@@ -33,19 +33,19 @@
                 </Grid.ColumnDefinitions>
 
                 <Label Grid.Row="0" Grid.Column="0" Content="Name:" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Name}" HorizontalAlignment="Stretch" Margin="0 4" Padding="2" />
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="0 4" Padding="2" />
 
                 <Label Grid.Row="1" Grid.Column="0" Content="Version:" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Version}" HorizontalAlignment="Stretch" Margin="0 4" Padding="2" />
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Version, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="0 4" Padding="2" />
 
                 <Label Grid.Row="2" Grid.Column="0" Content="Author:" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Author}" HorizontalAlignment="Stretch" Margin="0 4" Padding="2" />
+                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Author, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="0 4" Padding="2" />
 
                 <Label Grid.Row="3" Grid.Column="0" Content="Email:" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Email}" HorizontalAlignment="Stretch" Margin="0 4" Padding="2" />
+                <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="0 4" Padding="2" />
 
                 <Label Grid.Row="4" Grid.Column="0" Content="Description:" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 2 0 0" />
-                <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Description}" AcceptsReturn="True" AcceptsTab="True" Height="80" HorizontalAlignment="Stretch" Margin="0 4" Padding="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" />
+                <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" AcceptsTab="True" Height="80" HorizontalAlignment="Stretch" Margin="0 4" Padding="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" />
             </Grid>
         </GroupBox>
         
@@ -62,10 +62,10 @@
                 </Grid.ColumnDefinitions>
 
                 <Label Grid.Row="0" Grid.Column="0" Content="Parameter List:" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding ParameterList}" HorizontalAlignment="Stretch" Margin="0 4" Padding="2" />
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding ParameterList, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="0 4" Padding="2" />
 
                 <Label Grid.Row="1" Grid.Column="0" Content="Return Type:" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ReturnType}" HorizontalAlignment="Stretch" Margin="0 4" Padding="2" />
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ReturnType, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="0 4" Padding="2" />
             </Grid>
         </GroupBox>
 
@@ -76,7 +76,7 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <TextBox Grid.Row="0" Text="{Binding Code}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Margin="0 4" Padding="2" AcceptsReturn="False" AcceptsTab="False" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" />
+                <TextBox Grid.Row="0" Text="{Binding Code, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Margin="0 4" Padding="2" AcceptsReturn="False" AcceptsTab="False" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" />
 
                 <Grid Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                     <Grid.ColumnDefinitions>
