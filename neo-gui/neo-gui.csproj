@@ -337,6 +337,10 @@
     <Compile Include="UI\Base\Dialogs\InputBox.xaml.cs">
       <DependentUpon>InputBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Contracts\DeployContractView.xaml.cs">
+      <DependentUpon>DeployContractView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Contracts\DeployContractViewModel.cs" />
     <Compile Include="UI\Messages\CloseWindowMessage.cs" />
     <Compile Include="UI\Messages\OpenWalletMessage.cs" />
     <Compile Include="UI\Messages\CreateWalletMessage.cs" />
@@ -443,12 +447,6 @@
     <Compile Include="UI\OldWinForms\CreateMultiSigContractDialog.Designer.cs">
       <DependentUpon>CreateMultiSigContractDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\OldWinForms\DeployContractDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\OldWinForms\DeployContractDialog.Designer.cs">
-      <DependentUpon>DeployContractDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\OldWinForms\IssueDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -550,16 +548,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\CreateMultiSigContractDialog.zh-Hans.resx">
       <DependentUpon>CreateMultiSigContractDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\DeployContractDialog.es-ES.resx">
-      <DependentUpon>DeployContractDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\DeployContractDialog.resx">
-      <DependentUpon>DeployContractDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\DeployContractDialog.zh-Hans.resx">
-      <DependentUpon>DeployContractDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\IssueDialog.es-ES.resx">
       <DependentUpon>IssueDialog.cs</DependentUpon>
@@ -686,6 +674,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Contracts\DeployContractView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

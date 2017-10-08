@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
              xmlns:local="clr-namespace:Neo.UI.Contracts"
-             Title="Invoke Contract" MinWidth="500" MinHeight="540"
+             Title="Invoke Contract" Width="500"  MinWidth="500" MinHeight="540"
              ResizeMode="CanResizeWithGrip">
     <controls:NeoWindow.DataContext>
         <local:InvokeContractViewModel />
@@ -40,20 +40,20 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <TextBox Grid.Column="0" Text="{Binding ScriptHash, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="0 3 8 3" Padding="4" />
+                        <TextBox Grid.Column="0" Text="{Binding ScriptHash, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" Margin="0 4 8 4" Padding="2" />
                         <Button Grid.Column="1" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="6" Command="{Binding GetContractCommand}" IsEnabled="{Binding GetContractEnabled, Mode=OneWay}">
                             <Image Source="pack://application:,,,/Resources/search.png" Width="12" Height="12" />
                         </Button>
                     </Grid>
 
                     <Label Grid.Row="1" Grid.Column="0" Content="Name:" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ContractName, Mode=OneWay}" IsReadOnly="True" HorizontalAlignment="Stretch" Margin="0 3 0 3" Padding="4" />
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ContractName, Mode=OneWay}" IsReadOnly="True" HorizontalAlignment="Stretch" Margin="0 4" Padding="2" />
 
                     <Label Grid.Row="2" Grid.Column="0" Content="Version:" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ContractVersion, Mode=OneWay}" IsReadOnly="True" HorizontalAlignment="Stretch" Margin="0 3 0 3" Padding="4"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ContractVersion, Mode=OneWay}" IsReadOnly="True" HorizontalAlignment="Stretch" Margin="0 4" Padding="2"/>
 
                     <Label Grid.Row="3" Grid.Column="0" Content="Author:" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding ContractAuthor, Mode=OneWay}" IsReadOnly="True" HorizontalAlignment="Stretch" Margin="0 3 0 3" Padding="4" />
+                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding ContractAuthor, Mode=OneWay}" IsReadOnly="True" HorizontalAlignment="Stretch" Margin="0 4" Padding="2" />
 
                     <Label Grid.Row="4" Grid.Column="0" Content="Parameters:" HorizontalAlignment="Right" VerticalAlignment="Center" />
                     <Grid Grid.Row="4" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -61,7 +61,7 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <TextBox Grid.Column="0" Text="{Binding ContractParameters, Mode=OneWay}" IsReadOnly="True" HorizontalAlignment="Stretch" Margin="0 3 8 3" Padding="4" />
+                        <TextBox Grid.Column="0" Text="{Binding ContractParameters, Mode=OneWay}" IsReadOnly="True" HorizontalAlignment="Stretch" Margin="0 4 8 4" Padding="2" />
                         <Button Grid.Column="1" Content="Edit" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="6" Command="{Binding EditParametersCommand}" IsEnabled="{Binding EditParametersEnabled}" />
                     </Grid>
                 </Grid>

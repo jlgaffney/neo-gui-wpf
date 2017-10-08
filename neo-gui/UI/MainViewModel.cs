@@ -1082,12 +1082,13 @@ namespace Neo.UI
 
         private static void DeployContract()
         {
-            InvocationTransaction transactionResult;
-            using (var dialog = new DeployContractDialog())
-            {
-                if (dialog.ShowDialog() != DialogResult.OK) return;
-                transactionResult = dialog.GetTransaction();
-            }
+            var view = new DeployContractView();
+            view.ShowDialog();
+
+            var transactionResult = view.GetTransaction();
+
+            if (transactionResult == null) return;
+
 
             var invokeContractView = new InvokeContractView(transactionResult);
             invokeContractView.ShowDialog();
@@ -1095,6 +1096,7 @@ namespace Neo.UI
             transactionResult = invokeContractView.GetTransaction();
 
             if (transactionResult == null) return;
+
 
             Base.Helper.SignAndShowInformation(transactionResult);
         }
