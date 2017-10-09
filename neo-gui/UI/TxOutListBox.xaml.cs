@@ -29,11 +29,26 @@ namespace Neo.UI
                 typeof(ObservableCollection<TxOutListBoxItem>), typeof(TxOutListBox),
                 new FrameworkPropertyMetadata(null));
 
+        // Dependency Property
+        public static readonly DependencyProperty ScriptHashProperty =
+            DependencyProperty.Register("ScriptHash",
+                typeof(UInt160), typeof(TxOutListBox),
+                new FrameworkPropertyMetadata(null,
+                    OnScriptHashPropertyChanged,
+                    OnCoerceScriptHashProperty));
+
         // .NET Property wrapper
         internal ObservableCollection<TxOutListBoxItem> Items
         {
             get => (ObservableCollection<TxOutListBoxItem>)GetValue(ItemsProperty);
             set => SetValue(ItemsProperty, value);
+        }
+
+        // .NET Property wrapper
+        public UInt160 ScriptHash
+        {
+            get => (UInt160)GetValue(ScriptHashProperty);
+            set => SetValue(ScriptHashProperty, value); // this.BulkPayButton.IsEnabled = value == null;
         }
 
         internal AssetDescriptor Asset { get; set; }
@@ -44,17 +59,6 @@ namespace Neo.UI
         {
             get => !this.DockPanel.IsEnabled;
             set => this.DockPanel.IsEnabled = !value;
-        }
-
-        private UInt160 scriptHash = null;
-        public UInt160 ScriptHash
-        {
-            get => scriptHash;
-            set
-            {
-                scriptHash = value;
-                this.BulkPayButton.IsEnabled = value == null;
-            }
         }
 
         private void UpdateRemoveButtonEnabled()
@@ -125,6 +129,27 @@ namespace Neo.UI
             ItemsChanged?.Invoke(this, EventArgs.Empty);
 
             this.UpdateRemoveButtonEnabled();
+        }
+
+
+        private static void OnScriptHashPropertyChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
+        {
+            var listBox = source as TxOutListBox;
+
+            if (listBox == null) return;
+
+            listBox.BulkPayButton.IsEnabled = e.NewValue == null;
+        }
+
+        private static object OnCoerceScriptHashProperty(DependencyObject source, object data)
+        {
+            var listBox = source as TxOutListBox;
+
+            if (listBox == null) return data;
+
+            listBox.BulkPayButton.IsEnabled = data == null;
+
+            return data;
         }
     }
 }

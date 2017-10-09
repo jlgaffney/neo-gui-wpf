@@ -381,6 +381,9 @@
     <Compile Include="UI\Transactions\SignatureViewModel.cs" />
     <Compile Include="UI\Voting\ElectionViewModel.cs" />
     <Compile Include="UI\Voting\VotingViewModel.cs" />
+    <Compile Include="UI\Wallets\TradeView.xaml.cs">
+      <DependentUpon>TradeView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Wallets\TradeVerificationView.xaml.cs">
       <DependentUpon>TradeVerificationView.xaml</DependentUpon>
     </Compile>
@@ -464,12 +467,6 @@
     <Compile Include="UI\OldWinForms\IssueDialog.Designer.cs">
       <DependentUpon>IssueDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\OldWinForms\TradeForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\OldWinForms\TradeForm.Designer.cs">
-      <DependentUpon>TradeForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\OldWinForms\WinFormsTxOutListBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -503,6 +500,7 @@
     <Compile Include="UI\Base\Converters\UIntBaseConverter.cs" />
     <Compile Include="UI\Base\Wrappers\WitnessWrapper.cs" />
     <Compile Include="UI\Wallets\TradeVerificationViewModel.cs" />
+    <Compile Include="UI\Wallets\TradeViewModel.cs" />
     <Compile Include="UI\Wallets\TransferView.xaml.cs">
       <DependentUpon>TransferView.xaml</DependentUpon>
     </Compile>
@@ -556,15 +554,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\IssueDialog.zh-Hans.resx">
       <DependentUpon>IssueDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\TradeForm.es-ES.resx">
-      <DependentUpon>TradeForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\TradeForm.resx">
-      <DependentUpon>TradeForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\TradeForm.zh-Hans.resx">
-      <DependentUpon>TradeForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\WinFormsTxOutListBox.resx">
       <DependentUpon>WinFormsTxOutListBox.cs</DependentUpon>
@@ -656,6 +645,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Contracts\DeployContractView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Wallets\TradeView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

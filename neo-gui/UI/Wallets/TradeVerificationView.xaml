@@ -17,7 +17,7 @@
         </Grid.RowDefinitions>
 
         <GroupBox Grid.Row="0" Header="Assets you will acquire" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <ui:TxOutListBox Items="{Binding Items}" ItemsChanged="TxOutListBox_OnItemsChanged" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            <ui:TxOutListBox Items="{Binding Items}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </GroupBox>
 
         <DockPanel Grid.Row="1" Margin="0 8 0 0" HorizontalAlignment="Right" VerticalAlignment="Stretch">

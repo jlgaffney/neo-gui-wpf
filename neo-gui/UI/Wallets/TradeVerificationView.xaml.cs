@@ -15,7 +15,7 @@ namespace Neo.UI.Wallets
 
             this.viewModel?.SetOutputs(outputs);
         }
-
+        
         public bool TradeAccepted => viewModel?.TradeAccepted ?? false;
     }
 }

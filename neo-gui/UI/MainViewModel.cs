@@ -1027,10 +1027,8 @@ namespace Neo.UI
 
         private static void ShowTransactionDialog()
         {
-            using (var form = new TradeForm())
-            {
-                form.ShowDialog();
-            }
+            var view = new TradeView();
+            view.ShowDialog();
         }
 
         private static void ShowSigningDialog()
