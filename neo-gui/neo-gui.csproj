@@ -325,6 +325,10 @@
     </Compile>
     <Compile Include="UI\Accounts\ImportCustomContractViewModel.cs" />
     <Compile Include="UI\Accounts\SelectCertificateViewModel.cs" />
+    <Compile Include="UI\Assets\AssetDistributionView.xaml.cs">
+      <DependentUpon>AssetDistributionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Assets\AssetDistributionViewModel.cs" />
     <Compile Include="UI\Base\Controls\Development\TransactionPropertyGrid.xaml.cs">
       <DependentUpon>TransactionPropertyGrid.xaml</DependentUpon>
     </Compile>
@@ -461,18 +465,6 @@
     <Compile Include="UI\OldWinForms\CreateMultiSigContractDialog.Designer.cs">
       <DependentUpon>CreateMultiSigContractDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\OldWinForms\IssueDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\OldWinForms\IssueDialog.Designer.cs">
-      <DependentUpon>IssueDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\OldWinForms\WinFormsTxOutListBox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\OldWinForms\WinFormsTxOutListBox.Designer.cs">
-      <DependentUpon>WinFormsTxOutListBox.cs</DependentUpon>
-    </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -544,20 +536,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\OldWinForms\CreateMultiSigContractDialog.zh-Hans.resx">
       <DependentUpon>CreateMultiSigContractDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\IssueDialog.es-ES.resx">
-      <DependentUpon>IssueDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\IssueDialog.resx">
-      <DependentUpon>IssueDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\IssueDialog.zh-Hans.resx">
-      <DependentUpon>IssueDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\OldWinForms\WinFormsTxOutListBox.resx">
-      <DependentUpon>WinFormsTxOutListBox.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="config.testnet.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -633,6 +611,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Assets\AssetDistributionView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

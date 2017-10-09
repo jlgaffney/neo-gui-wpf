@@ -37,6 +37,12 @@ namespace Neo.UI
                     OnScriptHashPropertyChanged,
                     OnCoerceScriptHashProperty));
 
+        // Dependency Property
+        public static readonly DependencyProperty AssetProperty =
+            DependencyProperty.Register("Asset",
+                typeof(AssetDescriptor), typeof(TxOutListBox),
+                new FrameworkPropertyMetadata(null));
+
         // .NET Property wrapper
         internal ObservableCollection<TxOutListBoxItem> Items
         {
@@ -45,13 +51,18 @@ namespace Neo.UI
         }
 
         // .NET Property wrapper
-        public UInt160 ScriptHash
+        internal UInt160 ScriptHash
         {
             get => (UInt160)GetValue(ScriptHashProperty);
-            set => SetValue(ScriptHashProperty, value); // this.BulkPayButton.IsEnabled = value == null;
+            set => SetValue(ScriptHashProperty, value);
         }
 
-        internal AssetDescriptor Asset { get; set; }
+        // .NET Property wrapper
+        internal AssetDescriptor Asset
+        {
+            get => (AssetDescriptor) GetValue(AssetProperty);
+            set => SetValue(AssetProperty, value);
+        }
 
         public int ItemCount => this.Items.Count;
 

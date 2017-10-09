@@ -29,13 +29,13 @@
             </Grid.ColumnDefinitions>
 
             <Label Grid.Row="0" Grid.Column="0" Content="Address:" HorizontalAlignment="Right" VerticalAlignment="Center" />
-            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Address, Mode=OneWay}" Margin="4" Padding="2" HorizontalAlignment="Stretch" />
+            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Address, Mode=OneWay}" IsReadOnly="True" Margin="4" Padding="2" HorizontalAlignment="Stretch" />
 
             <Label Grid.Row="1" Grid.Column="0" Content="Script Hash:" HorizontalAlignment="Right" VerticalAlignment="Center" />
-            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ScriptHash, Mode=OneWay}" Margin="4" Padding="2" HorizontalAlignment="Stretch" />
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ScriptHash, Mode=OneWay}" IsReadOnly="True" Margin="4" Padding="2" HorizontalAlignment="Stretch" />
 
             <Label Grid.Row="2" Grid.Column="0" Content="Parameter List:" HorizontalAlignment="Right" VerticalAlignment="Center" />
-            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ParameterList, Mode=OneWay}" Margin="4" Padding="2" HorizontalAlignment="Stretch" />
+            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ParameterList, Mode=OneWay}" IsReadOnly="True" Margin="4" Padding="2" HorizontalAlignment="Stretch" />
         </Grid>
         
         <GroupBox Grid.Row="1" Header="Redeem Script" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">

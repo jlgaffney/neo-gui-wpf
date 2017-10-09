@@ -1070,11 +1070,14 @@ namespace Neo.UI
 
         private static void DistributeAsset()
         {
-            using (var dialog = new IssueDialog())
-            {
-                if (dialog.ShowDialog() != DialogResult.OK) return;
-                Base.Helper.SignAndShowInformation(dialog.GetTransaction());
-            }
+            var view = new AssetDistributionView();
+            view.ShowDialog();
+
+            var transaction = view.GetTransaction();
+
+            if (transaction == null) return;
+
+            Base.Helper.SignAndShowInformation(transaction);
         }
 
         private static void DeployContract()
