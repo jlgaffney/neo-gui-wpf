@@ -1275,19 +1275,16 @@ namespace Neo.UI
 
         private void CreateLockAddress()
         {
-            using (var dialog = new CreateLockAccountDialog())
-            {
-                if (dialog.ShowDialog() != DialogResult.OK) return;
-                var contract = dialog.GetContract();
-                if (contract == null)
-                {
-                    MessageBox.Show(Strings.AddContractFailedMessage);
-                    return;
-                }
-                App.CurrentWallet.AddContract(contract);
-                this.SelectedAccount = null;
-                AddContract(contract, true);
-            }
+            var view = new CreateLockAccountView();
+            view.ShowDialog();
+
+            var contract = view.GetContract();
+
+            if (contract == null) return;
+
+            App.CurrentWallet.AddContract(contract);
+            this.SelectedAccount = null;
+            AddContract(contract, true);
         }
 
         private void ImportCustomContract()
