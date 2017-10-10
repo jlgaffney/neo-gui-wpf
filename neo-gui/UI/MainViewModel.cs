@@ -11,7 +11,6 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Input;
 
 using Application = System.Windows.Application;
@@ -1258,19 +1257,16 @@ namespace Neo.UI
 
         private void CreateMultiSignatureContract()
         {
-            using (var dialog = new CreateMultiSigContractDialog())
-            {
-                if (dialog.ShowDialog() != DialogResult.OK) return;
-                var contract = dialog.GetContract();
-                if (contract == null)
-                {
-                    MessageBox.Show(Strings.AddContractFailedMessage);
-                    return;
-                }
-                App.CurrentWallet.AddContract(contract);
-                this.SelectedAccount = null;
-                AddContract(contract, true);
-            }
+            var view = new CreateMultiSigContractView();
+            view.ShowDialog();
+
+            var contract = view.GetContract();
+
+            if (contract == null) return;
+
+            App.CurrentWallet.AddContract(contract);
+            this.SelectedAccount = null;
+            AddContract(contract, true);
         }
 
         private void CreateLockAddress()

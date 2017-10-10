@@ -1,0 +1,52 @@
+﻿<controls:NeoWindow x:Class="Neo.UI.Accounts.CreateMultiSigContractView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
+        xmlns:local="clr-namespace:Neo.UI.Accounts"
+        Title="Multi-Signature"
+        Width="570" Height="350" ResizeMode="CanResizeWithGrip">
+    <controls:NeoWindow.DataContext>
+        <local:CreateMultiSigContractViewModel />
+    </controls:NeoWindow.DataContext>
+    
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Label Grid.Row="0" Grid.Column="0" Content="Min. Sig. Num.:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <controls:NumericUpDownControl Grid.Row="0" Grid.Column="1" Value="{Binding MinimumSignatureNumber}" MinimumValue="0" MaximumValue="{Binding MinimumSignatureNumberMaxValue}" Margin="0 4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+
+        <Label Grid.Row="1" Grid.Column="0" Content="Public Key List:" HorizontalAlignment="Right" VerticalAlignment="Top" />
+        <ListBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding PublicKeys}" SelectedItem="{Binding SelectedPublicKey}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+
+        <Grid Grid.Row="2" Grid.Column="1" Margin="0 6 0 0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            
+            <TextBox Grid.Column="0" Text="{Binding NewPublicKey, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            <Button Grid.Column="1" Width="28" Height="24" ToolTip="Add Public Key" Command="{Binding AddPublicKeyCommand}" IsEnabled="{Binding AddPublicKeyEnabled}">
+                <Image Source="/Resources/add.png" Width="12" Height="12" />
+            </Button>
+            <Button Grid.Column="2" Width="28" Height="24" ToolTip="Remove Public Key" Command="{Binding RemovePublicKeyCommand}" IsEnabled="{Binding RemovePublicKeyEnabled}">
+                <Image Source="/Resources/remove.png" Width="12" Height="12" />
+            </Button>
+        </Grid>
+
+        <DockPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Stretch" Margin="0 8 0 0">
+            <Button Content="Confirm" Width="60" Margin="0 0 8 0" Command="{Binding ConfirmCommand}" IsEnabled="{Binding ConfirmEnabled}" />
+            <Button Content="Cancel" Width="60" Command="{Binding CancelCommand}" />
+        </DockPanel>
+    </Grid>
+</controls:NeoWindow>

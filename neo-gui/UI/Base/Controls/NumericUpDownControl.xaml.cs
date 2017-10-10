@@ -6,6 +6,7 @@ namespace Neo.UI.Base.Controls
 {
     /// <summary>
     /// Interaction logic for NumericUpDownControl.xaml
+    /// TODO Fix data binding, updating binding on text input, button press, etc.
     /// </summary>
     public partial class NumericUpDownControl
     {
