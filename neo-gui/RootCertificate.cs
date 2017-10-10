@@ -1,9 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Windows.Forms;
+using System.Windows;
 using Neo.Properties;
 
 namespace Neo
@@ -29,7 +30,7 @@ namespace Neo
                     return true;
                 }
                 catch (CryptographicException) { }
-                if (MessageBox.Show(Strings.InstallCertificateText, Strings.InstallCertificateCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1) != DialogResult.Yes)
+                if (MessageBox.Show(Strings.InstallCertificateText, Strings.InstallCertificateCaption, MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes) != MessageBoxResult.Yes)
                 {
                     Settings.Default.InstallCertificate = false;
                     Settings.Default.Save();
@@ -39,7 +40,7 @@ namespace Neo
                 {
                     Process.Start(new ProcessStartInfo
                     {
-                        FileName = Application.ExecutablePath,
+                        FileName = Assembly.GetExecutingAssembly().Location,
                         UseShellExecute = true,
                         Verb = "runas",
                         WorkingDirectory = Environment.CurrentDirectory

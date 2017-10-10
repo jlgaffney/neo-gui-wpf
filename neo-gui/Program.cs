@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
-
 using Neo.Core;
 using Neo.Implementations.Blockchains.LevelDB;
 using Neo.Network;

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows.Forms;
 using Neo.Core;
 using Neo.Properties;
 using Neo.SmartContract;
@@ -13,42 +12,23 @@ namespace Neo.UI.Base
 {
     internal static class Helper
     {
-        private static readonly Dictionary<Type, Form> toolForms = new Dictionary<Type, Form>();
-
-        private static readonly Dictionary<Type, NeoWindow> toolWindows = new Dictionary<Type, NeoWindow>();
-
-        private static void Helper_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            toolForms.Remove(sender.GetType());
-        }
-
-        public static void ShowForm<T>() where T : Form, new()
-        {
-            var type = typeof(T);
-            if (!toolForms.ContainsKey(type))
-            {
-                toolForms.Add(type, new T());
-                toolForms[type].FormClosing += Helper_FormClosing;
-            }
-            toolForms[type].Show();
-            toolForms[type].Activate();
-        }
-
+        private static readonly Dictionary<Type, NeoWindow> windows = new Dictionary<Type, NeoWindow>();
+        
         private static void Helper_WindowClosing(object sender, CancelEventArgs e)
         {
-            toolWindows.Remove(sender.GetType());
+            windows.Remove(sender.GetType());
         }
 
         public static void Show<T>() where T : NeoWindow, new()
         {
             var type = typeof(T);
-            if (!toolWindows.ContainsKey(type))
+            if (!windows.ContainsKey(type))
             {
-                toolWindows.Add(type, new T());
-                toolWindows[type].Closing += Helper_WindowClosing;
+                windows.Add(type, new T());
+                windows[type].Closing += Helper_WindowClosing;
             }
-            toolWindows[type].Show();
-            toolWindows[type].Activate();
+            windows[type].Show();
+            windows[type].Activate();
         }
 
         public static void SignAndShowInformation(Transaction tx)
