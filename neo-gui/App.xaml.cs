@@ -1,5 +1,4 @@
 ﻿using Neo.Implementations.Wallets.EntityFramework;
-using Neo.UI;
 
 namespace Neo
 {
@@ -13,10 +12,6 @@ namespace Neo
         internal App()
         {
             this.InitializeComponent();
-
-            this.MainWindow = new MainView();
-
-            this.MainWindow.Show();
         }
     }
 }
