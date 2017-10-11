@@ -11,6 +11,8 @@ namespace Neo.UI.Wallets
         private string password;
         private string reEnteredPassword;
 
+        private bool confirmed;
+
         public string WalletPath
         {
             get => this.walletPath;
@@ -66,6 +68,19 @@ namespace Neo.UI.Wallets
             NotifyPropertyChanged(nameof(this.ConfirmEnabled));
         }
 
+        public bool GetWalletOpenInfo(out string path, out string walletPassword)
+        {
+            path = null;
+            walletPassword = null;
+
+            if (!this.confirmed) return false;
+
+            path = this.walletPath;
+            walletPassword = this.password;
+
+            return true;
+        }
+
         private void GetWalletPath()
         {
             var saveFileDialog = new SaveFileDialog
@@ -82,7 +97,7 @@ namespace Neo.UI.Wallets
 
         private void Confirm()
         {
-            EventAggregator.Current.Publish(new CreateWalletMessage(this.WalletPath, this.password));
+            this.confirmed = true;
 
             this.TryClose();
         }

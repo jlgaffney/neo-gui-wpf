@@ -364,8 +364,6 @@
     <Compile Include="UI\Contracts\DeployContractViewModel.cs" />
     <Compile Include="UI\Contracts\ParametersEditorViewModel.cs" />
     <Compile Include="UI\Messages\UpdateApplicationMessage.cs" />
-    <Compile Include="UI\Messages\OpenWalletMessage.cs" />
-    <Compile Include="UI\Messages\CreateWalletMessage.cs" />
     <Compile Include="UI\Models\AccountItem.cs" />
     <Compile Include="UI\Models\AssetItem.cs" />
     <Compile Include="UI\Models\TransactionItem.cs" />

@@ -31,5 +31,15 @@ namespace Neo.UI.Wallets
 
             this.viewModel?.UpdateReEnteredPassword(reEnteredPasswordBox.Password);
         }
+
+        public bool GetWalletOpenInfo(out string walletPath, out string password)
+        {
+            walletPath = null;
+            password = null;
+
+            if (this.viewModel == null) return false;
+
+            return this.viewModel.GetWalletOpenInfo(out walletPath, out password);
+        }
     }
 }

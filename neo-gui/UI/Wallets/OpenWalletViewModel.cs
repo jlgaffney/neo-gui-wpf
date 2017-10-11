@@ -11,6 +11,8 @@ namespace Neo.UI.Wallets
         private string password;
         private bool repairMode;
 
+        private bool confirmed;
+
         public string WalletPath
         {
             get => this.walletPath;
@@ -65,6 +67,21 @@ namespace Neo.UI.Wallets
             NotifyPropertyChanged(nameof(this.ConfirmEnabled));
         }
 
+        public bool GetWalletOpenInfo(out string path, out string walletPassword, out bool openInRepairMode)
+        {
+            path = null;
+            walletPassword = null;
+            openInRepairMode = false;
+
+            if (!this.confirmed) return false;
+
+            path = this.walletPath;
+            walletPassword = this.password;
+            openInRepairMode = this.repairMode;
+
+            return true;
+        }
+
         private void GetWalletPath()
         {
             var openFileDialog = new OpenFileDialog
@@ -81,7 +98,7 @@ namespace Neo.UI.Wallets
 
         private void Confirm()
         {
-            EventAggregator.Current.Publish(new OpenWalletMessage(this.WalletPath, this.password, this.RepairMode));
+            this.confirmed = true;
 
             this.TryClose();
         }

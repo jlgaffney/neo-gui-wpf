@@ -45,9 +45,7 @@ using Neo.UI.Voting;
 namespace Neo.UI
 {
     public class MainViewModel : ViewModelBase,
-        IHandle<UpdateApplicationMessage>,
-        IHandle<CreateWalletMessage>,
-        IHandle<OpenWalletMessage>
+        IHandle<UpdateApplicationMessage>
     {
         private static readonly UInt160 RecycleScriptHash = new[] { (byte)OpCode.PUSHT }.ToScriptHash();
 
@@ -235,9 +233,9 @@ namespace Neo.UI
 
         #region Tool Strip Menu Commands
 
-        public ICommand CreateWalletCommand => new RelayCommand(CreateWallet);
+        public ICommand CreateWalletCommand => new RelayCommand(this.CreateWallet);
 
-        public ICommand OpenWalletCommand => new RelayCommand(OpenWallet);
+        public ICommand OpenWalletCommand => new RelayCommand(this.OpenWallet);
 
         public ICommand CloseWalletCommand => new RelayCommand(this.CloseWallet);
 
@@ -906,62 +904,61 @@ namespace Neo.UI
             Process.Start(message.UpdateScriptPath);
         }
 
-        public void Handle(CreateWalletMessage message)
+        #endregion Message Handlers
+
+        #region Main Menu Command Methods
+
+        private void CreateWallet()
         {
-            if (string.IsNullOrEmpty(message.WalletPath) || string.IsNullOrEmpty(message.Password)) return;
+            var view = new CreateWalletView();
+            view.ShowDialog();
 
-            var wallet = UserWallet.Create(message.WalletPath, message.Password);
+            if (!view.GetWalletOpenInfo(out var walletPath, out var password)) return;
 
-            ChangeWallet(wallet);
-            Settings.Default.LastWalletPath = message.WalletPath;
+            if (string.IsNullOrEmpty(walletPath) || string.IsNullOrEmpty(password)) return;
+
+            var wallet = UserWallet.Create(walletPath, password);
+
+            this.ChangeWallet(wallet);
+            Settings.Default.LastWalletPath = walletPath;
             Settings.Default.Save();
         }
 
-        public void Handle(OpenWalletMessage message)
+        private void OpenWallet()
         {
-            if (UserWallet.GetVersion(message.WalletPath) < Version.Parse("1.3.5"))
+            var view = new OpenWalletView();
+            view.ShowDialog();
+
+            if (!view.GetWalletOpenInfo(out var walletPath, out var password, out var repairMode)) return;
+
+
+            if (UserWallet.GetVersion(walletPath) < Version.Parse("1.3.5"))
             {
                 if (MessageBox.Show(Strings.MigrateWalletMessage, Strings.MigrateWalletCaption,
-                    MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes)
-                        != MessageBoxResult.Yes) return;
+                        MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes)
+                    != MessageBoxResult.Yes) return;
 
-                var path_old = Path.ChangeExtension(message.WalletPath, ".old.db3");
-                var path_new = Path.ChangeExtension(message.WalletPath, ".new.db3");
-                UserWallet.Migrate(message.WalletPath, path_new);
-                File.Move(message.WalletPath, path_old);
-                File.Move(path_new, message.WalletPath);
-                MessageBox.Show($"{Strings.MigrateWalletSucceedMessage}\n{path_old}");
+                var pathOld = Path.ChangeExtension(walletPath, ".old.db3");
+                var pathNew = Path.ChangeExtension(walletPath, ".new.db3");
+                UserWallet.Migrate(walletPath, pathNew);
+                File.Move(walletPath, pathOld);
+                File.Move(pathNew, walletPath);
+                MessageBox.Show($"{Strings.MigrateWalletSucceedMessage}\n{pathOld}");
             }
             UserWallet wallet;
             try
             {
-                wallet = UserWallet.Open(message.WalletPath, message.Password);
+                wallet = UserWallet.Open(walletPath, password);
             }
             catch (CryptographicException)
             {
                 MessageBox.Show(Strings.PasswordIncorrect);
                 return;
             }
-            if (message.RepairMode) wallet.Rebuild();
+            if (repairMode) wallet.Rebuild();
             ChangeWallet(wallet);
-            Settings.Default.LastWalletPath = message.WalletPath;
+            Settings.Default.LastWalletPath = walletPath;
             Settings.Default.Save();
-        }
-
-        #endregion Message Handlers
-
-        #region Main Menu Command Methods
-
-        private static void CreateWallet()
-        {
-            var view = new CreateWalletView();
-            view.ShowDialog();
-        }
-
-        private static void OpenWallet()
-        {
-            var view = new OpenWalletView();
-            view.ShowDialog();
         }
 
         public void CloseWallet()
