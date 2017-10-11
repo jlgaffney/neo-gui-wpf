@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Windows.Input;
 using Neo.Core;
-using Neo.Extensions;
+using Neo.UI.Base.Extensions;
 using Neo.UI.Base.MVVM;
 using Neo.VM;
 using Neo.Wallets;

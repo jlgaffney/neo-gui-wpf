@@ -1,36 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using Neo.Core;
 using Neo.Properties;
 using Neo.SmartContract;
-using Neo.UI.Base.Controls;
 using Neo.UI.Base.Dialogs;
 using MessageBox = System.Windows.MessageBox;
 
-namespace Neo.UI.Base
+namespace Neo.UI.Base.Helpers
 {
-    internal static class Helper
+    public static class TransactionHelper
     {
-        private static readonly Dictionary<Type, NeoWindow> windows = new Dictionary<Type, NeoWindow>();
-        
-        private static void Helper_WindowClosing(object sender, CancelEventArgs e)
-        {
-            windows.Remove(sender.GetType());
-        }
-
-        public static void Show<T>() where T : NeoWindow, new()
-        {
-            var type = typeof(T);
-            if (!windows.ContainsKey(type))
-            {
-                windows.Add(type, new T());
-                windows[type].Closing += Helper_WindowClosing;
-            }
-            windows[type].Show();
-            windows[type].Activate();
-        }
-
         public static void SignAndShowInformation(Transaction tx)
         {
             if (tx == null)

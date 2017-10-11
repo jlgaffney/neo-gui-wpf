@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Neo.Extensions
+namespace Neo.UI.Base.Extensions
 {
     public static class StringExtensions
     {

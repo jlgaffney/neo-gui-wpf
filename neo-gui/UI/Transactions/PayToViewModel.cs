@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using Neo.Extensions;
+using Neo.UI.Base.Extensions;
 using Neo.UI.Base.MVVM;
 using Neo.Wallets;
 

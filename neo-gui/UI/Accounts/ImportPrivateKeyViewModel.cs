@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Input;
-using Neo.Extensions;
+using Neo.UI.Base.Extensions;
 using Neo.UI.Base.MVVM;
 
 namespace Neo.UI.Accounts

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
-using Neo.Extensions;
+using Neo.UI.Base.Extensions;
 using Neo.Properties;
 using Neo.UI.Base.Controls;
 using Neo.UI.Base.MVVM;

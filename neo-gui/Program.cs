@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Windows.Forms;
 using Neo.Core;
 using Neo.Implementations.Blockchains.LevelDB;
 using Neo.Network;
@@ -17,8 +16,6 @@ namespace Neo
         public static void Main()
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
 
             // Check if application needs updating
             if (VersionHelper.UpdateIsRequired)

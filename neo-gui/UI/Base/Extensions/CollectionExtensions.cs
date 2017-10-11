@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace Neo.Extensions
+namespace Neo.UI.Base.Extensions
 {
     public static class CollectionExtensions
     {

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Windows.Input;
 using Neo.Core;
 using Neo.Cryptography.ECC;
-using Neo.Extensions;
+using Neo.UI.Base.Extensions;
 using Neo.SmartContract;
 using Neo.UI.Base.MVVM;
 using Neo.VM;

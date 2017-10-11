@@ -31,6 +31,7 @@ using Neo.Wallets;
 using Neo.UI.Accounts;
 using Neo.UI.Assets;
 using Neo.UI.Base.Dialogs;
+using Neo.UI.Base.Helpers;
 using Neo.UI.Base.MVVM;
 using Neo.UI.Contracts;
 using Neo.UI.Development;
@@ -1021,7 +1022,7 @@ namespace Neo.UI
                 if (transaction == null) return;
             }
 
-            Base.Helper.SignAndShowInformation(transaction);
+            TransactionHelper.SignAndShowInformation(transaction);
         }
 
         private static void ShowTransactionDialog()
@@ -1038,7 +1039,7 @@ namespace Neo.UI
 
         private static void Claim()
         {
-            Base.Helper.Show<ClaimView>();
+            WindowHelper.Show<ClaimView>();
         }
 
         private static void RequestCertificate()
@@ -1064,7 +1065,7 @@ namespace Neo.UI
 
             if (transactionResult == null) return;
 
-            Base.Helper.SignAndShowInformation(transactionResult);
+            TransactionHelper.SignAndShowInformation(transactionResult);
         }
 
         private static void DistributeAsset()
@@ -1076,7 +1077,7 @@ namespace Neo.UI
 
             if (transaction == null) return;
 
-            Base.Helper.SignAndShowInformation(transaction);
+            TransactionHelper.SignAndShowInformation(transaction);
         }
 
         private static void DeployContract()
@@ -1097,7 +1098,7 @@ namespace Neo.UI
             if (transactionResult == null) return;
 
 
-            Base.Helper.SignAndShowInformation(transactionResult);
+            TransactionHelper.SignAndShowInformation(transactionResult);
         }
 
         private static void InvokeContract()
@@ -1122,7 +1123,7 @@ namespace Neo.UI
 
             if (transactionResult == null) return;
 
-            Base.Helper.SignAndShowInformation(transactionResult);
+            TransactionHelper.SignAndShowInformation(transactionResult);
         }
 
         private static void ShowOptionsDialog()
@@ -1143,7 +1144,7 @@ namespace Neo.UI
 
         private static void ShowDeveloperTools()
         {
-            Base.Helper.Show<DeveloperToolsView>();
+            WindowHelper.Show<DeveloperToolsView>();
         }
 
         private static void ShowAboutNeoDialog()
@@ -1338,7 +1339,7 @@ namespace Neo.UI
 
             if (transaction == null) return;
 
-            Base.Helper.SignAndShowInformation(transaction);
+            TransactionHelper.SignAndShowInformation(transaction);
         }
 
         private void CopyAddressToClipboard()
@@ -1396,7 +1397,7 @@ namespace Neo.UI
 
             var transaction = App.CurrentWallet.MakeTransaction(new ContractTransaction
             {
-                Outputs = new TransactionOutput[]
+                Outputs = new []
                 {
                     new TransactionOutput
                     {
@@ -1407,7 +1408,7 @@ namespace Neo.UI
                 }
             }, fee: Fixed8.Zero);
 
-            Base.Helper.SignAndShowInformation(transaction);
+            TransactionHelper.SignAndShowInformation(transaction);
         }
 
         #endregion Asset Menu Command Methods

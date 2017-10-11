@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Neo.Extensions;
+using Neo.UI.Base.Extensions;
 using Neo.Network;
 using Neo.Properties;
 using Neo.SmartContract;
