@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
 using Neo.UI.Base.Controls;
+using Neo.UI.Base.Helpers;
 using Neo.UI.Base.MVVM;
 
 namespace Neo.UI.Wallets
@@ -118,7 +119,7 @@ namespace Neo.UI.Wallets
         {
             var claims = App.CurrentWallet.GetUnclaimedCoins().Select(p => p.Reference).ToArray();
             if (claims.Length == 0) return;
-            Base.Helper.SignAndShowInformation(new ClaimTransaction
+            TransactionHelper.SignAndShowInformation(new ClaimTransaction
             {
                 Claims = claims,
                 Attributes = new TransactionAttribute[0],

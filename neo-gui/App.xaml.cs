@@ -12,6 +12,8 @@ namespace Neo
 
         internal App()
         {
+            this.InitializeComponent();
+
             this.MainWindow = new MainView();
 
             this.MainWindow.Show();

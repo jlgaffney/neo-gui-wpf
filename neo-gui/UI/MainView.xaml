@@ -9,10 +9,6 @@
         <local:MainViewModel />
     </controls:NeoWindow.DataContext>
 
-    <controls:NeoWindow.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-    </controls:NeoWindow.Resources>
-
     <controls:NeoWindow.InputBindings>
         <KeyBinding Key="F12" Command="{Binding ShowDeveloperToolsCommand}"/>
     </controls:NeoWindow.InputBindings>
@@ -193,7 +189,7 @@
                 </StatusBarItem.Content>
             </StatusBarItem>
 
-            <StatusBarItem HorizontalAlignment="Left" Visibility="{Binding NewVersionVisible, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Hidden}">
+            <StatusBarItem HorizontalAlignment="Left" Visibility="{Binding Path=NewVersionVisible, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Hidden}">
                 <StatusBarItem.Content>
                     <TextBlock>
                         <Hyperlink Command="{Binding ShowUpdateDialogCommand}">
