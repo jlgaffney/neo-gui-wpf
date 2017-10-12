@@ -11,17 +11,33 @@ namespace Neo
         {
             if (!File.Exists(PeerStatePath)) return;
 
-            using (var fileStream = new FileStream(PeerStatePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            try
             {
-                LocalNode.LoadState(fileStream);
+                using (var fileStream = new FileStream(PeerStatePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    LocalNode.LoadState(fileStream);
+                }
+            }
+            catch
+            {
+                // Swallow exception
+                // TODO Log exception somewhere
             }
         }
 
         public static void Save()
         {
-            using (var fileStream = new FileStream(PeerStatePath, FileMode.Create, FileAccess.Write, FileShare.None))
+            try
             {
-                LocalNode.SaveState(fileStream);
+                using (var fileStream = new FileStream(PeerStatePath, FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    LocalNode.SaveState(fileStream);
+                }
+            }
+            catch
+            {
+                // Swallow exception
+                // TODO Log exception somewhere
             }
         }
     }
