@@ -1,9 +1,9 @@
-﻿using System.Windows;
+﻿using MahApps.Metro.Controls;
 using Neo.UI.Base.MVVM;
 
 namespace Neo.UI.Base.Controls
 {
-    public class NeoWindow : Window
+    public class NeoWindow : MetroWindow
     {
         public NeoWindow()
         {

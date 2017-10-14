@@ -1,6 +1,7 @@
-﻿<Window x:Class="Neo.UI.Base.Dialogs.InformationBox"
+﻿<controls:NeoWindow x:Class="Neo.UI.Base.Dialogs.InformationBox"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
         Width="440" Height="200"
         SizeToContent="Height" ResizeMode="NoResize">
     <Grid Margin="12">
@@ -19,4 +20,5 @@
             <Button Content="Close" Width="60" Click="CloseClicked" />
         </DockPanel>
     </Grid>
-</Window>
+</controls:NeoWindow>
+
