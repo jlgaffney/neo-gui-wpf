@@ -6,9 +6,9 @@ using Neo.Properties;
 using Neo.UI.Base.Controls;
 using Neo.UI.Base.MVVM;
 
-namespace Neo.UI
+namespace Neo.UI.Options
 {
-    public class OptionsViewModel : ViewModelBase
+    public class NEP5ContractsViewModel : ViewModelBase
     {
         private string nep5ContractsList;
 

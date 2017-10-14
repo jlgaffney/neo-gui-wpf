@@ -48,7 +48,7 @@
     <DockPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="0 8 0 0" HorizontalAlignment="Stretch">
         <Button Content="Load" Width="68" Margin="0 0 8 0"  HorizontalAlignment="Left" Command="{Binding LoadCommand}" />
         <Button Content="Show" Width="68" HorizontalAlignment="Left" Command="{Binding ShowCommand}" IsEnabled="{Binding ShowEnabled}" />
-        <Button Content="Broadcast" Width="68" HorizontalAlignment="Left" Command="{Binding BroadcastCommand}" Visibility="{Binding Path=BroadcastVisible, Converter={StaticResource BoolToVisibilityConverter}}" />
+        <Button Content="Broadcast" Width="68" HorizontalAlignment="Left" Command="{Binding BroadcastCommand}" Visibility="{Binding Path=BroadcastVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
         <Button Content="Update" Width="68" HorizontalAlignment="Right" Command="{Binding UpdateCommand}" />
     </DockPanel>

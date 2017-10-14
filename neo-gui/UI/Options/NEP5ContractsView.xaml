@@ -1,11 +1,11 @@
-﻿<controls:NeoWindow x:Class="Neo.UI.OptionsView"
+﻿<controls:NeoWindow x:Class="Neo.UI.Options.NEP5ContractsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
-             xmlns:local="clr-namespace:Neo.UI"             
+             xmlns:local="clr-namespace:Neo.UI.Options"             
              Title="Options" Width="600" Height="440" ResizeMode="NoResize">
     <controls:NeoWindow.DataContext>
-        <local:OptionsViewModel />
+        <local:NEP5ContractsViewModel />
     </controls:NeoWindow.DataContext>
     
     <Grid Margin="12">

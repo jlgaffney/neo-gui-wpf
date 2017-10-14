@@ -10,7 +10,10 @@
     </controls:NeoWindow.DataContext>
 
     <controls:NeoWindow.InputBindings>
-        <KeyBinding Key="F12" Command="{Binding ShowDeveloperToolsCommand}"/>
+        <KeyBinding Key="N" Modifiers="Control" Command="{Binding CreateWalletCommand}" />
+        <KeyBinding Key="O" Modifiers="Control" Command="{Binding OpenWalletCommand}" />
+        
+        <KeyBinding Key="F12" Command="{Binding ShowDeveloperToolsCommand}" />
     </controls:NeoWindow.InputBindings>
     
     <Grid>
@@ -23,21 +26,21 @@
         <!-- Tool Strip Menu -->
         <Menu Grid.Row="0">
             <MenuItem Header="_Wallet">
-                <MenuItem Header="_New Wallet…" Command="{Binding CreateWalletCommand}" />
-                <MenuItem Header="_Open Wallet…" Command="{Binding OpenWalletCommand}" />
-                <MenuItem Header="_Close Wallet…" Command="{Binding CloseWalletCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
+                <MenuItem Header="_New Wallet…" Command="{Binding CreateWalletCommand}" InputGestureText="Ctrl+N" />
+                <MenuItem Header="_Open Wallet…" Command="{Binding OpenWalletCommand}" InputGestureText="Ctrl+O" />
+                <MenuItem Header="_Close Wallet…" Command="{Binding CloseWalletCommand}" IsEnabled="{Binding WalletIsOpen}" />
 
                 <Separator />
 
-                <MenuItem Header="Change _Password…" Command="{Binding ChangePasswordCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
-                <MenuItem Header="Rebuild _Index" Command="{Binding RebuildIndexCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
-                <MenuItem Header="_Restore Accounts…" Command="{Binding RestoreAccountsCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
+                <MenuItem Header="Change _Password…" Command="{Binding ChangePasswordCommand}" IsEnabled="{Binding WalletIsOpen}" />
+                <MenuItem Header="Rebuild _Index" Command="{Binding RebuildIndexCommand}" IsEnabled="{Binding WalletIsOpen}" />
+                <MenuItem Header="_Restore Accounts…" Command="{Binding RestoreAccountsCommand}" IsEnabled="{Binding WalletIsOpen}" />
 
                 <Separator />
 
                 <MenuItem Header="E_xit" Command="{Binding ExitCommand}" />
             </MenuItem>
-            <MenuItem Header="_Transaction" IsEnabled="{Binding AccountMenuItemsEnabled}">
+            <MenuItem Header="_Transaction" IsEnabled="{Binding WalletIsOpen}">
                 <MenuItem Header="_Transfer…" Command="{Binding TransferCommand}" />
                 <MenuItem Header="Transactions(_X)…" Command="{Binding ShowTransactionDialogCommand}" />
 
@@ -46,26 +49,26 @@
                 <MenuItem Header="_Signature…" Command="{Binding ShowSigningDialogCommand}" />
             </MenuItem>
             <MenuItem Header="_Advanced">
-                <MenuItem Header="_NeoGas Claim…" Command="{Binding ClaimCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
+                <MenuItem Header="_NeoGas Claim…" Command="{Binding ClaimCommand}" IsEnabled="{Binding WalletIsOpen}" />
 
                 <Separator />
 
-                <MenuItem Header="Request _Certificate…" Command="{Binding RequestCertificateCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
-                <MenuItem Header="Asset _Registration…" Command="{Binding AssetRegistrationCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
-                <MenuItem Header="Asset D_istribution…" Command="{Binding DistributeAssetCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
+                <MenuItem Header="Request _Certificate…" Command="{Binding RequestCertificateCommand}" IsEnabled="{Binding WalletIsOpen}" />
+                <MenuItem Header="Asset _Registration…" Command="{Binding AssetRegistrationCommand}" IsEnabled="{Binding WalletIsOpen}" />
+                <MenuItem Header="Asset D_istribution…" Command="{Binding DistributeAssetCommand}" IsEnabled="{Binding WalletIsOpen}" />
 
                 <Separator />
 
-                <MenuItem Header="_Deploy Contract…" Command="{Binding DeployContractCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
-                <MenuItem Header="In_voke Contract…" Command="{Binding InvokeContractCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
+                <MenuItem Header="_Deploy Contract…" Command="{Binding DeployContractCommand}" IsEnabled="{Binding WalletIsOpen}" />
+                <MenuItem Header="In_voke Contract…" Command="{Binding InvokeContractCommand}" IsEnabled="{Binding WalletIsOpen}" />
 
                 <Separator />
 
-                <MenuItem Header="_Election…" Command="{Binding ShowElectionDialogCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
+                <MenuItem Header="_Election…" Command="{Binding ShowElectionDialogCommand}" IsEnabled="{Binding WalletIsOpen}" />
 
                 <Separator />
 
-                <MenuItem Header="_Options…" Command="{Binding ShowOptionsDialogCommand}" />
+                <MenuItem Header="NE_P-5 Contracts List…" Command="{Binding ShowNEP5ContractsListCommand}" />
             </MenuItem>
             <MenuItem Header="_Help">
                 <MenuItem Header="_Check for Help" Command="{Binding CheckForHelpCommand}" />
@@ -120,7 +123,7 @@
                 </StatusBarItem.Content>
             </StatusBarItem>
 
-            <StatusBarItem HorizontalAlignment="Left" Visibility="{Binding Path=NewVersionVisible, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Hidden}">
+            <StatusBarItem HorizontalAlignment="Left" Visibility="{Binding Path=NewVersionVisible, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Hidden}">
                 <StatusBarItem.Content>
                     <TextBlock>
                         <Hyperlink Command="{Binding ShowUpdateDialogCommand}">

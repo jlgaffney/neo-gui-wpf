@@ -422,7 +422,7 @@
     <Compile Include="UI\Wallets\ClaimViewModel.cs" />
     <Compile Include="UI\Wallets\ChangePasswordViewModel.cs" />
     <Compile Include="UI\Accounts\ViewPrivateKeyViewModel.cs" />
-    <Compile Include="UI\OptionsViewModel.cs" />
+    <Compile Include="UI\Options\NEP5ContractsViewModel.cs" />
     <Compile Include="UI\Accounts\ViewContractView.xaml.cs">
       <DependentUpon>ViewContractView.xaml</DependentUpon>
     </Compile>
@@ -462,8 +462,8 @@
     <Compile Include="UI\Wallets\ChangePasswordView.xaml.cs">
       <DependentUpon>ChangePasswordView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\OptionsView.xaml.cs">
-      <DependentUpon>OptionsView.xaml</DependentUpon>
+    <Compile Include="UI\Options\NEP5ContractsView.xaml.cs">
+      <DependentUpon>NEP5ContractsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Wallets\ClaimView.xaml.cs">
       <DependentUpon>ClaimView.xaml</DependentUpon>
@@ -759,7 +759,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\OptionsView.xaml">
+    <Page Include="UI\Options\NEP5ContractsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

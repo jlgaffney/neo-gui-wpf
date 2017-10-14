@@ -28,6 +28,7 @@ using Neo.UI.Contracts;
 using Neo.UI.Development;
 using Neo.UI.Messages;
 using Neo.UI.Models;
+using Neo.UI.Options;
 using Neo.UI.Transactions;
 using Neo.UI.Updater;
 using Neo.UI.Wallets;
@@ -84,6 +85,8 @@ namespace Neo.UI.Home
         public AssetsViewModel AssetsViewModel { get; }
 
         public TransactionsViewModel TransactionsViewModel { get; }
+
+        public bool WalletIsOpen => App.CurrentWallet != null;
 
         public string BlockHeight => $"{Blockchain.Default.Height}/{Blockchain.Default.HeaderHeight}";
         public int NodeCount => Program.LocalNode.RemoteNodeCount;
@@ -152,7 +155,7 @@ namespace Neo.UI.Home
 
         public ICommand ShowElectionDialogCommand => new RelayCommand(ShowElectionDialog);
 
-        public ICommand ShowOptionsDialogCommand => new RelayCommand(ShowOptionsDialog);
+        public ICommand ShowNEP5ContractsListCommand => new RelayCommand(ShowNEP5ContractsList);
 
         public ICommand CheckForHelpCommand => new RelayCommand(CheckForHelp);
 
@@ -242,6 +245,7 @@ namespace Neo.UI.Home
             }
 
             this.AccountsViewModel.UpdateMenuItemsEnabled();
+            NotifyPropertyChanged(nameof(this.WalletIsOpen));
 
             if (App.CurrentWallet != null)
             {
@@ -860,9 +864,9 @@ namespace Neo.UI.Home
             TransactionHelper.SignAndShowInformation(transactionResult);
         }
 
-        private static void ShowOptionsDialog()
+        private static void ShowNEP5ContractsList()
         {
-            var view = new OptionsView();
+            var view = new NEP5ContractsView();
             view.ShowDialog();
         }
 
