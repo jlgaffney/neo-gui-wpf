@@ -346,9 +346,6 @@
     <Compile Include="UI\Base\Controls\Development\TransactionPropertyGrid.xaml.cs">
       <DependentUpon>TransactionPropertyGrid.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Base\Controls\NumericUpDownControl.xaml.cs">
-      <DependentUpon>NumericUpDownControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UI\Base\Helpers\TransactionHelper.cs" />
     <Compile Include="UI\Base\Helpers\WindowHelper.cs" />
     <Compile Include="UI\TxOutListBox.xaml.cs">
@@ -661,10 +658,6 @@
     <Page Include="UI\Base\Controls\Development\TransactionPropertyGrid.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Base\Controls\NumericUpDownControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Base\Dialogs\InformationBox.xaml">
       <Generator>MSBuild:Compile</Generator>

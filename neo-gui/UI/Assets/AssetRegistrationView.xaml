@@ -2,7 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
-        xmlns:local="clr-namespace:Neo.UI.Assets"        
+        xmlns:local="clr-namespace:Neo.UI.Assets"
+        xmlns:controls1="http://metro.mahapps.com/winfx/xaml/controls"
         Title="Asset Registration" Width="560"
         SizeToContent="Height" ResizeMode="NoResize">
     <controls:NeoWindow.DataContext>
@@ -44,8 +45,7 @@
             </DockPanel>
 
             <Label Grid.Row="3" Grid.Column="0" Content="Precision:" Margin="0 0 4 0" HorizontalAlignment="Right" VerticalAlignment="Center" />
-            <!-- TODO Make starting precision value 8 -->
-            <controls:NumericUpDownControl Grid.Row="3" Grid.Column="1" Value="{Binding Precision}" IsEnabled="{Binding PrecisionEnabled}" MinimumValue="0" MaximumValue="8" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center" />
+            <controls1:NumericUpDown Grid.Row="3" Grid.Column="1" Value="{Binding Precision}" Minimum="0" Maximum="8" IsEnabled="{Binding PrecisionEnabled}" Width="100" Margin="0 4" HorizontalAlignment="Left" VerticalAlignment="Center" />
 
             <Label Grid.Row="4" Grid.Column="0" Content="Owner:" Margin="0 0 4 0" HorizontalAlignment="Right" VerticalAlignment="Center" />
             <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding Owners}" SelectedItem="{Binding SelectedOwner}" Margin="0 4" HorizontalAlignment="Stretch" VerticalAlignment="Center" />

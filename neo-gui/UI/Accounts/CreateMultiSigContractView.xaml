@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
         xmlns:local="clr-namespace:Neo.UI.Accounts"
+        xmlns:controls1="http://metro.mahapps.com/winfx/xaml/controls"
         Title="Multi-Signature"
         Width="570" Height="350" ResizeMode="CanResizeWithGrip">
     <controls:NeoWindow.DataContext>
@@ -23,7 +24,7 @@
         </Grid.ColumnDefinitions>
 
         <Label Grid.Row="0" Grid.Column="0" Content="Min. Sig. Num.:" HorizontalAlignment="Right" VerticalAlignment="Center" />
-        <controls:NumericUpDownControl Grid.Row="0" Grid.Column="1" Value="{Binding MinimumSignatureNumber}" MinimumValue="0" MaximumValue="{Binding MinimumSignatureNumberMaxValue}" Margin="0 4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        <controls1:NumericUpDown Grid.Row="0" Grid.Column="1" Value="{Binding MinimumSignatureNumber}" Minimum="0" Maximum="{Binding MinimumSignatureNumberMaxValue}" Width="180"  Margin="0 4" HorizontalAlignment="Left" VerticalAlignment="Stretch" />
 
         <Label Grid.Row="1" Grid.Column="0" Content="Public Key List:" HorizontalAlignment="Right" VerticalAlignment="Top" />
         <ListBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding PublicKeys}" SelectedItem="{Binding SelectedPublicKey}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
