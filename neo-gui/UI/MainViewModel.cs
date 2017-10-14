@@ -427,7 +427,7 @@ namespace Neo.UI
 
         private void Blockchain_PersistCompleted(object sender, Block block)
         {
-            this.persistenceTime = DateTime.Now;
+            this.persistenceTime = DateTime.UtcNow;
             if (App.CurrentWallet != null)
             {
                 this.checkNep5Balance = true;
@@ -675,7 +675,7 @@ namespace Neo.UI
 
         private void UpdateUI(object sender, System.Timers.ElapsedEventArgs e)
         {
-            var persistenceSpan = DateTime.Now - this.persistenceTime;
+            var persistenceSpan = DateTime.UtcNow - this.persistenceTime;
 
             this.UpdateBlockProgress(persistenceSpan);
 
