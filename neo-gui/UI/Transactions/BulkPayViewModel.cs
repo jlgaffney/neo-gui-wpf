@@ -124,7 +124,7 @@ namespace Neo.UI.Transactions
                     Value = new BigDecimal(Fixed8.Parse(lineElements[1]).GetData(), 8),
                     ScriptHash = Wallet.ToScriptHash(lineElements[0])
                 };
-            }).ToArray();
+            }).Where(p => p.Value.Value != 0).ToArray();
         }
     }
 }

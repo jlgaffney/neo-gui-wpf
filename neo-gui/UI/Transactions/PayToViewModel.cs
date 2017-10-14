@@ -128,7 +128,9 @@ namespace Neo.UI.Transactions
                 if (asset == null) return false;
 
                 if (parsedAmount.GetData() % (long) Math.Pow(10, 8 - asset.Precision) != 0) return false;
-                
+
+                if (parsedAmount == Fixed8.Zero) return false;
+
                 return true;
             }
         }
