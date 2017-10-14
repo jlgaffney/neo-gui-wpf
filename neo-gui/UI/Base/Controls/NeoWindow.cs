@@ -15,16 +15,13 @@ namespace Neo.UI.Base.Controls
 
             this.BorderBrush = (Brush) brushConverter.ConvertFromString("#64B563");
 
-            this.NonActiveWindowTitleBrush = (Brush) brushConverter.ConvertFromString("#76B466");
+            this.NonActiveWindowTitleBrush = (Brush) brushConverter.ConvertFromString("#89B27E");
 
             this.Loaded += (sender, e) =>
             {
                 var viewModel = this.DataContext as ViewModelBase;
 
-                if (viewModel != null)
-                {
-                    viewModel.OnWindowAttached(this);
-                }
+                viewModel?.OnWindowAttached(this);
             };            
         }
     }
