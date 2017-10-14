@@ -1,3 +1,5 @@
+![Example Screenshot of Application](https://raw.githubusercontent.com/jlgaffney/neo-gui-wpf/master/blobs/example_screenshot.png)
+
 Project Setup
 =============
 
