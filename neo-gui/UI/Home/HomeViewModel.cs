@@ -1,26 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Input;
 
-using Application = System.Windows.Application;
-using Clipboard = System.Windows.Clipboard;
-using MessageBox = System.Windows.MessageBox;
-using Timer = System.Timers.Timer;
-
 using Neo.Core;
 using Neo.Cryptography;
-using Neo.Cryptography.ECC;
 using Neo.Implementations.Blockchains.LevelDB;
 using Neo.Implementations.Wallets.EntityFramework;
 using Neo.IO;
@@ -28,9 +21,7 @@ using Neo.Properties;
 using Neo.SmartContract;
 using Neo.VM;
 using Neo.Wallets;
-using Neo.UI.Accounts;
 using Neo.UI.Assets;
-using Neo.UI.Base.Dialogs;
 using Neo.UI.Base.Helpers;
 using Neo.UI.Base.MVVM;
 using Neo.UI.Contracts;
@@ -42,20 +33,13 @@ using Neo.UI.Updater;
 using Neo.UI.Wallets;
 using Neo.UI.Voting;
 
-namespace Neo.UI
+namespace Neo.UI.Home
 {
-    public class MainViewModel : ViewModelBase,
+    public class HomeViewModel : ViewModelBase,
         IHandle<UpdateApplicationMessage>
     {
-        private static readonly UInt160 RecycleScriptHash = new[] { (byte)OpCode.PUSHT }.ToScriptHash();
-
-        private readonly Dictionary<ECPoint, CertificateQueryResult> certificateQueryResultCache;
-
-        private AccountItem selectedAccount;
-        private AssetItem selectedAsset;
-        private TransactionItem selectedTransaction;
-
         private bool balanceChanged = false;
+
         private bool checkNep5Balance = false;
         private DateTime persistenceTime = DateTime.MinValue;
 
@@ -69,13 +53,11 @@ namespace Neo.UI
         private Timer uiUpdateTimer;
         private readonly object uiUpdateTimerLock = new object();
 
-        public MainViewModel()
+        public HomeViewModel()
         {
-            this.certificateQueryResultCache = new Dictionary<ECPoint, CertificateQueryResult>();
-
-            this.Accounts = new ObservableCollection<AccountItem>();
-            this.Assets = new ObservableCollection<AssetItem>();
-            this.Transactions = new ObservableCollection<TransactionItem>();
+            this.AccountsViewModel = new AccountsViewModel(this.SetBalanceChangedAction);
+            this.AssetsViewModel = new AssetsViewModel();
+            this.TransactionsViewModel = new TransactionsViewModel();
 
             EventAggregator.Current.Subscribe(this);
 
@@ -84,75 +66,31 @@ namespace Neo.UI
             this.StartUIUpdateTimer();
         }
 
+        private Action SetBalanceChangedAction
+        {
+            get
+            {
+                return () =>
+                {
+                    balanceChanged = true;
+                };
+            }
+        }
+
         #region Public Properties
 
-        public ObservableCollection<AccountItem> Accounts { get; }
+        public AccountsViewModel AccountsViewModel { get; }
 
-        public ObservableCollection<AssetItem> Assets { get; }
+        public AssetsViewModel AssetsViewModel { get; }
 
-        public ObservableCollection<TransactionItem> Transactions { get; }
-
-        public bool AccountMenuItemsEnabled => App.CurrentWallet != null;
+        public TransactionsViewModel TransactionsViewModel { get; }
 
         public string BlockHeight => $"{Blockchain.Default.Height}/{Blockchain.Default.HeaderHeight}";
         public int NodeCount => Program.LocalNode.RemoteNodeCount;
 
-        public AccountItem SelectedAccount
-        {
-            get => this.selectedAccount;
-            set
-            {
-                if (this.selectedAccount == value) return;
-
-                this.selectedAccount = value;
-
-                NotifyPropertyChanged();
-
-                // Update dependent properties
-                NotifyPropertyChanged(nameof(this.ViewPrivateKeyEnabled));
-                NotifyPropertyChanged(nameof(this.ViewContractEnabled));
-                NotifyPropertyChanged(nameof(this.ShowVotingDialogEnabled));
-                NotifyPropertyChanged(nameof(this.CopyAddressToClipboardEnabled));
-                NotifyPropertyChanged(nameof(this.DeleteAccountEnabled));
-            }
-        }
-
-        public AssetItem SelectedAsset
-        {
-            get { return this.selectedAsset; }
-            set
-            {
-                if (this.selectedAsset == value) return;
-
-                this.selectedAsset = value;
-
-                NotifyPropertyChanged();
-
-                // Update dependent properties
-                NotifyPropertyChanged(nameof(this.ViewCertificateEnabled));
-                NotifyPropertyChanged(nameof(this.DeleteAssetEnabled));
-            }
-        }
-
-        public TransactionItem SelectedTransaction
-        {
-            get => this.selectedTransaction;
-            set
-            {
-                if (this.selectedTransaction == value) return;
-
-                this.selectedTransaction = value;
-
-                NotifyPropertyChanged();
-
-                // Update dependent properties
-                NotifyPropertyChanged(nameof(this.CopyTransactionIdEnabled));
-            }
-        }
-
         public bool BlockProgressIndeterminate
         {
-            get { return this.blockProgressIndeterminate; }
+            get => this.blockProgressIndeterminate;
             set
             {
                 if (this.blockProgressIndeterminate == value) return;
@@ -165,7 +103,7 @@ namespace Neo.UI
 
         public int BlockProgress
         {
-            get { return this.blockProgress; }
+            get => this.blockProgress;
             set
             {
                 if (this.blockProgress == value) return;
@@ -175,59 +113,6 @@ namespace Neo.UI
                 NotifyPropertyChanged();
             }
         }
-
-        public bool ViewPrivateKeyEnabled =>
-            this.SelectedAccount != null &&
-            this.SelectedAccount.Contract != null &&
-            this.SelectedAccount.Contract.IsStandard;
-
-        public bool ViewContractEnabled =>
-            this.SelectedAccount != null &&
-            this.SelectedAccount.Contract != null;
-
-        public bool ShowVotingDialogEnabled =>
-            this.SelectedAccount != null &&
-            this.SelectedAccount.Contract != null &&
-            this.SelectedAccount.Neo > Fixed8.Zero;
-
-        public bool CopyAddressToClipboardEnabled => this.SelectedAccount != null;
-
-        public bool DeleteAccountEnabled => this.SelectedAccount != null;
-
-        public bool ViewCertificateEnabled
-        {
-            get
-            {
-                if (this.SelectedAsset == null) return false;
-
-                if (this.SelectedAsset.State == null)
-                {
-                    return false;
-                }
-                else
-                {
-                    var queryResult = GetCertificateQueryResult(this.SelectedAsset.State);
-
-                    if (queryResult == null)
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        return queryResult.Type == CertificateQueryResultType.Good ||
-                            queryResult.Type == CertificateQueryResultType.Expired ||
-                                queryResult.Type == CertificateQueryResultType.Invalid;
-                    }
-                }
-            }
-        }
-
-        public bool DeleteAssetEnabled => this.SelectedAsset != null &&
-            (this.SelectedAsset.State == null ||
-                (this.SelectedAsset.State.AssetType != AssetType.GoverningToken &&
-                this.SelectedAsset.State.AssetType != AssetType.UtilityToken));
-
-        public bool CopyTransactionIdEnabled => this.SelectedTransaction != null;
 
         #endregion Public Properies
 
@@ -280,45 +165,7 @@ namespace Neo.UI
         public ICommand ShowUpdateDialogCommand => new RelayCommand(ShowUpdateDialog);
 
         #endregion Tool Strip Menu Commands
-
-        #region Context Menu Commands
-
-        /*
-         * Account Context Menu Commands
-         */
-        public ICommand CreateNewAddressCommand => new RelayCommand(this.CreateNewKey);
-
-        public ICommand ImportWifPrivateKeyCommand => new RelayCommand(this.ImportWifPrivateKey);
-        public ICommand ImportFromCertificateCommand => new RelayCommand(this.ImportCertificate);
-
-        public ICommand ImportWatchOnlyAddressCommand => new RelayCommand(this.ImportWatchOnlyAddress);
-
-        public ICommand CreateMultiSignatureContractAddressCommand => new RelayCommand(this.CreateMultiSignatureContract);
-        public ICommand CreateLockContractAddressCommand => new RelayCommand(this.CreateLockAddress);
-
-        public ICommand CreateCustomContractAddressCommand => new RelayCommand(this.ImportCustomContract);
-
-        public ICommand ViewPrivateKeyCommand => new RelayCommand(this.ViewPrivateKey);
-        public ICommand ViewContractCommand => new RelayCommand(this.ViewContract);
-        public ICommand ShowVotingDialogCommand => new RelayCommand(this.ShowVotingDialog);
-        public ICommand CopyAddressToClipboardCommand => new RelayCommand(this.CopyAddressToClipboard);
-        public ICommand DeleteAccountCommand => new RelayCommand(this.DeleteAccount);
-
-
-        /*
-         * Asset Context Menu Commands
-         */
-        public ICommand ViewCertificateCommand => new RelayCommand(this.ViewCertificate);
-        public ICommand DeleteAssetCommand => new RelayCommand(this.DeleteAsset);
-
-
-        /*
-         * Asset Context Menu Commands
-         */
-        public ICommand CopyTransactionIdCommand => new RelayCommand(this.CopyTransactionId);
-
-        #endregion Context Menu Commands
-
+        
         #region New Version Properties
 
         public string NewVersionLabel
@@ -349,81 +196,7 @@ namespace Neo.UI
 
         #endregion New Version Properties
 
-        public AccountItem GetAccount(string address)
-        {
-            return this.Accounts.FirstOrDefault(account => account.Address == address);
-        }
-
-        public AssetItem GetAsset(UInt256 assetId)
-        {
-            return this.Assets.FirstOrDefault(asset =>
-            {
-                if (asset.State == null) return false;
-
-                return asset.State.AssetId.Equals(assetId);
-            });
-        }
-
-        public int GetTransactionIndex(string transactionId)
-        {
-            for (int i = 0; i < this.Transactions.Count; i++)
-            {
-                if (this.Transactions[i].Id == transactionId) return i;
-            }
-
-            // Could not find transaction
-            return -1;
-        }
-
         #region Wallet Methods
-
-        private void AddAddress(UInt160 scriptHash, bool selected = false)
-        {
-            var address = Wallet.ToAddress(scriptHash);
-            var item = this.GetAccount(address);
-
-            if (item == null)
-            {
-                //var group = this.Accounts.Groups["watchOnlyGroup"];
-                item = new AccountItem
-                {
-                    Address = address,
-                    Neo = Fixed8.Zero,
-                    Gas = Fixed8.Zero
-                };
-
-                this.Accounts.Add(item);
-            }
-
-            this.SelectedAccount = selected ? item : null;
-        }
-
-        private void AddContract(VerificationContract contract, bool selected = false)
-        {
-            var item = this.GetAccount(contract.Address);
-
-            if (item?.ScriptHash != null)
-            {
-                this.Accounts.Remove(item);
-                item = null;
-            }
-
-            if (item == null)
-            {
-                //var group = contract.IsStandard ? this.Accounts.Groups["standardContractGroup"] : this.Accounts.Groups["nonstandardContractGroup"];
-                item = new AccountItem
-                {
-                    Address = contract.Address,
-                    Neo = Fixed8.Zero,
-                    Gas = Fixed8.Zero,
-                    Contract = contract
-                };
-
-                this.Accounts.Add(item);
-            }
-
-            this.SelectedAccount = selected ? item : null;
-        }
 
         private void Blockchain_PersistCompleted(object sender, Block block)
         {
@@ -452,9 +225,9 @@ namespace Neo.UI
                 App.CurrentWallet.Dispose();
             }
 
-            this.Accounts.Clear();
-            this.Assets.Clear();
-            this.Transactions.Clear();
+            this.AccountsViewModel.Accounts.Clear();
+            this.AssetsViewModel.Assets.Clear();
+            this.TransactionsViewModel.Transactions.Clear();
 
             App.CurrentWallet = wallet;
 
@@ -468,7 +241,7 @@ namespace Neo.UI
                 App.CurrentWallet.TransactionsChanged += CurrentWallet_TransactionsChanged;
             }
 
-            NotifyPropertyChanged(nameof(this.AccountMenuItemsEnabled));
+            this.AccountsViewModel.UpdateMenuItemsEnabled();
 
             if (App.CurrentWallet != null)
             {
@@ -478,11 +251,11 @@ namespace Neo.UI
                     var contract = App.CurrentWallet.GetContract(scriptHash);
                     if (contract == null)
                     {
-                        AddAddress(scriptHash);
+                        this.AccountsViewModel.AddAddress(scriptHash);
                     }
                     else
                     {
-                        AddContract(contract);
+                        this.AccountsViewModel.AddContract(contract);
                     }
                 }
             }
@@ -502,43 +275,7 @@ namespace Neo.UI
 
         private void CurrentWallet_TransactionsChanged(object sender, IEnumerable<TransactionInfo> transactions)
         {
-            // Update transaction list
-            foreach (var transactionInfo in transactions)
-            {
-                var transactionItem = new TransactionItem
-                {
-                    Info = transactionInfo
-                };
-
-                var transactionIndex = this.GetTransactionIndex(transactionItem.Id);
-
-                // Check transaction exists in list
-                if (transactionIndex >= 0)
-                {
-                    // Update transaction info
-                    this.Transactions[transactionIndex] = transactionItem;
-                }
-                else
-                {
-                    // Add transaction to list
-                    this.Transactions.Insert(0, transactionItem);
-                }
-            }
-
-            // Update transaction confirmations
-            foreach (var item in this.Transactions)
-            {
-                uint transactionHeight = 0;
-
-                if (item.Info != null && item.Info.Height != null)
-                {
-                    transactionHeight = item.Info.Height.Value;
-                }
-
-                var confirmations = ((int)Blockchain.Default.Height) - ((int)transactionHeight) + 1;
-
-                item.SetConfirmations(confirmations);
-            }
+            this.TransactionsViewModel.UpdateTransactions(transactions);
         }
 
         #endregion Wallet Methods
@@ -637,7 +374,7 @@ namespace Neo.UI
                     // Stop previous timer
                     this.uiUpdateTimer.Stop();
 
-                    this.uiUpdateTimer.Elapsed -= this.UpdateUI;
+                    this.uiUpdateTimer.Elapsed -= this.UpdateWallet;
 
                     this.uiUpdateTimer.Dispose();
 
@@ -651,7 +388,7 @@ namespace Neo.UI
                     AutoReset = true
                 };
 
-                timer.Elapsed += this.UpdateUI;
+                timer.Elapsed += this.UpdateWallet;
 
                 this.uiUpdateTimer = timer;
             }
@@ -673,13 +410,13 @@ namespace Neo.UI
             }
         }
 
-        private void UpdateUI(object sender, System.Timers.ElapsedEventArgs e)
+        private void UpdateWallet(object sender, ElapsedEventArgs e)
         {
             var persistenceSpan = DateTime.UtcNow - this.persistenceTime;
 
             this.UpdateBlockProgress(persistenceSpan);
 
-            this.UpdateWallet(persistenceSpan);
+            this.UpdateBalances(persistenceSpan);
         }
 
         private void UpdateBlockProgress(TimeSpan persistenceSpan)
@@ -700,7 +437,7 @@ namespace Neo.UI
             }
         }
 
-        private void UpdateWallet(TimeSpan persistenceSpan)
+        private void UpdateBalances(TimeSpan persistenceSpan)
         {
             if (App.CurrentWallet == null) return;
 
@@ -709,6 +446,7 @@ namespace Neo.UI
             this.UpdateNEP5TokenBalances(persistenceSpan);
         }
 
+        
         private void UpdateAssetBalances()
         {
             if (App.CurrentWallet.WalletHeight > Blockchain.Default.Height + 1) return;
@@ -736,7 +474,7 @@ namespace Neo.UI
                 }
                 var balanceNeo = coins.Where(p => p.Output.AssetId.Equals(Blockchain.GoverningToken.Hash)).GroupBy(p => p.Output.ScriptHash).ToDictionary(p => p.Key, p => p.Sum(i => i.Output.Value));
                 var balanceGas = coins.Where(p => p.Output.AssetId.Equals(Blockchain.UtilityToken.Hash)).GroupBy(p => p.Output.ScriptHash).ToDictionary(p => p.Key, p => p.Sum(i => i.Output.Value));
-                foreach (var account in this.Accounts)
+                foreach (var account in this.AccountsViewModel.Accounts)
                 {
                     var script_hash = Wallet.ToScriptHash(account.Address);
                     var neo = balanceNeo.ContainsKey(script_hash) ? balanceNeo[script_hash] : Fixed8.Zero;
@@ -744,18 +482,18 @@ namespace Neo.UI
                     account.Neo = neo;
                     account.Gas = gas;
                 }
-                foreach (var asset in this.Assets.Where(item => item.State != null))
+                foreach (var asset in this.AssetsViewModel.Assets.Where(item => item.State != null))
                 {
                     if (!assets.ContainsKey(asset.State.AssetId))
                     {
-                        this.Assets.Remove(asset);
+                        this.AssetsViewModel.Assets.Remove(asset);
                     }
                 }
                 foreach (var asset in assets.Values)
                 {
-                    var value_text = asset.Value.ToString() + (asset.Asset.AssetId.Equals(Blockchain.UtilityToken.Hash) ? $"+({asset.Claim})" : "");
+                    var value_text = asset.Value + (asset.Asset.AssetId.Equals(Blockchain.UtilityToken.Hash) ? $"+({asset.Claim})" : "");
 
-                    var item = this.GetAsset(asset.Asset.AssetId);
+                    var item = this.AssetsViewModel.GetAsset(asset.Asset.AssetId);
 
                     if (item != null)
                     {
@@ -763,11 +501,11 @@ namespace Neo.UI
                     }
                     else
                     {
-                        string asset_name = asset.Asset.AssetType == AssetType.GoverningToken ? "NEO" :
+                        var asset_name = asset.Asset.AssetType == AssetType.GoverningToken ? "NEO" :
                                             asset.Asset.AssetType == AssetType.UtilityToken ? "NeoGas" :
                                             asset.Asset.GetName();
 
-                        this.Assets.Add(new AssetItem
+                        this.AssetsViewModel.Assets.Add(new AssetItem
                         {
                             Name = asset_name,
                             Type = asset.Asset.AssetType.ToString(),
@@ -785,13 +523,15 @@ namespace Neo.UI
                 }
                 balanceChanged = false;
             }
-            foreach (var item in this.Assets)//.Groups["unchecked"].Items)
+
+
+            foreach (var item in this.AssetsViewModel.Assets)//.Groups["unchecked"].Items)
             {
                 if (item.State == null) continue;
 
                 var asset = item.State;
 
-                var queryResult = GetCertificateQueryResult(asset);
+                var queryResult = this.AssetsViewModel.GetCertificateQueryResult(asset);
 
                 if (queryResult == null) continue;
 
@@ -833,6 +573,7 @@ namespace Neo.UI
             }
         }
 
+
         private void UpdateNEP5TokenBalances(TimeSpan persistenceSpan)
         {
             if (!checkNep5Balance) return;
@@ -873,7 +614,7 @@ namespace Neo.UI
                 }
                 else
                 {
-                    this.Assets.Add(new AssetItem
+                    this.AssetsViewModel.Assets.Add(new AssetItem
                     {
                         Name = name,
                         Type = "NEP-5",
@@ -893,8 +634,6 @@ namespace Neo.UI
 
         #endregion UI Update Methods
 
-        #region Message Handlers
-
         public void Handle(UpdateApplicationMessage message)
         {
             // Close window
@@ -903,8 +642,6 @@ namespace Neo.UI
             // Start update
             Process.Start(message.UpdateScriptPath);
         }
-
-        #endregion Message Handlers
 
         #region Main Menu Command Methods
 
@@ -974,8 +711,8 @@ namespace Neo.UI
 
         private void RebuildIndex()
         {
-            this.Assets.Clear();
-            this.Transactions.Clear();
+            this.AssetsViewModel.Assets.Clear();
+            this.TransactionsViewModel.Transactions.Clear();
             App.CurrentWallet.Rebuild();
         }
 
@@ -991,7 +728,7 @@ namespace Neo.UI
             foreach (var contract in contracts)
             {
                 App.CurrentWallet.AddContract(contract);
-                AddContract(contract, true);
+                this.AccountsViewModel.AddContract(contract, true);
             }
         }
 
@@ -1151,305 +888,11 @@ namespace Neo.UI
 
         #endregion Main Menu Command Methods
 
-        #region Account Menu Command Methods
-
-        private void CreateNewKey()
-        {
-            this.SelectedAccount = null;
-            var key = App.CurrentWallet.CreateKey();
-            foreach (var contract in App.CurrentWallet.GetContracts(key.PublicKeyHash))
-            {
-                AddContract(contract, true);
-            }
-        }
-
-        private void ImportWifPrivateKey()
-        {
-            var view = new ImportPrivateKeyView();
-            view.ShowDialog();
-
-            var wifStrings = view.WifStrings;
-
-            if (wifStrings == null) return;
-
-            var wifStringList = wifStrings.ToList();
-
-            if (!wifStringList.Any()) return;
-
-            // Import private keys
-            this.SelectedAccount = null;
-
-            foreach (var wif in wifStringList)
-            {
-                KeyPair key;
-                try
-                {
-                    key = App.CurrentWallet.Import(wif);
-                }
-                catch (FormatException)
-                {
-                    // Skip WIF line
-                    continue;
-                }
-                foreach (var contract in App.CurrentWallet.GetContracts(key.PublicKeyHash))
-                {
-                    AddContract(contract, true);
-                }
-            }
-        }
-
-        private void ImportCertificate()
-        {
-            var view = new SelectCertificateView();
-            view.ShowDialog();
-
-            if (view.SelectedCertificate == null) return;
-
-            this.SelectedAccount = null;
-
-            KeyPair key;
-            try
-            {
-                key = App.CurrentWallet.Import(view.SelectedCertificate);
-            }
-            catch
-            {
-                MessageBox.Show("Certificate import failed!");
-                return;
-            }
-
-            foreach (var contract in App.CurrentWallet.GetContracts(key.PublicKeyHash))
-            {
-                AddContract(contract, true);
-            }
-        }
-
-        private void ImportWatchOnlyAddress()
-        {
-            if (!InputBox.Show(out var text, Strings.Address, Strings.ImportWatchOnlyAddress)) return;
-
-            if (string.IsNullOrEmpty(text)) return;
-
-            using (var reader = new StringReader(text))
-            {
-                while (true)
-                {
-                    var address = reader.ReadLine();
-                    if (address == null) break;
-                    address = address.Trim();
-                    if (string.IsNullOrEmpty(address)) continue;
-                    UInt160 scriptHash;
-                    try
-                    {
-                        scriptHash = Wallet.ToScriptHash(address);
-                    }
-                    catch (FormatException)
-                    {
-                        continue;
-                    }
-                    App.CurrentWallet.AddWatchOnly(scriptHash);
-                    AddAddress(scriptHash, true);
-                }
-            }
-        }
-
-        private void CreateMultiSignatureContract()
-        {
-            var view = new CreateMultiSigContractView();
-            view.ShowDialog();
-
-            var contract = view.GetContract();
-
-            if (contract == null) return;
-
-            App.CurrentWallet.AddContract(contract);
-            this.SelectedAccount = null;
-            AddContract(contract, true);
-        }
-
-        private void CreateLockAddress()
-        {
-            var view = new CreateLockAccountView();
-            view.ShowDialog();
-
-            var contract = view.GetContract();
-
-            if (contract == null) return;
-
-            App.CurrentWallet.AddContract(contract);
-            this.SelectedAccount = null;
-            AddContract(contract, true);
-        }
-
-        private void ImportCustomContract()
-        {
-            var view = new ImportCustomContractView();
-            view.ShowDialog();
-
-            var contract = view.GetContract();
-
-            if (contract == null) return;
-
-            App.CurrentWallet.AddContract(contract);
-            this.SelectedAccount = null;
-            AddContract(contract, true);
-        }
-
-        private void ViewPrivateKey()
-        {
-            if (this.SelectedAccount?.Contract == null) return;
-
-            var contract = this.SelectedAccount.Contract;
-            var key = App.CurrentWallet.GetKeyByScriptHash(contract.ScriptHash);
-
-            var view = new ViewPrivateKeyView(key, contract.ScriptHash);
-            view.ShowDialog();
-        }
-
-        private void ViewContract()
-        {
-            if (this.SelectedAccount?.Contract == null) return;
-
-            var contract = this.SelectedAccount.Contract;
-
-            var view = new ViewContractView(contract);
-            view.ShowDialog();
-        }
-
-        private void ShowVotingDialog()
-        {
-            if (this.SelectedAccount?.Contract == null) return;
-
-            var contract = this.SelectedAccount.Contract;
-
-            var view = new VotingView(contract.ScriptHash);
-            view.ShowDialog();
-
-            var transaction = view.GetTransaction();
-
-            if (transaction == null) return;
-
-            var invokeContractView = new InvokeContractView(transaction);
-            invokeContractView.ShowDialog();
-
-            transaction = invokeContractView.GetTransaction();
-
-            if (transaction == null) return;
-
-            TransactionHelper.SignAndShowInformation(transaction);
-        }
-
-        private void CopyAddressToClipboard()
-        {
-            if (this.SelectedAccount == null) return;
-
-            try
-            {
-                Clipboard.SetText(this.SelectedAccount.Address);
-            }
-            catch (ExternalException) { }
-        }
-
-        private void DeleteAccount()
-        {
-            if (this.SelectedAccount == null) return;
-
-            var accountToDelete = this.SelectedAccount;
-
-            if (MessageBox.Show(Strings.DeleteAddressConfirmationMessage, Strings.DeleteAddressConfirmationCaption,
-                MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes) return;
-
-            var scriptHash = accountToDelete.ScriptHash != null
-                ? accountToDelete.ScriptHash
-                : accountToDelete.Contract.ScriptHash;
-
-            App.CurrentWallet.DeleteAddress(scriptHash);
-            this.Accounts.Remove(accountToDelete);
-
-            balanceChanged = true;
-        }
-
-        #endregion Account Menu Command Methods
-
-        #region Asset Menu Command Methods
-
-        private void ViewCertificate()
-        {
-            if (this.SelectedAsset == null || this.SelectedAsset.State == null) return;
-
-            var hash = Contract.CreateSignatureRedeemScript(this.SelectedAsset.State.Owner).ToScriptHash();
-            var address = Wallet.ToAddress(hash);
-            var path = Path.Combine(Settings.Default.CertCachePath, $"{address}.cer");
-            Process.Start(path);
-        }
-
-        private void DeleteAsset()
-        {
-            if (this.SelectedAsset == null || this.SelectedAsset.State == null) return;
-
-            var value = App.CurrentWallet.GetAvailable(this.SelectedAsset.State.AssetId);
-
-            if (MessageBox.Show($"{Strings.DeleteAssetConfirmationMessage}\n{string.Join("\n", $"{this.SelectedAsset.State.GetName()}:{value}")}",
-                Strings.DeleteConfirmation, MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes) return;
-
-            var transaction = App.CurrentWallet.MakeTransaction(new ContractTransaction
-            {
-                Outputs = new []
-                {
-                    new TransactionOutput
-                    {
-                        AssetId = this.SelectedAsset.State.AssetId,
-                        Value = value,
-                        ScriptHash = RecycleScriptHash
-                    }
-                }
-            }, fee: Fixed8.Zero);
-
-            TransactionHelper.SignAndShowInformation(transaction);
-        }
-
-        #endregion Asset Menu Command Methods
-
-        #region Transaction Menu Command Methods
-
-        private void CopyTransactionId()
-        {
-            if (this.SelectedTransaction == null) return;
-            Clipboard.SetDataObject(this.SelectedTransaction.Id);
-        }
-
-        #endregion Transaction Menu Command Methods
-
         private static void ShowUpdateDialog()
         {
             var dialog = new UpdateView();
 
             dialog.ShowDialog();
-        }
-
-        private CertificateQueryResult GetCertificateQueryResult(AssetState asset)
-        {
-            CertificateQueryResult result;
-            if (asset.AssetType == AssetType.GoverningToken || asset.AssetType == AssetType.UtilityToken)
-            {
-                result = new CertificateQueryResult { Type = CertificateQueryResultType.System };
-            }
-            else
-            {
-                if (!this.certificateQueryResultCache.ContainsKey(asset.Owner))
-                {
-                    result = CertificateQueryService.Query(asset.Owner);
-
-                    if (result == null) return null;
-
-                    // Cache query result
-                    this.certificateQueryResultCache.Add(asset.Owner, result);
-                }
-
-                result = this.certificateQueryResultCache[asset.Owner];
-            }
-
-            return result;
         }
     }
 }

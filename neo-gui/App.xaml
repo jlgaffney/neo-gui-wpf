@@ -1,7 +1,7 @@
 ﻿<Application x:Class="Neo.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             StartupUri="/UI/MainView.xaml">
+             StartupUri="/UI/Home/HomeView.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

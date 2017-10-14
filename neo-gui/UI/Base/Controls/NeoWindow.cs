@@ -10,7 +10,12 @@ namespace Neo.UI.Base.Controls
         public NeoWindow()
         {
             this.BorderThickness = new Thickness(1.0);
-            this.BorderBrush = (Brush) new BrushConverter().ConvertFromString("#64B563");
+
+            var brushConverter = new BrushConverter();
+
+            this.BorderBrush = (Brush) brushConverter.ConvertFromString("#64B563");
+
+            this.NonActiveWindowTitleBrush = (Brush) brushConverter.ConvertFromString("#76B466");
 
             this.Loaded += (sender, e) =>
             {

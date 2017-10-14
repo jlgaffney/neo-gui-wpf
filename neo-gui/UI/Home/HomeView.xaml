@@ -1,12 +1,12 @@
-﻿<controls:NeoWindow x:Class="Neo.UI.MainView"
+﻿<controls:NeoWindow x:Class="Neo.UI.Home.HomeView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
-        xmlns:local="clr-namespace:Neo.UI"
+        xmlns:local="clr-namespace:Neo.UI.Home"
         Title="neo-gui" Height="520" Width="740"
         Loaded="Window_Loaded" Closing="Window_Closing">
     <controls:NeoWindow.DataContext>
-        <local:MainViewModel />
+        <local:HomeViewModel />
     </controls:NeoWindow.DataContext>
 
     <controls:NeoWindow.InputBindings>
@@ -84,86 +84,17 @@
         <TabControl Grid.Row="1">
             <!-- Account Tab -->
             <TabItem Header="Account">
-                <ListView ItemsSource="{Binding Accounts}" SelectedItem="{Binding SelectedAccount}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MouseDoubleClick="AccountList_DoubleClick">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="Address" Width="260" DisplayMemberBinding="{Binding Address}" />
-                            <GridViewColumn Header="NEO" Width="60" DisplayMemberBinding="{Binding Neo}" />
-                            <GridViewColumn Header="NeoGas" Width="60" DisplayMemberBinding="{Binding NeoGas}" />
-                        </GridView>
-                    </ListView.View>
-
-                    <ListView.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header="Create _New Address" Command="{Binding CreateNewAddressCommand}" IsEnabled="{Binding AccountMenuItemsEnabled}" />
-                            <MenuItem Header="_Import" IsEnabled="{Binding AccountMenuItemsEnabled}">
-                                <MenuItem Header="Import from _WIF…" Command="{Binding ImportWifPrivateKeyCommand}" />
-                                <MenuItem Header="Import from _Certificate…" Command="{Binding ImportFromCertificateCommand}" />
-
-                                <Separator />
-
-                                <MenuItem Header="Import Watch-Only _Address…" Command="{Binding ImportWatchOnlyAddressCommand}" />
-                            </MenuItem>
-                            <MenuItem Header="Create Contract _Address" IsEnabled="{Binding AccountMenuItemsEnabled}">
-                                <MenuItem Header="_Multi-Signature…" Command="{Binding CreateMultiSignatureContractAddressCommand}" />
-                                <MenuItem Header="_Lock…" Command="{Binding CreateLockContractAddressCommand}" />
-
-                                <Separator />
-
-                                <MenuItem Header="_Custom…" Command="{Binding CreateCustomContractAddressCommand}" />
-                            </MenuItem>
-
-                            <Separator />
-
-                            <MenuItem Header="View _Private Key" Command="{Binding ViewPrivateKeyCommand}" IsEnabled="{Binding ViewPrivateKeyEnabled}" />
-                            <MenuItem Header="View C_ontract" Command="{Binding ViewContractCommand}" IsEnabled="{Binding ViewContractEnabled}" />
-                            <MenuItem Header="_Vote…" Command="{Binding ShowVotingDialogCommand}" IsEnabled="{Binding ShowVotingDialogEnabled}" />
-                            <MenuItem Header="_Copy to Clipboard" Command="{Binding CopyAddressToClipboardCommand}" IsEnabled="{Binding CopyAddressToClipboardEnabled}" />
-                            <MenuItem Header="_Delete…" Command="{Binding DeleteAccountCommand}" IsEnabled="{Binding DeleteAccountEnabled}" />
-                        </ContextMenu>
-                    </ListView.ContextMenu>
-                </ListView>
+                <local:AccountsView DataContext="{Binding AccountsViewModel, Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
             </TabItem>
 
             <!-- Asset Tab -->
             <TabItem Header="Asset">
-                <ListView ItemsSource="{Binding Assets}" SelectedItem="{Binding SelectedAsset}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MouseDoubleClick="AssetList_DoubleClick">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="Asset" Width="120" DisplayMemberBinding="{Binding Asset}" />
-                            <GridViewColumn Header="Type" Width="72" DisplayMemberBinding="{Binding Type}" />
-                            <GridViewColumn Header="Balance" Width="120" DisplayMemberBinding="{Binding Balance}" />
-                            <GridViewColumn Header="Issuer" Width="260" DisplayMemberBinding="{Binding Issuer}" />
-                        </GridView>
-                    </ListView.View>
-
-                    <ListView.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header="View _Certificate" Command="{Binding ViewCertificateCommand}" IsEnabled="{Binding ViewCertificateEnabled}" />
-                            <MenuItem Header="_Delete…" Command="{Binding DeleteAssetCommand}" IsEnabled="{Binding DeleteAssetEnabled}" />
-                        </ContextMenu>
-                    </ListView.ContextMenu>
-                </ListView>
+                <local:AssetsView DataContext="{Binding AssetsViewModel, Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
             </TabItem>
 
             <!-- Transaction Tab -->
             <TabItem Header="Transaction History">
-                <ListView ItemsSource="{Binding Transactions}" SelectedItem="{Binding SelectedTransaction}" MouseDoubleClick="TransactionList_DoubleClick">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="Time" Width="80" DisplayMemberBinding="{Binding Time}" />
-                            <GridViewColumn Header="Transaction ID" Width="320" DisplayMemberBinding="{Binding Id}" />
-                            <GridViewColumn Header="confirm" Width="54" DisplayMemberBinding="{Binding Confirmations}" />
-                            <GridViewColumn Header="Transaction Type" Width="120" DisplayMemberBinding="{Binding Type}" />
-                        </GridView>
-                    </ListView.View>
-
-                    <ListView.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header="_Copy TXID" Command="{Binding CopyTransactionIdCommand}" IsEnabled="{Binding CopyTransactionIdEnabled}" />
-                        </ContextMenu>
-                    </ListView.ContextMenu>
-                </ListView>
+                <local:TransactionsView DataContext="{Binding TransactionsViewModel, Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
             </TabItem>
         </TabControl>
 

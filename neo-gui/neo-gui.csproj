@@ -348,6 +348,22 @@
     </Compile>
     <Compile Include="UI\Base\Helpers\TransactionHelper.cs" />
     <Compile Include="UI\Base\Helpers\WindowHelper.cs" />
+    <Compile Include="UI\Home\TransactionsView.xaml.cs">
+      <DependentUpon>TransactionsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Home\AssetsView.xaml.cs">
+      <DependentUpon>AssetsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Home\AccountsViewModel.cs" />
+    <Compile Include="UI\Home\AccountsView.xaml.cs">
+      <DependentUpon>AccountsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Home\AssetsViewModel.cs" />
+    <Compile Include="UI\Home\HomeView.xaml.cs">
+      <DependentUpon>HomeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Home\HomeViewModel.cs" />
+    <Compile Include="UI\Home\TransactionsViewModel.cs" />
     <Compile Include="UI\TxOutListBox.xaml.cs">
       <DependentUpon>TxOutListBox.xaml</DependentUpon>
     </Compile>
@@ -461,9 +477,6 @@
     <Compile Include="UI\Wallets\OpenWalletView.xaml.cs">
       <DependentUpon>OpenWalletView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\MainView.xaml.cs">
-      <DependentUpon>MainView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -472,7 +485,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\TxOutListBoxItem.cs" />
-    <Compile Include="UI\MainViewModel.cs" />
     <Compile Include="UI\Updater\UpdateView.xaml.cs">
       <DependentUpon>UpdateView.xaml</DependentUpon>
     </Compile>
@@ -598,6 +610,22 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Assets\AssetDistributionView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Home\TransactionsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Home\AssetsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Home\AccountsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Home\HomeView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -747,14 +775,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\MainView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="UI\Updater\UpdateView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

@@ -1,0 +1,20 @@
+﻿<ListView x:Class="Neo.UI.Home.TransactionsView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        ItemsSource="{Binding Transactions}" SelectedItem="{Binding SelectedTransaction}"
+        Loaded="TransactionsView_Loaded" MouseDoubleClick="TransactionList_DoubleClick">
+    <ListView.View>
+        <GridView>
+            <GridViewColumn Header="Time" Width="80" DisplayMemberBinding="{Binding Time}" />
+            <GridViewColumn Header="Transaction ID" Width="320" DisplayMemberBinding="{Binding Id}" />
+            <GridViewColumn Header="confirm" Width="Auto" DisplayMemberBinding="{Binding Confirmations}" />
+            <GridViewColumn Header="Transaction Type" Width="Auto" DisplayMemberBinding="{Binding Type}" />
+        </GridView>
+    </ListView.View>
+
+    <ListView.ContextMenu>
+        <ContextMenu>
+            <MenuItem Header="_Copy TXID" Command="{Binding CopyTransactionIdCommand}" IsEnabled="{Binding CopyTransactionIdEnabled}" />
+        </ContextMenu>
+    </ListView.ContextMenu>
+</ListView>

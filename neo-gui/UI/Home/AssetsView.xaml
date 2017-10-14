@@ -1,0 +1,21 @@
+﻿<ListView x:Class="Neo.UI.Home.AssetsView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        ItemsSource="{Binding Assets}" SelectedItem="{Binding SelectedAsset}"
+        Loaded="AssetsView_Loaded" MouseDoubleClick="AssetList_DoubleClick">
+    <ListView.View>
+        <GridView>
+            <GridViewColumn Header="Asset" Width="120" DisplayMemberBinding="{Binding Asset}" />
+            <GridViewColumn Header="Type" Width="72" DisplayMemberBinding="{Binding Type}" />
+            <GridViewColumn Header="Balance" Width="120" DisplayMemberBinding="{Binding Balance}" />
+            <GridViewColumn Header="Issuer" Width="260" DisplayMemberBinding="{Binding Issuer}" />
+        </GridView>
+    </ListView.View>
+
+    <ListView.ContextMenu>
+        <ContextMenu>
+            <MenuItem Header="View _Certificate" Command="{Binding ViewCertificateCommand}" IsEnabled="{Binding ViewCertificateEnabled}" />
+            <MenuItem Header="_Delete…" Command="{Binding DeleteAssetCommand}" IsEnabled="{Binding DeleteAssetEnabled}" />
+        </ContextMenu>
+    </ListView.ContextMenu>
+</ListView>
