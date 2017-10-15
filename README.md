@@ -1,5 +1,10 @@
 ![Example Screenshot of Application](https://raw.githubusercontent.com/jlgaffney/neo-gui-wpf/master/blobs/example_screenshot.png)
 
+!!! APPLICATION IS STILL BEING TESTED !!!
+=========================================
+!!! PLEASE DO NOT USE TO CONDUCT TRANSACTIONS ON NEO MAINNET !!! USE AT OWN RISK !!!
+====================================================================================
+
 Project Setup
 =============
 
