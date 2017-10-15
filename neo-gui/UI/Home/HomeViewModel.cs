@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Input;
-
+using MahApps.Metro.Controls.Dialogs;
 using Neo.Core;
 using Neo.Cryptography;
 using Neo.Implementations.Blockchains.LevelDB;
@@ -155,7 +155,7 @@ namespace Neo.UI.Home
 
         public ICommand ShowElectionDialogCommand => new RelayCommand(ShowElectionDialog);
 
-        public ICommand ShowNEP5ContractsListCommand => new RelayCommand(ShowNEP5ContractsList);
+        public ICommand ShowSettingsCommand => new RelayCommand(ShowSettings);
 
         public ICommand CheckForHelpCommand => new RelayCommand(CheckForHelp);
 
@@ -163,7 +163,7 @@ namespace Neo.UI.Home
 
         public ICommand ShowDeveloperToolsCommand => new RelayCommand(ShowDeveloperTools);
 
-        public ICommand AboutNeoCommand => new RelayCommand(ShowAboutNeoDialog);
+        public ICommand AboutNeoCommand => new RelayCommand(this.ShowAboutNeoDialog);
 
         public ICommand ShowUpdateDialogCommand => new RelayCommand(ShowUpdateDialog);
 
@@ -665,26 +665,28 @@ namespace Neo.UI.Home
             Settings.Default.Save();
         }
 
-        private void OpenWallet()
+        private async void OpenWallet()
         {
             var view = new OpenWalletView();
             view.ShowDialog();
 
             if (!view.GetWalletOpenInfo(out var walletPath, out var password, out var repairMode)) return;
-
-
+            
             if (UserWallet.GetVersion(walletPath) < Version.Parse("1.3.5"))
             {
-                if (MessageBox.Show(Strings.MigrateWalletMessage, Strings.MigrateWalletCaption,
-                        MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes)
-                    != MessageBoxResult.Yes) return;
+                var migrateApproved = await DialogCoordinator.Instance.ShowMessageAsync(this,
+                    Strings.MigrateWalletCaption, Strings.MigrateWalletMessage,
+                        MessageDialogStyle.AffirmativeAndNegative);
+
+                if (migrateApproved != MessageDialogResult.Affirmative) return;
 
                 var pathOld = Path.ChangeExtension(walletPath, ".old.db3");
                 var pathNew = Path.ChangeExtension(walletPath, ".new.db3");
                 UserWallet.Migrate(walletPath, pathNew);
                 File.Move(walletPath, pathOld);
                 File.Move(pathNew, walletPath);
-                MessageBox.Show($"{Strings.MigrateWalletSucceedMessage}\n{pathOld}");
+
+                await DialogCoordinator.Instance.ShowMessageAsync(this, string.Empty, $"{Strings.MigrateWalletSucceedMessage}\n{pathOld}");
             }
             UserWallet wallet;
             try
@@ -693,7 +695,7 @@ namespace Neo.UI.Home
             }
             catch (CryptographicException)
             {
-                MessageBox.Show(Strings.PasswordIncorrect);
+                await DialogCoordinator.Instance.ShowMessageAsync(this, string.Empty, Strings.PasswordIncorrect);
                 return;
             }
             if (repairMode) wallet.Rebuild();
@@ -864,9 +866,9 @@ namespace Neo.UI.Home
             TransactionHelper.SignAndShowInformation(transactionResult);
         }
 
-        private static void ShowNEP5ContractsList()
+        private static void ShowSettings()
         {
-            var view = new NEP5ContractsView();
+            var view = new SettingsView();
             view.ShowDialog();
         }
 
@@ -885,9 +887,9 @@ namespace Neo.UI.Home
             WindowHelper.Show<DeveloperToolsView>();
         }
 
-        private static void ShowAboutNeoDialog()
+        private void ShowAboutNeoDialog()
         {
-            MessageBox.Show($"{Strings.AboutMessage} {Strings.AboutVersion}{Assembly.GetExecutingAssembly().GetName().Version}", Strings.About);
+            DialogCoordinator.Instance.ShowMessageAsync(this, Strings.About, $"{Strings.AboutMessage} {Strings.AboutVersion} {Assembly.GetExecutingAssembly().GetName().Version}");
         }
 
         #endregion Main Menu Command Methods

@@ -5,6 +5,9 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
+
+using MahApps.Metro.Controls.Dialogs;
+
 using Neo.Properties;
 using Neo.UI.Accounts;
 using Neo.UI.Base.Dialogs;
@@ -209,7 +212,7 @@ namespace Neo.UI.Home
             }
         }
 
-        private void ImportCertificate()
+        private async void ImportCertificate()
         {
             var view = new SelectCertificateView();
             view.ShowDialog();
@@ -225,7 +228,7 @@ namespace Neo.UI.Home
             }
             catch
             {
-                MessageBox.Show("Certificate import failed!");
+                await DialogCoordinator.Instance.ShowMessageAsync(this, string.Empty, "Certificate import failed!");
                 return;
             }
 

@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using MahApps.Metro.Controls.Dialogs;
 using Neo.UI.Base.Controls;
 using Neo.UI.Base.Dialogs;
 using Neo.UI.Base.MVVM;
@@ -156,7 +157,7 @@ namespace Neo.UI.Wallets
             this.view?.SetSelectedTab(1);
         }
 
-        private void Validate()
+        private async void Validate()
         {
             IEnumerable<CoinReference> inputs;
             IEnumerable<TransactionOutput> outputs;
@@ -172,7 +173,7 @@ namespace Neo.UI.Wallets
                     var outputOthers = outputsOthers.FirstOrDefault(p => p.AssetId == outputMine.AssetId && p.Value == outputMine.Value && p.ScriptHash == outputMine.ScriptHash);
                     if (outputOthers == null)
                     {
-                        MessageBox.Show(Strings.TradeFailedFakeDataMessage, Strings.Failed, MessageBoxButton.OK, MessageBoxImage.Error);
+                        await DialogCoordinator.Instance.ShowMessageAsync(this, Strings.Failed, Strings.TradeFailedFakeDataMessage);
                         return;
                     }
                     outputsOthers.Remove(outputOthers);
@@ -190,13 +191,13 @@ namespace Neo.UI.Wallets
             {
                 if (inputs.Select(p => Blockchain.Default.GetTransaction(p.PrevHash).Outputs[p.PrevIndex].ScriptHash).Distinct().Any(p => App.CurrentWallet.ContainsAddress(p)))
                 {
-                    MessageBox.Show(Strings.TradeFailedInvalidDataMessage, Strings.Failed, MessageBoxButton.OK, MessageBoxImage.Error);
+                    await DialogCoordinator.Instance.ShowMessageAsync(this, Strings.Failed, Strings.TradeFailedInvalidDataMessage);
                     return;
                 }
             }
             catch
             {
-                MessageBox.Show(Strings.TradeFailedNoSyncMessage, Strings.Failed, MessageBoxButton.OK, MessageBoxImage.Error);
+                await DialogCoordinator.Instance.ShowMessageAsync(this, Strings.Failed, Strings.TradeFailedNoSyncMessage);
                 return;
             }
 

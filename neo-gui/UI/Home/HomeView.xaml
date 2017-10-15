@@ -4,7 +4,10 @@
         xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
         xmlns:local="clr-namespace:Neo.UI.Home"
         Title="neo-gui" Height="520" Width="740"
-        Loaded="Window_Loaded" Closing="Window_Closing">
+        Loaded="Window_Loaded" Closing="Window_Closing"
+        xmlns:dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+        xmlns:mahapps="http://metro.mahapps.com/winfx/xaml/controls"
+        dialog:DialogParticipation.Register="{Binding}">
     <controls:NeoWindow.DataContext>
         <local:HomeViewModel />
     </controls:NeoWindow.DataContext>
@@ -15,7 +18,13 @@
         
         <KeyBinding Key="F12" Command="{Binding ShowDeveloperToolsCommand}" />
     </controls:NeoWindow.InputBindings>
-    
+
+    <controls:NeoWindow.RightWindowCommands>
+        <mahapps:WindowCommands>
+            <Button Content="settings" Command="{Binding ShowSettingsCommand}" />
+        </mahapps:WindowCommands>
+    </controls:NeoWindow.RightWindowCommands>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -68,7 +77,7 @@
 
                 <Separator />
 
-                <MenuItem Header="NE_P-5 Contracts List…" Command="{Binding ShowNEP5ContractsListCommand}" />
+                <MenuItem Header="_Settings…" Command="{Binding ShowSettingsCommand}" />
             </MenuItem>
             <MenuItem Header="_Help">
                 <MenuItem Header="_Check for Help" Command="{Binding CheckForHelpCommand}" />

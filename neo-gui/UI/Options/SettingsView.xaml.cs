@@ -1,11 +1,11 @@
 ﻿namespace Neo.UI.Options
 {
     /// <summary>
-    /// Interaction logic for NEP5ContractsView.xaml
+    /// Interaction logic for SettingsView.xaml
     /// </summary>
-    public partial class NEP5ContractsView
+    public partial class SettingsView
     {
-        public NEP5ContractsView()
+        public SettingsView()
         {
             InitializeComponent();
         }

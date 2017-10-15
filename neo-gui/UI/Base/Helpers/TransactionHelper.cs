@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Windows;
 using Neo.Core;
 using Neo.Properties;
 using Neo.SmartContract;
 using Neo.UI.Base.Dialogs;
-using MessageBox = System.Windows.MessageBox;
 
 namespace Neo.UI.Base.Helpers
 {

@@ -37,7 +37,7 @@
         </Grid.RowDefinitions>
 
         <GroupBox Grid.Row="0" Header="Current Value">
-            <TextBox Text="{Binding CurrentValue, Mode=OneWay}" IsReadOnly="True" Background="#F0F0F0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" />
+            <TextBox Text="{Binding CurrentValue, Mode=OneWay}" IsReadOnly="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" />
         </GroupBox>
 
         <GroupBox Grid.Row="1" Header="New Value">

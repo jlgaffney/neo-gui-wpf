@@ -2,6 +2,9 @@
 using System.Windows;
 using MahApps.Metro;
 using Neo.Implementations.Wallets.EntityFramework;
+using Neo.Properties;
+using Neo.UI;
+using Neo.UI.Options;
 
 namespace Neo
 {
@@ -22,15 +25,22 @@ namespace Neo
             // Add custom accent and theme resource dictionaries to the ThemeManager
             ThemeManager.AddAccent("CustomAccent1", new Uri("pack://application:,,,/neo-gui;component/UI/Resources/ThemeResources.xaml"));
 
-            // Get the current app style (theme and accent) from the application
-            var theme = ThemeManager.DetectAppStyle(Current);
+            var themeSetting = (NeoTheme)Enum.ToObject(typeof(NeoTheme), Settings.Default.AppTheme);
 
-            // Change app style to the custom accent and current theme
-            ThemeManager.ChangeAppStyle(Current,
-                ThemeManager.GetAccent("CustomAccent1"),
-                theme.Item1);
+           SetTheme(themeSetting);
 
             base.OnStartup(e);
+        }
+
+        public static void SetTheme(NeoTheme appTheme)
+        {
+            // Change app style to the custom accent and current theme
+            var accent = ThemeManager.GetAccent("CustomAccent1");
+            var theme = ThemeManager.GetAppTheme(appTheme == NeoTheme.Light ? "BaseLight" : "BaseDark");
+
+            ThemeManager.ChangeAppStyle(Current,
+                accent,
+                theme);
         }
     }
 }

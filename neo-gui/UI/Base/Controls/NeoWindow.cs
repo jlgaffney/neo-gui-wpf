@@ -7,13 +7,13 @@ namespace Neo.UI.Base.Controls
 {
     public class NeoWindow : MetroWindow
     {
+        private static readonly BrushConverter brushConverter = new BrushConverter();
+
         public NeoWindow()
         {
             this.BorderThickness = new Thickness(1.0);
-
-            var brushConverter = new BrushConverter();
-
-            this.BorderBrush = (Brush) brushConverter.ConvertFromString("#64B563");
+            
+            this.BorderBrush = (Brush) brushConverter.ConvertFromString("#9EAF99");
 
             this.NonActiveWindowTitleBrush = (Brush) brushConverter.ConvertFromString("#89B27E");
 

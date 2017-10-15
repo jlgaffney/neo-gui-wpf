@@ -20,8 +20,8 @@
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <ui:TxOutListBox Items="{Binding Items}" ItemsChanged="TxOutListBox_OnItemsChanged" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 
-                <Button ToolTip="Remark" Width="28" Height="24" HorizontalAlignment="Right" VerticalAlignment="Bottom" Command="{Binding RemarkCommand}">
-                    <Image Source="/Resources/remark.png" Width="18" Height="18" />
+                <Button ToolTip="Remark" Width="28" Height="28" Padding="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Command="{Binding RemarkCommand}">
+                    <Image Source="/Resources/remark.png" Width="20" Height="20" />
                 </Button>
             </Grid>
             
