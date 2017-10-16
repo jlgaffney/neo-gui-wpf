@@ -51,20 +51,24 @@
 
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Row="0" Grid.Column="0" Content="Base Style" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                        <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding ThemeStyles}" SelectedItem="{Binding SelectedThemeStyle}" Margin="0 4" HorizontalAlignment="Stretch" />
+                        <ComboBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" ItemsSource="{Binding ThemeStyles}" SelectedItem="{Binding SelectedThemeStyle}" Margin="0 4" HorizontalAlignment="Stretch" />
 
                         <Label Grid.Row="1" Grid.Column="0" Content="Accent Color" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ThemeAccentBaseColorHex, UpdateSourceTrigger=PropertyChanged}" Margin="0 4" Padding="2" HorizontalAlignment="Stretch" />
+                        <Rectangle Grid.Row="1" Grid.Column="1" Width="20" Height="20" Fill="{Binding ThemeAccentBaseColor}" Margin="0 4 6 4" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding ThemeAccentBaseColorHex, UpdateSourceTrigger=PropertyChanged}" Margin="0 4" Padding="2" HorizontalAlignment="Stretch" />
 
                         <Label Grid.Row="2" Grid.Column="0" Content="Highlight Color" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ThemeHighlightColorHex, UpdateSourceTrigger=PropertyChanged}" Margin="0 4" Padding="2" HorizontalAlignment="Stretch" />
+                        <Rectangle Grid.Row="2" Grid.Column="1" Width="20" Height="20" Fill="{Binding ThemeHighlightColor}" Margin="0 4 6 4" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding ThemeHighlightColorHex, UpdateSourceTrigger=PropertyChanged}" Margin="0 4" Padding="2" HorizontalAlignment="Stretch" />
 
                         <Label Grid.Row="3" Grid.Column="0" Content="Window Border Color" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding ThemeWindowBorderColorHex, UpdateSourceTrigger=PropertyChanged}" Margin="0 4" Padding="2" HorizontalAlignment="Stretch" />
+                        <Rectangle Grid.Row="3" Grid.Column="1" Width="20" Height="20" Fill="{Binding ThemeWindowBorderColor}" Margin="0 4 6 4" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <TextBox Grid.Row="3" Grid.Column="2" Text="{Binding ThemeWindowBorderColorHex, UpdateSourceTrigger=PropertyChanged}" Margin="0 4" Padding="2" HorizontalAlignment="Stretch" />
                     </Grid>
 
                     <DockPanel Grid.Row="1" HorizontalAlignment="Right">

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using MahApps.Metro.Controls.Dialogs;
 using Neo.Properties;
 using Neo.UI.Base.Extensions;
@@ -137,8 +138,26 @@ namespace Neo.UI.Options
 
                 NotifyPropertyChanged();
 
-                // Update dependent property
+                // Update dependent properties
                 NotifyPropertyChanged(nameof(this.AppearanceSettingsChanged));
+
+                NotifyPropertyChanged(nameof(this.ThemeAccentBaseColor));
+            }
+        }
+
+        public SolidColorBrush ThemeAccentBaseColor
+        {
+            get
+            {
+                var transparentBrush = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
+
+                if (string.IsNullOrEmpty(this.ThemeAccentBaseColorHex)) return transparentBrush;
+
+                var accentBaseColor = ColorHelper.HexToColor(this.ThemeAccentBaseColorHex);
+
+                accentBaseColor.A = byte.MaxValue;
+
+                return new SolidColorBrush(accentBaseColor);
             }
         }
 
@@ -153,8 +172,26 @@ namespace Neo.UI.Options
 
                 NotifyPropertyChanged();
 
-                // Update dependent property
+                // Update dependent properties
                 NotifyPropertyChanged(nameof(this.AppearanceSettingsChanged));
+
+                NotifyPropertyChanged(nameof(this.ThemeHighlightColor));
+            }
+        }
+
+        public SolidColorBrush ThemeHighlightColor
+        {
+            get
+            {
+                var transparentBrush = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
+
+                if (string.IsNullOrEmpty(this.ThemeHighlightColorHex)) return transparentBrush;
+
+                var highlightColor = ColorHelper.HexToColor(this.ThemeHighlightColorHex);
+
+                highlightColor.A = byte.MaxValue;
+
+                return new SolidColorBrush(highlightColor);
             }
         }
 
@@ -171,6 +208,22 @@ namespace Neo.UI.Options
 
                 // Update dependent property
                 NotifyPropertyChanged(nameof(this.AppearanceSettingsChanged));
+            }
+        }
+
+        public SolidColorBrush ThemeWindowBorderColor
+        {
+            get
+            {
+                var transparentBrush = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
+
+                if (string.IsNullOrEmpty(this.ThemeWindowBorderColorHex)) return transparentBrush;
+
+                var windowBorderColor = ColorHelper.HexToColor(this.ThemeWindowBorderColorHex);
+
+                windowBorderColor.A = byte.MaxValue;
+
+                return new SolidColorBrush(windowBorderColor);
             }
         }
 
