@@ -206,8 +206,10 @@ namespace Neo.UI.Options
 
                 NotifyPropertyChanged();
 
-                // Update dependent property
+                // Update dependent properties
                 NotifyPropertyChanged(nameof(this.AppearanceSettingsChanged));
+
+                NotifyPropertyChanged(nameof(this.ThemeWindowBorderColor));
             }
         }
 
