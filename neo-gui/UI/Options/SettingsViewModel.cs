@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using MahApps.Metro;
+using System.Windows.Media;
+using MahApps.Metro.Controls.Dialogs;
 using Neo.Properties;
 using Neo.UI.Base.Extensions;
+using Neo.UI.Base.Helpers;
 using Neo.UI.Base.MVVM;
+using Neo.UI.Base.Themes;
 
 namespace Neo.UI.Options
 {
@@ -14,8 +18,18 @@ namespace Neo.UI.Options
         private string currentNEP5ContractsList;
         private string nep5ContractsList;
 
-        private NeoTheme currentAppTheme;
-        private NeoTheme selectedAppTheme;
+        private ThemeStyle currentThemeStyle;
+        private ThemeStyle selectedThemeStyle;
+
+        private string currentThemeAccentBaseColorHex;
+        private string themeAccentBaseColorHex;
+
+        private string currentThemeHighlightColorHex;
+        private string themeHighlightColorHex;
+
+        private string currentThemeWindowBorderColorHex;
+        private string themeWindowBorderColorHex;
+
 
         public SettingsViewModel()
         {
@@ -49,10 +63,24 @@ namespace Neo.UI.Options
 
         private void LoadAppearanceSettings()
         {
-            var appTheme = (NeoTheme)Enum.ToObject(typeof(NeoTheme), Settings.Default.AppTheme);
+            var currentTheme = NeoTheme.Current;
 
-            this.currentAppTheme = appTheme;
-            this.SelectedAppTheme = appTheme;
+            // Set theme style
+            this.currentThemeStyle = currentTheme.Style;
+            this.SelectedThemeStyle = currentTheme.Style;
+
+            // Set color values, without transparency as these colors do not require transparency
+            var accentBaseColorHex = ColorHelper.ColorToHex(currentTheme.AccentBaseColor);
+            this.currentThemeAccentBaseColorHex = accentBaseColorHex;
+            this.ThemeAccentBaseColorHex = accentBaseColorHex;
+
+            var highlightColorHex = ColorHelper.ColorToHex(currentTheme.HighlightColor);
+            this.currentThemeHighlightColorHex = highlightColorHex;
+            this.ThemeHighlightColorHex = highlightColorHex;
+
+            var windowBorderColorHex = ColorHelper.ColorToHex(currentTheme.WindowBorderColor);
+            this.currentThemeWindowBorderColorHex = windowBorderColorHex;
+            this.ThemeWindowBorderColorHex = windowBorderColorHex;
         }
 
         #region NEP-5 Properties & Commands
@@ -75,22 +103,22 @@ namespace Neo.UI.Options
 
         public bool NEP5SettingsChanged => this.currentNEP5ContractsList != this.NEP5ContractsList;
 
-        public ICommand ApplyNEP5SettingsCommand => new RelayCommand(this.ApplyNEP5Settings);
+        public ICommand SaveNEP5SettingsCommand => new RelayCommand(this.SaveNEP5Settings);
 
         #endregion NEP-5 Properties & Commands
 
         #region Appearance Properties
 
-        public NeoTheme[] AppThemes => Enum.GetValues(typeof(NeoTheme)).Cast<NeoTheme>().ToArray();
+        public ThemeStyle[] ThemeStyles => Enum.GetValues(typeof(ThemeStyle)).Cast<ThemeStyle>().ToArray();
 
-        public NeoTheme SelectedAppTheme
+        public ThemeStyle SelectedThemeStyle
         {
-            get => this.selectedAppTheme;
+            get => this.selectedThemeStyle;
             set
             {
-                if (this.selectedAppTheme == value) return;
+                if (this.selectedThemeStyle == value) return;
 
-                this.selectedAppTheme = value;
+                this.selectedThemeStyle = value;
 
                 NotifyPropertyChanged();
 
@@ -99,7 +127,117 @@ namespace Neo.UI.Options
             }
         }
 
-        public bool AppearanceSettingsChanged => this.currentAppTheme != this.SelectedAppTheme;
+        public string ThemeAccentBaseColorHex
+        {
+            get => this.themeAccentBaseColorHex;
+            set
+            {
+                if (this.themeAccentBaseColorHex == value) return;
+
+                this.themeAccentBaseColorHex = value;
+
+                NotifyPropertyChanged();
+
+                // Update dependent properties
+                NotifyPropertyChanged(nameof(this.AppearanceSettingsChanged));
+
+                NotifyPropertyChanged(nameof(this.ThemeAccentBaseColor));
+            }
+        }
+
+        public SolidColorBrush ThemeAccentBaseColor
+        {
+            get
+            {
+                var transparentBrush = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
+
+                if (string.IsNullOrEmpty(this.ThemeAccentBaseColorHex)) return transparentBrush;
+
+                var accentBaseColor = ColorHelper.HexToColor(this.ThemeAccentBaseColorHex);
+
+                accentBaseColor.A = byte.MaxValue;
+
+                return new SolidColorBrush(accentBaseColor);
+            }
+        }
+
+        public string ThemeHighlightColorHex
+        {
+            get => this.themeHighlightColorHex;
+            set
+            {
+                if (this.themeHighlightColorHex == value) return;
+
+                this.themeHighlightColorHex = value;
+
+                NotifyPropertyChanged();
+
+                // Update dependent properties
+                NotifyPropertyChanged(nameof(this.AppearanceSettingsChanged));
+
+                NotifyPropertyChanged(nameof(this.ThemeHighlightColor));
+            }
+        }
+
+        public SolidColorBrush ThemeHighlightColor
+        {
+            get
+            {
+                var transparentBrush = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
+
+                if (string.IsNullOrEmpty(this.ThemeHighlightColorHex)) return transparentBrush;
+
+                var highlightColor = ColorHelper.HexToColor(this.ThemeHighlightColorHex);
+
+                highlightColor.A = byte.MaxValue;
+
+                return new SolidColorBrush(highlightColor);
+            }
+        }
+
+        public string ThemeWindowBorderColorHex
+        {
+            get => this.themeWindowBorderColorHex;
+            set
+            {
+                if (this.themeWindowBorderColorHex == value) return;
+
+                this.themeWindowBorderColorHex = value;
+
+                NotifyPropertyChanged();
+
+                // Update dependent properties
+                NotifyPropertyChanged(nameof(this.AppearanceSettingsChanged));
+
+                NotifyPropertyChanged(nameof(this.ThemeWindowBorderColor));
+            }
+        }
+
+        public SolidColorBrush ThemeWindowBorderColor
+        {
+            get
+            {
+                var transparentBrush = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
+
+                if (string.IsNullOrEmpty(this.ThemeWindowBorderColorHex)) return transparentBrush;
+
+                var windowBorderColor = ColorHelper.HexToColor(this.ThemeWindowBorderColorHex);
+
+                windowBorderColor.A = byte.MaxValue;
+
+                return new SolidColorBrush(windowBorderColor);
+            }
+        }
+
+        public bool AppearanceSettingsChanged =>
+            this.currentThemeStyle != this.SelectedThemeStyle ||
+            this.currentThemeAccentBaseColorHex != this.ThemeAccentBaseColorHex ||
+            this.currentThemeHighlightColorHex != this.ThemeHighlightColorHex ||
+            this.currentThemeWindowBorderColorHex != this.ThemeWindowBorderColorHex;
+
+        public ICommand ResetAppearanceSettingsToDefaultCommand => new RelayCommand(this.ResetAppearanceSettingsToDefault);
+
+        public ICommand SaveAppearanceSettingsCommand => new RelayCommand(this.SaveAppearanceSettings);
 
         public ICommand ApplyAppearanceSettingsCommand => new RelayCommand(this.ApplyAppearanceSettings);
 
@@ -109,7 +247,7 @@ namespace Neo.UI.Options
 
         public ICommand CancelCommand => new RelayCommand(this.Cancel);
 
-        public void Ok()
+        private void Ok()
         {
             if (this.NEP5SettingsChanged || this.AppearanceSettingsChanged)
             {
@@ -120,12 +258,12 @@ namespace Neo.UI.Options
             this.TryClose();
         }
 
-        public void Cancel()
+        private void Cancel()
         {
             this.TryClose();
         }
 
-        public void ApplyNEP5Settings()
+        private void SaveNEP5Settings()
         {
             var nep5ContractsLines =  string.IsNullOrEmpty(this.NEP5ContractsList)
                 ? new string[0] : this.NEP5ContractsList.ToLines();
@@ -142,20 +280,66 @@ namespace Neo.UI.Options
             NotifyPropertyChanged(nameof(this.NEP5SettingsChanged));
         }
 
-        public void ApplyAppearanceSettings()
+        private async void ApplyAppearanceSettings()
         {
-            Settings.Default.AppTheme = (int) this.SelectedAppTheme;
+            var restartApprovedResult = await DialogCoordinator.Instance.ShowMessageAsync(this,
+                "App will need to be restarted", "This application needs to be restarted for the new theme settings to be applied",
+                    MessageDialogStyle.AffirmativeAndNegative);
 
+            if (restartApprovedResult != MessageDialogResult.Affirmative) return;
+
+            // Application restart approved
+
+            // Save new theme settings
+            this.SaveAppearanceSettings();
+
+            // Restart application
+            Process.Start(Application.ResourceAssembly.Location);
+            Application.Current.Shutdown();
+        }
+
+        private void ResetAppearanceSettingsToDefault()
+        {
+            this.SelectedThemeStyle = ThemeHelper.DefaultTheme.Style;
+
+            // Convert default theme colors to hex values
+            this.ThemeAccentBaseColorHex = ColorHelper.ColorToHex(ThemeHelper.DefaultTheme.AccentBaseColor);
+            this.ThemeHighlightColorHex = ColorHelper.ColorToHex(ThemeHelper.DefaultTheme.HighlightColor);
+            this.ThemeWindowBorderColorHex = ColorHelper.ColorToHex(ThemeHelper.DefaultTheme.WindowBorderColor);
+        }
+
+        private void SaveAppearanceSettings()
+        {
+            // Convert hex values to colors
+            var accentBaseColor = ColorHelper.HexToColor(this.ThemeAccentBaseColorHex);
+            var highlightColor = ColorHelper.HexToColor(this.ThemeHighlightColorHex);
+            var windowBorderColor = ColorHelper.HexToColor(this.ThemeWindowBorderColorHex);
+
+            // Remove unnecessary transparency values
+            accentBaseColor.A = byte.MaxValue;
+            highlightColor.A = byte.MaxValue;
+            windowBorderColor.A = byte.MaxValue;
+
+            // Build new theme instance
+            var newTheme = new NeoTheme
+            {
+                Style = this.SelectedThemeStyle,
+                AccentBaseColor = accentBaseColor,
+                HighlightColor = highlightColor,
+                WindowBorderColor = windowBorderColor
+            };
+
+            // Export and save as JSON in settings
+            var newThemeJson = NeoTheme.Export(newTheme);
+            Settings.Default.AppTheme = newThemeJson;
             Settings.Default.Save();
 
-            // If theme has changed apply new application theme
-            if (this.SelectedAppTheme != this.currentAppTheme)
-            {
-                App.SetTheme(this.SelectedAppTheme);
-            }
-
             // Update settings' current values
-            this.currentAppTheme = this.SelectedAppTheme;
+            this.currentThemeStyle = this.SelectedThemeStyle;
+            this.currentThemeAccentBaseColorHex = this.ThemeAccentBaseColorHex;
+            this.currentThemeHighlightColorHex = this.ThemeHighlightColorHex;
+            this.currentThemeWindowBorderColorHex = this.ThemeWindowBorderColorHex;
+
             NotifyPropertyChanged(nameof(this.AppearanceSettingsChanged));
         }
     }
