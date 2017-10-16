@@ -5,14 +5,15 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/neo-gui;component/UI/Resources/StyleResources.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/neo-gui;component/UI/Resources/ConverterResources.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/neo-gui;component/UI/Base/Resources/ConverterResources.xaml" />
                 
                 
                 <!-- MahApps resource dictionaries -->
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
+                
+                <!-- Default style -->
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Green.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
             </ResourceDictionary.MergedDictionaries>

@@ -74,10 +74,10 @@ namespace Neo.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int AppTheme {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AppTheme {
             get {
-                return ((int)(this["AppTheme"]));
+                return ((string)(this["AppTheme"]));
             }
             set {
                 this["AppTheme"] = value;

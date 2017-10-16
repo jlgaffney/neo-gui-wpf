@@ -346,8 +346,12 @@
     <Compile Include="UI\Base\Controls\Development\TransactionPropertyGrid.xaml.cs">
       <DependentUpon>TransactionPropertyGrid.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Base\Helpers\ColorHelper.cs" />
     <Compile Include="UI\Base\Helpers\TransactionHelper.cs" />
     <Compile Include="UI\Base\Helpers\WindowHelper.cs" />
+    <Compile Include="UI\Base\Themes\NeoTheme.cs" />
+    <Compile Include="UI\Base\Themes\ThemeStyle.cs" />
+    <Compile Include="UI\Base\Themes\ThemeHelper.cs" />
     <Compile Include="UI\Home\TransactionsView.xaml.cs">
       <DependentUpon>TransactionsView.xaml</DependentUpon>
     </Compile>
@@ -364,7 +368,6 @@
     </Compile>
     <Compile Include="UI\Home\HomeViewModel.cs" />
     <Compile Include="UI\Home\TransactionsViewModel.cs" />
-    <Compile Include="UI\NeoTheme.cs" />
     <Compile Include="UI\TxOutListBox.xaml.cs">
       <DependentUpon>TxOutListBox.xaml</DependentUpon>
     </Compile>
@@ -630,15 +633,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Resources\ConverterResources.xaml">
+    <Page Include="UI\Base\Resources\ConverterResources.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Resources\ThemeResources.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UI\Resources\StyleResources.xaml">
+    <Page Include="UI\Base\Resources\CustomAccentThemeResources.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

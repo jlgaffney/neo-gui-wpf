@@ -3,11 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
         xmlns:local="clr-namespace:Neo.UI.Home"
-        Title="neo-gui" Height="520" Width="740"
-        Loaded="Window_Loaded" Closing="Window_Closing"
         xmlns:dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
         xmlns:mahapps="http://metro.mahapps.com/winfx/xaml/controls"
-        dialog:DialogParticipation.Register="{Binding}">
+        dialog:DialogParticipation.Register="{Binding}"
+        Title="neo-gui" Height="520" Width="740"
+        Loaded="Window_Loaded" Closing="Window_Closing">
     <controls:NeoWindow.DataContext>
         <local:HomeViewModel />
     </controls:NeoWindow.DataContext>

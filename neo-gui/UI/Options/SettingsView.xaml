@@ -3,7 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
              xmlns:local="clr-namespace:Neo.UI.Options"             
-             Title="Settings" Width="600" Height="440" ResizeMode="NoResize">
+             xmlns:dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+             dialog:DialogParticipation.Register="{Binding}"
+             Title="Settings" Width="580" Height="440" ResizeMode="NoResize">
     <controls:NeoWindow.DataContext>
         <local:SettingsViewModel />
     </controls:NeoWindow.DataContext>
@@ -27,7 +29,7 @@
                                  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" />
                     </GroupBox>
 
-                    <Button Grid.Row="1" Content="Apply" Width="60" HorizontalAlignment="Right" Command="{Binding ApplyNEP5SettingsCommand}" IsEnabled="{Binding NEP5SettingsChanged}" />
+                    <Button Grid.Row="1" Content="Save" Width="60" HorizontalAlignment="Right" Command="{Binding ApplyNEP5SettingsCommand}" IsEnabled="{Binding NEP5SettingsChanged}" />
                 </Grid>
             </TabItem>
             
@@ -43,6 +45,8 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
                         <Grid.ColumnDefinitions>
@@ -50,11 +54,24 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <Label Grid.Row="0" Grid.Column="0" Content="Theme" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                        <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding AppThemes}" SelectedItem="{Binding SelectedAppTheme}" Margin="0 4" />
+                        <Label Grid.Row="0" Grid.Column="0" Content="Base Style" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                        <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding ThemeStyles}" SelectedItem="{Binding SelectedThemeStyle}" Margin="0 4" HorizontalAlignment="Stretch" />
+
+                        <Label Grid.Row="1" Grid.Column="0" Content="Accent Color" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ThemeAccentBaseColorHex, UpdateSourceTrigger=PropertyChanged}" Margin="0 4" Padding="2" HorizontalAlignment="Stretch" />
+
+                        <Label Grid.Row="2" Grid.Column="0" Content="Highlight Color" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ThemeHighlightColorHex, UpdateSourceTrigger=PropertyChanged}" Margin="0 4" Padding="2" HorizontalAlignment="Stretch" />
+
+                        <Label Grid.Row="3" Grid.Column="0" Content="Window Border Color" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding ThemeWindowBorderColorHex, UpdateSourceTrigger=PropertyChanged}" Margin="0 4" Padding="2" HorizontalAlignment="Stretch" />
                     </Grid>
 
-                    <Button Grid.Row="1" Content="Apply" Width="60" HorizontalAlignment="Right" Command="{Binding ApplyAppearanceSettingsCommand}" IsEnabled="{Binding AppearanceSettingsChanged}" />
+                    <DockPanel Grid.Row="1" HorizontalAlignment="Right">
+                        <Button Content="Reset to default" Width="Auto" Margin="0 0 8 0" Command="{Binding ResetAppearanceSettingsToDefaultCommand}" />
+                        <Button Content="Save" Width="60" Margin="0 0 8 0" Command="{Binding SaveAppearanceSettingsCommand}" IsEnabled="{Binding AppearanceSettingsChanged}" />
+                        <Button Content="Apply" Width="60" Command="{Binding ApplyAppearanceSettingsCommand}" IsEnabled="{Binding AppearanceSettingsChanged}" />
+                    </DockPanel>
                 </Grid>
             </TabItem>
         </TabControl>
