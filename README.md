@@ -1,21 +1,42 @@
-![Example Screenshot of Application](https://raw.githubusercontent.com/jlgaffney/neo-gui-wpf/master/blobs/example_screenshot.png)
+<p align="center">
+  <img 
+    src="http://res.cloudinary.com/vidsy/image/upload/v1503160820/CoZ_Icon_DARKBLUE_200x178px_oq0gxm.png" 
+    width="125px"
+  >
+</p>
 
-!!! APPLICATION IS STILL BEING TESTED !!!
-=========================================
-!!! PLEASE DO NOT USE TO CONDUCT TRANSACTIONS ON NEO MAINNET !!! USE AT OWN RISK !!!
-====================================================================================
+<h1 align="center">neo-gui</h1>
 
-Project Setup
-=============
+<p align="center">
+  Full wallet for the <b>NEO</b> blockchain.
+</p>
 
-On Linux:
-=========
-`yum install leveldb-devel`
+## What?
 
-On Windows:
-===========
+- Full node wallet for interacting with the [NEO](http://neo.org/) blockchain.
+- Port of official [NEO GUI](https://github.com/neo-project/neo-gui) to WPF (Windows Presentation Framework) using MVVM pattern (Model-View-ViewModel).
+- **Note** - Application is still being tested, please only use on testnet or private chains
 
+## Project Setup
+### On Linux:
+
+```
+yum install leveldb-devel
+```
+
+### On Windows:
 To build and run locally, you need to clone and build https://github.com/neo-project/leveldb first, 
 then copy `libleveldb.dll` to the working directory (i.e. /bin/Debug, /bin/Release)
 
-Note: When building, the project file settings must be changed from static library (lib) to dynamic linked library (dll).
+**Note** - When building, the project file settings must be changed from static library (lib) to dynamic linked library (dll).
+
+
+## Help
+
+- Open a new [issue](https://github.com/CityOfZion/neo-gui-wpf/issues/new) if you encountered a problem.
+- Or ping **@lostfella** on the [NEO Slack](https://neo-slack-invite.herokuapp.com).
+- Submitting PRs to the project is always welcome!
+
+## License
+
+- Open-source [MIT](https://github.com/CityOfZion/neo-gui-wpf/blob/master/LICENSE).
