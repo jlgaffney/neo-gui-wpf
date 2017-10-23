@@ -18,11 +18,11 @@ namespace Neo.UI.Voting
         {
             this.BookKeepers = new ObservableCollection<ECPoint>();
 
-            if (App.CurrentWallet == null) return;
+            if (ApplicationContext.Instance.CurrentWallet == null) return;
             
             // Load book keepers
-            var bookKeepers = App.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p =>
-                App.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey);
+            var bookKeepers = ApplicationContext.Instance.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p =>
+                ApplicationContext.Instance.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey);
 
             this.BookKeepers.AddRange(bookKeepers);
         }

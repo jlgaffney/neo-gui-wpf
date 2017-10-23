@@ -81,7 +81,7 @@ namespace Neo.UI.Wallets
             }
             else
             {
-                var addresses = App.CurrentWallet.GetAddresses().ToArray();
+                var addresses = ApplicationContext.Instance.CurrentWallet.GetAddresses().ToArray();
                 var sAttributes = new HashSet<UInt160>();
                 using (var builder = new ScriptBuilder())
                 {
@@ -170,7 +170,7 @@ namespace Neo.UI.Wallets
 
             if (tx is ContractTransaction ctx)
             {
-                tx = App.CurrentWallet.MakeTransaction(ctx);
+                tx = ApplicationContext.Instance.CurrentWallet.MakeTransaction(ctx);
             }
 
             return tx;

@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using Neo.Implementations.Wallets.EntityFramework;
 using Neo.UI.Base.Themes;
 
 namespace Neo
@@ -9,8 +8,6 @@ namespace Neo
     /// </summary>
     public partial class App
     {
-        public static UserWallet CurrentWallet;
-
         internal App()
         {
             this.InitializeComponent();

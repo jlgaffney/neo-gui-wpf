@@ -145,7 +145,7 @@ namespace Neo.UI.Wallets
 
         private void Initiate()
         {
-            var tx = App.CurrentWallet.MakeTransaction(new ContractTransaction
+            var tx = ApplicationContext.Instance.CurrentWallet.MakeTransaction(new ContractTransaction
             {
                 Outputs = this.Items.Select(p => p.ToTxOutput()).ToArray()
             }, fee: Fixed8.Zero);
@@ -189,7 +189,7 @@ namespace Neo.UI.Wallets
 
             try
             {
-                if (inputs.Select(p => Blockchain.Default.GetTransaction(p.PrevHash).Outputs[p.PrevIndex].ScriptHash).Distinct().Any(p => App.CurrentWallet.ContainsAddress(p)))
+                if (inputs.Select(p => Blockchain.Default.GetTransaction(p.PrevHash).Outputs[p.PrevIndex].ScriptHash).Distinct().Any(p => ApplicationContext.Instance.CurrentWallet.ContainsAddress(p)))
                 {
                     await DialogCoordinator.Instance.ShowMessageAsync(this, Strings.Failed, Strings.TradeFailedInvalidDataMessage);
                     return;
@@ -201,7 +201,7 @@ namespace Neo.UI.Wallets
                 return;
             }
 
-            outputs = outputs.Where(p => App.CurrentWallet.ContainsAddress(p.ScriptHash));
+            outputs = outputs.Where(p => ApplicationContext.Instance.CurrentWallet.ContainsAddress(p.ScriptHash));
 
             var verificationView = new TradeVerificationView(outputs);
             verificationView.ShowDialog();
@@ -229,13 +229,13 @@ namespace Neo.UI.Wallets
                 });
             }
 
-            App.CurrentWallet.Sign(context);
+            ApplicationContext.Instance.CurrentWallet.Sign(context);
 
             if (context.Completed)
             {
                 context.Verifiable.Scripts = context.GetScripts();
                 var tx = (ContractTransaction)context.Verifiable;
-                App.CurrentWallet.SaveTransaction(tx);
+                ApplicationContext.Instance.CurrentWallet.SaveTransaction(tx);
                 Program.LocalNode.Relay(tx);
                 InformationBox.Show(tx.Hash.ToString(), Strings.TradeSuccessMessage, Strings.TradeSuccessCaption);
             }
@@ -269,7 +269,7 @@ namespace Neo.UI.Wallets
             {
                 ["vin"] = tx.Inputs.Select(p => p.ToJson()).ToArray(),
                 ["vout"] = tx.Outputs.Select((p, i) => p.ToJson((ushort)i)).ToArray(),
-                ["change_address"] = Wallet.ToAddress(App.CurrentWallet.GetChangeAddress())
+                ["change_address"] = Wallet.ToAddress(ApplicationContext.Instance.CurrentWallet.GetChangeAddress())
             };
             return json;
         }

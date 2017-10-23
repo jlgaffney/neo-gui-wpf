@@ -28,12 +28,12 @@ namespace Neo.UI.Base.Helpers
                 return;
             }
 
-            App.CurrentWallet.Sign(context);
+            ApplicationContext.Instance.CurrentWallet.Sign(context);
 
             if (context.Completed)
             {
                 context.Verifiable.Scripts = context.GetScripts();
-                App.CurrentWallet.SaveTransaction(tx);
+                ApplicationContext.Instance.CurrentWallet.SaveTransaction(tx);
                 Program.LocalNode.Relay(tx);
                 InformationBox.Show(tx.Hash.ToString(), Strings.SendTxSucceedMessage, Strings.SendTxSucceedTitle);
             }

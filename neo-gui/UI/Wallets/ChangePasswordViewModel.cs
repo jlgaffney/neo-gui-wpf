@@ -53,7 +53,7 @@ namespace Neo.UI.Wallets
                 return;
             }
 
-            var changedSuccessfully = App.CurrentWallet.ChangePassword(this.oldPassword, this.newPassword);
+            var changedSuccessfully = ApplicationContext.Instance.CurrentWallet.ChangePassword(this.oldPassword, this.newPassword);
 
             if (changedSuccessfully)
             {

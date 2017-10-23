@@ -42,14 +42,14 @@ namespace Neo
         {
             if (AssetId is UInt256 assetId)
             {
-                return new BigDecimal(App.CurrentWallet.GetAvailable(assetId).GetData(), 8);
+                return new BigDecimal(ApplicationContext.Instance.CurrentWallet.GetAvailable(assetId).GetData(), 8);
             }
 
             // NEP5
             byte[] script;
             using (var builder = new ScriptBuilder())
             {
-                foreach (var account in App.CurrentWallet.GetContracts().Select(p => p.ScriptHash))
+                foreach (var account in ApplicationContext.Instance.CurrentWallet.GetContracts().Select(p => p.ScriptHash))
                 {
                     builder.EmitAppCall((UInt160) AssetId, "balanceOf", account);
                 }
@@ -64,7 +64,7 @@ namespace Neo
 
         internal static IEnumerable<AssetDescriptor> GetAssets()
         {
-            foreach (var assetId in App.CurrentWallet.FindUnspentCoins().Select(p => p.Output.AssetId).Distinct())
+            foreach (var assetId in ApplicationContext.Instance.CurrentWallet.FindUnspentCoins().Select(p => p.Output.AssetId).Distinct())
             {
                 var state = Blockchain.Default.GetAssetState(assetId);
                 yield return new AssetDescriptor(state);

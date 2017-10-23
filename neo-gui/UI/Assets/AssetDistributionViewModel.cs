@@ -208,7 +208,7 @@ namespace Neo.UI.Assets
         private IssueTransaction GenerateTransaction()
         {
             if (this.Asset == null) return null;
-            return App.CurrentWallet.MakeTransaction(new IssueTransaction
+            return ApplicationContext.Instance.CurrentWallet.MakeTransaction(new IssueTransaction
             {
                 Version = 1,
                 Outputs = this.Items.GroupBy(p => p.ScriptHash).Select(g => new TransactionOutput

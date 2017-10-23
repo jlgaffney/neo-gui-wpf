@@ -28,7 +28,7 @@ namespace Neo.UI.Accounts
 
         public CreateLockAccountViewModel()
         {
-            this.Accounts = new ObservableCollection<ECPoint>(App.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p => App.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey).ToArray());
+            this.Accounts = new ObservableCollection<ECPoint>(ApplicationContext.Instance.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p => ApplicationContext.Instance.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey).ToArray());
 
             this.Hours = new List<int>();
 

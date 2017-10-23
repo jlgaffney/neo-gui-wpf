@@ -82,7 +82,7 @@ namespace Neo.UI.Wallets
 
         private void CalculateBonusAvailable()
         {
-            var bonusAvailable = Blockchain.CalculateBonus(App.CurrentWallet.GetUnclaimedCoins().Select(p => p.Reference));
+            var bonusAvailable = Blockchain.CalculateBonus(ApplicationContext.Instance.CurrentWallet.GetUnclaimedCoins().Select(p => p.Reference));
             this.AvailableGas = bonusAvailable;
 
             if (bonusAvailable == Fixed8.Zero)
@@ -93,7 +93,7 @@ namespace Neo.UI.Wallets
 
         private void CalculateBonusUnavailable(uint height)
         {
-            var unspent = App.CurrentWallet.FindUnspentCoins()
+            var unspent = ApplicationContext.Instance.CurrentWallet.FindUnspentCoins()
                 .Where(p => p.Output.AssetId.Equals(Blockchain.GoverningToken.Hash))
                 .Select(p => p.Reference);
 
@@ -117,7 +117,7 @@ namespace Neo.UI.Wallets
 
         private void Claim()
         {
-            var claims = App.CurrentWallet.GetUnclaimedCoins().Select(p => p.Reference).ToArray();
+            var claims = ApplicationContext.Instance.CurrentWallet.GetUnclaimedCoins().Select(p => p.Reference).ToArray();
             if (claims.Length == 0) return;
             TransactionHelper.SignAndShowInformation(new ClaimTransaction
             {
@@ -130,7 +130,7 @@ namespace Neo.UI.Wallets
                     {
                         AssetId = Blockchain.UtilityToken.Hash,
                         Value = Blockchain.CalculateBonus(claims),
-                        ScriptHash = App.CurrentWallet.GetChangeAddress()
+                        ScriptHash = ApplicationContext.Instance.CurrentWallet.GetChangeAddress()
                     }
                 }
             });

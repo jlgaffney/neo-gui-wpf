@@ -69,9 +69,9 @@ namespace Neo.UI.Development
 
         public bool SidePanelEnabled => this.TransactionWrapper != null;
 
-        public bool SetupOutputsEnabled => App.CurrentWallet != null;
+        public bool SetupOutputsEnabled => ApplicationContext.Instance.CurrentWallet != null;
 
-        public bool FindUnspentCoinsEnabled => App.CurrentWallet != null;
+        public bool FindUnspentCoinsEnabled => ApplicationContext.Instance.CurrentWallet != null;
 
         #region Commands
 
@@ -145,7 +145,7 @@ namespace Neo.UI.Development
         private void FindUnspentCoins()
         {
             var wrapper = (TransactionWrapper)this.TransactionWrapper;
-            var transaction = App.CurrentWallet.MakeTransaction(wrapper.Unwrap());
+            var transaction = ApplicationContext.Instance.CurrentWallet.MakeTransaction(wrapper.Unwrap());
             if (transaction == null)
             {
                 MessageBox.Show(Strings.InsufficientFunds);

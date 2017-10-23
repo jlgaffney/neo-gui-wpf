@@ -309,7 +309,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ApplicationContext.cs" />
     <Compile Include="BigDecimal.cs" />
+    <Compile Include="IApplicationContext.cs" />
     <Compile Include="UI\Base\Extensions\CollectionExtensions.cs" />
     <Compile Include="UI\Base\Extensions\StringExtensions.cs" />
     <Compile Include="PeerState.cs" />

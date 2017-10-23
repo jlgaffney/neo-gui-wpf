@@ -124,12 +124,12 @@ namespace Neo.UI.Home
         {
             if (this.SelectedAsset == null || this.SelectedAsset.State == null) return;
 
-            var value = App.CurrentWallet.GetAvailable(this.SelectedAsset.State.AssetId);
+            var value = ApplicationContext.Instance.CurrentWallet.GetAvailable(this.SelectedAsset.State.AssetId);
 
             if (MessageBox.Show($"{Strings.DeleteAssetConfirmationMessage}\n{string.Join("\n", $"{this.SelectedAsset.State.GetName()}:{value}")}",
                     Strings.DeleteConfirmation, MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes) return;
 
-            var transaction = App.CurrentWallet.MakeTransaction(new ContractTransaction
+            var transaction = ApplicationContext.Instance.CurrentWallet.MakeTransaction(new ContractTransaction
             {
                 Outputs = new[]
                 {
