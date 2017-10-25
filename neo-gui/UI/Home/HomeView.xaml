@@ -1,16 +1,19 @@
-﻿<controls:NeoWindow x:Class="Neo.UI.Home.HomeView"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
-        xmlns:local="clr-namespace:Neo.UI.Home"
-        xmlns:dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
-        xmlns:mahapps="http://metro.mahapps.com/winfx/xaml/controls"
-        dialog:DialogParticipation.Register="{Binding}"
-        Title="neo-gui" Height="520" Width="740"
-        Loaded="Window_Loaded" Closing="Window_Closing">
-    <controls:NeoWindow.DataContext>
-        <local:HomeViewModel />
-    </controls:NeoWindow.DataContext>
+﻿<controls:NeoWindow 
+    x:Class="Neo.UI.Home.HomeView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
+    xmlns:local="clr-namespace:Neo.UI.Home"
+    xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
+    xmlns:dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+    xmlns:mahapps="http://metro.mahapps.com/winfx/xaml/controls"
+    dialog:DialogParticipation.Register="{Binding}"
+    DataContext="{markupExtensions:DataContextBinding ViewModel=HomeViewModel}"
+    Title="neo-gui" 
+    Height="520" 
+    Width="740"
+    Loaded="Window_Loaded" 
+    Closing="Window_Closing">
 
     <controls:NeoWindow.InputBindings>
         <KeyBinding Key="N" Modifiers="Control" Command="{Binding CreateWalletCommand}" />

@@ -1,4 +1,5 @@
 ﻿using System;
+using Autofac;
 using Neo.Implementations.Wallets.EntityFramework;
 
 namespace Neo
@@ -16,6 +17,8 @@ namespace Neo
             }
         }
         #endregion
+
+        public ILifetimeScope ContainerLifetimeScope { get; set; }
 
         public UserWallet CurrentWallet { get; set; }
     }

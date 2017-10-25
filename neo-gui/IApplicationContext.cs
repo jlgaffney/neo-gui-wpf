@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Autofac;
+using Neo.Implementations.Wallets.EntityFramework;
 
 namespace Neo
 {
     public interface IApplicationContext
     {
+        ILifetimeScope ContainerLifetimeScope { get; set; }
+
+        UserWallet CurrentWallet { get; set; }
     }
 }

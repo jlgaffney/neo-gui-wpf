@@ -76,6 +76,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac, Version=4.6.2.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.4.6.2\lib\net45\Autofac.dll</HintPath>
+    </Reference>
     <Reference Include="MahApps.Metro, Version=1.5.0.23, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.5.0\lib\net45\MahApps.Metro.dll</HintPath>
     </Reference>
@@ -378,6 +381,7 @@
     </Compile>
     <Compile Include="UI\Home\HomeViewModel.cs" />
     <Compile Include="UI\Home\TransactionsViewModel.cs" />
+    <Compile Include="UI\MarkupExtensions\DataContextBindingExtension.cs" />
     <Compile Include="UI\TxOutListBox.xaml.cs">
       <DependentUpon>TxOutListBox.xaml</DependentUpon>
     </Compile>
@@ -424,6 +428,7 @@
     </Compile>
     <Compile Include="UI\Transactions\PayToViewModel.cs" />
     <Compile Include="UI\Transactions\SignatureViewModel.cs" />
+    <Compile Include="UI\ViewModelsRegistrationModule.cs" />
     <Compile Include="UI\Voting\ElectionViewModel.cs" />
     <Compile Include="UI\Voting\VotingViewModel.cs" />
     <Compile Include="UI\Wallets\TradeView.xaml.cs">
