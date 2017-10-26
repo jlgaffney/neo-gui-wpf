@@ -4,7 +4,8 @@
         xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
         xmlns:local="clr-namespace:Neo.UI.Wallets"
         xmlns:ui="clr-namespace:Neo.UI"
-        Title="Transfer"
+        xmlns:properties="clr-namespace:Neo.Properties"
+        Title="{x:Static properties:Strings.Transfer}"
         Width="600" Height="410" ResizeMode="NoResize">
     <controls:NeoWindow.DataContext>
         <local:TransferViewModel />
@@ -16,20 +17,19 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <GroupBox Grid.Row="0" Header="Recipient List" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <GroupBox Grid.Row="0" Header="{x:Static properties:Strings.RecipientList}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <ui:TxOutListBox Items="{Binding Items}" ItemsChanged="TxOutListBox_OnItemsChanged" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 
-                <Button ToolTip="Remark" Width="28" Height="28" Padding="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Command="{Binding RemarkCommand}">
+                <Button ToolTip="{x:Static properties:Strings.Remark}" Width="28" Height="28" Padding="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Command="{Binding RemarkCommand}">
                     <Image Source="/Resources/remark.png" Width="20" Height="20" />
                 </Button>
             </Grid>
-            
         </GroupBox>
 
         <DockPanel Grid.Row="1" Margin="0 8 0 0" HorizontalAlignment="Right" VerticalAlignment="Stretch">
-            <Button Content="OK" Width="70" Margin="0 0 8 0" Command="{Binding OkCommand}" IsEnabled="{Binding OkEnabled}" />
-            <Button Content="Cancel" Width="70" Command="{Binding CancelCommand}" />
+            <Button Content="{x:Static properties:Strings.OK}" Width="70" Margin="0 0 8 0" Command="{Binding OkCommand}" IsEnabled="{Binding OkEnabled}" />
+            <Button Content="{x:Static properties:Strings.Cancel}" Width="70" Command="{Binding CancelCommand}" />
         </DockPanel>
     </Grid>
 </controls:NeoWindow>

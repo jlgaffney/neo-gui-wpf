@@ -3,8 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
              xmlns:local="clr-namespace:Neo.UI.Contracts"
-             Title="Invoke Contract" Width="500"  MinWidth="500" MinHeight="540"
-             ResizeMode="CanResizeWithGrip">
+             xmlns:properties="clr-namespace:Neo.Properties"
+             Title="{x:Static properties:Strings.InvokeContractTitle}"
+             Width="500" MinWidth="500" MinHeight="540" ResizeMode="CanResizeWithGrip">
     <controls:NeoWindow.DataContext>
         <local:InvokeContractViewModel />
     </controls:NeoWindow.DataContext>
@@ -18,7 +19,7 @@
 
         <TabControl x:Name="TabControl" Grid.Row="0" Height="240" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <!-- Function Tab -->
-            <TabItem Header="Function">
+            <TabItem Header="{x:Static properties:Strings.Function}">
                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="8">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -34,7 +35,7 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <Label Grid.Row="0" Grid.Column="0" Content="ScriptHash:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                    <Label Grid.Row="0" Grid.Column="0" Content="{x:Static properties:Strings.ScriptHash}" HorizontalAlignment="Right" VerticalAlignment="Center" />
                     <Grid Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -46,29 +47,29 @@
                         </Button>
                     </Grid>
 
-                    <Label Grid.Row="1" Grid.Column="0" Content="Name:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                    <Label Grid.Row="1" Grid.Column="0" Content="{x:Static properties:Strings.Name}" HorizontalAlignment="Right" VerticalAlignment="Center" />
                     <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ContractName, Mode=OneWay}" IsReadOnly="True" HorizontalAlignment="Stretch" Margin="0 4" Padding="2" />
 
-                    <Label Grid.Row="2" Grid.Column="0" Content="Version:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                    <Label Grid.Row="2" Grid.Column="0" Content="{x:Static properties:Strings.Version}" HorizontalAlignment="Right" VerticalAlignment="Center" />
                     <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ContractVersion, Mode=OneWay}" IsReadOnly="True" HorizontalAlignment="Stretch" Margin="0 4" Padding="2"/>
 
-                    <Label Grid.Row="3" Grid.Column="0" Content="Author:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                    <Label Grid.Row="3" Grid.Column="0" Content="{x:Static properties:Strings.Author}" HorizontalAlignment="Right" VerticalAlignment="Center" />
                     <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding ContractAuthor, Mode=OneWay}" IsReadOnly="True" HorizontalAlignment="Stretch" Margin="0 4" Padding="2" />
 
-                    <Label Grid.Row="4" Grid.Column="0" Content="Parameters:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                    <Label Grid.Row="4" Grid.Column="0" Content="{x:Static properties:Strings.Parameters}" HorizontalAlignment="Right" VerticalAlignment="Center" />
                     <Grid Grid.Row="4" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <TextBox Grid.Column="0" Text="{Binding ContractParameters, Mode=OneWay}" IsReadOnly="True" HorizontalAlignment="Stretch" Margin="0 4 8 4" Padding="2" />
-                        <Button Grid.Column="1" Content="Edit" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="6" Command="{Binding EditParametersCommand}" IsEnabled="{Binding EditParametersEnabled}" />
+                        <Button Grid.Column="1" Content="{x:Static properties:Strings.Edit}" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="6" Command="{Binding EditParametersCommand}" IsEnabled="{Binding EditParametersEnabled}" />
                     </Grid>
                 </Grid>
             </TabItem>
 
             <!-- Custom Tab -->
-            <TabItem Header="Custom">
+            <TabItem Header="{x:Static properties:Strings.Custom}">
                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="6">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
@@ -78,26 +79,26 @@
                     <TextBox Grid.Row="0" Text="{Binding CustomScript, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                              HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" Margin="0,0,0.333,0"/>
 
-                    <Button Grid.Row="1" Content="Load" Width="70" HorizontalAlignment="Right" Margin="0 6 0 0" Command="{Binding LoadCommand}" />
+                    <Button Grid.Row="1" Content="{x:Static properties:Strings.Load}" Width="70" HorizontalAlignment="Right" Margin="0 6 0 0" Command="{Binding LoadCommand}" />
                 </Grid>
             </TabItem>
         </TabControl>
 
-        <GroupBox Grid.Row="1" Header="Results">
+        <GroupBox Grid.Row="1" Header="{x:Static properties:Strings.Results}">
             <TextBox Text="{Binding Results, Mode=OneWay}" IsReadOnly="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                      HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible"/>
         </GroupBox>
 
         <DockPanel Grid.Row="2" HorizontalAlignment="Stretch" Margin="0 4 0 0">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                <Label Content="Fee:" />
+                <Label Content="{x:Static properties:Strings.Fee}" />
                 <Label Content="{Binding Fee}" />
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin=" 0 8 0 0">
-                <Button Content="Test" Width="70" Margin="0 0 8 0" Command="{Binding TestCommand}" IsEnabled="{Binding TestEnabled, Mode=OneWay}" />
-                <Button Content="Invoke" Width="70" Margin="0 0 8 0" Command="{Binding InvokeCommand}" IsEnabled="{Binding InvokeEnabled}" />
-                <Button Content="Cancel" Width="70" Command="{Binding CancelCommand}" />
+                <Button Content="{x:Static properties:Strings.Test}" Width="70" Margin="0 0 8 0" Command="{Binding TestCommand}" IsEnabled="{Binding TestEnabled, Mode=OneWay}" />
+                <Button Content="{x:Static properties:Strings.Invoke}" Width="70" Margin="0 0 8 0" Command="{Binding InvokeCommand}" IsEnabled="{Binding InvokeEnabled}" />
+                <Button Content="{x:Static properties:Strings.Cancel}" Width="70" Command="{Binding CancelCommand}" />
             </StackPanel>
         </DockPanel>
     </Grid>

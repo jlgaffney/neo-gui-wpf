@@ -123,8 +123,23 @@
   <data name="AboutMessage" xml:space="preserve">
     <value>NEO</value>
   </data>
+  <data name="AboutNeoMenuHeader" xml:space="preserve">
+    <value>_Acerca de NEO</value>
+  </data>
   <data name="AboutVersion" xml:space="preserve">
     <value>Versión: </value>
+  </data>
+  <data name="Accent" xml:space="preserve">
+    <value>Acento</value>
+  </data>
+  <data name="Accept" xml:space="preserve">
+    <value>Aceptar</value>
+  </data>
+  <data name="Account" xml:space="preserve">
+    <value>Cuenta</value>
+  </data>
+  <data name="AccountDetailsTitle" xml:space="preserve">
+    <value>Detalles de la cuenta</value>
   </data>
   <data name="AddContractFailedMessage" xml:space="preserve">
     <value>Fallo al añadir el contrato inteligente. Falta la correspondiente clave privada en el monedero.</value>
@@ -132,8 +147,119 @@
   <data name="Address" xml:space="preserve">
     <value>Dirección</value>
   </data>
+  <data name="Admin" xml:space="preserve">
+    <value>Admin</value>
+  </data>
+  <data name="AdvancedMenuHeader" xml:space="preserve">
+    <value>A_vanzado</value>
+  </data>
+  <data name="Amount" xml:space="preserve">
+    <value>Cantidad</value>
+  </data>
+  <data name="Appearance" xml:space="preserve">
+    <value>Apariencia</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Aplicar</value>
+  </data>
+  <data name="Asset" xml:space="preserve">
+    <value>Activo</value>
+  </data>
+  <data name="AssetDetails" xml:space="preserve">
+    <value>Detalles</value>
+  </data>
+  <data name="AssetDistributionMenuHeader" xml:space="preserve">
+    <value>D_istribuir activo…</value>
+  </data>
+  <data name="AssetDistributionTitle" xml:space="preserve">
+    <value>Distribución de activos</value>
+  </data>
+  <data name="AssetId" xml:space="preserve">
+    <value>ID del activo</value>
+  </data>
+  <data name="AssetRegistrationMenuHeader" xml:space="preserve">
+    <value>_Registrar activo…</value>
+  </data>
+  <data name="AssetRegistrationTitle" xml:space="preserve">
+    <value>Registro de activo</value>
+  </data>
+  <data name="AssetType" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="Author" xml:space="preserve">
+    <value>Autor</value>
+  </data>
+  <data name="Balance" xml:space="preserve">
+    <value>Saldo</value>
+  </data>
+  <data name="BaseStyle" xml:space="preserve">
+    <value>Estilo base</value>
+  </data>
+  <data name="Broadcast" xml:space="preserve">
+    <value>Emitir</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="ChangePasswordMenuHeader" xml:space="preserve">
+    <value>Cambiar contra_seña…</value>
+  </data>
   <data name="ChangePasswordSuccessful" xml:space="preserve">
     <value>Contraseña cambiada con éxito.</value>
+  </data>
+  <data name="CheckForHelpMenuHeader" xml:space="preserve">
+    <value>_Obtener ayuda</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="CloseWalletMenuHeader" xml:space="preserve">
+    <value>_Cerrar la billetera…</value>
+  </data>
+  <data name="Code" xml:space="preserve">
+    <value>Código</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Confirmar</value>
+  </data>
+  <data name="ContractParameters" xml:space="preserve">
+    <value>Parámetros del contrato</value>
+  </data>
+  <data name="Copy" xml:space="preserve">
+    <value>Copiar</value>
+  </data>
+  <data name="CopyToClipboardMenuHeader" xml:space="preserve">
+    <value>_Copiar al portapapeles</value>
+  </data>
+  <data name="CopyTxIdMenuHeader" xml:space="preserve">
+    <value>_Copiar TXID</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Crear</value>
+  </data>
+  <data name="CreateContractAddressMenuHeader" xml:space="preserve">
+    <value>Crear nuev_a dirección de contrato</value>
+  </data>
+  <data name="CreateLockAccountTitle" xml:space="preserve">
+    <value>Crear cuenta bloqueo</value>
+  </data>
+  <data name="CreateMultiSigContractTitle" xml:space="preserve">
+    <value>Contrato con múltiples firmas</value>
+  </data>
+  <data name="CreateNewAddressMenuHeader" xml:space="preserve">
+    <value>Crear _nueva dirección</value>
+  </data>
+  <data name="CurrentValue" xml:space="preserve">
+    <value>Valor actual</value>
+  </data>
+  <data name="Custom" xml:space="preserve">
+    <value>Custom</value>
+  </data>
+  <data name="CustomMenuHeader" xml:space="preserve">
+    <value>_Personalizado…</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value>Default</value>
   </data>
   <data name="DeleteAddressConfirmationCaption" xml:space="preserve">
     <value>Confirmación</value>
@@ -147,8 +273,44 @@
   <data name="DeleteConfirmation" xml:space="preserve">
     <value>Confirmación</value>
   </data>
+  <data name="DeleteMenuHeader" xml:space="preserve">
+    <value>_Eliminar…</value>
+  </data>
+  <data name="Deploy" xml:space="preserve">
+    <value>Desplegar</value>
+  </data>
+  <data name="DeployContractMenuHeader" xml:space="preserve">
+    <value>_Desplegar contrato…</value>
+  </data>
+  <data name="DeployContractTitle" xml:space="preserve">
+    <value>Desplegar contrato</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Descripción</value>
+  </data>
+  <data name="DeveloperToolsMenuHeader" xml:space="preserve">
+    <value>_Herramientas de desarrollo</value>
+  </data>
+  <data name="DeveloperToolsTitle" xml:space="preserve">
+    <value>Herramienta de desarrollo</value>
+  </data>
+  <data name="Distribution" xml:space="preserve">
+    <value>Distribución</value>
+  </data>
   <data name="DownloadNewVersion" xml:space="preserve">
     <value>Descargar nueva versión</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="EditArray" xml:space="preserve">
+    <value>Edit Array</value>
+  </data>
+  <data name="ElectionMenuHeader" xml:space="preserve">
+    <value>_Votación…</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Correo</value>
   </data>
   <data name="EnterRemarkMessage" xml:space="preserve">
     <value>Notas de la transacción que se grabará en la blockchain.</value>
@@ -159,20 +321,71 @@
   <data name="ExecutionFailed" xml:space="preserve">
     <value>La ejecución terminó con un estado de error.</value>
   </data>
+  <data name="ExitMenuHeader" xml:space="preserve">
+    <value>Sa_lir…</value>
+  </data>
   <data name="ExpiredCertificate" xml:space="preserve">
     <value>Caducado</value>
   </data>
   <data name="Failed" xml:space="preserve">
     <value>Falló</value>
   </data>
+  <data name="Fee" xml:space="preserve">
+    <value>Tasa</value>
+  </data>
+  <data name="FindUnspentCoins" xml:space="preserve">
+    <value>Monedas no gastadas</value>
+  </data>
+  <data name="Function" xml:space="preserve">
+    <value>Function</value>
+  </data>
+  <data name="GasClaimMenuHeader" xml:space="preserve">
+    <value>Reclamar _GAS…</value>
+  </data>
+  <data name="GetParametersContext" xml:space="preserve">
+    <value>Parametros de contexto</value>
+  </data>
+  <data name="HeightHeading" xml:space="preserve">
+    <value>Altura:</value>
+  </data>
+  <data name="HelpMenuHeader" xml:space="preserve">
+    <value>_Ayuda</value>
+  </data>
+  <data name="Highlight" xml:space="preserve">
+    <value>Realce</value>
+  </data>
+  <data name="ImportCustomContractTitle" xml:space="preserve">
+    <value>Importar contrato personalizado</value>
+  </data>
+  <data name="ImportFromCertificateMenuHeader" xml:space="preserve">
+    <value>Importar desde _certificado…</value>
+  </data>
+  <data name="ImportFromWifMenuHeader" xml:space="preserve">
+    <value>Importar desde _WIF…</value>
+  </data>
+  <data name="ImportMenuHeader" xml:space="preserve">
+    <value>_Importar</value>
+  </data>
+  <data name="ImportPrivateKeyTitle" xml:space="preserve">
+    <value>Importar clave privada</value>
+  </data>
   <data name="ImportWatchOnlyAddress" xml:space="preserve">
     <value>Importar dirección sólo lectura</value>
+  </data>
+  <data name="ImportWatchOnlyAddressMenuHeader" xml:space="preserve">
+    <value>Importar dirección sólo lectur_a…</value>
   </data>
   <data name="IncompletedSignatureMessage" xml:space="preserve">
     <value>Transacción iniciada aunque la firma está incompleta.</value>
   </data>
   <data name="IncompletedSignatureTitle" xml:space="preserve">
     <value>Firma incompleta</value>
+  </data>
+  <data name="Information" xml:space="preserve">
+    <value>Información</value>
+  </data>
+  <data name="Input" xml:space="preserve">
+    <value>Entrada</value>
   </data>
   <data name="InstallCertificateCancel" xml:space="preserve">
     <value>Instalación del certificado cancelada.</value>
@@ -189,6 +402,30 @@
   <data name="InvalidCertificate" xml:space="preserve">
     <value>Inválido</value>
   </data>
+  <data name="Invoke" xml:space="preserve">
+    <value>Invocar</value>
+  </data>
+  <data name="InvokeContractMenuHeader" xml:space="preserve">
+    <value>I_nvocar contrato…</value>
+  </data>
+  <data name="InvokeContractTitle" xml:space="preserve">
+    <value>Invocar contrato</value>
+  </data>
+  <data name="Issued" xml:space="preserve">
+    <value>Emitido</value>
+  </data>
+  <data name="Issuer" xml:space="preserve">
+    <value>Emisor</value>
+  </data>
+  <data name="Load" xml:space="preserve">
+    <value>Cargar</value>
+  </data>
+  <data name="LockMenuHeader" xml:space="preserve">
+    <value>_Lock…</value>
+  </data>
+  <data name="Metadata" xml:space="preserve">
+    <value>Metadatos</value>
+  </data>
   <data name="MigrateWalletCaption" xml:space="preserve">
     <value>Migrar monedero</value>
   </data>
@@ -199,8 +436,83 @@ Aviso: los ficheros actualizados no podran ser abiertos por clientes de versione
   <data name="MigrateWalletSucceedMessage" xml:space="preserve">
     <value>Ficheros de monederos realojados. Los ficheros antiguos se guardaron automáticamente en:</value>
   </data>
+  <data name="MinimumSignatureNumber" xml:space="preserve">
+    <value>Nº mínimo de firmas</value>
+  </data>
+  <data name="MultiSignatureMenuHeader" xml:space="preserve">
+    <value>_Múltiples firmas…</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="NeedsStorage" xml:space="preserve">
+    <value>Es necesario almacenamiento</value>
+  </data>
+  <data name="NEP5ContractsList" xml:space="preserve">
+    <value>Lista de contratos NEP-5</value>
+  </data>
+  <data name="NewValue" xml:space="preserve">
+    <value>Nuevo valor</value>
+  </data>
+  <data name="NewWalletMenuHeader" xml:space="preserve">
+    <value>_Nueva billetera…</value>
+  </data>
+  <data name="NotEvaluated" xml:space="preserve">
+    <value>No evaluada</value>
+  </data>
+  <data name="NumberOfConnectionsHeading" xml:space="preserve">
+    <value>Conectado:</value>
+  </data>
+  <data name="OfficialWebMenuHeader" xml:space="preserve">
+    <value>_Web oficial</value>
+  </data>
+  <data name="OK" xml:space="preserve">
+    <value>Aceptar</value>
+  </data>
+  <data name="OpenWalletMenuHeader" xml:space="preserve">
+    <value>Billetera _abierta…</value>
+  </data>
+  <data name="Output" xml:space="preserve">
+    <value>Salida</value>
+  </data>
+  <data name="Owner" xml:space="preserve">
+    <value>Propietario</value>
+  </data>
+  <data name="ParameterList" xml:space="preserve">
+    <value>Lista de parámetros</value>
+  </data>
+  <data name="Parameters" xml:space="preserve">
+    <value>Parámetros</value>
+  </data>
   <data name="PasswordIncorrect" xml:space="preserve">
     <value>Contraseña incorrecta</value>
+  </data>
+  <data name="Payment" xml:space="preserve">
+    <value>Pago</value>
+  </data>
+  <data name="PayTo" xml:space="preserve">
+    <value>Pagar a</value>
+  </data>
+  <data name="Precision" xml:space="preserve">
+    <value>Decimales</value>
+  </data>
+  <data name="PrivateKey" xml:space="preserve">
+    <value>Clave privada</value>
+  </data>
+  <data name="PublicKey" xml:space="preserve">
+    <value>Clave pública</value>
+  </data>
+  <data name="PublicKeyList" xml:space="preserve">
+    <value>Lista de claves públicas</value>
+  </data>
+  <data name="RebuildIndexMenuHeader" xml:space="preserve">
+    <value>Reconstruir _indice</value>
+  </data>
+  <data name="RedeemScript" xml:space="preserve">
+    <value>Código del script</value>
+  </data>
+  <data name="RelatedAccount" xml:space="preserve">
+    <value>Cuenta relacionada</value>
   </data>
   <data name="RelaySuccessText" xml:space="preserve">
     <value>Datos emitidos con éxito. El hash se muestra como sigue:</value>
@@ -211,11 +523,59 @@ Aviso: los ficheros actualizados no podran ser abiertos por clientes de versione
   <data name="RelayTitle" xml:space="preserve">
     <value>Raw:</value>
   </data>
+  <data name="RequestCertificateMenuHeader" xml:space="preserve">
+    <value>Solicitar _Certificado…</value>
+  </data>
+  <data name="RestoreAccountsMenuHeader" xml:space="preserve">
+    <value>_Restaurar cuentas…</value>
+  </data>
+  <data name="Results" xml:space="preserve">
+    <value>Resultados</value>
+  </data>
+  <data name="ReturnType" xml:space="preserve">
+    <value>Tipo devuelto</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="Script" xml:space="preserve">
+    <value>Script</value>
+  </data>
+  <data name="ScriptHash" xml:space="preserve">
+    <value>Hash del script</value>
+  </data>
+  <data name="SelectCertificateTitle" xml:space="preserve">
+    <value>Seleccionar certificado</value>
+  </data>
   <data name="SendTxSucceedMessage" xml:space="preserve">
     <value>Transacción enviada, TXID:</value>
   </data>
   <data name="SendTxSucceedTitle" xml:space="preserve">
     <value>Transacción realizada con éxito</value>
+  </data>
+  <data name="SetParametersTitle" xml:space="preserve">
+    <value>Definir parámetros</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Configuraciones</value>
+  </data>
+  <data name="SettingsMenuHeader" xml:space="preserve">
+    <value>Configuracione_s…</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Configuraciones</value>
+  </data>
+  <data name="SetupOutputs" xml:space="preserve">
+    <value>Salidas de configuración</value>
+  </data>
+  <data name="Show" xml:space="preserve">
+    <value>Mostrar</value>
+  </data>
+  <data name="Signature" xml:space="preserve">
+    <value>Firma</value>
+  </data>
+  <data name="SignatureMenuHeader" xml:space="preserve">
+    <value>_Firma…</value>
   </data>
   <data name="SigningFailedKeyNotFoundMessage" xml:space="preserve">
     <value>Falta la clave privada para firmar los datos.</value>
@@ -225,6 +585,18 @@ Aviso: los ficheros actualizados no podran ser abiertos por clientes de versione
   </data>
   <data name="SystemIssuer" xml:space="preserve">
     <value>System</value>
+  </data>
+  <data name="Test" xml:space="preserve">
+    <value>Prueba</value>
+  </data>
+  <data name="Time" xml:space="preserve">
+    <value>Fecha</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="TotalLimit" xml:space="preserve">
+    <value>Límite total</value>
   </data>
   <data name="TradeFailedFakeDataMessage" xml:space="preserve">
     <value>¡Falló la validación! El contratante falsificó el contenido de la transacción.</value>
@@ -253,13 +625,211 @@ Aviso: los ficheros actualizados no podran ser abiertos por clientes de versione
   <data name="TradeSuccessMessage" xml:space="preserve">
     <value>Transacción enviada, este es el TXID:</value>
   </data>
+  <data name="TransactionHistory" xml:space="preserve">
+    <value>Transacciónes</value>
+  </data>
+  <data name="TransactionId" xml:space="preserve">
+    <value>ID de la transacción</value>
+  </data>
+  <data name="TransactionMenuHeader" xml:space="preserve">
+    <value>_Transacción</value>
+  </data>
+  <data name="TransactionRemark" xml:space="preserve">
+    <value>Notas Transacción</value>
+  </data>
+  <data name="TransactionsMenuHeader" xml:space="preserve">
+    <value>Transacciones (_X)…</value>
+  </data>
+  <data name="TransactionType" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="TransferMenuHeader" xml:space="preserve">
+    <value>_Transferir…</value>
+  </data>
+  <data name="TxBuilder" xml:space="preserve">
+    <value>Tx Builder</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
   <data name="Unconfirmed" xml:space="preserve">
     <value>Sin confirmar.</value>
   </data>
   <data name="UnknownIssuer" xml:space="preserve">
     <value>Emisor desconocido.</value>
   </data>
+  <data name="UnlockDate" xml:space="preserve">
+    <value>Debloqueo</value>
+  </data>
   <data name="UnsynchronizedBlock" xml:space="preserve">
     <value>Blockchain sin sincronizar, la transacción no puede ser enviada.</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>Actualizar</value>
+  </data>
+  <data name="Value" xml:space="preserve">
+    <value>Valor</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>Versión</value>
+  </data>
+  <data name="ViewCertificateMenuHeader" xml:space="preserve">
+    <value>Ver _certificado</value>
+  </data>
+  <data name="ViewContractMenuHeader" xml:space="preserve">
+    <value>Ver c_ontrato</value>
+  </data>
+  <data name="ViewContractTitle" xml:space="preserve">
+    <value>Ver contrato</value>
+  </data>
+  <data name="ViewPrivateKeyMenuHeader" xml:space="preserve">
+    <value>Ver clave _privada</value>
+  </data>
+  <data name="ViewPrivateKeyTitle" xml:space="preserve">
+    <value>Ver clave privada</value>
+  </data>
+  <data name="VoteMenuHeader" xml:space="preserve">
+    <value>_Votar…</value>
+  </data>
+  <data name="WaitingForNextBlock" xml:space="preserve">
+    <value>Esperando próximo bloque</value>
+  </data>
+  <data name="WalletMenuHeader" xml:space="preserve">
+    <value>_Billetera</value>
+  </data>
+  <data name="WifPrivateKey" xml:space="preserve">
+    <value>Clave privada WIF</value>
+  </data>
+  <data name="WindowBorder" xml:space="preserve">
+    <value>Borde de la ventana</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Añadir</value>
+  </data>
+  <data name="AssetsTheCounterpartyWillAcquire" xml:space="preserve">
+    <value>Activos a adquirir por el contratante</value>
+  </data>
+  <data name="AssetsYouWillAcquire" xml:space="preserve">
+    <value>Activos a adquirir</value>
+  </data>
+  <data name="Available" xml:space="preserve">
+    <value>Disponible</value>
+  </data>
+  <data name="Bookkeeper" xml:space="preserve">
+    <value>Contable</value>
+  </data>
+  <data name="Browse" xml:space="preserve">
+    <value>Buscar</value>
+  </data>
+  <data name="BulkPay" xml:space="preserve">
+    <value>Pago a granel</value>
+  </data>
+  <data name="Candidates" xml:space="preserve">
+    <value>Candidatos</value>
+  </data>
+  <data name="CertificateApplicationTitle" xml:space="preserve">
+    <value>Solicitud de certificado</value>
+  </data>
+  <data name="ChangeLogs" xml:space="preserve">
+    <value>Registro de cambios</value>
+  </data>
+  <data name="ChangePasswordTitle" xml:space="preserve">
+    <value>Cambiar contraseña</value>
+  </data>
+  <data name="ClaimAll" xml:space="preserve">
+    <value>Reclamar todo</value>
+  </data>
+  <data name="CounterpartyRequest" xml:space="preserve">
+    <value>La solicitud de la contraparte</value>
+  </data>
+  <data name="CreateWalletTitle" xml:space="preserve">
+    <value>Nuevo billetera</value>
+  </data>
+  <data name="Download" xml:space="preserve">
+    <value>Descargar</value>
+  </data>
+  <data name="GasClaimTitle" xml:space="preserve">
+    <value>Reclamo GAS</value>
+  </data>
+  <data name="InitiateRequest" xml:space="preserve">
+    <value>Iniciar</value>
+  </data>
+  <data name="InitiateTxRequest" xml:space="preserve">
+    <value>Iniciar solicitud</value>
+  </data>
+  <data name="Merge" xml:space="preserve">
+    <value>Merge</value>
+  </data>
+  <data name="MergeTxRequest" xml:space="preserve">
+    <value>Solicitud de fusión</value>
+  </data>
+  <data name="MyTradeRequest" xml:space="preserve">
+    <value>Mi solicitud</value>
+  </data>
+  <data name="NewestVersion" xml:space="preserve">
+    <value>Última versión</value>
+  </data>
+  <data name="NewPassword" xml:space="preserve">
+    <value>Nueva contraseña</value>
+  </data>
+  <data name="OfficialWeb" xml:space="preserve">
+    <value>Web oficial</value>
+  </data>
+  <data name="OldPassword" xml:space="preserve">
+    <value>Contraseña actual</value>
+  </data>
+  <data name="OpenWalletTitle" xml:space="preserve">
+    <value>Abrir billetera</value>
+  </data>
+  <data name="Organization" xml:space="preserve">
+    <value>Organización</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Contraseña</value>
+  </data>
+  <data name="RecipientList" xml:space="preserve">
+    <value>Lista de destinatarios</value>
+  </data>
+  <data name="ReEnterPassword" xml:space="preserve">
+    <value>Repetir contraseña</value>
+  </data>
+  <data name="Refuse" xml:space="preserve">
+    <value>Rechazar</value>
+  </data>
+  <data name="Remark" xml:space="preserve">
+    <value>Notas</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Retirar</value>
+  </data>
+  <data name="RepairMode" xml:space="preserve">
+    <value>Modo reparación</value>
+  </data>
+  <data name="RestoreAccountsTitle" xml:space="preserve">
+    <value>Restaurar cuentas</value>
+  </data>
+  <data name="TradeTitle" xml:space="preserve">
+    <value>Transacción</value>
+  </data>
+  <data name="TransactionVerificationTitle" xml:space="preserve">
+    <value>Verificación de transacción</value>
+  </data>
+  <data name="Transfer" xml:space="preserve">
+    <value>Transferir</value>
+  </data>
+  <data name="Unavailable" xml:space="preserve">
+    <value>No disponible</value>
+  </data>
+  <data name="UpdateTitle" xml:space="preserve">
+    <value>Actualización disponible</value>
+  </data>
+  <data name="Validate" xml:space="preserve">
+    <value>Validar</value>
+  </data>
+  <data name="VotingTitle" xml:space="preserve">
+    <value>Votación</value>
+  </data>
+  <data name="WalletFile" xml:space="preserve">
+    <value>Fichero de billetera</value>
   </data>
 </root>

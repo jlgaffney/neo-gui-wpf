@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 using Neo.Network;
 using Neo.Properties;
@@ -9,7 +8,7 @@ using Neo.UI.Base.MVVM;
 
 namespace Neo.UI.Transactions
 {
-    public class SignatureViewModel : ViewModelBase
+    public class SigningViewModel : ViewModelBase
     {
         private string input;
         private ContractParametersContext output;

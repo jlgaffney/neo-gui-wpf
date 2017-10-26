@@ -4,8 +4,10 @@
              xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
              xmlns:local="clr-namespace:Neo.UI.Options"             
              xmlns:dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+             xmlns:properties="clr-namespace:Neo.Properties"
              dialog:DialogParticipation.Register="{Binding}"
-             Title="Settings" Width="580" Height="440" ResizeMode="NoResize">
+             Title="{x:Static properties:Strings.SettingsTitle}"
+             Width="580" Height="440" ResizeMode="NoResize">
     <controls:NeoWindow.DataContext>
         <local:SettingsViewModel />
     </controls:NeoWindow.DataContext>
@@ -24,17 +26,19 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <GroupBox Header="NEP-5 Contracts List" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                        <TextBox Text="{Binding NEP5ContractsList, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                    <GroupBox Header="{x:Static properties:Strings.NEP5ContractsList}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <TextBox Text="{Binding NEP5ContractsList, UpdateSourceTrigger=PropertyChanged}"
+                                 AcceptsReturn="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" />
                     </GroupBox>
 
-                    <Button Grid.Row="1" Content="Save" Width="60" HorizontalAlignment="Right" Command="{Binding ApplyNEP5SettingsCommand}" IsEnabled="{Binding NEP5SettingsChanged}" />
+                    <Button Grid.Row="1" Content="{x:Static properties:Strings.Save}" Width="60" HorizontalAlignment="Right"
+                            Command="{Binding SaveNEP5SettingsCommand}" IsEnabled="{Binding NEP5SettingsChanged}" />
                 </Grid>
             </TabItem>
             
             <!-- Appearance tab -->
-            <TabItem Header="Appearance">
+            <TabItem Header="{x:Static properties:Strings.Appearance}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
@@ -55,34 +59,34 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <Label Grid.Row="0" Grid.Column="0" Content="Base Style" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                        <Label Grid.Row="0" Grid.Column="0" Content="{x:Static properties:Strings.BaseStyle}" HorizontalAlignment="Right" VerticalAlignment="Center" />
                         <ComboBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" ItemsSource="{Binding ThemeStyles}" SelectedItem="{Binding SelectedThemeStyle}" Margin="0 4" HorizontalAlignment="Stretch" />
 
-                        <Label Grid.Row="1" Grid.Column="0" Content="Accent Color" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                        <Label Grid.Row="1" Grid.Column="0" Content="{x:Static properties:Strings.Accent}" HorizontalAlignment="Right" VerticalAlignment="Center" />
                         <Rectangle Grid.Row="1" Grid.Column="1" Width="20" Height="20" Fill="{Binding ThemeAccentBaseColor}" Margin="0 4 6 4" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding ThemeAccentBaseColorHex, UpdateSourceTrigger=PropertyChanged}" Margin="0 4" Padding="2" HorizontalAlignment="Stretch" />
 
-                        <Label Grid.Row="2" Grid.Column="0" Content="Highlight Color" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                        <Label Grid.Row="2" Grid.Column="0" Content="{x:Static properties:Strings.Highlight}" HorizontalAlignment="Right" VerticalAlignment="Center" />
                         <Rectangle Grid.Row="2" Grid.Column="1" Width="20" Height="20" Fill="{Binding ThemeHighlightColor}" Margin="0 4 6 4" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding ThemeHighlightColorHex, UpdateSourceTrigger=PropertyChanged}" Margin="0 4" Padding="2" HorizontalAlignment="Stretch" />
 
-                        <Label Grid.Row="3" Grid.Column="0" Content="Window Border Color" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                        <Label Grid.Row="3" Grid.Column="0" Content="{x:Static properties:Strings.WindowBorder}" HorizontalAlignment="Right" VerticalAlignment="Center" />
                         <Rectangle Grid.Row="3" Grid.Column="1" Width="20" Height="20" Fill="{Binding ThemeWindowBorderColor}" Margin="0 4 6 4" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         <TextBox Grid.Row="3" Grid.Column="2" Text="{Binding ThemeWindowBorderColorHex, UpdateSourceTrigger=PropertyChanged}" Margin="0 4" Padding="2" HorizontalAlignment="Stretch" />
                     </Grid>
 
                     <DockPanel Grid.Row="1" HorizontalAlignment="Right">
-                        <Button Content="Reset to default" Width="Auto" Margin="0 0 8 0" Command="{Binding ResetAppearanceSettingsToDefaultCommand}" />
-                        <Button Content="Save" Width="60" Margin="0 0 8 0" Command="{Binding SaveAppearanceSettingsCommand}" IsEnabled="{Binding AppearanceSettingsChanged}" />
-                        <Button Content="Apply" Width="60" Command="{Binding ApplyAppearanceSettingsCommand}" IsEnabled="{Binding AppearanceSettingsChanged}" />
+                        <Button Content="{x:Static properties:Strings.Default}" Width="Auto" Margin="0 0 8 0" Command="{Binding ResetAppearanceSettingsToDefaultCommand}" />
+                        <Button Content="{x:Static properties:Strings.Save}" Width="60" Margin="0 0 8 0" Command="{Binding SaveAppearanceSettingsCommand}" IsEnabled="{Binding AppearanceSettingsChanged}" />
+                        <Button Content="{x:Static properties:Strings.Apply}" Width="60" Command="{Binding ApplyAppearanceSettingsCommand}" IsEnabled="{Binding AppearanceSettingsChanged}" />
                     </DockPanel>
                 </Grid>
             </TabItem>
         </TabControl>
         
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 8 0 0">
-            <Button Content="OK" Width="60" Margin="0 0 8 0" Command="{Binding OkCommand}" />
-            <Button Content="Cancel" Width="60" Command="{Binding CancelCommand}" />
+            <Button Content="{x:Static properties:Strings.OK}" Width="60" Margin="0 0 8 0" Command="{Binding OkCommand}" />
+            <Button Content="{x:Static properties:Strings.Cancel}" Width="60" Command="{Binding CancelCommand}" />
         </StackPanel>
     </Grid>
 </controls:NeoWindow>

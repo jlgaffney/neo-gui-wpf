@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
         xmlns:local="clr-namespace:Neo.UI.Accounts"
-        Title="Import Private Key" Width="500" 
+        xmlns:properties="clr-namespace:Neo.Properties"
+        Title="{x:Static properties:Strings.ImportPrivateKeyTitle}" Width="500" 
         SizeToContent="Height" ResizeMode="NoResize">
     <controls:NeoWindow.DataContext>
         <local:ImportPrivateKeyViewModel />
@@ -15,14 +16,14 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <GroupBox Header="WIF Private Key:" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <GroupBox Header="{x:Static properties:Strings.WifPrivateKey}" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <TextBox Text="{Binding PrivateKeyWif, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                      HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible"/>
         </GroupBox>
 
         <DockPanel Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Stretch">
-            <Button Content="OK" Width="70" Margin="0 8 6 0" Command="{Binding OkCommand}" IsEnabled="{Binding OkEnabled}" />
-            <Button Content="Cancel" Width="70" Margin="0 8 0 0" Command="{Binding CancelCommand}" />
+            <Button Content="{x:Static properties:Strings.OK}" Width="70" Margin="0 8 6 0" Command="{Binding OkCommand}" IsEnabled="{Binding OkEnabled}" />
+            <Button Content="{x:Static properties:Strings.Cancel}" Width="70" Margin="0 8 0 0" Command="{Binding CancelCommand}" />
         </DockPanel>
     </Grid>
 </controls:NeoWindow>

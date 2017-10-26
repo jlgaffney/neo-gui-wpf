@@ -3,8 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
         xmlns:local="clr-namespace:Neo.UI.Accounts"
-        xmlns:controls1="http://metro.mahapps.com/winfx/xaml/controls"
-        Title="Multi-Signature"
+        xmlns:mahapps="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:properties="clr-namespace:Neo.Properties"
+        Title="{x:Static properties:Strings.CreateMultiSigContractTitle}"
         Width="570" Height="350" ResizeMode="CanResizeWithGrip">
     <controls:NeoWindow.DataContext>
         <local:CreateMultiSigContractViewModel />
@@ -23,10 +24,10 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Label Grid.Row="0" Grid.Column="0" Content="Min. Sig. Num.:" HorizontalAlignment="Right" VerticalAlignment="Center" />
-        <controls1:NumericUpDown Grid.Row="0" Grid.Column="1" Value="{Binding MinimumSignatureNumber}" Minimum="0" Maximum="{Binding MinimumSignatureNumberMaxValue}" Width="180"  Margin="0 4" HorizontalAlignment="Left" VerticalAlignment="Stretch" />
+        <Label Grid.Row="0" Grid.Column="0" Content="{x:Static properties:Strings.MinimumSignatureNumber}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <mahapps:NumericUpDown Grid.Row="0" Grid.Column="1" Value="{Binding MinimumSignatureNumber}" Minimum="0" Maximum="{Binding MinimumSignatureNumberMaxValue}" Width="180"  Margin="0 4" HorizontalAlignment="Left" VerticalAlignment="Stretch" />
 
-        <Label Grid.Row="1" Grid.Column="0" Content="Public Key List:" HorizontalAlignment="Right" VerticalAlignment="Top" />
+        <Label Grid.Row="1" Grid.Column="0" Content="{x:Static properties:Strings.PublicKeyList}" HorizontalAlignment="Right" VerticalAlignment="Top" />
         <ListBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding PublicKeys}" SelectedItem="{Binding SelectedPublicKey}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 
         <Grid Grid.Row="2" Grid.Column="1" Margin="0 6 0 0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -46,8 +47,8 @@
         </Grid>
 
         <DockPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Stretch" Margin="0 8 0 0">
-            <Button Content="Confirm" Width="60" Margin="0 0 8 0" Command="{Binding ConfirmCommand}" IsEnabled="{Binding ConfirmEnabled}" />
-            <Button Content="Cancel" Width="60" Command="{Binding CancelCommand}" />
+            <Button Content="{x:Static properties:Strings.Confirm}" Width="60" Margin="0 0 8 0" Command="{Binding ConfirmCommand}" IsEnabled="{Binding ConfirmEnabled}" />
+            <Button Content="{x:Static properties:Strings.Cancel}" Width="60" Command="{Binding CancelCommand}" />
         </DockPanel>
     </Grid>
 </controls:NeoWindow>

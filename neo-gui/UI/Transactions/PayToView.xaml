@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
         xmlns:local="clr-namespace:Neo.UI.Transactions"
-        Title="Payment" Width="560"
+        xmlns:properties="clr-namespace:Neo.Properties"
+        Title="{x:Static properties:Strings.Payment}" Width="560"
         SizeToContent="Height" ResizeMode="NoResize">
     <controls:NeoWindow.DataContext>
         <local:PayToViewModel />
@@ -23,18 +24,18 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Label Grid.Row="0" Grid.Column="0" Content="Asset:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <Label Grid.Row="0" Grid.Column="0" Content="{x:Static properties:Strings.Asset}" HorizontalAlignment="Right" VerticalAlignment="Center" />
         <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Assets}" SelectedItem="{Binding SelectedAsset}" IsEnabled="{Binding AssetSelectionEnabled}" Margin="0 4" HorizontalAlignment="Stretch" />
 
-        <Label Grid.Row="1" Grid.Column="0" Content="Balance:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <Label Grid.Row="1" Grid.Column="0" Content="{x:Static properties:Strings.Balance}" HorizontalAlignment="Right" VerticalAlignment="Center" />
         <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding AssetBalance, Mode=OneWay}" IsReadOnly="True" Margin="0 4" Padding="4" HorizontalAlignment="Stretch" />
 
-        <Label Grid.Row="2" Grid.Column="0" Content="Pay to:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <Label Grid.Row="2" Grid.Column="0" Content="{x:Static properties:Strings.PayTo}" HorizontalAlignment="Right" VerticalAlignment="Center" />
         <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding PayToAddress, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="{Binding PayToAddressReadOnly}" Margin="0 4" Padding="4" HorizontalAlignment="Stretch" />
 
-        <Label Grid.Row="3" Grid.Column="0" Content="Amount:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <Label Grid.Row="3" Grid.Column="0" Content="{x:Static properties:Strings.Amount}" HorizontalAlignment="Right" VerticalAlignment="Center" />
         <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Amount, UpdateSourceTrigger=PropertyChanged}" Margin="0 4" Padding="4" HorizontalAlignment="Stretch" />
 
-        <Button Grid.Row="4" Grid.ColumnSpan="2" Content="OK" Width="60" Margin="0 8 0 0" HorizontalAlignment="Right" Command="{Binding OkCommand}" IsEnabled="{Binding OkEnabled}" />
+        <Button Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Content="{x:Static properties:Strings.OK}" Width="60" Margin="0 8 0 0" HorizontalAlignment="Right" Command="{Binding OkCommand}" IsEnabled="{Binding OkEnabled}" />
     </Grid>
 </controls:NeoWindow>
