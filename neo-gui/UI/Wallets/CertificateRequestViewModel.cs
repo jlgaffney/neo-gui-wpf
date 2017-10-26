@@ -140,7 +140,7 @@ namespace Neo.UI.Wallets
 
             var x509Key = new CX509PrivateKey
             {
-                //AlgorithmName = "ECDSA_P256"
+                AlgorithmName = "ECDSA_P256"
             };
 
             x509Key.Import("ECCPRIVATEBLOB", Convert.ToBase64String(privateKey));
