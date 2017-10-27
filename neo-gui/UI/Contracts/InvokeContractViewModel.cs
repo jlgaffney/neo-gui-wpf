@@ -112,7 +112,7 @@ namespace Neo.UI.Contracts
 
         public string Fee
         {
-            get => string.IsNullOrEmpty(this.fee) ? "not evaluated" : this.fee;
+            get => string.IsNullOrEmpty(this.fee) ? Strings.NotEvaluated : this.fee;
             set
             {
                 if (this.fee == value) return;

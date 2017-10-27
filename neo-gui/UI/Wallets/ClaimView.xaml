@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
              xmlns:local="clr-namespace:Neo.UI.Wallets"
-             Title="NeoGas Claim" Width="300"
+             xmlns:properties="clr-namespace:Neo.Properties"
+             Title="{x:Static properties:Strings.GasClaimTitle}" Width="300"
              SizeToContent="Height" ResizeMode="NoResize">
     <controls:NeoWindow.DataContext>
         <local:ClaimViewModel />
@@ -22,12 +23,12 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <Label Grid.Row="0" Grid.Column="0" Content="Available:" HorizontalAlignment="Right" />
+        <Label Grid.Row="0" Grid.Column="0" Content="{x:Static properties:Strings.Available}" HorizontalAlignment="Right" />
         <Label Grid.Row="0" Grid.Column="1" Content="{Binding AvailableGas}" HorizontalAlignment="Left" />
 
-        <Label Grid.Row="1" Grid.Column="0" Content="Unavailable:" HorizontalAlignment="Right" />
+        <Label Grid.Row="1" Grid.Column="0" Content="{x:Static properties:Strings.Unavailable}" HorizontalAlignment="Right" />
         <Label Grid.Row="1" Grid.Column="1" Content="{Binding UnavailableGas}" HorizontalAlignment="Left" />
 
-        <Button Grid.Row="2" Grid.Column="2" Content="Claim All" IsEnabled="{Binding ClaimEnabled}" Padding="6 2" HorizontalAlignment="Right" />
+        <Button Grid.Row="2" Grid.Column="2" Content="{x:Static properties:Strings.ClaimAll}" IsEnabled="{Binding ClaimEnabled}" Padding="6 2" HorizontalAlignment="Right" />
     </Grid>
 </controls:NeoWindow>

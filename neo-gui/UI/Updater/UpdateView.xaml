@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
         xmlns:local="clr-namespace:Neo.UI.Updater"
-        Title="Update Available" Height="350" Width="525">
+        xmlns:properties="clr-namespace:Neo.Properties"
+        Title="{x:Static properties:Strings.UpdateTitle}" Height="350" Width="525">
     <controls:NeoWindow.DataContext>
         <local:UpdateViewModel />
     </controls:NeoWindow.DataContext>
@@ -21,33 +22,36 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            
-            <Label Name="label1" Grid.Column="0" Content="Newest Version:" VerticalAlignment="Center"/>
+
+            <Label Grid.Column="0" Content="{x:Static properties:Strings.NewestVersion}" VerticalAlignment="Center"/>
 
             <TextBox Grid.Column="1" IsReadOnly="True" Text="{Binding LatestVersionValue, Mode=OneWay}" Margin="4" Padding="2" HorizontalAlignment="Stretch" />
         </Grid>
 
-        <GroupBox Grid.Row="1" Header="Change logs">
+        <GroupBox Grid.Row="1" Header="{x:Static properties:Strings.ChangeLogs}">
             <TextBox Text="{Binding Changes, Mode=OneWay}" IsReadOnly="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                 HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" />
         </GroupBox>
 
-        <ProgressBar Name="progressBar1" Grid.Row="2" HorizontalAlignment="Stretch" Height="24" Margin="0 8" />
+        <ProgressBar Grid.Row="2" HorizontalAlignment="Stretch" Height="24" Margin="0 8" />
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Left">
             <TextBlock Margin="0 0 16 0">           
-                <Hyperlink Name="linkLabel1" Command="{Binding GoToOfficialWebsiteCommand}">Official Web</Hyperlink>
+                <Hyperlink Command="{Binding GoToOfficialWebsiteCommand}">
+                    <TextBlock Text="{x:Static properties:Strings.OfficialWeb}" />
+                </Hyperlink>
             </TextBlock>
-            
-            <TextBlock>           
-                <Hyperlink Name="linkLabel2" Command="{Binding GoToDownloadPageCommand}">Download</Hyperlink>
+
+            <TextBlock>
+                <Hyperlink Command="{Binding GoToDownloadPageCommand}">
+                    <TextBlock Text="{x:Static properties:Strings.Download}" />
+                </Hyperlink>
             </TextBlock>
         </StackPanel>
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="Update" Width="72" Margin="0 0 8 0" Command="{Binding UpdateCommand}" IsEnabled="{Binding ButtonsEnabled}" />
-
-            <Button Content="Close" Width="72" Command="{Binding CloseCommand}" IsEnabled="{Binding ButtonsEnabled}" />
+            <Button Content="{x:Static properties:Strings.Update}" Width="72" Margin="0 0 8 0" Command="{Binding UpdateCommand}" IsEnabled="{Binding ButtonsEnabled}" />
+            <Button Content="{x:Static properties:Strings.Close}" Width="72" Command="{Binding CloseCommand}" IsEnabled="{Binding ButtonsEnabled}" />
         </StackPanel>
     </Grid>
 </controls:NeoWindow>

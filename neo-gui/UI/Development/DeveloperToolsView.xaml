@@ -3,17 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
              xmlns:local="clr-namespace:Neo.UI.Development"
-             Title="Neo Developer Tools" Width="660" Height="480"
-             ResizeMode="NoResize">
+             xmlns:properties="clr-namespace:Neo.Properties"
+             Title="{x:Static properties:Strings.DeveloperToolsTitle}"
+             Width="660" Height="480" ResizeMode="NoResize">
     <Grid>
         <TabControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <!-- Transaction Builder Tab -->
-            <TabItem Header="Tx Builder">
+            <TabItem Header="{x:Static properties:Strings.TxBuilder}">
                 <local:TransactionBuilderView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
             </TabItem>
 
             <!-- Contract Parameters Tab -->
-            <TabItem Header="Contract Parameters">
+            <TabItem Header="{x:Static properties:Strings.ContractParameters}">
                 <local:ContractParametersView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
             </TabItem>
         </TabControl>

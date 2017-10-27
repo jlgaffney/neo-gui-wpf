@@ -30,6 +30,7 @@ namespace Neo.UI.Models
 
         private string TransactionTypeToString(TransactionType type)
         {
+            // TODO Localise returned strings
             return type.ToString();
         }
     }

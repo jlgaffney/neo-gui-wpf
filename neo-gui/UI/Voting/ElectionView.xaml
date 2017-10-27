@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
         xmlns:local="clr-namespace:Neo.UI.Voting"
-        Title="Election" Width="500"
+        xmlns:properties="clr-namespace:Neo.Properties"
+        Title="{x:Static properties:Strings.ElectionTitle}" Width="500"
         SizeToContent="Height" ResizeMode="NoResize">
     <controls:NeoWindow.DataContext>
         <local:ElectionViewModel />
@@ -20,11 +21,11 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            
-            <Label Grid.Column="0" Content="Bookkeeper:" Margin="0 0 4 0" VerticalAlignment="Center" />
+
+            <Label Grid.Column="0" Content="{x:Static properties:Strings.Bookkeeper}" Margin="0 0 4 0" VerticalAlignment="Center" />
             <ComboBox Grid.Column="1" ItemsSource="{Binding BookKeepers}" SelectedItem="{Binding SelectedBookKeeper}" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
         </Grid>
 
-        <Button Grid.Row="1" Content="OK" Width="60" Margin="0 12 0 0" HorizontalAlignment="Right" Command="{Binding OkCommand}" IsEnabled="{Binding OkEnabled}" />
+        <Button Grid.Row="1" Content="{x:Static properties:Strings.OK}" Width="60" Margin="0 12 0 0" HorizontalAlignment="Right" Command="{Binding OkCommand}" IsEnabled="{Binding OkEnabled}" />
     </Grid>
 </controls:NeoWindow>

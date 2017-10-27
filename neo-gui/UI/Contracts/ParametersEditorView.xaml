@@ -3,8 +3,9 @@
             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
             xmlns:local="clr-namespace:Neo.UI.Contracts"
             xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
-            Title="Set Parameters"
-            Width="700" Height="480"  ResizeMode="NoResize">
+            xmlns:properties="clr-namespace:Neo.Properties"
+            Title="{x:Static properties:Strings.SetParametersTitle}"
+            Width="720" Height="480" ResizeMode="NoResize">
     <controls:NeoWindow.DataContext>
         <local:ParametersEditorViewModel />
     </controls:NeoWindow.DataContext>
@@ -12,16 +13,16 @@
     <Grid Margin="12">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="250" />
+            <ColumnDefinition Width="280" />
         </Grid.ColumnDefinitions>
 
-        <GroupBox Grid.Column="0" Header="Parameter List" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <GroupBox Grid.Column="0" Header="{x:Static properties:Strings.ParameterList}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <ListView ItemsSource="{Binding Parameters}" SelectedItem="{Binding SelectedParameter}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="" DisplayMemberBinding="{Binding IndexStr}" />
-                        <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}" />
-                        <GridViewColumn Header="Value" DisplayMemberBinding="{Binding Value}" />
+                        <GridViewColumn Header="{x:Static properties:Strings.Type}" Width="Auto" DisplayMemberBinding="{Binding Type}" />
+                        <GridViewColumn Header="{x:Static properties:Strings.Value}" Width="Auto" DisplayMemberBinding="{Binding Value}" />
                     </GridView>
                 </ListView.View>
             </ListView>
@@ -33,11 +34,11 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <GroupBox Grid.Row="0" Header="Current Value">
+            <GroupBox Grid.Row="0" Header="{x:Static properties:Strings.CurrentValue}">
                 <TextBox Text="{Binding CurrentValue, Mode=OneWay}" IsReadOnly="True" Background="#F0F0F0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" />
             </GroupBox>
 
-            <GroupBox Grid.Row="1" Header="New Value">
+            <GroupBox Grid.Row="1" Header="{x:Static properties:Strings.NewValue}">
                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
@@ -47,13 +48,17 @@
                     <TextBox Grid.Row="0" Text="{Binding NewValue, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding NewValueEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" />
 
                     <DockPanel Grid.Row="1" HorizontalAlignment="Left" Margin="0 8 0 0">
-                        <Button Content="+" Margin="0 0 8 0" Width="24"  Command="{Binding AddCommand}" IsEnabled="{Binding AddEnabled}" />
-                        <Button Content="-" Width="24"  Command="{Binding RemoveCommand}" IsEnabled="{Binding RemoveEnabled}" /> 
+                        <Button Width="28" Height="28" Padding="0" HorizontalAlignment="Left" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="0 0 8 0" Command="{Binding AddCommand}" IsEnabled="{Binding AddEnabled}">
+                            <Image Source="/Resources/add.png" Width="12" Height="12" />
+                        </Button>
+                        <Button Width="28" Height="28" Padding="0" HorizontalAlignment="Left" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Command="{Binding RemoveCommand}" IsEnabled="{Binding RemoveEnabled}">
+                            <Image Source="/Resources/remove.png" Width="16" Height="16" />
+                        </Button>
                     </DockPanel>
 
                     <DockPanel Grid.Row="1" HorizontalAlignment="Right" Margin="0 8 0 0">
-                        <Button Content="Edit Array" Width="70" Margin="0 0 8 0" Command="{Binding EditArrayCommand}" IsEnabled="{Binding EditArrayEnabled}" />
-                        <Button Content="Update" Width="70" Command="{Binding UpdateCommand}" IsEnabled="{Binding UpdateEnabled}" />
+                        <Button Content="{x:Static properties:Strings.EditArray}" Width="70" Margin="0 0 8 0" Command="{Binding EditArrayCommand}" IsEnabled="{Binding EditArrayEnabled}" />
+                        <Button Content="{x:Static properties:Strings.Update}" Width="70" Command="{Binding UpdateCommand}" IsEnabled="{Binding UpdateEnabled}" />
                     </DockPanel>
                 </Grid>
             </GroupBox>

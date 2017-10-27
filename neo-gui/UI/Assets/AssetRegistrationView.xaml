@@ -3,9 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
         xmlns:local="clr-namespace:Neo.UI.Assets"
-        xmlns:controls1="http://metro.mahapps.com/winfx/xaml/controls"
-        Title="Asset Registration" Width="560"
-        SizeToContent="Height" ResizeMode="NoResize">
+        xmlns:mahapps="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:properties="clr-namespace:Neo.Properties"
+        Title="{x:Static properties:Strings.AssetRegistrationTitle}"
+        Width="560" SizeToContent="Height" ResizeMode="NoResize">
     <controls:NeoWindow.DataContext>
         <local:AssetRegistrationViewModel />
     </controls:NeoWindow.DataContext>
@@ -32,31 +33,31 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Label Grid.Row="0" Grid.Column="0" Content="Asset Type:" Margin="0 0 4 0" HorizontalAlignment="Right" VerticalAlignment="Center" />
+            <Label Grid.Row="0" Grid.Column="0" Content="{x:Static properties:Strings.AssetType}" Margin="0 0 4 0" HorizontalAlignment="Right" VerticalAlignment="Center" />
             <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding AssetTypes}" SelectedItem="{Binding SelectedAssetType}" Margin="0 4" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
 
-            <Label Grid.Row="1" Grid.Column="0" Content="Name:" Margin="0 0 4 0" HorizontalAlignment="Right" VerticalAlignment="Center" />
+            <Label Grid.Row="1" Grid.Column="0" Content="{x:Static properties:Strings.Name}" Margin="0 0 4 0" HorizontalAlignment="Right" VerticalAlignment="Center" />
             <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
 
-            <Label Grid.Row="2" Grid.Column="0" Content="Capped:" Margin="0 0 4 0" HorizontalAlignment="Right" VerticalAlignment="Center" />
+            <Label Grid.Row="2" Grid.Column="0" Content="{x:Static properties:Strings.TotalLimit}" Margin="0 0 4 0" HorizontalAlignment="Right" VerticalAlignment="Center" />
             <DockPanel Grid.Row="2" Grid.Column="1">
-                <CheckBox IsChecked="{Binding CappedBool}" Margin="0 0 8 0" VerticalAlignment="Center" />
-                <TextBox Text="{Binding CappedString, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CappedBool}" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+                <CheckBox IsChecked="{Binding TotalIsLimited}" Margin="0 0 8 0" VerticalAlignment="Center" />
+                <TextBox Text="{Binding TotalLimit, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding TotalIsLimited}" Margin="0 4" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
             </DockPanel>
 
-            <Label Grid.Row="3" Grid.Column="0" Content="Precision:" Margin="0 0 4 0" HorizontalAlignment="Right" VerticalAlignment="Center" />
-            <controls1:NumericUpDown Grid.Row="3" Grid.Column="1" Value="{Binding Precision}" Minimum="0" Maximum="8" IsEnabled="{Binding PrecisionEnabled}" Width="100" Margin="0 4" HorizontalAlignment="Left" VerticalAlignment="Center" />
+            <Label Grid.Row="3" Grid.Column="0" Content="{x:Static properties:Strings.Precision}" Margin="0 0 4 0" HorizontalAlignment="Right" VerticalAlignment="Center" />
+            <mahapps:NumericUpDown Grid.Row="3" Grid.Column="1" Value="{Binding Precision}" Minimum="0" Maximum="8" IsEnabled="{Binding PrecisionEnabled}" Width="100" Margin="0 4" HorizontalAlignment="Left" VerticalAlignment="Center" />
 
-            <Label Grid.Row="4" Grid.Column="0" Content="Owner:" Margin="0 0 4 0" HorizontalAlignment="Right" VerticalAlignment="Center" />
+            <Label Grid.Row="4" Grid.Column="0" Content="{x:Static properties:Strings.Owner}" Margin="0 0 4 0" HorizontalAlignment="Right" VerticalAlignment="Center" />
             <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding Owners}" SelectedItem="{Binding SelectedOwner}" Margin="0 4" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
 
-            <Label Grid.Row="5" Grid.Column="0" Content="Admin:" Margin="0 0 4 0" HorizontalAlignment="Right" VerticalAlignment="Center" />
+            <Label Grid.Row="5" Grid.Column="0" Content="{x:Static properties:Strings.Admin}" Margin="0 0 4 0" HorizontalAlignment="Right" VerticalAlignment="Center" />
             <ComboBox Grid.Row="5" Grid.Column="1" ItemsSource="{Binding Admins}" SelectedItem="{Binding SelectedAdmin}" Margin="0 4" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
 
-            <Label Grid.Row="6" Grid.Column="0" Content="Issuer:" Margin="0 0 4 0" HorizontalAlignment="Right" VerticalAlignment="Center" />
+            <Label Grid.Row="6" Grid.Column="0" Content="{x:Static properties:Strings.Issuer}" Margin="0 0 4 0" HorizontalAlignment="Right" VerticalAlignment="Center" />
             <ComboBox Grid.Row="6" Grid.Column="1" ItemsSource="{Binding Issuers}" SelectedItem="{Binding SelectedIssuer}" Margin="0 4" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
         </Grid>
 
-        <Button Grid.Row="1" Content="OK" Width="60" Margin="0 8 0 0" HorizontalAlignment="Right" Command="{Binding OkCommand}" IsEnabled="{Binding OkEnabled}" />
+        <Button Grid.Row="1" Content="{x:Static properties:Strings.OK}" Width="60" Margin="0 8 0 0" HorizontalAlignment="Right" Command="{Binding OkCommand}" IsEnabled="{Binding OkEnabled}" />
     </Grid>
 </controls:NeoWindow>

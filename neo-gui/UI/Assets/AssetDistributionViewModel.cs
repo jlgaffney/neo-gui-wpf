@@ -18,7 +18,7 @@ namespace Neo.UI.Assets
 
         private string owner;
         private string admin;
-        private string cap;
+        private string total;
         private string issued;
 
         private bool distributionEnabled;
@@ -100,14 +100,14 @@ namespace Neo.UI.Assets
             }
         }
 
-        public string Cap
+        public string Total
         {
-            get => this.cap;
-            set
+            get => this.total;
+            private set
             {
-                if (this.cap == value) return;
+                if (this.total == value) return;
 
-                this.cap = value;
+                this.total = value;
 
                 NotifyPropertyChanged();
             }
@@ -184,7 +184,7 @@ namespace Neo.UI.Assets
             {
                 this.Owner = string.Empty;
                 this.Admin = string.Empty;
-                this.Cap = string.Empty;
+                this.Total = string.Empty;
                 this.Issued = string.Empty;
                 this.DistributionEnabled = false;
             }
@@ -192,7 +192,7 @@ namespace Neo.UI.Assets
             {
                 this.Owner = state.Owner.ToString();
                 this.Admin = Wallet.ToAddress(state.Admin);
-                this.Cap = state.Amount == -Fixed8.Satoshi ? "+\u221e" : state.Amount.ToString();
+                this.Total = state.Amount == -Fixed8.Satoshi ? "+\u221e" : state.Amount.ToString();
                 this.Issued = state.Available.ToString();
                 this.DistributionEnabled = true;
             }

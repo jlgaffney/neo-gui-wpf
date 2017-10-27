@@ -287,15 +287,6 @@
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="WindowsFormsIntegration" />
-    <Reference Include="Xamarin.Forms.Core, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xamarin.Forms.2.3.4.247\lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Forms.Platform, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xamarin.Forms.2.3.4.247\lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.Platform.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Forms.Xaml, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xamarin.Forms.2.3.4.247\lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.Xaml.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
@@ -402,8 +393,8 @@
     <Compile Include="UI\Contracts\InvokeContractViewModel.cs" />
     <Compile Include="UI\Development\ContractParametersViewModel.cs" />
     <Compile Include="UI\Development\TransactionBuilderViewModel.cs" />
-    <Compile Include="UI\Transactions\SignatureView.xaml.cs">
-      <DependentUpon>SignatureView.xaml</DependentUpon>
+    <Compile Include="UI\Transactions\SigningView.xaml.cs">
+      <DependentUpon>SigningView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Transactions\BulkPayView.xaml.cs">
       <DependentUpon>BulkPayView.xaml</DependentUpon>
@@ -413,7 +404,7 @@
       <DependentUpon>PayToView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Transactions\PayToViewModel.cs" />
-    <Compile Include="UI\Transactions\SignatureViewModel.cs" />
+    <Compile Include="UI\Transactions\SigningViewModel.cs" />
     <Compile Include="UI\Voting\ElectionViewModel.cs" />
     <Compile Include="UI\Voting\VotingViewModel.cs" />
     <Compile Include="UI\Wallets\TradeView.xaml.cs">
@@ -422,7 +413,7 @@
     <Compile Include="UI\Wallets\TradeVerificationView.xaml.cs">
       <DependentUpon>TradeVerificationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Wallets\CertificateRequestViewModel.cs" />
+    <Compile Include="UI\Wallets\CertificateApplicationViewModel.cs" />
     <Compile Include="UI\Wallets\ClaimViewModel.cs" />
     <Compile Include="UI\Wallets\ChangePasswordViewModel.cs" />
     <Compile Include="UI\Accounts\ViewPrivateKeyViewModel.cs" />
@@ -460,8 +451,8 @@
     <Compile Include="UI\Voting\ElectionView.xaml.cs">
       <DependentUpon>ElectionView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Wallets\CertificateRequestView.xaml.cs">
-      <DependentUpon>CertificateRequestView.xaml</DependentUpon>
+    <Compile Include="UI\Wallets\CertificateApplicationView.xaml.cs">
+      <DependentUpon>CertificateApplicationView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Wallets\ChangePasswordView.xaml.cs">
       <DependentUpon>ChangePasswordView.xaml</DependentUpon>
@@ -525,7 +516,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Strings.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -731,7 +722,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\Transactions\SignatureView.xaml">
+    <Page Include="UI\Transactions\SigningView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -751,7 +742,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Wallets\CertificateRequestView.xaml">
+    <Page Include="UI\Wallets\CertificateApplicationView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

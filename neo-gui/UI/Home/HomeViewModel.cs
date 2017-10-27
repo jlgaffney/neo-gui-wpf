@@ -197,6 +197,9 @@ namespace Neo.UI.Home
             }
         }
 
+        // TODO Update property to return actual status
+        public string BlockStatus => Strings.WaitingForNextBlock + ":";
+
         #endregion New Version Properties
 
         #region Wallet Methods
@@ -425,9 +428,6 @@ namespace Neo.UI.Home
 
         private void UpdateBlockProgress(TimeSpan persistenceSpan)
         {
-            NotifyPropertyChanged(nameof(this.BlockHeight));
-            NotifyPropertyChanged(nameof(this.NodeCount));
-
             if (persistenceSpan < TimeSpan.Zero) persistenceSpan = TimeSpan.Zero;
 
             if (persistenceSpan > Blockchain.TimePerBlock)
@@ -439,6 +439,10 @@ namespace Neo.UI.Home
                 this.BlockProgressIndeterminate = true;
                 this.BlockProgress = persistenceSpan.Seconds;
             }
+
+            NotifyPropertyChanged(nameof(this.BlockHeight));
+            NotifyPropertyChanged(nameof(this.NodeCount));
+            NotifyPropertyChanged(nameof(this.BlockStatus));
         }
 
         private void UpdateBalances(TimeSpan persistenceSpan)
@@ -773,7 +777,7 @@ namespace Neo.UI.Home
 
         private static void ShowSigningDialog()
         {
-            var view = new SignatureView();
+            var view = new SigningView();
             view.ShowDialog();
         }
 
@@ -784,7 +788,7 @@ namespace Neo.UI.Home
 
         private static void RequestCertificate()
         {
-            var view = new CertificateRequestView();
+            var view = new CertificateApplicationView();
             view.ShowDialog();
         }
 

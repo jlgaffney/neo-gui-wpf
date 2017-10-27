@@ -1,12 +1,15 @@
 ﻿<ListView x:Class="Neo.UI.Home.AccountsView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dialogs="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+        xmlns:properties="clr-namespace:Neo.Properties"
+        dialogs:DialogParticipation.Register="{Binding}"
         ItemsSource="{Binding Accounts}" SelectedItem="{Binding SelectedAccount}"
         Loaded="AccountsView_Loaded" MouseDoubleClick="AccountList_DoubleClick">
     
     <ListView.View>
         <GridView>
-            <GridViewColumn Header="Address" Width="260" DisplayMemberBinding="{Binding Address}" />
+            <GridViewColumn Header="{x:Static properties:Strings.Address}" Width="260" DisplayMemberBinding="{Binding Address}" />
             <GridViewColumn Header="NEO" Width="Auto" DisplayMemberBinding="{Binding Neo}" />
             <GridViewColumn Header="GAS" Width="Auto" DisplayMemberBinding="{Binding Gas}" />
         </GridView>
@@ -14,31 +17,31 @@
 
     <ListView.ContextMenu>
         <ContextMenu>
-            <MenuItem Header="Create _New Address" Command="{Binding CreateNewAddressCommand}" IsEnabled="{Binding MenuItemsEnabled}" />
-            <MenuItem Header="_Import" IsEnabled="{Binding MenuItemsEnabled}">
-                <MenuItem Header="Import from _WIF…" Command="{Binding ImportWifPrivateKeyCommand}" />
-                <MenuItem Header="Import from _Certificate…" Command="{Binding ImportFromCertificateCommand}" />
+            <MenuItem Header="{x:Static properties:Strings.CreateNewAddressMenuHeader}" Command="{Binding CreateNewAddressCommand}" IsEnabled="{Binding MenuItemsEnabled}" />
+            <MenuItem Header="{x:Static properties:Strings.ImportMenuHeader}" IsEnabled="{Binding MenuItemsEnabled}">
+                <MenuItem Header="{x:Static properties:Strings.ImportFromWifMenuHeader}" Command="{Binding ImportWifPrivateKeyCommand}" />
+                <MenuItem Header="{x:Static properties:Strings.ImportFromCertificateMenuHeader}" Command="{Binding ImportFromCertificateCommand}" />
 
                 <Separator />
 
-                <MenuItem Header="Import Watch-Only _Address…" Command="{Binding ImportWatchOnlyAddressCommand}" />
+                <MenuItem Header="{x:Static properties:Strings.ImportWatchOnlyAddressMenuHeader}" Command="{Binding ImportWatchOnlyAddressCommand}" />
             </MenuItem>
-            <MenuItem Header="Create Contract _Address" IsEnabled="{Binding MenuItemsEnabled}">
-                <MenuItem Header="_Multi-Signature…" Command="{Binding CreateMultiSignatureContractAddressCommand}" />
-                <MenuItem Header="_Lock…" Command="{Binding CreateLockContractAddressCommand}" />
+            <MenuItem Header="{x:Static properties:Strings.CreateContractAddressMenuHeader}" IsEnabled="{Binding MenuItemsEnabled}">
+                <MenuItem Header="{x:Static properties:Strings.MultiSignatureMenuHeader}" Command="{Binding CreateMultiSignatureContractAddressCommand}" />
+                <MenuItem Header="{x:Static properties:Strings.LockMenuHeader}" Command="{Binding CreateLockContractAddressCommand}" />
 
                 <Separator />
 
-                <MenuItem Header="_Custom…" Command="{Binding CreateCustomContractAddressCommand}" />
+                <MenuItem Header="{x:Static properties:Strings.CustomMenuHeader}" Command="{Binding CreateCustomContractAddressCommand}" />
             </MenuItem>
 
             <Separator />
 
-            <MenuItem Header="View _Private Key" Command="{Binding ViewPrivateKeyCommand}" IsEnabled="{Binding ViewPrivateKeyEnabled}" />
-            <MenuItem Header="View C_ontract" Command="{Binding ViewContractCommand}" IsEnabled="{Binding ViewContractEnabled}" />
-            <MenuItem Header="_Vote…" Command="{Binding ShowVotingDialogCommand}" IsEnabled="{Binding ShowVotingDialogEnabled}" />
-            <MenuItem Header="_Copy to Clipboard" Command="{Binding CopyAddressToClipboardCommand}" IsEnabled="{Binding CopyAddressToClipboardEnabled}" />
-            <MenuItem Header="_Delete…" Command="{Binding DeleteAccountCommand}" IsEnabled="{Binding DeleteAccountEnabled}" />
+            <MenuItem Header="{x:Static properties:Strings.ViewPrivateKeyMenuHeader}" Command="{Binding ViewPrivateKeyCommand}" IsEnabled="{Binding ViewPrivateKeyEnabled}" />
+            <MenuItem Header="{x:Static properties:Strings.ViewContractMenuHeader}" Command="{Binding ViewContractCommand}" IsEnabled="{Binding ViewContractEnabled}" />
+            <MenuItem Header="{x:Static properties:Strings.VoteMenuHeader}" Command="{Binding ShowVotingDialogCommand}" IsEnabled="{Binding ShowVotingDialogEnabled}" />
+            <MenuItem Header="{x:Static properties:Strings.CopyToClipboardMenuHeader}" Command="{Binding CopyAddressToClipboardCommand}" IsEnabled="{Binding CopyAddressToClipboardEnabled}" />
+            <MenuItem Header="{x:Static properties:Strings.DeleteMenuHeader}" Command="{Binding DeleteAccountCommand}" IsEnabled="{Binding DeleteAccountEnabled}" />
         </ContextMenu>
     </ListView.ContextMenu>
 </ListView>

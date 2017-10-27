@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
              xmlns:local="clr-namespace:Neo.UI.Contracts"
-             Title="Account Details" Width="500"
+             xmlns:properties="clr-namespace:Neo.Properties"
+             Title="{x:Static properties:Strings.AccountDetailsTitle}" Width="500"
              SizeToContent="Height" ResizeMode="NoResize">
     <controls:NeoWindow.DataContext>
         <local:ContractDetailsViewModel />
@@ -21,16 +22,16 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        
-        <Label Grid.Row="0" Grid.Column="0" Content="Address:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+
+        <Label Grid.Row="0" Grid.Column="0" Content="{x:Static properties:Strings.Address}" HorizontalAlignment="Right" VerticalAlignment="Center" />
         <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Address, Mode=OneWay}" IsReadOnly="True" HorizontalAlignment="Stretch" Margin="0 3 0 3" Padding="4" />
 
-        <Label Grid.Row="1" Grid.Column="0" Content="ScriptHash:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <Label Grid.Row="1" Grid.Column="0" Content="{x:Static properties:Strings.ScriptHash}" HorizontalAlignment="Right" VerticalAlignment="Center" />
         <TextBox Grid.Row="1"  Grid.Column="1" Text="{Binding ScriptHash, Mode=OneWay}" IsReadOnly="True" HorizontalAlignment="Stretch" Margin="0 3 0 3" Padding="4" />
 
-        <Label Grid.Row="2" Grid.Column="0" Content="RedeemScript:" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 4 0 0" />
+        <Label Grid.Row="2" Grid.Column="0" Content="{x:Static properties:Strings.RedeemScript}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 4 0 0" />
         <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding RedeemScript, Mode=OneWay}" IsReadOnly="True" Height="150" HorizontalAlignment="Stretch" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible"  Margin="0 3 0 0" Padding="4" />
 
-        <Button Grid.Row="3" Grid.ColumnSpan="2" Content="Close" Width="70" HorizontalAlignment="Right" Margin="0 8 0 0" Command="{Binding CloseCommand}" />
+        <Button Grid.Row="3" Grid.ColumnSpan="2" Content="{x:Static properties:Strings.Close}" Width="70" HorizontalAlignment="Right" Margin="0 8 0 0" Command="{Binding CloseCommand}" />
     </Grid>
 </controls:NeoWindow>

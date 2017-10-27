@@ -1,8 +1,5 @@
 ﻿using System.ComponentModel;
-using System.Diagnostics;
 using System.Windows;
-using System.Windows.Input;
-using Neo.Properties;
 
 namespace Neo.UI.Home
 {
@@ -22,16 +19,12 @@ namespace Neo.UI.Home
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (this.viewModel == null) return;
-
-            this.viewModel.Load();
+            this.viewModel?.Load();
         }
 
         public void Window_Closing(object sender, CancelEventArgs e)
         {
-            if (this.viewModel == null) return;
-
-            this.viewModel.Close();
+            this.viewModel?.Close();
         }
     }
 }

@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
         xmlns:local="clr-namespace:Neo.UI.Wallets"
-        Title="New Wallet" Width="525"
+        xmlns:properties="clr-namespace:Neo.Properties"
+        Title="{x:Static properties:Strings.CreateWalletTitle}" Width="525"
         SizeToContent="Height" ResizeMode="NoResize">
     <controls:NeoWindow.DataContext>
         <local:CreateWalletViewModel />
@@ -22,15 +23,15 @@
             <ColumnDefinition Width="60" />
         </Grid.ColumnDefinitions>
 
-        <Label Grid.Row="0" Grid.Column="0" Content="Wallet File:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <Label Grid.Row="0" Grid.Column="0" Content="{x:Static properties:Strings.WalletFile}" HorizontalAlignment="Right" VerticalAlignment="Center" />
         <TextBox Grid.Row="0" Grid.Column="1" IsReadOnly="True" Text="{Binding WalletPath, UpdateSourceTrigger=PropertyChanged}" Margin="4" Padding="4" HorizontalAlignment="Stretch" />
-        <Button Grid.Row="0" Grid.Column="2" Content="Browse" Height="24" Command="{Binding GetWalletPathCommand}" />
+        <Button Grid.Row="0" Grid.Column="2" Content="{x:Static properties:Strings.Browse}" Height="24" Command="{Binding GetWalletPathCommand}" />
 
-        <Label Grid.Row="1" Grid.Column="0" Content="Password:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <Label Grid.Row="1" Grid.Column="0" Content="{x:Static properties:Strings.Password}" HorizontalAlignment="Right" VerticalAlignment="Center" />
         <PasswordBox Grid.Row="1" Grid.Column="1" Width="160" Margin="4" Padding="4" HorizontalAlignment="Left" PasswordChanged="PasswordChanged" />
 
-        <Label Grid.Row="2" Grid.Column="0" Content="Re-Enter Password:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <Label Grid.Row="2" Grid.Column="0" Content="{x:Static properties:Strings.ReEnterPassword}" HorizontalAlignment="Right" VerticalAlignment="Center" />
         <PasswordBox Grid.Row="2" Grid.Column="1" Width="160" Margin="4" Padding="4" HorizontalAlignment="Left" PasswordChanged="ReEnteredPasswordChanged" />
-        <Button Grid.Row="2" Grid.Column="2" Content="Confirm" Height="24" Command="{Binding ConfirmCommand}" IsEnabled="{Binding ConfirmEnabled}" />
+        <Button Grid.Row="2" Grid.Column="2" Content="{x:Static properties:Strings.Confirm}" Height="24" Command="{Binding ConfirmCommand}" IsEnabled="{Binding ConfirmEnabled}" />
     </Grid>
 </controls:NeoWindow>
