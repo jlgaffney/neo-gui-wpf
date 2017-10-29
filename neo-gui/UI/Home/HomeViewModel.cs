@@ -33,11 +33,14 @@ using Neo.UI.Transactions;
 using Neo.UI.Updater;
 using Neo.UI.Wallets;
 using Neo.UI.Voting;
+using Neo.UI.Base.Messages;
 
 namespace Neo.UI.Home
 {
-    public class HomeViewModel : ViewModelBase,
-        IHandle<UpdateApplicationMessage>
+    public class HomeViewModel : 
+        ViewModelBase,
+        IHandle<UpdateApplicationMessage>,
+        IMessageHandler<UpdateApplicationMessage>
     {
         private bool balanceChanged = false;
 
@@ -54,18 +57,21 @@ namespace Neo.UI.Home
         private Timer uiUpdateTimer;
         private readonly object uiUpdateTimerLock = new object();
 
-        public HomeViewModel()
+        #region Constructor 
+        public HomeViewModel(IMessageAggregator messageAggregator)
         {
             this.AccountsViewModel = new AccountsViewModel(this.SetBalanceChangedAction);
             this.AssetsViewModel = new AssetsViewModel();
             this.TransactionsViewModel = new TransactionsViewModel();
 
+            messageAggregator.Subscribe(this);
             EventAggregator.Current.Subscribe(this);
 
             this.SetupUIUpdateTimer();
 
             this.StartUIUpdateTimer();
         }
+        #endregion
 
         private Action SetBalanceChangedAction
         {
@@ -899,6 +905,10 @@ namespace Neo.UI.Home
             var dialog = new UpdateView();
 
             dialog.ShowDialog();
+        }
+
+        public void HandleMessage(UpdateApplicationMessage message)
+        {
         }
     }
 }

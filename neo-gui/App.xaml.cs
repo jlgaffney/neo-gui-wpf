@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using Autofac;
 using Neo.UI;
+using Neo.UI.Base;
 using Neo.UI.Base.Themes;
 
 namespace Neo
@@ -19,6 +20,7 @@ namespace Neo
         {
             var autoFacContainerBuilder = new ContainerBuilder();
             autoFacContainerBuilder.RegisterModule<ViewModelsRegistrationModule>();
+            autoFacContainerBuilder.RegisterModule<BaseRegistrationModule>();
 
             var container = autoFacContainerBuilder.Build();
             ApplicationContext.Instance.ContainerLifetimeScope = container.BeginLifetimeScope();
