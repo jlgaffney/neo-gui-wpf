@@ -359,6 +359,7 @@
     </Compile>
     <Compile Include="UI\Home\HomeViewModel.cs" />
     <Compile Include="UI\Home\TransactionsViewModel.cs" />
+    <Compile Include="UI\AccountType.cs" />
     <Compile Include="UI\TxOutListBox.xaml.cs">
       <DependentUpon>TxOutListBox.xaml</DependentUpon>
     </Compile>
@@ -378,9 +379,9 @@
     <Compile Include="UI\Contracts\DeployContractViewModel.cs" />
     <Compile Include="UI\Contracts\ParametersEditorViewModel.cs" />
     <Compile Include="UI\Messages\UpdateApplicationMessage.cs" />
-    <Compile Include="UI\Models\AccountItem.cs" />
-    <Compile Include="UI\Models\AssetItem.cs" />
-    <Compile Include="UI\Models\TransactionItem.cs" />
+    <Compile Include="UI\AccountItem.cs" />
+    <Compile Include="UI\AssetItem.cs" />
+    <Compile Include="UI\TransactionItem.cs" />
     <Compile Include="UI\Base\Controls\NeoWindow.cs" />
     <Compile Include="UI\Base\MVVM\EventAggregator.cs" />
     <Compile Include="UI\Base\MVVM\IHandle.cs" />

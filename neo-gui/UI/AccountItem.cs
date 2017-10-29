@@ -1,10 +1,12 @@
 ﻿using Neo.Wallets;
 
-namespace Neo.UI.Models
+namespace Neo.UI
 {
     public class AccountItem
     {
         public string Address { get; set; }
+
+        public AccountType Type { get; set; }
 
         public Fixed8 Neo { get; set; }
 

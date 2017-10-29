@@ -3,7 +3,7 @@ using Neo.Core;
 using Neo.Implementations.Wallets.EntityFramework;
 using Neo.Properties;
 
-namespace Neo.UI.Models
+namespace Neo.UI
 {
     public class TransactionItem
     {
@@ -18,8 +18,7 @@ namespace Neo.UI.Models
         public string Type => this.Info == null ? string.Empty : TransactionTypeToString(this.Info.Transaction.Type);
 
         public string Confirmations => this.confirmations > 0
-            ? this.confirmations.ToString()
-                : Strings.Unconfirmed;
+            ? this.confirmations.ToString() : Strings.Unconfirmed;
 
         public void SetConfirmations(int value)
         {
@@ -30,7 +29,6 @@ namespace Neo.UI.Models
 
         private string TransactionTypeToString(TransactionType type)
         {
-            // TODO Localise returned strings
             return type.ToString();
         }
     }
