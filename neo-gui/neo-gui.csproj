@@ -293,6 +293,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="BigDecimal.cs" />
+    <Compile Include="UI\Base\Converters\EnumDescriptionTypeConverter.cs" />
     <Compile Include="UI\Base\Extensions\CollectionExtensions.cs" />
     <Compile Include="UI\Base\Extensions\StringExtensions.cs" />
     <Compile Include="PeerState.cs" />
@@ -340,6 +341,12 @@
     <Compile Include="UI\Base\Helpers\ColorHelper.cs" />
     <Compile Include="UI\Base\Helpers\TransactionHelper.cs" />
     <Compile Include="UI\Base\Helpers\WindowHelper.cs" />
+    <Compile Include="UI\Base\Localization\LocalizedDescriptionAttribute.cs" />
+    <Compile Include="UI\Base\Resources\EnumStrings.Designer.cs">
+      <DependentUpon>EnumStrings.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="UI\Base\Themes\NeoTheme.cs" />
     <Compile Include="UI\Base\Themes\ThemeStyle.cs" />
     <Compile Include="UI\Base\Themes\ThemeHelper.cs" />
@@ -359,6 +366,7 @@
     </Compile>
     <Compile Include="UI\Home\HomeViewModel.cs" />
     <Compile Include="UI\Home\TransactionsViewModel.cs" />
+    <Compile Include="UI\AccountType.cs" />
     <Compile Include="UI\TxOutListBox.xaml.cs">
       <DependentUpon>TxOutListBox.xaml</DependentUpon>
     </Compile>
@@ -378,9 +386,9 @@
     <Compile Include="UI\Contracts\DeployContractViewModel.cs" />
     <Compile Include="UI\Contracts\ParametersEditorViewModel.cs" />
     <Compile Include="UI\Messages\UpdateApplicationMessage.cs" />
-    <Compile Include="UI\Models\AccountItem.cs" />
-    <Compile Include="UI\Models\AssetItem.cs" />
-    <Compile Include="UI\Models\TransactionItem.cs" />
+    <Compile Include="UI\AccountItem.cs" />
+    <Compile Include="UI\AssetItem.cs" />
+    <Compile Include="UI\TransactionItem.cs" />
     <Compile Include="UI\Base\Controls\NeoWindow.cs" />
     <Compile Include="UI\Base\MVVM\EventAggregator.cs" />
     <Compile Include="UI\Base\MVVM\IHandle.cs" />
@@ -521,6 +529,17 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Strings.zh-Hans.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Base\Resources\EnumStrings.es-Es.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Base\Resources\EnumStrings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>EnumStrings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Base\Resources\EnumStrings.zh-Hans.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="config.testnet.json">

@@ -27,7 +27,6 @@ using Neo.UI.Base.MVVM;
 using Neo.UI.Contracts;
 using Neo.UI.Development;
 using Neo.UI.Messages;
-using Neo.UI.Models;
 using Neo.UI.Options;
 using Neo.UI.Transactions;
 using Neo.UI.Updater;
