@@ -349,6 +349,8 @@
     <Compile Include="UI\Base\Messages\IMessageAggregator.cs" />
     <Compile Include="UI\Base\Messages\IMessageHandler.cs" />
     <Compile Include="UI\Base\Messages\MessageAggregator.cs" />
+    <Compile Include="UI\Base\MVVM\ILoadable.cs" />
+    <Compile Include="UI\Base\MVVM\IUnloadable.cs" />
     <Compile Include="UI\Base\Themes\NeoTheme.cs" />
     <Compile Include="UI\Base\Themes\ThemeStyle.cs" />
     <Compile Include="UI\Base\Themes\ThemeHelper.cs" />

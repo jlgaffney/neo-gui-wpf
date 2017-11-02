@@ -39,6 +39,7 @@ namespace Neo.UI.Home
 {
     public class HomeViewModel : 
         ViewModelBase,
+        ILoadable,
         IHandle<UpdateApplicationMessage>,
         IMessageHandler<UpdateApplicationMessage>
     {
@@ -339,7 +340,7 @@ namespace Neo.UI.Home
             blockchain.VerifyBlocks = true;
         }
 
-        public void Load()
+        private void Load()
         {
             Task.Run(() =>
             {
@@ -909,6 +910,11 @@ namespace Neo.UI.Home
 
         public void HandleMessage(UpdateApplicationMessage message)
         {
+        }
+
+        public void OnLoad()
+        {
+            this.Load();
         }
     }
 }

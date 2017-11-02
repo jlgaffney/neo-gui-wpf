@@ -12,7 +12,6 @@
     Title="neo-gui" 
     Height="520" 
     Width="740"
-    Loaded="Window_Loaded" 
     Closing="Window_Closing">
 
     <controls:NeoWindow.InputBindings>

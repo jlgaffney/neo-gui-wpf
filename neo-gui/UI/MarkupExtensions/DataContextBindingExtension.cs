@@ -40,6 +40,11 @@ namespace Neo.UI.MarkupExtensions
             var viewModelInstance = ApplicationContext.Instance.ContainerLifetimeScope
                 .Resolve<ViewModelBase>(new NamedParameter("ViewModel", this.ViewModel));
 
+            if (viewModelInstance is ILoadable loadableViewModel)
+            {
+                loadableViewModel.OnLoad();
+            }
+
             return viewModelInstance;
         }
         #endregion
