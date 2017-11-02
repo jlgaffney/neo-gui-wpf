@@ -1,6 +1,6 @@
 ﻿using Neo.Core;
 
-namespace Neo.UI.Models
+namespace Neo.UI
 {
     public class AssetItem
     {

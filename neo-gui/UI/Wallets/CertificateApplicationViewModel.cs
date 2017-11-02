@@ -9,7 +9,7 @@ using Neo.UI.Base.MVVM;
 
 namespace Neo.UI.Wallets
 {
-    public class CertificateRequestViewModel : ViewModelBase
+    public class CertificateApplicationViewModel : ViewModelBase
     {
         private ECPoint selectedPublicKey;
 
@@ -18,7 +18,7 @@ namespace Neo.UI.Wallets
         private string s;
         private string serialNumber;
 
-        public CertificateRequestViewModel()
+        public CertificateApplicationViewModel()
         {
             this.PublicKeys = ApplicationContext.Instance.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p =>
                 ApplicationContext.Instance.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey).ToArray();

@@ -9,7 +9,7 @@ using Neo.VM;
 
 namespace Neo
 {
-    internal class AssetDescriptor
+    public class AssetDescriptor
     {
         public UIntBase AssetId;
         public string AssetName;

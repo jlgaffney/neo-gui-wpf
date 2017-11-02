@@ -299,6 +299,7 @@
     <Compile Include="BigDecimal.cs" />
     <Compile Include="IApplicationContext.cs" />
     <Compile Include="UI\Base\BaseRegistrationModule.cs" />
+    <Compile Include="UI\Base\Converters\EnumDescriptionTypeConverter.cs" />
     <Compile Include="UI\Base\Extensions\CollectionExtensions.cs" />
     <Compile Include="UI\Base\Extensions\StringExtensions.cs" />
     <Compile Include="PeerState.cs" />
@@ -351,6 +352,12 @@
     <Compile Include="UI\Base\Messages\MessageAggregator.cs" />
     <Compile Include="UI\Base\MVVM\ILoadable.cs" />
     <Compile Include="UI\Base\MVVM\IUnloadable.cs" />
+    <Compile Include="UI\Base\Localization\LocalizedDescriptionAttribute.cs" />
+    <Compile Include="UI\Base\Resources\EnumStrings.Designer.cs">
+      <DependentUpon>EnumStrings.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="UI\Base\Themes\NeoTheme.cs" />
     <Compile Include="UI\Base\Themes\ThemeStyle.cs" />
     <Compile Include="UI\Base\Themes\ThemeHelper.cs" />
@@ -370,6 +377,7 @@
     </Compile>
     <Compile Include="UI\Home\HomeViewModel.cs" />
     <Compile Include="UI\Home\TransactionsViewModel.cs" />
+    <Compile Include="UI\AccountType.cs" />
     <Compile Include="UI\MarkupExtensions\DataContextBindingExtension.cs" />
     <Compile Include="UI\TxOutListBox.xaml.cs">
       <DependentUpon>TxOutListBox.xaml</DependentUpon>
@@ -390,9 +398,9 @@
     <Compile Include="UI\Contracts\DeployContractViewModel.cs" />
     <Compile Include="UI\Contracts\ParametersEditorViewModel.cs" />
     <Compile Include="UI\Messages\UpdateApplicationMessage.cs" />
-    <Compile Include="UI\Models\AccountItem.cs" />
-    <Compile Include="UI\Models\AssetItem.cs" />
-    <Compile Include="UI\Models\TransactionItem.cs" />
+    <Compile Include="UI\AccountItem.cs" />
+    <Compile Include="UI\AssetItem.cs" />
+    <Compile Include="UI\TransactionItem.cs" />
     <Compile Include="UI\Base\Controls\NeoWindow.cs" />
     <Compile Include="UI\Base\MVVM\EventAggregator.cs" />
     <Compile Include="UI\Base\MVVM\IHandle.cs" />
@@ -405,8 +413,8 @@
     <Compile Include="UI\Contracts\InvokeContractViewModel.cs" />
     <Compile Include="UI\Development\ContractParametersViewModel.cs" />
     <Compile Include="UI\Development\TransactionBuilderViewModel.cs" />
-    <Compile Include="UI\Transactions\SignatureView.xaml.cs">
-      <DependentUpon>SignatureView.xaml</DependentUpon>
+    <Compile Include="UI\Transactions\SigningView.xaml.cs">
+      <DependentUpon>SigningView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Transactions\BulkPayView.xaml.cs">
       <DependentUpon>BulkPayView.xaml</DependentUpon>
@@ -416,6 +424,7 @@
       <DependentUpon>PayToView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Transactions\PayToViewModel.cs" />
+    <Compile Include="UI\Transactions\SigningViewModel.cs" />
     <Compile Include="UI\Transactions\SignatureViewModel.cs" />
     <Compile Include="UI\ViewModelsRegistrationModule.cs" />
     <Compile Include="UI\Voting\ElectionViewModel.cs" />
@@ -426,7 +435,7 @@
     <Compile Include="UI\Wallets\TradeVerificationView.xaml.cs">
       <DependentUpon>TradeVerificationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Wallets\CertificateRequestViewModel.cs" />
+    <Compile Include="UI\Wallets\CertificateApplicationViewModel.cs" />
     <Compile Include="UI\Wallets\ClaimViewModel.cs" />
     <Compile Include="UI\Wallets\ChangePasswordViewModel.cs" />
     <Compile Include="UI\Accounts\ViewPrivateKeyViewModel.cs" />
@@ -464,8 +473,8 @@
     <Compile Include="UI\Voting\ElectionView.xaml.cs">
       <DependentUpon>ElectionView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Wallets\CertificateRequestView.xaml.cs">
-      <DependentUpon>CertificateRequestView.xaml</DependentUpon>
+    <Compile Include="UI\Wallets\CertificateApplicationView.xaml.cs">
+      <DependentUpon>CertificateApplicationView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Wallets\ChangePasswordView.xaml.cs">
       <DependentUpon>ChangePasswordView.xaml</DependentUpon>
@@ -529,11 +538,22 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Strings.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Strings.zh-Hans.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Base\Resources\EnumStrings.es-Es.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Base\Resources\EnumStrings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>EnumStrings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Base\Resources\EnumStrings.zh-Hans.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="config.testnet.json">
@@ -735,7 +755,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\Transactions\SignatureView.xaml">
+    <Page Include="UI\Transactions\SigningView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -755,7 +775,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Wallets\CertificateRequestView.xaml">
+    <Page Include="UI\Wallets\CertificateApplicationView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

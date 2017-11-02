@@ -16,18 +16,9 @@ namespace Neo.UI.Home
             this.viewModel = this.DataContext as HomeViewModel;
         }
 
-        //private void Window_Loaded(object sender, RoutedEventArgs e)
-        //{
-        //    if (this.viewModel == null) return;
-
-        //    this.viewModel.Load();
-        //}
-
         public void Window_Closing(object sender, CancelEventArgs e)
         {
-            if (this.viewModel == null) return;
-
-            this.viewModel.Close();
+            this.viewModel?.Close();
         }
     }
 }

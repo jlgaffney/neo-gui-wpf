@@ -2,7 +2,7 @@
 
 namespace Neo
 {
-    internal struct BigDecimal
+    public struct BigDecimal
     {
         private readonly BigInteger value;
         private readonly byte decimals;
@@ -18,9 +18,11 @@ namespace Neo
 
         public override string ToString()
         {
-            BigInteger divisor = BigInteger.Pow(10, decimals);
-            BigInteger result = BigInteger.DivRem(value, divisor, out BigInteger remainder);
-            if (remainder == 0) return result.ToString();
+            var divisor = BigInteger.Pow(10, decimals);
+            var result = BigInteger.DivRem(value, divisor, out var remainder);
+
+            if (remainder == BigInteger.Zero) return result.ToString();
+
             return $"{result}.{remainder.ToString("d" + decimals)}".TrimEnd('0');
         }
     }

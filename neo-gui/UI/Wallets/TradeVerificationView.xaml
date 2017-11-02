@@ -4,7 +4,8 @@
         xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
         xmlns:local="clr-namespace:Neo.UI.Wallets"
         xmlns:ui="clr-namespace:Neo.UI"
-        Title="Transaction Verification"
+        xmlns:properties="clr-namespace:Neo.Properties"
+        Title="{x:Static properties:Strings.TransactionVerificationTitle}"
         Width="600" Height="500" ResizeMode="NoResize">
     <controls:NeoWindow.DataContext>
         <local:TradeVerificationViewModel />
@@ -16,13 +17,13 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <GroupBox Grid.Row="0" Header="Assets you will acquire" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <GroupBox Grid.Row="0" Header="{x:Static properties:Strings.AssetsYouWillAcquire}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <ui:TxOutListBox Items="{Binding Items}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </GroupBox>
 
         <DockPanel Grid.Row="1" Margin="0 8 0 0" HorizontalAlignment="Right" VerticalAlignment="Stretch">
-            <Button Content="Accept" Width="70" Margin="0 0 8 0" Command="{Binding AcceptCommand}" />
-            <Button Content="Refuse" Width="70" Command="{Binding RefuseCommand}" />
+            <Button Content="{x:Static properties:Strings.Accept}" Width="70" Margin="0 0 8 0" Command="{Binding AcceptCommand}" />
+            <Button Content="{x:Static properties:Strings.Refuse}" Width="70" Command="{Binding RefuseCommand}" />
         </DockPanel>
     </Grid>
 </controls:NeoWindow>

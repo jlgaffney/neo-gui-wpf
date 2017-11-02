@@ -23,8 +23,8 @@ namespace Neo.UI.Assets
 
         private string name;
 
-        private bool cappedBool;
-        private string cappedString;
+        private bool totalIsLimited;
+        private string totalLimit;
 
         private int precision = 8;
 
@@ -136,33 +136,33 @@ namespace Neo.UI.Assets
             }
         }
 
-        public bool CappedBool
+        public bool TotalIsLimited
         {
-            get => this.cappedBool;
+            get => this.totalIsLimited;
             set
             {
-                if (this.cappedBool == value) return;
+                if (this.totalIsLimited == value) return;
 
-                this.cappedBool = value;
+                this.totalIsLimited = value;
 
                 NotifyPropertyChanged();
 
                 // Update dependent properties
-                NotifyPropertyChanged(nameof(this.CappedString));
+                NotifyPropertyChanged(nameof(this.TotalLimit));
                 NotifyPropertyChanged(nameof(this.OkEnabled));
 
                 CheckForm();
             }
         }
 
-        public string CappedString
+        public string TotalLimit
         {
-            get => this.cappedString;
+            get => this.totalLimit;
             set
             {
-                if (this.cappedString == value) return;
+                if (this.totalLimit == value) return;
 
-                this.cappedString = value;
+                this.totalLimit = value;
 
                 NotifyPropertyChanged();
 
@@ -189,7 +189,7 @@ namespace Neo.UI.Assets
         public bool OkEnabled => 
             this.SelectedAssetType != null &&
             !string.IsNullOrEmpty(this.Name) &&
-            (!this.CappedBool || !string.IsNullOrEmpty(this.CappedString)) &&
+            (!this.TotalIsLimited || !string.IsNullOrEmpty(this.TotalLimit)) &&
             this.SelectedOwner != null &&
             !string.IsNullOrWhiteSpace(this.SelectedAdmin) &&
             !string.IsNullOrWhiteSpace(this.SelectedIssuer) &&
@@ -210,7 +210,7 @@ namespace Neo.UI.Assets
             var formattedName = !string.IsNullOrWhiteSpace(this.Name)
                 ? $"[{{\"lang\":\"{CultureInfo.CurrentCulture.Name}\",\"name\":\"{this.Name}\"}}]"
                 : string.Empty;
-            var amount = this.CappedBool ? Fixed8.Parse(this.CappedString) : -Fixed8.Satoshi;
+            var amount = this.TotalIsLimited ? Fixed8.Parse(this.TotalLimit) : -Fixed8.Satoshi;
             var precisionByte = (byte) this.Precision;
             var owner = this.SelectedOwner;
             var admin = Wallet.ToScriptHash(this.SelectedAdmin);

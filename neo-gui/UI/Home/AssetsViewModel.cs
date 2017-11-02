@@ -12,7 +12,6 @@ using Neo.Properties;
 using Neo.SmartContract;
 using Neo.UI.Base.Helpers;
 using Neo.UI.Base.MVVM;
-using Neo.UI.Models;
 using Neo.VM;
 using Neo.Wallets;
 

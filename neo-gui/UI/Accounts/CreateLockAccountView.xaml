@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
         xmlns:local="clr-namespace:Neo.UI.Accounts"
-        Title="Create Lock Account" Width="450"
+        xmlns:properties="clr-namespace:Neo.Properties"
+        Title="{x:Static properties:Strings.CreateLockAccountTitle}" Width="450"
         SizeToContent="Height" ResizeMode="NoResize">
     <controls:NeoWindow.DataContext>
         <local:CreateLockAccountViewModel />
@@ -21,10 +22,10 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Label Grid.Row="0" Grid.Column="0" Content="Account:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <Label Grid.Row="0" Grid.Column="0" Content="{x:Static properties:Strings.Account}" HorizontalAlignment="Right" VerticalAlignment="Center" />
         <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Accounts}" SelectedItem="{Binding SelectedAccount}" Margin="0 4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-        
-        <Label Grid.Row="1" Grid.Column="0" Content="Unlock Date:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+
+        <Label Grid.Row="1" Grid.Column="0" Content="{x:Static properties:Strings.UnlockDate}" HorizontalAlignment="Right" VerticalAlignment="Center" />
         <Grid Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -42,8 +43,8 @@
         </Grid>
 
         <DockPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Stretch" Margin="0 8 0 0">
-            <Button Content="Create" Width="60" Margin="0 8 8 0" Command="{Binding CreateCommand}" IsEnabled="{Binding CreateEnabled}" />
-            <Button Content="Cancel" Width="60" Margin="0 8 0 0" Command="{Binding CancelCommand}" />
+            <Button Content="{x:Static properties:Strings.Create}" Width="60" Margin="0 8 8 0" Command="{Binding CreateCommand}" IsEnabled="{Binding CreateEnabled}" />
+            <Button Content="{x:Static properties:Strings.Cancel}" Width="60" Margin="0 8 0 0" Command="{Binding CancelCommand}" />
         </DockPanel>
     </Grid>
 </controls:NeoWindow>

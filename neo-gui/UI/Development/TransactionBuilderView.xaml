@@ -2,7 +2,8 @@
             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
             xmlns:developmentControls="clr-namespace:Neo.UI.Base.Controls.Development"
-            xmlns:local="clr-namespace:Neo.UI.Development">
+            xmlns:local="clr-namespace:Neo.UI.Development"
+            xmlns:properties="clr-namespace:Neo.Properties">
     <Grid.DataContext>
         <local:TransactionBuilderViewModel />
     </Grid.DataContext>
@@ -22,9 +23,9 @@
     <developmentControls:TransactionPropertyGrid Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TransactionWrapper="{Binding TransactionWrapper}" />
 
     <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Orientation="Vertical" IsEnabled="{Binding SidePanelEnabled}" Margin="10 0 0 0" VerticalAlignment="Bottom">
-        <Button Content="Transaction Remark" Margin="0 0 0 8" Padding="12 2" Command="{Binding TransactionRemarkCommand}" />
-        <Button Content="Setup Outputs" Margin="0 0 0 8" Padding="12 2" Command="{Binding SetupOutputsCommand}" IsEnabled="{Binding SetupOutputsEnabled}" />
-        <Button Content="Find Unspent Coins" Margin="0 0 0 8" Padding="12 2" Command="{Binding FindUnspentCoinsCommand}" IsEnabled="{Binding FindUnspentCoinsEnabled}" />
-        <Button Content="Get Parameters Context" Padding="12 2" Command="{Binding GetParametersContextCommand}" />
+        <Button Content="{x:Static properties:Strings.TransactionRemark}" Margin="0 0 0 8" Padding="12 2" Command="{Binding TransactionRemarkCommand}" />
+        <Button Content="{x:Static properties:Strings.SetupOutputs}" Margin="0 0 0 8" Padding="12 2" Command="{Binding SetupOutputsCommand}" IsEnabled="{Binding SetupOutputsEnabled}" />
+        <Button Content="{x:Static properties:Strings.FindUnspentCoins}" Margin="0 0 0 8" Padding="12 2" Command="{Binding FindUnspentCoinsCommand}" IsEnabled="{Binding FindUnspentCoinsEnabled}" />
+        <Button Content="{x:Static properties:Strings.GetParametersContext}" Padding="12 2" Command="{Binding GetParametersContextCommand}" />
     </StackPanel>
 </Grid>

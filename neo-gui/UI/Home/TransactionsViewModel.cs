@@ -5,7 +5,6 @@ using System.Windows.Input;
 using Neo.Core;
 using Neo.Implementations.Wallets.EntityFramework;
 using Neo.UI.Base.MVVM;
-using Neo.UI.Models;
 
 namespace Neo.UI.Home
 {

@@ -23,7 +23,7 @@ namespace Neo.UI.Transactions
             this.Assets = new ObservableCollection<AssetDescriptor>();
         }
 
-        internal ObservableCollection<AssetDescriptor> Assets { get; }
+        public ObservableCollection<AssetDescriptor> Assets { get; }
 
         public bool AssetSelectionEnabled
         {
@@ -38,7 +38,7 @@ namespace Neo.UI.Transactions
             }
         }
 
-        internal AssetDescriptor SelectedAsset
+        public AssetDescriptor SelectedAsset
         {
             get => this.selectedAsset;
             set

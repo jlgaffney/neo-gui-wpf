@@ -14,7 +14,6 @@ using Neo.UI.Base.Dialogs;
 using Neo.UI.Base.Helpers;
 using Neo.UI.Base.MVVM;
 using Neo.UI.Contracts;
-using Neo.UI.Models;
 using Neo.UI.Voting;
 using Neo.Wallets;
 
@@ -112,9 +111,6 @@ namespace Neo.UI.Home
         }
 
 
-
-
-
         internal void AddAddress(UInt160 scriptHash, bool selected = false)
         {
             var address = Wallet.ToAddress(scriptHash);
@@ -122,10 +118,10 @@ namespace Neo.UI.Home
 
             if (item == null)
             {
-                //var group = this.Accounts.Groups["watchOnlyGroup"];
                 item = new AccountItem
                 {
                     Address = address,
+                    Type = AccountType.WatchOnly,
                     Neo = Fixed8.Zero,
                     Gas = Fixed8.Zero
                 };
@@ -148,10 +144,10 @@ namespace Neo.UI.Home
 
             if (item == null)
             {
-                //var group = contract.IsStandard ? this.Accounts.Groups["standardContractGroup"] : this.Accounts.Groups["nonstandardContractGroup"];
                 item = new AccountItem
                 {
                     Address = contract.Address,
+                    Type = contract.IsStandard ? AccountType.Standard : AccountType.NonStandard,
                     Neo = Fixed8.Zero,
                     Gas = Fixed8.Zero,
                     Contract = contract

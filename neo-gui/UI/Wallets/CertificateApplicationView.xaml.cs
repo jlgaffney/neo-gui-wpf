@@ -1,8 +1,8 @@
 ﻿namespace Neo.UI.Wallets
 {
-    public partial class CertificateRequestView
+    public partial class CertificateApplicationView
     {
-        public CertificateRequestView()
+        public CertificateApplicationView()
         {
             InitializeComponent();
         }
