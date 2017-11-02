@@ -425,7 +425,6 @@
     </Compile>
     <Compile Include="UI\Transactions\PayToViewModel.cs" />
     <Compile Include="UI\Transactions\SigningViewModel.cs" />
-    <Compile Include="UI\Transactions\SignatureViewModel.cs" />
     <Compile Include="UI\ViewModelsRegistrationModule.cs" />
     <Compile Include="UI\Voting\ElectionViewModel.cs" />
     <Compile Include="UI\Voting\VotingViewModel.cs" />
