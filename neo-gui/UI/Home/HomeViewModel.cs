@@ -32,11 +32,15 @@ using Neo.UI.Transactions;
 using Neo.UI.Updater;
 using Neo.UI.Wallets;
 using Neo.UI.Voting;
+using Neo.UI.Base.Messages;
 
 namespace Neo.UI.Home
 {
-    public class HomeViewModel : ViewModelBase,
-        IHandle<UpdateApplicationMessage>
+    public class HomeViewModel : 
+        ViewModelBase,
+        ILoadable,
+        IHandle<UpdateApplicationMessage>,
+        IMessageHandler<UpdateApplicationMessage>
     {
         private bool balanceChanged = false;
 
@@ -53,18 +57,21 @@ namespace Neo.UI.Home
         private Timer uiUpdateTimer;
         private readonly object uiUpdateTimerLock = new object();
 
-        public HomeViewModel()
+        #region Constructor 
+        public HomeViewModel(IMessageAggregator messageAggregator)
         {
             this.AccountsViewModel = new AccountsViewModel(this.SetBalanceChangedAction);
             this.AssetsViewModel = new AssetsViewModel();
             this.TransactionsViewModel = new TransactionsViewModel();
 
+            messageAggregator.Subscribe(this);
             EventAggregator.Current.Subscribe(this);
 
             this.SetupUIUpdateTimer();
 
             this.StartUIUpdateTimer();
         }
+        #endregion
 
         private Action SetBalanceChangedAction
         {
@@ -85,7 +92,7 @@ namespace Neo.UI.Home
 
         public TransactionsViewModel TransactionsViewModel { get; }
 
-        public bool WalletIsOpen => App.CurrentWallet != null;
+        public bool WalletIsOpen => ApplicationContext.Instance.CurrentWallet != null;
 
         public string BlockHeight => $"{Blockchain.Default.Height}/{Blockchain.Default.HeaderHeight}";
         public int NodeCount => Program.LocalNode.RemoteNodeCount;
@@ -206,11 +213,11 @@ namespace Neo.UI.Home
         private void Blockchain_PersistCompleted(object sender, Block block)
         {
             this.persistenceTime = DateTime.UtcNow;
-            if (App.CurrentWallet != null)
+            if (ApplicationContext.Instance.CurrentWallet != null)
             {
                 this.checkNep5Balance = true;
 
-                var coins = App.CurrentWallet.GetCoins();
+                var coins = ApplicationContext.Instance.CurrentWallet.GetCoins();
                 if (coins.Any(coin => !coin.State.HasFlag(CoinState.Spent) &&
                     coin.Output.AssetId.Equals(Blockchain.GoverningToken.Hash)))
                 {
@@ -222,39 +229,39 @@ namespace Neo.UI.Home
 
         private void ChangeWallet(UserWallet wallet)
         {
-            if (App.CurrentWallet != null)
+            if (ApplicationContext.Instance.CurrentWallet != null)
             {
                 // Dispose current wallet
-                App.CurrentWallet.BalanceChanged -= CurrentWallet_BalanceChanged;
-                App.CurrentWallet.TransactionsChanged -= CurrentWallet_TransactionsChanged;
-                App.CurrentWallet.Dispose();
+                ApplicationContext.Instance.CurrentWallet.BalanceChanged -= CurrentWallet_BalanceChanged;
+                ApplicationContext.Instance.CurrentWallet.TransactionsChanged -= CurrentWallet_TransactionsChanged;
+                ApplicationContext.Instance.CurrentWallet.Dispose();
             }
 
             this.AccountsViewModel.Accounts.Clear();
             this.AssetsViewModel.Assets.Clear();
             this.TransactionsViewModel.Transactions.Clear();
 
-            App.CurrentWallet = wallet;
+            ApplicationContext.Instance.CurrentWallet = wallet;
 
-            if (App.CurrentWallet != null)
+            if (ApplicationContext.Instance.CurrentWallet != null)
             {
                 // Setup wallet
-                var transactions = App.CurrentWallet.LoadTransactions();
+                var transactions = ApplicationContext.Instance.CurrentWallet.LoadTransactions();
 
                 CurrentWallet_TransactionsChanged(transactions);
-                App.CurrentWallet.BalanceChanged += CurrentWallet_BalanceChanged;
-                App.CurrentWallet.TransactionsChanged += CurrentWallet_TransactionsChanged;
+                ApplicationContext.Instance.CurrentWallet.BalanceChanged += CurrentWallet_BalanceChanged;
+                ApplicationContext.Instance.CurrentWallet.TransactionsChanged += CurrentWallet_TransactionsChanged;
             }
 
             this.AccountsViewModel.UpdateMenuItemsEnabled();
             NotifyPropertyChanged(nameof(this.WalletIsOpen));
 
-            if (App.CurrentWallet != null)
+            if (ApplicationContext.Instance.CurrentWallet != null)
             {
                 // Load accounts
-                foreach (var scriptHash in App.CurrentWallet.GetAddresses())
+                foreach (var scriptHash in ApplicationContext.Instance.CurrentWallet.GetAddresses())
                 {
-                    var contract = App.CurrentWallet.GetContract(scriptHash);
+                    var contract = ApplicationContext.Instance.CurrentWallet.GetContract(scriptHash);
                     if (contract == null)
                     {
                         this.AccountsViewModel.AddAddress(scriptHash);
@@ -335,7 +342,7 @@ namespace Neo.UI.Home
             blockchain.VerifyBlocks = true;
         }
 
-        public void Load()
+        private void Load()
         {
             Task.Run(() =>
             {
@@ -446,7 +453,7 @@ namespace Neo.UI.Home
 
         private void UpdateBalances(TimeSpan persistenceSpan)
         {
-            if (App.CurrentWallet == null) return;
+            if (ApplicationContext.Instance.CurrentWallet == null) return;
 
             this.UpdateAssetBalances();
 
@@ -456,12 +463,12 @@ namespace Neo.UI.Home
         
         private void UpdateAssetBalances()
         {
-            if (App.CurrentWallet.WalletHeight > Blockchain.Default.Height + 1) return;
+            if (ApplicationContext.Instance.CurrentWallet.WalletHeight > Blockchain.Default.Height + 1) return;
 
             if (balanceChanged)
             {
-                var coins = App.CurrentWallet?.GetCoins().Where(p => !p.State.HasFlag(CoinState.Spent)) ?? Enumerable.Empty<Coin>();
-                var bonus_available = Blockchain.CalculateBonus(App.CurrentWallet.GetUnclaimedCoins().Select(p => p.Reference));
+                var coins = ApplicationContext.Instance.CurrentWallet?.GetCoins().Where(p => !p.State.HasFlag(CoinState.Spent)) ?? Enumerable.Empty<Coin>();
+                var bonus_available = Blockchain.CalculateBonus(ApplicationContext.Instance.CurrentWallet.GetUnclaimedCoins().Select(p => p.Reference));
                 var bonus_unavailable = Blockchain.CalculateBonus(coins.Where(p => p.State.HasFlag(CoinState.Confirmed) && p.Output.AssetId.Equals(Blockchain.GoverningToken.Hash)).Select(p => p.Reference), Blockchain.Default.Height + 1);
                 var bonus = bonus_available + bonus_unavailable;
                 var assets = coins.GroupBy(p => p.Output.AssetId, (k, g) => new
@@ -588,7 +595,7 @@ namespace Neo.UI.Home
             if (persistenceSpan <= TimeSpan.FromSeconds(2)) return;
 
             // Update balances
-            var addresses = App.CurrentWallet.GetAddresses().ToArray();
+            var addresses = ApplicationContext.Instance.CurrentWallet.GetAddresses().ToArray();
             foreach (var s in Settings.Default.NEP5Watched)
             {
                 var script_hash = UInt160.Parse(s);
@@ -722,7 +729,7 @@ namespace Neo.UI.Home
         {
             this.AssetsViewModel.Assets.Clear();
             this.TransactionsViewModel.Transactions.Clear();
-            App.CurrentWallet.Rebuild();
+            ApplicationContext.Instance.CurrentWallet.Rebuild();
         }
 
         private void RestoreAccounts()
@@ -736,7 +743,7 @@ namespace Neo.UI.Home
 
             foreach (var contract in contracts)
             {
-                App.CurrentWallet.AddContract(contract);
+                ApplicationContext.Instance.CurrentWallet.AddContract(contract);
                 this.AccountsViewModel.AddContract(contract, true);
             }
         }
@@ -902,6 +909,15 @@ namespace Neo.UI.Home
             var dialog = new UpdateView();
 
             dialog.ShowDialog();
+        }
+
+        public void HandleMessage(UpdateApplicationMessage message)
+        {
+        }
+
+        public void OnLoad()
+        {
+            this.Load();
         }
     }
 }

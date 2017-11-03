@@ -35,9 +35,9 @@ namespace Neo.UI.Assets
         public AssetRegistrationViewModel()
         {
             this.AssetTypes = new ObservableCollection<AssetType>(assetTypes);
-            this.Owners = new ObservableCollection<ECPoint>(App.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p => App.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey));
-            this.Admins = new ObservableCollection<string>(App.CurrentWallet.GetContracts().Select(p => p.Address));
-            this.Issuers = new ObservableCollection<string>(App.CurrentWallet.GetContracts().Select(p => p.Address));
+            this.Owners = new ObservableCollection<ECPoint>(ApplicationContext.Instance.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p => ApplicationContext.Instance.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey));
+            this.Admins = new ObservableCollection<string>(ApplicationContext.Instance.CurrentWallet.GetContracts().Select(p => p.Address));
+            this.Issuers = new ObservableCollection<string>(ApplicationContext.Instance.CurrentWallet.GetContracts().Select(p => p.Address));
         }
 
         public ObservableCollection<AssetType> AssetTypes { get; }

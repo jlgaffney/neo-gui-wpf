@@ -20,8 +20,8 @@ namespace Neo.UI.Accounts
         public ImportCustomContractViewModel()
         {
             this.RelatedAccounts = new ObservableCollection<ECPoint>(
-                App.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p =>
-                    App.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey));
+                ApplicationContext.Instance.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p =>
+                    ApplicationContext.Instance.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey));
         }
 
         public ObservableCollection<ECPoint> RelatedAccounts { get; }

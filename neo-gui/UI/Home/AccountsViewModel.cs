@@ -56,7 +56,7 @@ namespace Neo.UI.Home
             }
         }
 
-        public bool MenuItemsEnabled => App.CurrentWallet != null;
+        public bool MenuItemsEnabled => ApplicationContext.Instance.CurrentWallet != null;
 
         public void UpdateMenuItemsEnabled()
         {
@@ -166,8 +166,8 @@ namespace Neo.UI.Home
         private void CreateNewKey()
         {
             this.SelectedAccount = null;
-            var key = App.CurrentWallet.CreateKey();
-            foreach (var contract in App.CurrentWallet.GetContracts(key.PublicKeyHash))
+            var key = ApplicationContext.Instance.CurrentWallet.CreateKey();
+            foreach (var contract in ApplicationContext.Instance.CurrentWallet.GetContracts(key.PublicKeyHash))
             {
                 AddContract(contract, true);
             }
@@ -194,14 +194,14 @@ namespace Neo.UI.Home
                 KeyPair key;
                 try
                 {
-                    key = App.CurrentWallet.Import(wif);
+                    key = ApplicationContext.Instance.CurrentWallet.Import(wif);
                 }
                 catch (FormatException)
                 {
                     // Skip WIF line
                     continue;
                 }
-                foreach (var contract in App.CurrentWallet.GetContracts(key.PublicKeyHash))
+                foreach (var contract in ApplicationContext.Instance.CurrentWallet.GetContracts(key.PublicKeyHash))
                 {
                     AddContract(contract, true);
                 }
@@ -220,7 +220,7 @@ namespace Neo.UI.Home
             KeyPair key;
             try
             {
-                key = App.CurrentWallet.Import(view.SelectedCertificate);
+                key = ApplicationContext.Instance.CurrentWallet.Import(view.SelectedCertificate);
             }
             catch
             {
@@ -228,7 +228,7 @@ namespace Neo.UI.Home
                 return;
             }
 
-            foreach (var contract in App.CurrentWallet.GetContracts(key.PublicKeyHash))
+            foreach (var contract in ApplicationContext.Instance.CurrentWallet.GetContracts(key.PublicKeyHash))
             {
                 AddContract(contract, true);
             }
@@ -257,7 +257,7 @@ namespace Neo.UI.Home
                     {
                         continue;
                     }
-                    App.CurrentWallet.AddWatchOnly(scriptHash);
+                    ApplicationContext.Instance.CurrentWallet.AddWatchOnly(scriptHash);
                     AddAddress(scriptHash, true);
                 }
             }
@@ -272,7 +272,7 @@ namespace Neo.UI.Home
 
             if (contract == null) return;
 
-            App.CurrentWallet.AddContract(contract);
+            ApplicationContext.Instance.CurrentWallet.AddContract(contract);
             this.SelectedAccount = null;
             AddContract(contract, true);
         }
@@ -286,7 +286,7 @@ namespace Neo.UI.Home
 
             if (contract == null) return;
 
-            App.CurrentWallet.AddContract(contract);
+            ApplicationContext.Instance.CurrentWallet.AddContract(contract);
             this.SelectedAccount = null;
             AddContract(contract, true);
         }
@@ -300,7 +300,7 @@ namespace Neo.UI.Home
 
             if (contract == null) return;
 
-            App.CurrentWallet.AddContract(contract);
+            ApplicationContext.Instance.CurrentWallet.AddContract(contract);
             this.SelectedAccount = null;
             AddContract(contract, true);
         }
@@ -310,7 +310,7 @@ namespace Neo.UI.Home
             if (this.SelectedAccount?.Contract == null) return;
 
             var contract = this.SelectedAccount.Contract;
-            var key = App.CurrentWallet.GetKeyByScriptHash(contract.ScriptHash);
+            var key = ApplicationContext.Instance.CurrentWallet.GetKeyByScriptHash(contract.ScriptHash);
 
             var view = new ViewPrivateKeyView(key, contract.ScriptHash);
             view.ShowDialog();
@@ -373,7 +373,7 @@ namespace Neo.UI.Home
                 ? accountToDelete.ScriptHash
                 : accountToDelete.Contract.ScriptHash;
 
-            App.CurrentWallet.DeleteAddress(scriptHash);
+            ApplicationContext.Instance.CurrentWallet.DeleteAddress(scriptHash);
             this.Accounts.Remove(accountToDelete);
 
             this.setBalanceChangedAction();

@@ -181,7 +181,7 @@ namespace Neo.UI.Contracts
 
             var transactionFee = this.transaction.Gas.Equals(Fixed8.Zero) ? NetworkFee : Fixed8.Zero;
 
-            return App.CurrentWallet.MakeTransaction(new InvocationTransaction
+            return ApplicationContext.Instance.CurrentWallet.MakeTransaction(new InvocationTransaction
             {
                 Version = transaction.Version,
                 Script = transaction.Script,

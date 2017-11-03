@@ -156,7 +156,7 @@ namespace Neo.UI.Accounts
 
             foreach (var publicKey in publicKeys)
             {
-                var key = App.CurrentWallet.GetKey(publicKey.EncodePoint(true).ToScriptHash());
+                var key = ApplicationContext.Instance.CurrentWallet.GetKey(publicKey.EncodePoint(true).ToScriptHash());
 
                 if (key == null) continue;
 

@@ -1,5 +1,7 @@
 ﻿using System.Windows;
-using Neo.Implementations.Wallets.EntityFramework;
+using Autofac;
+using Neo.UI;
+using Neo.UI.Base;
 using Neo.UI.Base.Themes;
 
 namespace Neo
@@ -9,8 +11,6 @@ namespace Neo
     /// </summary>
     public partial class App
     {
-        public static UserWallet CurrentWallet;
-
         internal App()
         {
             this.InitializeComponent();
@@ -18,6 +18,13 @@ namespace Neo
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            var autoFacContainerBuilder = new ContainerBuilder();
+            autoFacContainerBuilder.RegisterModule<ViewModelsRegistrationModule>();
+            autoFacContainerBuilder.RegisterModule<BaseRegistrationModule>();
+
+            var container = autoFacContainerBuilder.Build();
+            ApplicationContext.Instance.ContainerLifetimeScope = container.BeginLifetimeScope();
+
             ThemeHelper.LoadTheme();
 
             base.OnStartup(e);

@@ -46,7 +46,7 @@ namespace Neo.UI.Development
 
                 if (this.SelectedScriptHashAddress == string.Empty) return this.parameters;
 
-                if (App.CurrentWallet == null) return this.parameters;
+                if (ApplicationContext.Instance.CurrentWallet == null) return this.parameters;
 
                 var scriptHash = Wallet.ToScriptHash(this.SelectedScriptHashAddress);
 

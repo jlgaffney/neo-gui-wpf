@@ -13,9 +13,9 @@ namespace Neo.UI.Wallets
 
         public RestoreAccountsViewModel()
         {
-            var keys = App.CurrentWallet.GetKeys();
+            var keys = ApplicationContext.Instance.CurrentWallet.GetKeys();
 
-            keys = keys.Where(account => App.CurrentWallet.GetContracts(account.PublicKeyHash).All(contract => !contract.IsStandard));
+            keys = keys.Where(account => ApplicationContext.Instance.CurrentWallet.GetContracts(account.PublicKeyHash).All(contract => !contract.IsStandard));
 
             this.Accounts = new ObservableCollection<SelectableVerificationContract>(keys.Select(p => VerificationContract.CreateSignatureContract(p.PublicKey)).Select(p => new SelectableVerificationContract(this, p)));
         }

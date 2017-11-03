@@ -70,7 +70,7 @@ namespace Neo.UI.Transactions
                 return;
             }
 
-            if (!App.CurrentWallet.Sign(context))
+            if (!ApplicationContext.Instance.CurrentWallet.Sign(context))
             {
                 MessageBox.Show(Strings.SigningFailedKeyNotFoundMessage);
                 return;

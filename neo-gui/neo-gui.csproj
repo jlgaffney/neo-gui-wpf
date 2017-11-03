@@ -59,6 +59,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac, Version=4.6.2.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.4.6.2\lib\net45\Autofac.dll</HintPath>
+    </Reference>
     <Reference Include="MahApps.Metro, Version=1.5.0.23, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.5.0\lib\net45\MahApps.Metro.dll</HintPath>
     </Reference>
@@ -292,7 +295,10 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ApplicationContext.cs" />
     <Compile Include="BigDecimal.cs" />
+    <Compile Include="IApplicationContext.cs" />
+    <Compile Include="UI\Base\BaseRegistrationModule.cs" />
     <Compile Include="UI\Base\Converters\EnumDescriptionTypeConverter.cs" />
     <Compile Include="UI\Base\Extensions\CollectionExtensions.cs" />
     <Compile Include="UI\Base\Extensions\StringExtensions.cs" />
@@ -341,6 +347,11 @@
     <Compile Include="UI\Base\Helpers\ColorHelper.cs" />
     <Compile Include="UI\Base\Helpers\TransactionHelper.cs" />
     <Compile Include="UI\Base\Helpers\WindowHelper.cs" />
+    <Compile Include="UI\Base\Messages\IMessageAggregator.cs" />
+    <Compile Include="UI\Base\Messages\IMessageHandler.cs" />
+    <Compile Include="UI\Base\Messages\MessageAggregator.cs" />
+    <Compile Include="UI\Base\MVVM\ILoadable.cs" />
+    <Compile Include="UI\Base\MVVM\IUnloadable.cs" />
     <Compile Include="UI\Base\Localization\LocalizedDescriptionAttribute.cs" />
     <Compile Include="UI\Base\Resources\EnumStrings.Designer.cs">
       <DependentUpon>EnumStrings.resx</DependentUpon>
@@ -367,6 +378,7 @@
     <Compile Include="UI\Home\HomeViewModel.cs" />
     <Compile Include="UI\Home\TransactionsViewModel.cs" />
     <Compile Include="UI\AccountType.cs" />
+    <Compile Include="UI\MarkupExtensions\DataContextBindingExtension.cs" />
     <Compile Include="UI\TxOutListBox.xaml.cs">
       <DependentUpon>TxOutListBox.xaml</DependentUpon>
     </Compile>
@@ -413,6 +425,7 @@
     </Compile>
     <Compile Include="UI\Transactions\PayToViewModel.cs" />
     <Compile Include="UI\Transactions\SigningViewModel.cs" />
+    <Compile Include="UI\ViewModelsRegistrationModule.cs" />
     <Compile Include="UI\Voting\ElectionViewModel.cs" />
     <Compile Include="UI\Voting\VotingViewModel.cs" />
     <Compile Include="UI\Wallets\TradeView.xaml.cs">
@@ -795,7 +808,6 @@
       <ErrorText>此项目引用这台计算机上缺少的 NuGet 程序包。使用 NuGet 程序包还原可下载这些程序包。有关详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\SQLite.3.13.0\build\net45\SQLite.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SQLite.3.13.0\build\net45\SQLite.props'))" />
-    <Error Condition="!Exists('..\packages\Xamarin.Forms.2.3.4.247\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Xamarin.Forms.2.3.4.247\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets'))" />
   </Target>
   <Import Project="..\packages\Xamarin.Forms.2.3.4.247\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.2.3.4.247\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
