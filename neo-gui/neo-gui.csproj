@@ -299,6 +299,8 @@
     <Compile Include="IApplicationContext.cs" />
     <Compile Include="UI\Base\BaseRegistrationModule.cs" />
     <Compile Include="UI\Base\Converters\EnumDescriptionTypeConverter.cs" />
+    <Compile Include="UI\Base\Dispatching\Dispatcher.cs" />
+    <Compile Include="UI\Base\Dispatching\IDispatcher.cs" />
     <Compile Include="UI\Base\Extensions\CollectionExtensions.cs" />
     <Compile Include="UI\Base\Extensions\StringExtensions.cs" />
     <Compile Include="PeerState.cs" />

@@ -4,16 +4,21 @@ using System.Windows;
 using System.Windows.Input;
 using Neo.Core;
 using Neo.Implementations.Wallets.EntityFramework;
+using Neo.UI.Base.Dispatching;
 using Neo.UI.Base.MVVM;
 
 namespace Neo.UI.Home
 {
     public class TransactionsViewModel : ViewModelBase
     {
+        private readonly IDispatcher dispatcher;
+
         private TransactionItem selectedTransaction;
 
-        public TransactionsViewModel()
+        public TransactionsViewModel(IDispatcher dispatcher)
         {
+            this.dispatcher = dispatcher;
+
             this.Transactions = new ObservableCollection<TransactionItem>();
         }
 
@@ -77,7 +82,7 @@ namespace Neo.UI.Home
             {
                 uint transactionHeight = 0;
 
-                if (item.Info != null && item.Info.Height != null)
+                if (item.Info?.Height != null)
                 {
                     transactionHeight = item.Info.Height.Value;
                 }

@@ -11,6 +11,7 @@ using MahApps.Metro.Controls.Dialogs;
 using Neo.Properties;
 using Neo.UI.Accounts;
 using Neo.UI.Base.Dialogs;
+using Neo.UI.Base.Dispatching;
 using Neo.UI.Base.Helpers;
 using Neo.UI.Base.MVVM;
 using Neo.UI.Contracts;
@@ -21,12 +22,14 @@ namespace Neo.UI.Home
 {
     public class AccountsViewModel : ViewModelBase
     {
+        private readonly IDispatcher dispatcher;
         private readonly Action setBalanceChangedAction;
 
         private AccountItem selectedAccount;
         
-        public AccountsViewModel(Action setBalanceChangedAction)
+        public AccountsViewModel(IDispatcher dispatcher, Action setBalanceChangedAction)
         {
+            this.dispatcher = dispatcher;
             this.setBalanceChangedAction = setBalanceChangedAction;
 
             this.Accounts = new ObservableCollection<AccountItem>();

@@ -22,7 +22,7 @@ namespace Neo.UI.MarkupExtensions
 
         public DataContextBindingExtension(string viewModel)
         {
-            this.ViewModel = ViewModel;
+            this.ViewModel = viewModel;
         }
         #endregion
 
@@ -30,12 +30,9 @@ namespace Neo.UI.MarkupExtensions
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
             var provideValueTarget = serviceProvider.GetService(typeof(IProvideValueTarget)) as IProvideValueTarget;
-            var target = provideValueTarget.TargetObject as FrameworkElement;
+            var target = provideValueTarget?.TargetObject as FrameworkElement;
 
-            if (DesignerProperties.GetIsInDesignMode(target))
-            {
-                return null;
-            }
+            if (target == null || DesignerProperties.GetIsInDesignMode(target)) return null;
 
             var viewModelInstance = ApplicationContext.Instance.ContainerLifetimeScope
                 .Resolve<ViewModelBase>(new NamedParameter("ViewModel", this.ViewModel));

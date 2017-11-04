@@ -22,6 +22,7 @@ using Neo.SmartContract;
 using Neo.VM;
 using Neo.Wallets;
 using Neo.UI.Assets;
+using Neo.UI.Base.Dispatching;
 using Neo.UI.Base.Helpers;
 using Neo.UI.Base.MVVM;
 using Neo.UI.Contracts;
@@ -57,11 +58,11 @@ namespace Neo.UI.Home
         private readonly object uiUpdateTimerLock = new object();
 
         #region Constructor 
-        public HomeViewModel(IMessageAggregator messageAggregator)
+        public HomeViewModel(IMessageAggregator messageAggregator, IDispatcher dispatcher)
         {
-            this.AccountsViewModel = new AccountsViewModel(this.SetBalanceChangedAction);
-            this.AssetsViewModel = new AssetsViewModel();
-            this.TransactionsViewModel = new TransactionsViewModel();
+            this.AccountsViewModel = new AccountsViewModel(dispatcher, this.SetBalanceChangedAction);
+            this.AssetsViewModel = new AssetsViewModel(dispatcher);
+            this.TransactionsViewModel = new TransactionsViewModel(dispatcher);
 
             messageAggregator.Subscribe(this);
 
