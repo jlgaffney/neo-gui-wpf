@@ -171,8 +171,8 @@
     <Reference Include="Microsoft.Win32.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Win32.Primitives.4.3.0\lib\net46\Microsoft.Win32.Primitives.dll</HintPath>
     </Reference>
-    <Reference Include="Neo, Version=2.3.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Neo.2.3.3\lib\net461\Neo.dll</HintPath>
+    <Reference Include="Neo, Version=2.3.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Neo.2.3.5\lib\net461\Neo.dll</HintPath>
     </Reference>
     <Reference Include="Neo.VM, Version=2.0.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Neo.VM.2.0.3\lib\net461\Neo.VM.dll</HintPath>
@@ -296,7 +296,6 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationContext.cs" />
-    <Compile Include="BigDecimal.cs" />
     <Compile Include="IApplicationContext.cs" />
     <Compile Include="UI\Base\BaseRegistrationModule.cs" />
     <Compile Include="UI\Base\Converters\EnumDescriptionTypeConverter.cs" />
@@ -320,7 +319,6 @@
     <Compile Include="Properties\Settings.cs">
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="AssetDescriptor.cs" />
     <Compile Include="UI\Accounts\CreateMultiSigContractView.xaml.cs">
       <DependentUpon>CreateMultiSigContractView.xaml</DependentUpon>
     </Compile>

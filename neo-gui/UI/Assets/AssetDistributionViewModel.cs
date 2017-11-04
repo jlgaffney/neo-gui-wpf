@@ -172,7 +172,7 @@ namespace Neo.UI.Assets
             if (UInt256.TryParse(this.AssetId, out var id))
             {
                 state = Blockchain.Default.GetAssetState(id);
-                this.Asset = new AssetDescriptor(state);
+                this.Asset = new AssetDescriptor(id);
             }
             else
             {

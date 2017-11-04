@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using Neo.UI.Base.Extensions;
+using Neo.Properties;
 using Neo.UI.Base.MVVM;
 using Neo.Wallets;
 
@@ -57,7 +57,8 @@ namespace Neo.UI.Transactions
             }
         }
 
-        public string AssetBalance => this.SelectedAsset?.GetAvailable().ToString();
+        public string AssetBalance => this.SelectedAsset == null ? string.Empty
+            : ApplicationContext.Instance.CurrentWallet.GetAvailable(this.SelectedAsset.AssetId).ToString();
 
         public bool PayToAddressReadOnly
         {
@@ -127,7 +128,7 @@ namespace Neo.UI.Transactions
 
                 if (asset == null) return false;
 
-                if (parsedAmount.GetData() % (long) Math.Pow(10, 8 - asset.Precision) != 0) return false;
+                if (parsedAmount.GetData() % (long) Math.Pow(10, 8 - asset.Decimals) != 0) return false;
 
                 if (parsedAmount == Fixed8.Zero) return false;
 
@@ -150,7 +151,37 @@ namespace Neo.UI.Transactions
             }
             else
             {
-                this.Assets.AddRange(AssetDescriptor.GetAssets());
+                // Add first-class assets to list
+                foreach (var assetId in ApplicationContext.Instance.CurrentWallet.FindUnspentCoins().Select(p => p.Output.AssetId).Distinct())
+                {
+                    this.Assets.Add(new AssetDescriptor(assetId));
+                }
+
+                // Add NEP-5 assets to list
+                foreach (var s in Settings.Default.NEP5Watched)
+                {
+                    UInt160 assetId;
+                    try
+                    {
+                        assetId = UInt160.Parse(s);
+                    }
+                    catch
+                    {
+                        continue;
+                    }
+
+                    AssetDescriptor nep5Asset;
+                    try
+                    {
+                        nep5Asset = new AssetDescriptor(assetId);
+                    }
+                    catch (ArgumentException)
+                    {
+                        continue;
+                    }
+
+                    this.Assets.Add(nep5Asset);
+                }
 
                 this.AssetSelectionEnabled = this.Assets.Any();
             }

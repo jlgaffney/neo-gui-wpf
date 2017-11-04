@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using Neo.UI.Transactions;
+using Neo.Wallets;
 
 namespace Neo.UI
 {
