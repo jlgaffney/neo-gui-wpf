@@ -114,7 +114,7 @@ namespace Neo.UI.Home
         }
 
 
-        internal void AddAddress(UInt160 scriptHash, bool selected = false)
+        internal async void AddAddress(UInt160 scriptHash, bool selected = false)
         {
             var address = Wallet.ToAddress(scriptHash);
             var item = this.GetAccount(address);
@@ -129,19 +129,20 @@ namespace Neo.UI.Home
                     Gas = Fixed8.Zero
                 };
 
-                this.Accounts.Add(item);
+                await this.dispatcher.InvokeOnMainUIThread(() => this.Accounts.Add(item));
             }
 
             this.SelectedAccount = selected ? item : null;
         }
 
-        internal void AddContract(VerificationContract contract, bool selected = false)
+        internal async void AddContract(VerificationContract contract, bool selected = false)
         {
             var item = this.GetAccount(contract.Address);
 
             if (item?.ScriptHash != null)
             {
-                this.Accounts.Remove(item);
+                var account = item;
+                await this.dispatcher.InvokeOnMainUIThread(() => this.Accounts.Remove(account));
                 item = null;
             }
 
@@ -156,7 +157,7 @@ namespace Neo.UI.Home
                     Contract = contract
                 };
 
-                this.Accounts.Add(item);
+                await this.dispatcher.InvokeOnMainUIThread(() => this.Accounts.Add(item));
             }
 
             this.SelectedAccount = selected ? item : null;
@@ -363,7 +364,7 @@ namespace Neo.UI.Home
             catch (ExternalException) { }
         }
 
-        private void DeleteAccount()
+        private async void DeleteAccount()
         {
             if (this.SelectedAccount == null) return;
 
@@ -377,7 +378,7 @@ namespace Neo.UI.Home
                 : accountToDelete.Contract.ScriptHash;
 
             ApplicationContext.Instance.CurrentWallet.DeleteAddress(scriptHash);
-            this.Accounts.Remove(accountToDelete);
+            await this.dispatcher.InvokeOnMainUIThread(() => this.Accounts.Remove(accountToDelete));
 
             this.setBalanceChangedAction();
         }

@@ -27,7 +27,7 @@ namespace Neo.UI
             this.confirmations = value;
         }
 
-        private string TransactionTypeToString(TransactionType type)
+        private static string TransactionTypeToString(TransactionType type)
         {
             return type.ToString();
         }

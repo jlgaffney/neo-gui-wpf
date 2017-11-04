@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Neo.UI.Base.Dispatching
 {
     public interface IDispatcher
     {
-        void DispatchToMainUIThread(Action action);
+        Task InvokeOnMainUIThread(Action action);
     }
 }
