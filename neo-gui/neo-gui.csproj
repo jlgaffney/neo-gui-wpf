@@ -400,8 +400,6 @@
     <Compile Include="UI\AssetItem.cs" />
     <Compile Include="UI\TransactionItem.cs" />
     <Compile Include="UI\Base\Controls\NeoWindow.cs" />
-    <Compile Include="UI\Base\MVVM\EventAggregator.cs" />
-    <Compile Include="UI\Base\MVVM\IHandle.cs" />
     <Compile Include="UI\Base\MVVM\RelayCommand.cs" />
     <Compile Include="UI\Base\MVVM\ViewModelBase.cs" />
     <Compile Include="UI\Accounts\ImportPrivateKeyViewModel.cs" />

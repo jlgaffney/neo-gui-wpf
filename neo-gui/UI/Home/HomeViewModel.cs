@@ -39,7 +39,6 @@ namespace Neo.UI.Home
     public class HomeViewModel :
         ViewModelBase,
         ILoadable,
-        IHandle<UpdateApplicationMessage>,
         IMessageHandler<UpdateApplicationMessage>
     {
         private bool balanceChanged = false;
@@ -65,7 +64,6 @@ namespace Neo.UI.Home
             this.TransactionsViewModel = new TransactionsViewModel();
 
             messageAggregator.Subscribe(this);
-            EventAggregator.Current.Subscribe(this);
 
             this.SetupUIUpdateTimer();
 
@@ -647,16 +645,7 @@ namespace Neo.UI.Home
         }
 
         #endregion UI Update Methods
-
-        public void Handle(UpdateApplicationMessage message)
-        {
-            // Close window
-            this.TryClose();
-
-            // Start update
-            Process.Start(message.UpdateScriptPath);
-        }
-
+        
         #region Main Menu Command Methods
 
         private void CreateWallet()
@@ -927,6 +916,11 @@ namespace Neo.UI.Home
 
         public void HandleMessage(UpdateApplicationMessage message)
         {
+            // Close window
+            this.TryClose();
+
+            // Start update
+            Process.Start(message.UpdateScriptPath);
         }
 
         public void OnLoad()
