@@ -36,7 +36,7 @@ using Neo.UI.Base.Messages;
 
 namespace Neo.UI.Home
 {
-    public class HomeViewModel : 
+    public class HomeViewModel :
         ViewModelBase,
         ILoadable,
         IHandle<UpdateApplicationMessage>,
@@ -94,7 +94,7 @@ namespace Neo.UI.Home
 
         public bool WalletIsOpen => ApplicationContext.Instance.CurrentWallet != null;
 
-        public string BlockHeight => $"{Blockchain.Default.Height}/{Blockchain.Default.HeaderHeight}";
+        public string BlockHeight => $"{GetWalletHeight()}/{Blockchain.Default.Height}/{Blockchain.Default.HeaderHeight}";
         public int NodeCount => Program.LocalNode.RemoteNodeCount;
 
         public bool BlockProgressIndeterminate
@@ -909,6 +909,20 @@ namespace Neo.UI.Home
             var dialog = new UpdateView();
 
             dialog.ShowDialog();
+        }
+
+        private static uint GetWalletHeight()
+        {
+            uint walletHeight = 0;
+
+            if (ApplicationContext.Instance.CurrentWallet != null &&
+                ApplicationContext.Instance.CurrentWallet.WalletHeight > 0)
+            {
+                // Set wallet height
+                walletHeight = ApplicationContext.Instance.CurrentWallet.WalletHeight - 1;
+            }
+
+            return walletHeight;
         }
 
         public void HandleMessage(UpdateApplicationMessage message)
