@@ -11,12 +11,15 @@ using System.Windows.Input;
 using MahApps.Metro.Controls.Dialogs;
 using Neo.UI.Base.Controls;
 using Neo.UI.Base.Dialogs;
+using Neo.UI.Base.Dispatching;
 using Neo.UI.Base.MVVM;
 
 namespace Neo.UI.Wallets
 {
     internal class TradeViewModel : ViewModelBase
     {
+        private readonly IDispatcher dispatcher;
+
         private TradeView view;
 
         private string payToAddress;
@@ -27,8 +30,10 @@ namespace Neo.UI.Wallets
 
         private UInt160 scriptHash;
 
-        public TradeViewModel()
+        public TradeViewModel(IDispatcher dispatcher)
         {
+            this.dispatcher = dispatcher;
+
             this.Items = new ObservableCollection<TxOutListBoxItem>();
         }
 
@@ -57,7 +62,7 @@ namespace Neo.UI.Wallets
                     this.ScriptHash = null;
                 }
 
-                this.Items.Clear();
+                this.dispatcher.InvokeOnMainUIThread(() => this.Items.Clear());
             }
         }
 
@@ -144,9 +149,11 @@ namespace Neo.UI.Wallets
 
         private void Initiate()
         {
+            var txOutputs = this.Items.Select(p => p.ToTxOutput());
+
             var tx = ApplicationContext.Instance.CurrentWallet.MakeTransaction(new ContractTransaction
             {
-                Outputs = this.Items.Select(p => p.ToTxOutput()).ToArray()
+                Outputs = txOutputs.ToArray()
             }, fee: Fixed8.Zero);
 
             this.MyRequest = RequestToJson(tx).ToString();

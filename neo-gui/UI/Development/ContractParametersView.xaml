@@ -1,13 +1,11 @@
 ﻿<Grid x:Class="Neo.UI.Development.ContractParametersView"
             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-            xmlns:local="clr-namespace:Neo.UI.Development"
             xmlns:properties="clr-namespace:Neo.Properties"
+            xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
+            xmlns:development="clr-namespace:Neo.UI.Development"
+            DataContext="{markupExtensions:DataContextBinding ViewModel=development:ContractParametersViewModel}"
             Margin="8">
-    <Grid.DataContext>
-        <local:ContractParametersViewModel />
-    </Grid.DataContext>
-
     <Grid.RowDefinitions>
         <RowDefinition Height="*" />
         <RowDefinition Height="Auto" />

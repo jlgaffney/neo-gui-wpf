@@ -11,7 +11,7 @@ namespace Neo.UI.MarkupExtensions
     {
         #region Public Properties 
         [ConstructorArgument("viewModel")]
-        public string ViewModel { get; set; }
+        public Type ViewModel { get; set; }
         #endregion
 
         #region Constructor 
@@ -20,7 +20,7 @@ namespace Neo.UI.MarkupExtensions
             // NOP
         }
 
-        public DataContextBindingExtension(string viewModel)
+        public DataContextBindingExtension(Type viewModel)
         {
             this.ViewModel = viewModel;
         }
@@ -35,7 +35,7 @@ namespace Neo.UI.MarkupExtensions
             if (target == null || DesignerProperties.GetIsInDesignMode(target)) return null;
 
             var viewModelInstance = ApplicationContext.Instance.ContainerLifetimeScope
-                .Resolve<ViewModelBase>(new NamedParameter("ViewModel", this.ViewModel));
+                .Resolve<ViewModelBase>(new NamedParameter(nameof(this.ViewModel), this.ViewModel));
 
             if (viewModelInstance is ILoadable loadableViewModel)
             {

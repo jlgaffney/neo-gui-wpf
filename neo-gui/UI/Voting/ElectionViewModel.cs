@@ -16,15 +16,13 @@ namespace Neo.UI.Voting
 
         public ElectionViewModel()
         {
-            this.BookKeepers = new ObservableCollection<ECPoint>();
-
             if (ApplicationContext.Instance.CurrentWallet == null) return;
-            
+
             // Load book keepers
             var bookKeepers = ApplicationContext.Instance.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p =>
                 ApplicationContext.Instance.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey);
 
-            this.BookKeepers.AddRange(bookKeepers);
+            this.BookKeepers = new ObservableCollection<ECPoint>(bookKeepers);
         }
 
         public ObservableCollection<ECPoint> BookKeepers { get; }

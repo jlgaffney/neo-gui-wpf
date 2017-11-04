@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using Neo.Properties;
+using Neo.UI.Base.Dispatching;
 using Neo.UI.Base.Extensions;
 using Neo.UI.Base.MVVM;
 using Neo.Wallets;
@@ -11,6 +12,8 @@ namespace Neo.UI.Transactions
 {
     public class BulkPayViewModel : ViewModelBase
     {
+        private readonly IDispatcher dispatcher;
+
         private bool assetSelectionEnabled;
 
         private AssetDescriptor selectedAsset;
@@ -19,8 +22,10 @@ namespace Neo.UI.Transactions
 
         private TxOutListBoxItem[] outputs;
 
-        public BulkPayViewModel()
+        public BulkPayViewModel(IDispatcher dispatcher)
         {
+            this.dispatcher = dispatcher;
+
             this.Assets = new ObservableCollection<AssetDescriptor>();
         }
 
@@ -79,50 +84,54 @@ namespace Neo.UI.Transactions
 
         internal void Load(AssetDescriptor asset = null)
         {
-            this.Assets.Clear();
-
-            if (asset != null)
+            this.dispatcher.InvokeOnMainUIThread(() =>
             {
-                this.Assets.Add(asset);
-                this.SelectedAsset = asset;
-                this.AssetSelectionEnabled = false;
-            }
-            else
-            {
-                // Add first-class assets to list
-                foreach (var assetId in ApplicationContext.Instance.CurrentWallet.FindUnspentCoins().Select(p => p.Output.AssetId).Distinct())
+                this.Assets.Clear();
+
+                if (asset != null)
                 {
-                    this.Assets.Add(new AssetDescriptor(assetId));
+                    this.Assets.Add(asset);
+                    this.SelectedAsset = asset;
+                    this.AssetSelectionEnabled = false;
                 }
-
-                // Add NEP-5 assets to list
-                foreach (var s in Settings.Default.NEP5Watched)
+                else
                 {
-                    UInt160 assetId;
-                    try
+                    // Add first-class assets to list
+                    foreach (var assetId in ApplicationContext.Instance.CurrentWallet.FindUnspentCoins()
+                        .Select(p => p.Output.AssetId).Distinct())
                     {
-                        assetId = UInt160.Parse(s);
-                    }
-                    catch
-                    {
-                        continue;
+                        this.Assets.Add(new AssetDescriptor(assetId));
                     }
 
-                    AssetDescriptor nep5Asset;
-                    try
+                    // Add NEP-5 assets to list
+                    foreach (var s in Settings.Default.NEP5Watched)
                     {
-                        nep5Asset = new AssetDescriptor(assetId);
-                    }
-                    catch (ArgumentException)
-                    {
-                        continue;
+                        UInt160 assetId;
+                        try
+                        {
+                            assetId = UInt160.Parse(s);
+                        }
+                        catch
+                        {
+                            continue;
+                        }
+
+                        AssetDescriptor nep5Asset;
+                        try
+                        {
+                            nep5Asset = new AssetDescriptor(assetId);
+                        }
+                        catch (ArgumentException)
+                        {
+                            continue;
+                        }
+
+                        this.Assets.Add(nep5Asset);
                     }
 
-                    this.Assets.Add(nep5Asset);
+                    this.AssetSelectionEnabled = this.Assets.Any();
                 }
-
-                this.AssetSelectionEnabled = this.Assets.Any();
-            }
+            });
         }
 
         private void Ok()

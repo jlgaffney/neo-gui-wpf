@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Windows.Input;
 using Neo.UI.Base.MVVM;
@@ -16,12 +18,8 @@ namespace Neo.UI.Accounts
             {
                 store.Open(OpenFlags.ReadOnly);
 
-                this.Certificates = new ObservableCollection<X509Certificate2>();
-
-                foreach (var certificate in store.Certificates)
-                {
-                    this.Certificates.Add(certificate);
-                }
+                this.Certificates = new ObservableCollection<X509Certificate2>(
+                    store.Certificates.Cast<X509Certificate2>());
             }
         }
 

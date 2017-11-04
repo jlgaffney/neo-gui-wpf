@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using Neo.Properties;
+using Neo.UI.Base.Dispatching;
 using Neo.UI.Base.MVVM;
 using Neo.Wallets;
 
@@ -10,6 +11,8 @@ namespace Neo.UI.Transactions
 {
     public class PayToViewModel : ViewModelBase
     {
+        private readonly IDispatcher dispatcher;
+
         private bool assetSelectionEnabled;
         private AssetDescriptor selectedAsset;
 
@@ -20,8 +23,10 @@ namespace Neo.UI.Transactions
 
         private TxOutListBoxItem output;
 
-        public PayToViewModel()
+        public PayToViewModel(IDispatcher dispatcher)
         {
+            this.dispatcher = dispatcher;
+
             this.Assets = new ObservableCollection<AssetDescriptor>();
         }
 
@@ -141,56 +146,60 @@ namespace Neo.UI.Transactions
 
         internal void Load(AssetDescriptor asset = null, UInt160 scriptHash = null)
         {
-            this.Assets.Clear();
+            this.dispatcher.InvokeOnMainUIThread(() =>
+            {
+                this.Assets.Clear();
 
-            if (asset != null)
-            {
-                this.Assets.Add(asset);
-                this.SelectedAsset = asset;
-                this.AssetSelectionEnabled = false;
-            }
-            else
-            {
-                // Add first-class assets to list
-                foreach (var assetId in ApplicationContext.Instance.CurrentWallet.FindUnspentCoins().Select(p => p.Output.AssetId).Distinct())
+                if (asset != null)
                 {
-                    this.Assets.Add(new AssetDescriptor(assetId));
+                    this.Assets.Add(asset);
+                    this.SelectedAsset = asset;
+                    this.AssetSelectionEnabled = false;
+                }
+                else
+                {
+                    // Add first-class assets to list
+                    foreach (var assetId in ApplicationContext.Instance.CurrentWallet.FindUnspentCoins()
+                        .Select(p => p.Output.AssetId).Distinct())
+                    {
+                        this.Assets.Add(new AssetDescriptor(assetId));
+                    }
+
+                    // Add NEP-5 assets to list
+                    foreach (var s in Settings.Default.NEP5Watched)
+                    {
+                        UInt160 assetId;
+                        try
+                        {
+                            assetId = UInt160.Parse(s);
+                        }
+                        catch
+                        {
+                            continue;
+                        }
+
+                        AssetDescriptor nep5Asset;
+                        try
+                        {
+                            nep5Asset = new AssetDescriptor(assetId);
+                        }
+                        catch (ArgumentException)
+                        {
+                            continue;
+                        }
+
+                        this.Assets.Add(nep5Asset);
+                    }
+
+                    this.AssetSelectionEnabled = this.Assets.Any();
                 }
 
-                // Add NEP-5 assets to list
-                foreach (var s in Settings.Default.NEP5Watched)
+                if (scriptHash != null)
                 {
-                    UInt160 assetId;
-                    try
-                    {
-                        assetId = UInt160.Parse(s);
-                    }
-                    catch
-                    {
-                        continue;
-                    }
-
-                    AssetDescriptor nep5Asset;
-                    try
-                    {
-                        nep5Asset = new AssetDescriptor(assetId);
-                    }
-                    catch (ArgumentException)
-                    {
-                        continue;
-                    }
-
-                    this.Assets.Add(nep5Asset);
+                    this.PayToAddress = Wallet.ToAddress(scriptHash);
+                    this.PayToAddressReadOnly = true;
                 }
-
-                this.AssetSelectionEnabled = this.Assets.Any();
-            }
-
-            if (scriptHash != null)
-            {
-                this.PayToAddress = Wallet.ToAddress(scriptHash);
-                this.PayToAddressReadOnly = true;
-            }
+            });
         }
 
         private void Ok()

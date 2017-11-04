@@ -2,14 +2,12 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
-        xmlns:local="clr-namespace:Neo.UI.Transactions"
         xmlns:properties="clr-namespace:Neo.Properties"
+        xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
+        xmlns:transactions="clr-namespace:Neo.UI.Transactions"
+        DataContext="{markupExtensions:DataContextBinding ViewModel=transactions:BulkPayViewModel}"
         Title="{x:Static properties:Strings.Payment}"
         Width="560" Height="350" ResizeMode="NoResize">
-    <controls:NeoWindow.DataContext>
-        <local:BulkPayViewModel />
-    </controls:NeoWindow.DataContext>
-    
     <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
