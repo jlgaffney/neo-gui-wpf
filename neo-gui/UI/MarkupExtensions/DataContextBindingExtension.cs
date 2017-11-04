@@ -34,8 +34,7 @@ namespace Neo.UI.MarkupExtensions
 
             if (target == null || DesignerProperties.GetIsInDesignMode(target)) return null;
 
-            var viewModelInstance = ApplicationContext.Instance.ContainerLifetimeScope
-                .Resolve<ViewModelBase>(new NamedParameter(nameof(this.ViewModel), this.ViewModel));
+            var viewModelInstance = ApplicationContext.Instance.ContainerLifetimeScope.Resolve(this.ViewModel);
 
             if (viewModelInstance is ILoadable loadableViewModel)
             {
