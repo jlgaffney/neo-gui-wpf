@@ -36,10 +36,9 @@ using Neo.UI.Base.Messages;
 
 namespace Neo.UI.Home
 {
-    public class HomeViewModel : 
+    public class HomeViewModel :
         ViewModelBase,
         ILoadable,
-        IHandle<UpdateApplicationMessage>,
         IMessageHandler<UpdateApplicationMessage>
     {
         private bool balanceChanged = false;
@@ -65,7 +64,6 @@ namespace Neo.UI.Home
             this.TransactionsViewModel = new TransactionsViewModel();
 
             messageAggregator.Subscribe(this);
-            EventAggregator.Current.Subscribe(this);
 
             this.SetupUIUpdateTimer();
 
@@ -94,7 +92,7 @@ namespace Neo.UI.Home
 
         public bool WalletIsOpen => ApplicationContext.Instance.CurrentWallet != null;
 
-        public string BlockHeight => $"{Blockchain.Default.Height}/{Blockchain.Default.HeaderHeight}";
+        public string BlockHeight => $"{GetWalletHeight()}/{Blockchain.Default.Height}/{Blockchain.Default.HeaderHeight}";
         public int NodeCount => Program.LocalNode.RemoteNodeCount;
 
         public bool BlockProgressIndeterminate
@@ -647,16 +645,7 @@ namespace Neo.UI.Home
         }
 
         #endregion UI Update Methods
-
-        public void Handle(UpdateApplicationMessage message)
-        {
-            // Close window
-            this.TryClose();
-
-            // Start update
-            Process.Start(message.UpdateScriptPath);
-        }
-
+        
         #region Main Menu Command Methods
 
         private void CreateWallet()
@@ -911,8 +900,27 @@ namespace Neo.UI.Home
             dialog.ShowDialog();
         }
 
+        private static uint GetWalletHeight()
+        {
+            uint walletHeight = 0;
+
+            if (ApplicationContext.Instance.CurrentWallet != null &&
+                ApplicationContext.Instance.CurrentWallet.WalletHeight > 0)
+            {
+                // Set wallet height
+                walletHeight = ApplicationContext.Instance.CurrentWallet.WalletHeight - 1;
+            }
+
+            return walletHeight;
+        }
+
         public void HandleMessage(UpdateApplicationMessage message)
         {
+            // Close window
+            this.TryClose();
+
+            // Start update
+            Process.Start(message.UpdateScriptPath);
         }
 
         public void OnLoad()

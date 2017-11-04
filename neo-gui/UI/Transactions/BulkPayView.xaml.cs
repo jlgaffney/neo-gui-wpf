@@ -1,4 +1,6 @@
-﻿namespace Neo.UI.Transactions
+﻿using Neo.Wallets;
+
+namespace Neo.UI.Transactions
 {
     public partial class BulkPayView
     {

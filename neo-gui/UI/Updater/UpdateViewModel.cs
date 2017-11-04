@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Windows.Input;
+using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
 using Neo.UI.Messages;
 using NeoResources = Neo.Properties.Resources;
@@ -13,9 +14,12 @@ namespace Neo.UI.Updater
 {
     public class UpdateViewModel : ViewModelBase
     {
-        private const string downloadPath = "update.zip";
+        private const string UpdateFileName = "update.bat";
+        private const string DownloadPath = "update.zip";
 
         private readonly WebClient web = new WebClient();
+
+        private readonly IMessageAggregator messageAggregator;
 
         private readonly Version latestVersion;
         private readonly string downloadUrl;
@@ -24,8 +28,10 @@ namespace Neo.UI.Updater
 
         private bool buttonsEnabled;
 
-        public UpdateViewModel()
+        public UpdateViewModel(IMessageAggregator messageAggregator)
         {
+            this.messageAggregator = messageAggregator;
+
             // Setup update information
             this.latestVersion = VersionHelper.LatestVersion;
 
@@ -93,7 +99,7 @@ namespace Neo.UI.Updater
         {
             this.ButtonsEnabled = false;
             
-            web.DownloadFileAsync(new Uri(this.downloadUrl), downloadPath);
+            web.DownloadFileAsync(new Uri(this.downloadUrl), DownloadPath);
         }
 
         private void Web_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
@@ -114,7 +120,7 @@ namespace Neo.UI.Updater
             directoryInfo.Create();
 
             // Extract update zip file to directory
-            ZipFile.ExtractToDirectory(downloadPath, directoryInfo.Name);
+            ZipFile.ExtractToDirectory(DownloadPath, directoryInfo.Name);
 
             var fileSystemInfo = directoryInfo.GetFileSystemInfos();
             if (fileSystemInfo.Length == 1 && fileSystemInfo[0] is DirectoryInfo)
@@ -126,12 +132,12 @@ namespace Neo.UI.Updater
                 Directory.Move("update2", directoryInfo.Name);
             }
 
-            File.WriteAllBytes("update.bat", NeoResources.UpdateBat);
+            File.WriteAllBytes(UpdateFileName, NeoResources.UpdateBat);
 
             this.TryClose();
 
             // Update application
-            EventAggregator.Current.Publish(new UpdateApplicationMessage("update.bat"));
+            this.messageAggregator.Publish(new UpdateApplicationMessage(UpdateFileName));
         }
 
         #endregion Update Downloader Methods
