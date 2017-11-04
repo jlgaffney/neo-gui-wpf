@@ -1,19 +1,25 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Neo.Core;
 using Neo.Implementations.Wallets.EntityFramework;
+using Neo.UI.Base.Dispatching;
 using Neo.UI.Base.MVVM;
 
 namespace Neo.UI.Home
 {
     public class TransactionsViewModel : ViewModelBase
     {
+        private readonly IDispatcher dispatcher;
+
         private TransactionItem selectedTransaction;
 
-        public TransactionsViewModel()
+        public TransactionsViewModel(IDispatcher dispatcher)
         {
+            this.dispatcher = dispatcher;
+
             this.Transactions = new ObservableCollection<TransactionItem>();
         }
 
@@ -49,50 +55,55 @@ namespace Neo.UI.Home
 
         public void UpdateTransactions(IEnumerable<TransactionInfo> transactions)
         {
-            // Update transaction list
-            foreach (var transactionInfo in transactions)
+            this.dispatcher.InvokeOnMainUIThread(() =>
             {
-                var transactionItem = new TransactionItem
+                // Update transaction list
+                foreach (var transactionInfo in transactions)
                 {
-                    Info = transactionInfo
-                };
+                    var transactionItem = new TransactionItem
+                    {
+                        Info = transactionInfo
+                    };
 
-                var transactionIndex = this.GetTransactionIndex(transactionItem.Id);
+                    var transactionIndex = this.GetTransactionIndex(transactionItem.Id);
 
-                // Check transaction exists in list
-                if (transactionIndex >= 0)
-                {
-                    // Update transaction info
-                    this.Transactions[transactionIndex] = transactionItem;
-                }
-                else
-                {
-                    // Add transaction to list
-                    this.Transactions.Insert(0, transactionItem);
-                }
-            }
-
-            // Update transaction confirmations
-            foreach (var item in this.Transactions)
-            {
-                uint transactionHeight = 0;
-
-                if (item.Info != null && item.Info.Height != null)
-                {
-                    transactionHeight = item.Info.Height.Value;
+                    // Check transaction exists in list
+                    if (transactionIndex >= 0)
+                    {
+                        // Update transaction info
+                        this.Transactions[transactionIndex] = transactionItem;
+                    }
+                    else
+                    {
+                        // Add transaction to list
+                        this.Transactions.Insert(0, transactionItem);
+                    }
                 }
 
-                var confirmations = ((int)Blockchain.Default.Height) - ((int)transactionHeight) + 1;
+                // Update transaction confirmations
+                foreach (var item in this.Transactions)
+                {
+                    uint transactionHeight = 0;
 
-                item.SetConfirmations(confirmations);
-            }
+                    if (item.Info?.Height != null)
+                    {
+                        transactionHeight = item.Info.Height.Value;
+                    }
+
+                    var confirmations = ((int) Blockchain.Default.Height) - ((int) transactionHeight) + 1;
+
+                    item.SetConfirmations(confirmations);
+                }
+            });
         }
 
         private int GetTransactionIndex(string transactionId)
         {
-            for (int i = 0; i < this.Transactions.Count; i++)
+            var translationList = this.Transactions.ToList();
+
+            for (int i = 0; i < translationList.Count; i++)
             {
-                if (this.Transactions[i].Id == transactionId) return i;
+                if (translationList[i].Id == transactionId) return i;
             }
 
             // Could not find transaction

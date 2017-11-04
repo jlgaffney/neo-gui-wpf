@@ -4,7 +4,6 @@ using Neo.Core;
 using Neo.Implementations.Blockchains.LevelDB;
 using Neo.Network;
 using Neo.Properties;
-using Neo.UI.Updater;
 
 namespace Neo
 {
@@ -20,9 +19,9 @@ namespace Neo
             // Check if application needs updating
             if (VersionHelper.UpdateIsRequired)
             {
-                // Prevent application from starting until it has updated
-                var updateDialog = new UpdateView();
-                updateDialog.ShowDialog();
+                // Prevent GUI from starting normally until it has been updated
+                var app = new App(true);
+                app.Run();
                 return;
             }
 
@@ -37,7 +36,7 @@ namespace Neo
             {
                 LocalNode.UpnpEnabled = true;
 
-                // Start GUI Application
+                // Start GUI normally
                 var app = new App();
                 app.Run();
             }

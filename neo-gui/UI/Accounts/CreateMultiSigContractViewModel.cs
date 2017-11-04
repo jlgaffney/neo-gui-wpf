@@ -6,6 +6,7 @@ using System.Windows.Input;
 using Neo.Core;
 using Neo.Cryptography.ECC;
 using Neo.Properties;
+using Neo.UI.Base.Dispatching;
 using Neo.UI.Base.MVVM;
 using Neo.Wallets;
 
@@ -13,6 +14,8 @@ namespace Neo.UI.Accounts
 {
     public class CreateMultiSigContractViewModel : ViewModelBase
     {
+        private readonly IDispatcher dispatcher;
+
         private int minimumSignatureNumber;
         private int minimumSignatureNumberMaxValue;
 
@@ -23,8 +26,10 @@ namespace Neo.UI.Accounts
 
         private VerificationContract contract;
 
-        public CreateMultiSigContractViewModel()
+        public CreateMultiSigContractViewModel(IDispatcher dispatcher)
         {
+            this.dispatcher = dispatcher;
+
             this.PublicKeys = new ObservableCollection<string>();
         }
 
@@ -120,7 +125,7 @@ namespace Neo.UI.Accounts
             this.TryClose();
         }
 
-        private void AddPublicKey()
+        private async void AddPublicKey()
         {
             if (!this.AddPublicKeyEnabled) return;
 
@@ -131,18 +136,21 @@ namespace Neo.UI.Accounts
                 return;
             }
 
-            this.PublicKeys.Add(this.NewPublicKey);
+            await this.dispatcher.InvokeOnMainUIThread(() => this.PublicKeys.Add(this.NewPublicKey));
 
             this.NewPublicKey = string.Empty;
             this.MinimumSignatureNumberMaxValue = this.PublicKeys.Count;
         }
 
-        private void RemovePublicKey()
+        private async void RemovePublicKey()
         {
             if (!this.RemovePublicKeyEnabled) return;
 
-            this.PublicKeys.Remove(this.SelectedPublicKey);
-            this.MinimumSignatureNumberMaxValue = this.PublicKeys.Count;
+            await this.dispatcher.InvokeOnMainUIThread(() =>
+            {
+                this.PublicKeys.Remove(this.SelectedPublicKey);
+                this.MinimumSignatureNumberMaxValue = this.PublicKeys.Count;
+            });
         }
 
         public VerificationContract GetContract()

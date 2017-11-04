@@ -10,14 +10,15 @@ using Neo.SmartContract;
 using Neo.UI.Base.MVVM;
 using Neo.Wallets;
 using Neo.UI.Base.Dialogs;
+using Neo.UI.Base.Dispatching;
 
 namespace Neo.UI.Development
 {
     public class ContractParametersViewModel : ViewModelBase
     {
+        private readonly IDispatcher dispatcher;
+
         private ContractParametersContext context;
-        
-        private readonly ObservableCollection<ContractParameter> parameters;
 
         private string selectedScriptHashAddress;
         private ContractParameter selectedParameter;
@@ -28,10 +29,11 @@ namespace Neo.UI.Development
         private bool showEnabled;
         private bool broadcastVisible;
 
-        public ContractParametersViewModel()
+        public ContractParametersViewModel(IDispatcher dispatcher)
         {
+            this.dispatcher = dispatcher;
+
             this.ScriptHashAddresses = new ObservableCollection<string>();
-            this.parameters = new ObservableCollection<ContractParameter>();
         }
         
         public ObservableCollection<string> ScriptHashAddresses { get; }
@@ -40,22 +42,18 @@ namespace Neo.UI.Development
         {
             get
             {
-                this.parameters.Clear();
+                var emptyCollection = new ObservableCollection<ContractParameter>();
 
-                if (this.SelectedScriptHashAddress == null) return this.parameters;
+                if (ApplicationContext.Instance.CurrentWallet == null) return emptyCollection;
 
-                if (this.SelectedScriptHashAddress == string.Empty) return this.parameters;
-
-                if (ApplicationContext.Instance.CurrentWallet == null) return this.parameters;
+                if (string.IsNullOrEmpty(this.SelectedScriptHashAddress)) return emptyCollection;
 
                 var scriptHash = Wallet.ToScriptHash(this.SelectedScriptHashAddress);
 
-                if (scriptHash == null) return this.parameters;
+                if (scriptHash == null) return emptyCollection;
 
                 // Get parameters
-                this.parameters.AddRange(context.GetParameters(scriptHash));
-
-                return this.parameters;
+                return new ObservableCollection<ContractParameter>(context.GetParameters(scriptHash));
             }
         }
 
@@ -155,7 +153,7 @@ namespace Neo.UI.Development
 
         public ICommand UpdateCommand => new RelayCommand(this.Update);
 
-        private void Load()
+        private async void Load()
         {
             if (!InputBox.Show(out var input, "ParametersContext", "ParametersContext")) return;
 
@@ -171,16 +169,22 @@ namespace Neo.UI.Development
                 return;
             }
 
-            this.ScriptHashAddresses.Clear();
-            this.Parameters.Clear();
-            this.CurrentValue = string.Empty;
-            this.NewValue = string.Empty;
+            await this.dispatcher.InvokeOnMainUIThread(() =>
+            {
+                this.ScriptHashAddresses.Clear();
+                this.CurrentValue = string.Empty;
+                this.NewValue = string.Empty;
 
-            this.ScriptHashAddresses.AddRange(context.ScriptHashes.Select(Wallet.ToAddress));
+                this.ScriptHashAddresses.AddRange(context.ScriptHashes.Select(Wallet.ToAddress));
+            });
+
+            this.SelectedScriptHashAddress = null;
 
             this.ShowEnabled = true;
 
             this.BroadcastVisible = context.Completed;
+
+            NotifyPropertyChanged(nameof(this.Parameters));
         }
 
         private void Show()

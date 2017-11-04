@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
+using System.Windows.Threading;
 using Neo.UI.Transactions;
 using Neo.Wallets;
 
@@ -82,13 +84,17 @@ namespace Neo.UI
         {
             if (this.Items.Count <= 0) return;
 
-            this.Items.Clear();
+            // Execute on main UI thread
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+            {
+                this.Items.Clear();
 
-            this.RemoveButton.IsEnabled = false;
+                this.RemoveButton.IsEnabled = false;
 
-            ItemsChanged?.Invoke(this, EventArgs.Empty);
+                ItemsChanged?.Invoke(this, EventArgs.Empty);
 
-            this.UpdateRemoveButtonEnabled();
+                this.UpdateRemoveButtonEnabled();
+            }));
         }
 
         private void ListBox_SelectionChanged(object sender, EventArgs e)
@@ -105,23 +111,33 @@ namespace Neo.UI
 
             if (output == null) return;
 
-            this.Items.Add(output);
+            // Execute on main UI thread
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+            {
+                this.Items.Add(output);
 
-            ItemsChanged?.Invoke(this, EventArgs.Empty);
+                ItemsChanged?.Invoke(this, EventArgs.Empty);
 
-            this.UpdateRemoveButtonEnabled();
+                this.UpdateRemoveButtonEnabled();
+            }));
         }
 
         private void RemoveButton_Click(object sender, EventArgs e)
         {
-            while (this.ListBox.SelectedItem != null)
+            // Execute on main UI thread
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
             {
-                this.Items.Remove((TxOutListBoxItem) this.ListBox.SelectedItem);
-            }
+                var itemsToRemove = this.ListBox.SelectedItems.Cast<TxOutListBoxItem>();
 
-            ItemsChanged?.Invoke(this, EventArgs.Empty);
+                foreach (var item in itemsToRemove)
+                {
+                    this.Items.Remove(item);
+                }
 
-            this.UpdateRemoveButtonEnabled();
+                ItemsChanged?.Invoke(this, EventArgs.Empty);
+
+                this.UpdateRemoveButtonEnabled();
+            }));
         }
 
         private void BulkPayButton_Click(object sender, EventArgs e)
@@ -133,14 +149,18 @@ namespace Neo.UI
 
             if (outputs == null || outputs.Length == 0) return;
 
-            foreach (var output in outputs)
+            // Execute on main UI thread
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
             {
-                this.Items.Add(output);
-            }
+                foreach (var output in outputs)
+                {
+                    this.Items.Add(output);
+                }
 
-            ItemsChanged?.Invoke(this, EventArgs.Empty);
+                ItemsChanged?.Invoke(this, EventArgs.Empty);
 
-            this.UpdateRemoveButtonEnabled();
+                this.UpdateRemoveButtonEnabled();
+            }));
         }
 
 

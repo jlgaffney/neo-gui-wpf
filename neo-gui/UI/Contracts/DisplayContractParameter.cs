@@ -4,23 +4,20 @@ namespace Neo.UI.Contracts
 {
     public class DisplayContractParameter
     {
-        private readonly int index;
-        private readonly ContractParameter parameter;
-
         public DisplayContractParameter(int index, ContractParameter parameter)
         {
-            this.index = index;
-            this.parameter = parameter;
+            this.Index = index;
+            this.Parameter = parameter;
         }
 
-        public string IndexStr => "[" + this.index + "]";
+        public string IndexStr => "[" + this.Index + "]";
 
-        public string Type => this.parameter?.Type.ToString();
+        public string Type => this.Parameter?.Type.ToString();
 
-        public string Value => this.parameter?.ToString();
+        public string Value => this.Parameter?.ToString();
 
-        public ContractParameter Parameter => this.parameter;
+        public ContractParameter Parameter { get; }
 
-        public int Index => this.index;
+        public int Index { get; }
     }
 }

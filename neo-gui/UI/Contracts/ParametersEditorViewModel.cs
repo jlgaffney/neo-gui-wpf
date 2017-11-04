@@ -6,14 +6,19 @@ using System.Numerics;
 using System.Windows.Input;
 using Neo.Cryptography.ECC;
 using Neo.SmartContract;
+using Neo.UI.Base.Dispatching;
 using Neo.UI.Base.MVVM;
 
 namespace Neo.UI.Contracts
 {
     public class ParametersEditorViewModel : ViewModelBase
     {
-        // NOTE: Make sure this and the ObservableCollection are kept in sync.
-        // This list has been passed to the view model by reference
+        private readonly IDispatcher dispatcher;
+
+        /// <summary>
+        /// NOTE: Make sure this and the ObservableCollection are kept in sync.
+        /// This list has been passed to the view model by reference
+        /// </summary>
         private IList<ContractParameter> parameters;
 
         private DisplayContractParameter selectedParameter;
@@ -21,8 +26,10 @@ namespace Neo.UI.Contracts
         private string currentValue;
         private string newValue;
 
-        public ParametersEditorViewModel()
+        public ParametersEditorViewModel(IDispatcher dispatcher)
         {
+            this.dispatcher = dispatcher;
+
             this.Parameters = new ObservableCollection<DisplayContractParameter>();
         }
         
@@ -103,19 +110,21 @@ namespace Neo.UI.Contracts
         public ICommand UpdateCommand => new RelayCommand(this.Update);
 
 
-        public void Load(IList<ContractParameter> parameters)
+        public async void Load(IList<ContractParameter> parameterList)
         {
-            this.parameters = parameters;
+            this.parameters = parameterList;
 
-            this.Parameters.Clear();
-
-            if (this.parameters != null)
+            await this.dispatcher.InvokeOnMainUIThread(() =>
             {
+                this.Parameters.Clear();
+
+                if (this.parameters == null) return;
+
                 for (int i = 0; i < this.parameters.Count; i++)
                 {
                     this.Parameters.Add(new DisplayContractParameter(i, this.parameters[i]));
                 }
-            }
+            });
 
             // Update dependent property
             NotifyPropertyChanged(nameof(this.ParameterListEditingEnabled));
@@ -125,26 +134,32 @@ namespace Neo.UI.Contracts
 
         private void Add()
         {
-            if (string.IsNullOrEmpty(this.NewValue)) return;;
+            if (string.IsNullOrEmpty(this.NewValue)) return;
 
             var parameter = ParseParameter(this.NewValue);
 
-            var newIndex = this.Parameters.Count;
+            this.dispatcher.InvokeOnMainUIThread(() =>
+            {
+                var newIndex = this.Parameters.Count;
 
-            var newDisplayParameter = new DisplayContractParameter(newIndex, parameter);
+                var newDisplayParameter = new DisplayContractParameter(newIndex, parameter);
 
-            this.parameters.Add(parameter);
-            this.Parameters.Add(newDisplayParameter);
+                this.parameters.Add(parameter);
+                this.Parameters.Add(newDisplayParameter);
 
-            this.SelectedParameter = newDisplayParameter;
+                this.SelectedParameter = newDisplayParameter;
+            });
         }
 
         private void Remove()
         {
             if (this.SelectedParameter == null) return;
 
-            this.parameters.RemoveAt(this.SelectedParameter.Index);
-            this.Parameters.RemoveAt(this.SelectedParameter.Index);
+            this.dispatcher.InvokeOnMainUIThread(() =>
+            {
+                this.parameters.RemoveAt(this.SelectedParameter.Index);
+                this.Parameters.RemoveAt(this.SelectedParameter.Index);
+            });
         }
 
         private void EditArray()
