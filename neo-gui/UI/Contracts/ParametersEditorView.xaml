@@ -8,7 +8,6 @@
             DataContext="{markupExtensions:DataContextBinding ViewModel=contracts:ParametersEditorViewModel}"
             Title="{x:Static properties:Strings.SetParametersTitle}"
             Width="720" Height="480" ResizeMode="NoResize">
-
     <Grid Margin="12">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />

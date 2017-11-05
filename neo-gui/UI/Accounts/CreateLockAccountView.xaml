@@ -4,12 +4,10 @@
         xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
         xmlns:local="clr-namespace:Neo.UI.Accounts"
         xmlns:properties="clr-namespace:Neo.Properties"
+        xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
+        DataContext="{markupExtensions:DataContextBinding ViewModel=local:CreateLockAccountViewModel}"
         Title="{x:Static properties:Strings.CreateLockAccountTitle}" Width="450"
         SizeToContent="Height" ResizeMode="NoResize">
-    <controls:NeoWindow.DataContext>
-        <local:CreateLockAccountViewModel />
-    </controls:NeoWindow.DataContext>
-    
     <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

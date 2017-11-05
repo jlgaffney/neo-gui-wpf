@@ -6,8 +6,8 @@
         xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
         xmlns:updater="clr-namespace:Neo.UI.Updater"
         DataContext="{markupExtensions:DataContextBinding ViewModel=updater:UpdateViewModel}"
-        Title="{x:Static properties:Strings.UpdateTitle}" Height="350" Width="525">
-    
+        Title="{x:Static properties:Strings.UpdateTitle}"
+        Height="350" Width="525">
     <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

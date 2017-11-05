@@ -22,16 +22,12 @@ namespace Neo.UI.Home
     {
         private static readonly UInt160 RecycleScriptHash = new[] { (byte)OpCode.PUSHT }.ToScriptHash();
 
-        private readonly IDispatcher dispatcher;
-
         private readonly Dictionary<ECPoint, CertificateQueryResult> certificateQueryResultCache;
 
         private AssetItem selectedAsset;
 
-        public AssetsViewModel(IDispatcher dispatcher)
+        public AssetsViewModel()
         {
-            this.dispatcher = dispatcher;
-
             this.certificateQueryResultCache = new Dictionary<ECPoint, CertificateQueryResult>();
 
             this.Assets = new ObservableCollection<AssetItem>();

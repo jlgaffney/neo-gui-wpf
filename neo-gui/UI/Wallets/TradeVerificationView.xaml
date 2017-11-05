@@ -5,8 +5,8 @@
         xmlns:ui="clr-namespace:Neo.UI"
         xmlns:properties="clr-namespace:Neo.Properties"
         xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
-        xmlns:wallets="clr-namespace:Neo.UI.Wallets"
-        DataContext="{markupExtensions:DataContextBinding ViewModel=wallets:TradeVerificationViewModel}"
+        xmlns:local="clr-namespace:Neo.UI.Wallets"
+        DataContext="{markupExtensions:DataContextBinding ViewModel=local:TradeVerificationViewModel}"
         Title="{x:Static properties:Strings.TransactionVerificationTitle}"
         Width="600" Height="500" ResizeMode="NoResize">
     <Grid Margin="12">

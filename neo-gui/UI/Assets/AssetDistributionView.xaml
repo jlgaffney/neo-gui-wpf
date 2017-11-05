@@ -5,11 +5,10 @@
         xmlns:ui="clr-namespace:Neo.UI"
         xmlns:properties="clr-namespace:Neo.Properties"
         xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
-        xmlns:assets="clr-namespace:Neo.UI.Assets"
-        DataContext="{markupExtensions:DataContextBinding ViewModel=assets:AssetDistributionViewModel}"
+        xmlns:local="clr-namespace:Neo.UI.Assets"
+        DataContext="{markupExtensions:DataContextBinding ViewModel=local:AssetDistributionViewModel}"
         Title="{x:Static properties:Strings.AssetDistributionTitle}"
         Width="540" Height="490" ResizeMode="NoResize">
-
     <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

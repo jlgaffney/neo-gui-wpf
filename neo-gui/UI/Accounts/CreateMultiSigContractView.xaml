@@ -5,11 +5,10 @@
         xmlns:mahapps="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:properties="clr-namespace:Neo.Properties"
         xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
-        xmlns:accounts="clr-namespace:Neo.UI.Accounts"
-        DataContext="{markupExtensions:DataContextBinding ViewModel=accounts:CreateMultiSigContractViewModel}"
+        xmlns:local="clr-namespace:Neo.UI.Accounts"
+        DataContext="{markupExtensions:DataContextBinding ViewModel=local:CreateMultiSigContractViewModel}"
         Title="{x:Static properties:Strings.CreateMultiSigContractTitle}"
         Width="570" Height="350" ResizeMode="CanResizeWithGrip">
-
     <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

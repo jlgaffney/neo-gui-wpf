@@ -4,12 +4,10 @@
         xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
         xmlns:local="clr-namespace:Neo.UI.Wallets"
         xmlns:properties="clr-namespace:Neo.Properties"
+        xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
+        DataContext="{markupExtensions:DataContextBinding ViewModel=local:OpenWalletViewModel}"
         Title="{x:Static properties:Strings.OpenWalletTitle}"
         Width="525" SizeToContent="Height" ResizeMode="NoResize">
-    <controls:NeoWindow.DataContext>
-        <local:OpenWalletViewModel />
-    </controls:NeoWindow.DataContext>
-
     <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

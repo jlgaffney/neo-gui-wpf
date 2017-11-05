@@ -23,19 +23,19 @@ namespace Neo.UI.Home
     public class AccountsViewModel : ViewModelBase
     {
         private readonly IDispatcher dispatcher;
-        private readonly Action setBalanceChangedAction;
 
         private AccountItem selectedAccount;
         
-        public AccountsViewModel(IDispatcher dispatcher, Action setBalanceChangedAction)
+        public AccountsViewModel(IDispatcher dispatcher)
         {
             this.dispatcher = dispatcher;
-            this.setBalanceChangedAction = setBalanceChangedAction;
 
             this.Accounts = new ObservableCollection<AccountItem>();
         }
 
         #region Properties
+
+        public Action NotifyBalanceChangedAction { get; set; }
 
         public ObservableCollection<AccountItem> Accounts { get; }
 
@@ -380,7 +380,7 @@ namespace Neo.UI.Home
             ApplicationContext.Instance.CurrentWallet.DeleteAddress(scriptHash);
             await this.dispatcher.InvokeOnMainUIThread(() => this.Accounts.Remove(accountToDelete));
 
-            this.setBalanceChangedAction();
+            this.NotifyBalanceChangedAction?.Invoke();
         }
 
         #endregion Account Menu Command Methods

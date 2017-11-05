@@ -3,11 +3,9 @@
             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
             xmlns:developmentControls="clr-namespace:Neo.UI.Base.Controls.Development"
             xmlns:local="clr-namespace:Neo.UI.Development"
-            xmlns:properties="clr-namespace:Neo.Properties">
-    <Grid.DataContext>
-        <local:TransactionBuilderViewModel />
-    </Grid.DataContext>
-    
+            xmlns:properties="clr-namespace:Neo.Properties"
+            xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
+            DataContext="{markupExtensions:DataContextBinding ViewModel=local:TransactionBuilderViewModel}">
     <Grid.RowDefinitions>
         <RowDefinition Height="Auto" />
         <RowDefinition Height="*" />

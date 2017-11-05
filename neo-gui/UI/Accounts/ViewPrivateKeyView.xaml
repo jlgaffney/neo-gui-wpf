@@ -4,12 +4,10 @@
         xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
         xmlns:local="clr-namespace:Neo.UI.Accounts"
         xmlns:properties="clr-namespace:Neo.Properties"
+        xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
+        DataContext="{markupExtensions:DataContextBinding ViewModel=local:ViewPrivateKeyViewModel}"
         Title="{x:Static properties:Strings.ViewPrivateKeyTitle}"
         SizeToContent="WidthAndHeight" ResizeMode="NoResize">
-    <controls:NeoWindow.DataContext>
-        <local:ViewPrivateKeyViewModel />
-    </controls:NeoWindow.DataContext>
-    
     <Grid Margin="8">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

@@ -5,12 +5,10 @@
         xmlns:local="clr-namespace:Neo.UI.Wallets"
         xmlns:ui="clr-namespace:Neo.UI"
         xmlns:properties="clr-namespace:Neo.Properties"
+        xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
+        DataContext="{markupExtensions:DataContextBinding ViewModel=local:TransferViewModel}"
         Title="{x:Static properties:Strings.Transfer}"
         Width="600" Height="410" ResizeMode="NoResize">
-    <controls:NeoWindow.DataContext>
-        <local:TransferViewModel />
-    </controls:NeoWindow.DataContext>
-
     <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
