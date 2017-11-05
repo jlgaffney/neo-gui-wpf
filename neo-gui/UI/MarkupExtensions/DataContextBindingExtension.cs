@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Markup;
 using Autofac;
@@ -29,12 +30,18 @@ namespace Neo.UI.MarkupExtensions
         #region MarkupExtension implementation 
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
+            if (this.ViewModel == null) return null;
+
             var provideValueTarget = serviceProvider.GetService(typeof(IProvideValueTarget)) as IProvideValueTarget;
             var target = provideValueTarget?.TargetObject as FrameworkElement;
 
             if (target == null || DesignerProperties.GetIsInDesignMode(target)) return null;
 
             var viewModelInstance = ApplicationContext.Instance.ContainerLifetimeScope.Resolve(this.ViewModel);
+
+            if (viewModelInstance == null) return null;
+
+            Debug.Assert(viewModelInstance.GetType() == this.ViewModel);
 
             if (viewModelInstance is ILoadable loadableViewModel)
             {
