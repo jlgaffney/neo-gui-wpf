@@ -60,15 +60,18 @@ namespace Neo.UI.Home
         private readonly object uiUpdateTimerLock = new object();
 
         #region Constructor 
-        public HomeViewModel(IMessageAggregator messageAggregator, IDispatcher dispatcher)
+        public HomeViewModel(IMessageAggregator messageAggregator, IDispatcher dispatcher,
+            AccountsViewModel accountsViewModel, AssetsViewModel assetsViewModel, TransactionsViewModel transactionsViewModel)
         {
+            messageAggregator.Subscribe(this);
+
             this.dispatcher = dispatcher;
 
-            this.AccountsViewModel = new AccountsViewModel(this.dispatcher, this.SetBalanceChangedAction);
-            this.AssetsViewModel = new AssetsViewModel(this.dispatcher);
-            this.TransactionsViewModel = new TransactionsViewModel(this.dispatcher);
+            this.AccountsViewModel = accountsViewModel;
+            this.AssetsViewModel = assetsViewModel;
+            this.TransactionsViewModel = transactionsViewModel;
 
-            messageAggregator.Subscribe(this);
+            this.AccountsViewModel.NotifyBalanceChangedAction = this.NotifyBalanceChanged;
 
             this.SetupUIUpdateTimer();
 
@@ -76,15 +79,16 @@ namespace Neo.UI.Home
         }
         #endregion
 
-        private Action SetBalanceChangedAction
+        /// <summary>
+        /// NOTE: This method doesn't actually notify anything,
+        /// it sets the <c>balanceChanged</c> field to <c>true</c>.
+        /// 
+        /// When the UI is next updated, if <c>balanceChanged</c>
+        /// is <c>true</c> the account balances are updated.
+        /// </summary>
+        private void NotifyBalanceChanged()
         {
-            get
-            {
-                return () =>
-                {
-                    balanceChanged = true;
-                };
-            }
+            this.balanceChanged = true;
         }
 
         #region Public Properties
@@ -334,15 +338,15 @@ namespace Neo.UI.Home
             blockchain.VerifyBlocks = false;
             using (var reader = new BinaryReader(stream))
             {
-                uint count = reader.ReadUInt32();
+                var count = reader.ReadUInt32();
                 for (int height = 0; height < count; height++)
                 {
                     var array = reader.ReadBytes(reader.ReadInt32());
-                    if (height > Blockchain.Default.Height)
-                    {
-                        var block = array.AsSerializable<Block>();
-                        Blockchain.Default.AddBlock(block);
-                    }
+
+                    if (height <= Blockchain.Default.Height) continue;
+
+                    var block = array.AsSerializable<Block>();
+                    Blockchain.Default.AddBlock(block);
                 }
             }
             blockchain.VerifyBlocks = true;
