@@ -4,13 +4,10 @@
              xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
              xmlns:local="clr-namespace:Neo.UI.Contracts"
              xmlns:properties="clr-namespace:Neo.Properties"
+             xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
+             DataContext="{markupExtensions:DataContextBinding ViewModel=local:DeployContractViewModel}"
              Title="{x:Static properties:Strings.DeployContractTitle}"
-             Width="500" MinWidth="500" MinHeight="592" SizeToContent="Height"
-             ResizeMode="CanResizeWithGrip">
-    <controls:NeoWindow.DataContext>
-        <local:DeployContractViewModel />
-    </controls:NeoWindow.DataContext>
-
+             Width="500" MinWidth="500" MinHeight="592" SizeToContent="Height" ResizeMode="CanResizeWithGrip">
     <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

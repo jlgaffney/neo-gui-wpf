@@ -5,13 +5,11 @@
              xmlns:local="clr-namespace:Neo.UI.Options"             
              xmlns:dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
              xmlns:properties="clr-namespace:Neo.Properties"
+             xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
              dialog:DialogParticipation.Register="{Binding}"
+             DataContext="{markupExtensions:DataContextBinding ViewModel=local:SettingsViewModel}"
              Title="{x:Static properties:Strings.SettingsTitle}"
              Width="580" Height="440" ResizeMode="NoResize">
-    <controls:NeoWindow.DataContext>
-        <local:SettingsViewModel />
-    </controls:NeoWindow.DataContext>
-    
     <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />

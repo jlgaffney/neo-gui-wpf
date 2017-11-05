@@ -4,12 +4,10 @@
         xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
         xmlns:local="clr-namespace:Neo.UI.Accounts"
         xmlns:properties="clr-namespace:Neo.Properties"
-        Title="{x:Static properties:Strings.ViewContractTitle}" Height="460" Width="480"
-        SizeToContent="Height" ResizeMode="CanResizeWithGrip">
-    <controls:NeoWindow.DataContext>
-        <local:ViewContractViewModel />
-    </controls:NeoWindow.DataContext>
-    
+        xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
+        DataContext="{markupExtensions:DataContextBinding ViewModel=local:ViewContractViewModel}"
+        Title="{x:Static properties:Strings.ViewContractTitle}"
+        Width="480" Height="460" SizeToContent="Height" ResizeMode="CanResizeWithGrip">
     <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

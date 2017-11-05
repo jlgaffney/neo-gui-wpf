@@ -8,7 +8,6 @@
         DataContext="{markupExtensions:DataContextBinding ViewModel=transactions:PayToViewModel}"
         Title="{x:Static properties:Strings.Payment}" Width="560"
         SizeToContent="Height" ResizeMode="NoResize">
-
     <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

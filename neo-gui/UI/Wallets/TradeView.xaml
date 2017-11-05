@@ -6,9 +6,9 @@
         xmlns:ui="clr-namespace:Neo.UI"
         xmlns:properties="clr-namespace:Neo.Properties"
         xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
-        xmlns:wallets="clr-namespace:Neo.UI.Wallets"
+        xmlns:local="clr-namespace:Neo.UI.Wallets"
         dialog:DialogParticipation.Register="{Binding}"
-        DataContext="{markupExtensions:DataContextBinding ViewModel=wallets:TradeViewModel}"
+        DataContext="{markupExtensions:DataContextBinding ViewModel=local:TradeViewModel}"
         Title="{x:Static properties:Strings.TradeTitle}"
         Width="520" Height="580" ResizeMode="NoResize">
     <Grid>
