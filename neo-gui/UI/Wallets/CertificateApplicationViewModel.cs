@@ -140,6 +140,7 @@ namespace Neo.UI.Wallets
 
             var x509Key = new CX509PrivateKey();
 
+            // Set property using Reflection so this project can compile if this property isn't available
             var property = typeof(CX509PrivateKey).GetProperty("AlgorithmName");
 
             if (property == null)
