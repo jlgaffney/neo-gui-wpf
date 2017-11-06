@@ -349,7 +349,9 @@
     <Compile Include="UI\Base\Helpers\WindowHelper.cs" />
     <Compile Include="UI\Base\Messages\IMessageAggregator.cs" />
     <Compile Include="UI\Base\Messages\IMessageHandler.cs" />
+    <Compile Include="UI\Base\Messages\IMessagePublisher.cs" />
     <Compile Include="UI\Base\Messages\MessageAggregator.cs" />
+    <Compile Include="UI\Base\Messages\MessagePublisher.cs" />
     <Compile Include="UI\Base\MVVM\ILoadable.cs" />
     <Compile Include="UI\Base\MVVM\IUnloadable.cs" />
     <Compile Include="UI\Base\Localization\LocalizedDescriptionAttribute.cs" />
@@ -379,6 +381,7 @@
     <Compile Include="UI\Home\TransactionsViewModel.cs" />
     <Compile Include="UI\AccountType.cs" />
     <Compile Include="UI\MarkupExtensions\DataContextBindingExtension.cs" />
+    <Compile Include="UI\Messages\AccountBalanceChangedMessage.cs" />
     <Compile Include="UI\TxOutListBox.xaml.cs">
       <DependentUpon>TxOutListBox.xaml</DependentUpon>
     </Compile>

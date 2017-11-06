@@ -12,8 +12,10 @@ using Neo.Properties;
 using Neo.UI.Accounts;
 using Neo.UI.Base.Dialogs;
 using Neo.UI.Base.Helpers;
+using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
 using Neo.UI.Contracts;
+using Neo.UI.Messages;
 using Neo.UI.Voting;
 using Neo.Wallets;
 
@@ -378,7 +380,8 @@ namespace Neo.UI.Home
 
             this.setBalanceChangedAction();
         }
-
         #endregion Account Menu Command Methods
+
+        
     }
 }

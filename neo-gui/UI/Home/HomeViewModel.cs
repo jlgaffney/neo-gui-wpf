@@ -40,8 +40,10 @@ namespace Neo.UI.Home
         ViewModelBase,
         ILoadable,
         IHandle<UpdateApplicationMessage>,
-        IMessageHandler<UpdateApplicationMessage>
+        IMessageHandler<UpdateApplicationMessage>,
+        IMessageHandler<AccountBalanceChangedMessage>
     {
+        #region Private Fields 
         private bool balanceChanged = false;
 
         private bool checkNep5Balance = false;
@@ -56,6 +58,18 @@ namespace Neo.UI.Home
 
         private Timer uiUpdateTimer;
         private readonly object uiUpdateTimerLock = new object();
+
+        private Action SetBalanceChangedAction
+        {
+            get
+            {
+                return () =>
+                {
+                    balanceChanged = true;
+                };
+            }
+        }
+        #endregion
 
         #region Constructor 
         public HomeViewModel(IMessageAggregator messageAggregator)
@@ -72,17 +86,6 @@ namespace Neo.UI.Home
             this.StartUIUpdateTimer();
         }
         #endregion
-
-        private Action SetBalanceChangedAction
-        {
-            get
-            {
-                return () =>
-                {
-                    balanceChanged = true;
-                };
-            }
-        }
 
         #region Public Properties
 
@@ -648,15 +651,6 @@ namespace Neo.UI.Home
 
         #endregion UI Update Methods
 
-        public void Handle(UpdateApplicationMessage message)
-        {
-            // Close window
-            this.TryClose();
-
-            // Start update
-            Process.Start(message.UpdateScriptPath);
-        }
-
         #region Main Menu Command Methods
 
         private void CreateWallet()
@@ -904,20 +898,42 @@ namespace Neo.UI.Home
 
         #endregion Main Menu Command Methods
 
+        #region IHandle implementation
+        public void Handle(UpdateApplicationMessage message)
+        {
+            // Close window
+            this.TryClose();
+
+            // Start update
+            Process.Start(message.UpdateScriptPath);
+        }
+        #endregion
+
+        #region IMessageHandler implementation
+        public void HandleMessage(UpdateApplicationMessage message)
+        {
+        }
+
+        public void HandleMessage(AccountBalanceChangedMessage message)
+        {
+            this.balanceChanged = true;
+        }
+        #endregion
+
+        #region ILoadable implementation 
+        public void OnLoad()
+        {
+            this.Load();
+        }
+        #endregion
+
+        #region Private Methods 
         private static void ShowUpdateDialog()
         {
             var dialog = new UpdateView();
 
             dialog.ShowDialog();
         }
-
-        public void HandleMessage(UpdateApplicationMessage message)
-        {
-        }
-
-        public void OnLoad()
-        {
-            this.Load();
-        }
+        #endregion
     }
 }
