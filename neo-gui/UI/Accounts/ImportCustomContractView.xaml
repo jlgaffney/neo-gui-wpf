@@ -4,11 +4,10 @@
         xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
         xmlns:local="clr-namespace:Neo.UI.Accounts"
         xmlns:properties="clr-namespace:Neo.Properties"
-        Title="{x:Static properties:Strings.ImportCustomContractTitle}" Width="600" Height="520" ResizeMode="NoResize">
-    <controls:NeoWindow.DataContext>
-        <local:ImportCustomContractViewModel />
-    </controls:NeoWindow.DataContext>
-    
+        xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
+        DataContext="{markupExtensions:DataContextBinding ViewModel=local:ImportCustomContractViewModel}"
+        Title="{x:Static properties:Strings.ImportCustomContractTitle}"
+        Width="600" Height="520" ResizeMode="NoResize">
     <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

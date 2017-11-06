@@ -22,6 +22,7 @@ using Neo.SmartContract;
 using Neo.VM;
 using Neo.Wallets;
 using Neo.UI.Assets;
+using Neo.UI.Base.Dispatching;
 using Neo.UI.Base.Helpers;
 using Neo.UI.Base.MVVM;
 using Neo.UI.Contracts;
@@ -36,14 +37,13 @@ using Neo.UI.Base.Messages;
 
 namespace Neo.UI.Home
 {
-    public class HomeViewModel : 
+    public class HomeViewModel :
         ViewModelBase,
         ILoadable,
-        IHandle<UpdateApplicationMessage>,
-        IMessageHandler<UpdateApplicationMessage>,
-        IMessageHandler<AccountBalanceChangedMessage>
+        IMessageHandler<UpdateApplicationMessage>
     {
-        #region Private Fields 
+        private readonly IDispatcher dispatcher;
+
         private bool balanceChanged = false;
 
         private bool checkNep5Balance = false;
@@ -59,33 +59,37 @@ namespace Neo.UI.Home
         private Timer uiUpdateTimer;
         private readonly object uiUpdateTimerLock = new object();
 
-        private Action SetBalanceChangedAction
-        {
-            get
-            {
-                return () =>
-                {
-                    balanceChanged = true;
-                };
-            }
-        }
-        #endregion
-
         #region Constructor 
-        public HomeViewModel(IMessageAggregator messageAggregator)
+        public HomeViewModel(IMessageAggregator messageAggregator, IDispatcher dispatcher,
+            AccountsViewModel accountsViewModel, AssetsViewModel assetsViewModel, TransactionsViewModel transactionsViewModel)
         {
-            this.AccountsViewModel = new AccountsViewModel(this.SetBalanceChangedAction);
-            this.AssetsViewModel = new AssetsViewModel();
-            this.TransactionsViewModel = new TransactionsViewModel();
-
             messageAggregator.Subscribe(this);
-            EventAggregator.Current.Subscribe(this);
+
+            this.dispatcher = dispatcher;
+
+            this.AccountsViewModel = accountsViewModel;
+            this.AssetsViewModel = assetsViewModel;
+            this.TransactionsViewModel = transactionsViewModel;
+
+            this.AccountsViewModel.NotifyBalanceChangedAction = this.NotifyBalanceChanged;
 
             this.SetupUIUpdateTimer();
 
             this.StartUIUpdateTimer();
         }
         #endregion
+
+        /// <summary>
+        /// NOTE: This method doesn't actually notify anything,
+        /// it sets the <c>balanceChanged</c> field to <c>true</c>.
+        /// 
+        /// When the UI is next updated, if <c>balanceChanged</c>
+        /// is <c>true</c> the account balances are updated.
+        /// </summary>
+        private void NotifyBalanceChanged()
+        {
+            this.balanceChanged = true;
+        }
 
         #region Public Properties
 
@@ -97,7 +101,7 @@ namespace Neo.UI.Home
 
         public bool WalletIsOpen => ApplicationContext.Instance.CurrentWallet != null;
 
-        public string BlockHeight => $"{Blockchain.Default.Height}/{Blockchain.Default.HeaderHeight}";
+        public string BlockHeight => $"{GetWalletHeight()}/{Blockchain.Default.Height}/{Blockchain.Default.HeaderHeight}";
         public int NodeCount => Program.LocalNode.RemoteNodeCount;
 
         public bool BlockProgressIndeterminate
@@ -240,9 +244,12 @@ namespace Neo.UI.Home
                 ApplicationContext.Instance.CurrentWallet.Dispose();
             }
 
-            this.AccountsViewModel.Accounts.Clear();
-            this.AssetsViewModel.Assets.Clear();
-            this.TransactionsViewModel.Transactions.Clear();
+            this.dispatcher.InvokeOnMainUIThread(() =>
+            {
+                this.AccountsViewModel.Accounts.Clear();
+                this.AssetsViewModel.Assets.Clear();
+                this.TransactionsViewModel.Transactions.Clear();
+            });
 
             ApplicationContext.Instance.CurrentWallet = wallet;
 
@@ -331,15 +338,15 @@ namespace Neo.UI.Home
             blockchain.VerifyBlocks = false;
             using (var reader = new BinaryReader(stream))
             {
-                uint count = reader.ReadUInt32();
+                var count = reader.ReadUInt32();
                 for (int height = 0; height < count; height++)
                 {
                     var array = reader.ReadBytes(reader.ReadInt32());
-                    if (height > Blockchain.Default.Height)
-                    {
-                        var block = array.AsSerializable<Block>();
-                        Blockchain.Default.AddBlock(block);
-                    }
+
+                    if (height <= Blockchain.Default.Height) continue;
+
+                    var block = array.AsSerializable<Block>();
+                    Blockchain.Default.AddBlock(block);
                 }
             }
             blockchain.VerifyBlocks = true;
@@ -422,7 +429,7 @@ namespace Neo.UI.Home
         {
             lock (this.uiUpdateTimerLock)
             {
-                this.uiUpdateTimer.Start();
+                this.uiUpdateTimer.Stop();
             }
         }
 
@@ -468,18 +475,22 @@ namespace Neo.UI.Home
         {
             if (ApplicationContext.Instance.CurrentWallet.WalletHeight > Blockchain.Default.Height + 1) return;
 
+            var accountList = this.AccountsViewModel.Accounts.ToList();
+            var assetList = this.AssetsViewModel.Assets.ToList();
             if (balanceChanged)
             {
-                var coins = ApplicationContext.Instance.CurrentWallet?.GetCoins().Where(p => !p.State.HasFlag(CoinState.Spent)) ?? Enumerable.Empty<Coin>();
-                var bonus_available = Blockchain.CalculateBonus(ApplicationContext.Instance.CurrentWallet.GetUnclaimedCoins().Select(p => p.Reference));
-                var bonus_unavailable = Blockchain.CalculateBonus(coins.Where(p => p.State.HasFlag(CoinState.Confirmed) && p.Output.AssetId.Equals(Blockchain.GoverningToken.Hash)).Select(p => p.Reference), Blockchain.Default.Height + 1);
-                var bonus = bonus_available + bonus_unavailable;
+                var coins = ApplicationContext.Instance.CurrentWallet?.GetCoins().Where(p => !p.State.HasFlag(CoinState.Spent)).ToList();
+                var bonusAvailable = Blockchain.CalculateBonus(ApplicationContext.Instance.CurrentWallet.GetUnclaimedCoins().Select(p => p.Reference));
+                var bonusUnavailable = Blockchain.CalculateBonus(coins.Where(p => p.State.HasFlag(CoinState.Confirmed) && p.Output.AssetId.Equals(Blockchain.GoverningToken.Hash)).Select(p => p.Reference), Blockchain.Default.Height + 1);
+                var bonus = bonusAvailable + bonusUnavailable;
+
                 var assets = coins.GroupBy(p => p.Output.AssetId, (k, g) => new
                 {
                     Asset = Blockchain.Default.GetAssetState(k),
                     Value = g.Sum(p => p.Output.Value),
                     Claim = k.Equals(Blockchain.UtilityToken.Hash) ? bonus : Fixed8.Zero
                 }).ToDictionary(p => p.Asset.AssetId);
+
                 if (bonus != Fixed8.Zero && !assets.ContainsKey(Blockchain.UtilityToken.Hash))
                 {
                     assets[Blockchain.UtilityToken.Hash] = new
@@ -489,60 +500,66 @@ namespace Neo.UI.Home
                         Claim = bonus
                     };
                 }
+
                 var balanceNeo = coins.Where(p => p.Output.AssetId.Equals(Blockchain.GoverningToken.Hash)).GroupBy(p => p.Output.ScriptHash).ToDictionary(p => p.Key, p => p.Sum(i => i.Output.Value));
                 var balanceGas = coins.Where(p => p.Output.AssetId.Equals(Blockchain.UtilityToken.Hash)).GroupBy(p => p.Output.ScriptHash).ToDictionary(p => p.Key, p => p.Sum(i => i.Output.Value));
-                foreach (var account in this.AccountsViewModel.Accounts)
+
+                foreach (var account in accountList)
                 {
-                    var script_hash = Wallet.ToScriptHash(account.Address);
-                    var neo = balanceNeo.ContainsKey(script_hash) ? balanceNeo[script_hash] : Fixed8.Zero;
-                    var gas = balanceGas.ContainsKey(script_hash) ? balanceGas[script_hash] : Fixed8.Zero;
+                    var scriptHash = Wallet.ToScriptHash(account.Address);
+                    var neo = balanceNeo.ContainsKey(scriptHash) ? balanceNeo[scriptHash] : Fixed8.Zero;
+                    var gas = balanceGas.ContainsKey(scriptHash) ? balanceGas[scriptHash] : Fixed8.Zero;
                     account.Neo = neo;
                     account.Gas = gas;
                 }
-                foreach (var asset in this.AssetsViewModel.Assets.Where(item => item.State != null))
+
+                foreach (var asset in assetList.Where(item => item.State != null))
                 {
-                    if (!assets.ContainsKey(asset.State.AssetId))
-                    {
-                        this.AssetsViewModel.Assets.Remove(asset);
-                    }
+                    if (assets.ContainsKey(asset.State.AssetId)) continue;
+
+                    this.dispatcher.InvokeOnMainUIThread(() => this.AssetsViewModel.Assets.Remove(asset));
                 }
+
                 foreach (var asset in assets.Values)
                 {
-                    var value_text = asset.Value + (asset.Asset.AssetId.Equals(Blockchain.UtilityToken.Hash) ? $"+({asset.Claim})" : "");
+                    var valueText = asset.Value + (asset.Asset.AssetId.Equals(Blockchain.UtilityToken.Hash) ? $"+({asset.Claim})" : "");
 
                     var item = this.AssetsViewModel.GetAsset(asset.Asset.AssetId);
 
                     if (item != null)
                     {
-                        item.Value = value_text;
+                        item.Value = valueText;
                     }
                     else
                     {
-                        var asset_name = asset.Asset.AssetType == AssetType.GoverningToken ? "NEO" :
-                                            asset.Asset.AssetType == AssetType.UtilityToken ? "NeoGas" :
-                                            asset.Asset.GetName();
+                        var assetName = asset.Asset.AssetType == AssetType.GoverningToken ? "NEO" :
+                                        asset.Asset.AssetType == AssetType.UtilityToken ? "NeoGas" :
+                                        asset.Asset.GetName();
 
-                        this.AssetsViewModel.Assets.Add(new AssetItem
+                        this.dispatcher.InvokeOnMainUIThread(() =>
                         {
-                            Name = asset_name,
-                            Type = asset.Asset.AssetType.ToString(),
-                            Issuer = $"{Strings.UnknownIssuer}[{asset.Asset.Owner}]",
-                            Value = value_text
+                            this.AssetsViewModel.Assets.Add(new AssetItem
+                            {
+                                Name = assetName,
+                                Type = asset.Asset.AssetType.ToString(),
+                                Issuer = $"{Strings.UnknownIssuer}[{asset.Asset.Owner}]",
+                                Value = valueText
+                            });
+
+                            /*this.Assets.Groups["unchecked"]
+                            {
+                                Name = asset.Asset.AssetId.ToString(),
+                                Tag = asset.Asset,
+                                UseItemStyleForSubItems = false
+                            };*/
                         });
-
-                        /*this.Assets.Groups["unchecked"]
-                        {
-                            Name = asset.Asset.AssetId.ToString(),
-                            Tag = asset.Asset,
-                            UseItemStyleForSubItems = false
-                        };*/
                     }
                 }
                 balanceChanged = false;
             }
 
-
-            foreach (var item in this.AssetsViewModel.Assets)//.Groups["unchecked"].Items)
+            
+            foreach (var item in assetList)//.Groups["unchecked"].Items)
             {
                 if (item.State == null) continue;
 
@@ -591,7 +608,7 @@ namespace Neo.UI.Home
         }
 
 
-        private void UpdateNEP5TokenBalances(TimeSpan persistenceSpan)
+        private async void UpdateNEP5TokenBalances(TimeSpan persistenceSpan)
         {
             if (!checkNep5Balance) return;
 
@@ -601,56 +618,61 @@ namespace Neo.UI.Home
             var addresses = ApplicationContext.Instance.CurrentWallet.GetAddresses().ToArray();
             foreach (var s in Settings.Default.NEP5Watched)
             {
-                var script_hash = UInt160.Parse(s);
+                var scriptHash = UInt160.Parse(s);
                 byte[] script;
                 using (var builder = new ScriptBuilder())
                 {
                     foreach (var address in addresses)
                     {
-                        builder.EmitAppCall(script_hash, "balanceOf", address);
+                        builder.EmitAppCall(scriptHash, "balanceOf", address);
                     }
                     builder.Emit(OpCode.DEPTH, OpCode.PACK);
-                    builder.EmitAppCall(script_hash, "decimals");
-                    builder.EmitAppCall(script_hash, "name");
+                    builder.EmitAppCall(scriptHash, "decimals");
+                    builder.EmitAppCall(scriptHash, "name");
                     script = builder.ToArray();
                 }
+
                 var engine = ApplicationEngine.Run(script);
                 if (engine.State.HasFlag(VMState.FAULT)) continue;
+
                 var name = engine.EvaluationStack.Pop().GetString();
                 var decimals = (byte)engine.EvaluationStack.Pop().GetBigInteger();
                 var amount = engine.EvaluationStack.Pop().GetArray().Aggregate(BigInteger.Zero, (x, y) => x + y.GetBigInteger());
                 if (amount == 0) continue;
                 var balance = new BigDecimal(amount, decimals);
-                string value_text = balance.ToString();
+                var valueText = balance.ToString();
 
-                var item = (AssetItem)null;//this.GetAsset(script_hash);
-
-                if (item != null)
+                await this.dispatcher.InvokeOnMainUIThread(() =>
                 {
-                    //this.Assets[script_hash.ToString()].Value = value_text;
-                }
-                else
-                {
-                    this.AssetsViewModel.Assets.Add(new AssetItem
-                    {
-                        Name = name,
-                        Type = "NEP-5",
-                        Issuer = $"ScriptHash:{script_hash}",
-                        Value = value_text,
-                    });
+                    var item = (AssetItem) null; //this.GetAsset(scriptHash);
 
-                    /*this.Assets.Groups["checked"]
+                    if (item != null)
                     {
-                        Name = script_hash.ToString(),
-                        UseItemStyleForSubItems = false
-                    };*/
-                }
+                        item.Value = valueText;
+                    }
+                    else
+                    {
+                        this.AssetsViewModel.Assets.Add(new AssetItem
+                        {
+                            Name = name,
+                            Type = "NEP-5",
+                            Issuer = $"ScriptHash:{scriptHash}",
+                            Value = valueText,
+                        });
+
+                        /*this.Assets.Groups["checked"]
+                        {
+                            Name = script_hash.ToString(),
+                            UseItemStyleForSubItems = false
+                        };*/
+                    }
+                });
             }
             checkNep5Balance = false;
         }
 
         #endregion UI Update Methods
-
+        
         #region Main Menu Command Methods
 
         private void CreateWallet()
@@ -719,10 +741,14 @@ namespace Neo.UI.Home
             view.ShowDialog();
         }
 
-        private void RebuildIndex()
+        private async void RebuildIndex()
         {
-            this.AssetsViewModel.Assets.Clear();
-            this.TransactionsViewModel.Transactions.Clear();
+            await this.dispatcher.InvokeOnMainUIThread(() =>
+            {
+                this.AssetsViewModel.Assets.Clear();
+                this.TransactionsViewModel.Transactions.Clear();
+            });
+
             ApplicationContext.Instance.CurrentWallet.Rebuild();
         }
 
@@ -898,8 +924,28 @@ namespace Neo.UI.Home
 
         #endregion Main Menu Command Methods
 
-        #region IHandle implementation
-        public void Handle(UpdateApplicationMessage message)
+        private static void ShowUpdateDialog()
+        {
+            var dialog = new UpdateView();
+
+            dialog.ShowDialog();
+        }
+
+        private static uint GetWalletHeight()
+        {
+            uint walletHeight = 0;
+
+            if (ApplicationContext.Instance.CurrentWallet != null &&
+                ApplicationContext.Instance.CurrentWallet.WalletHeight > 0)
+            {
+                // Set wallet height
+                walletHeight = ApplicationContext.Instance.CurrentWallet.WalletHeight - 1;
+            }
+
+            return walletHeight;
+        }
+
+        public void HandleMessage(UpdateApplicationMessage message)
         {
             // Close window
             this.TryClose();
@@ -907,33 +953,10 @@ namespace Neo.UI.Home
             // Start update
             Process.Start(message.UpdateScriptPath);
         }
-        #endregion
 
-        #region IMessageHandler implementation
-        public void HandleMessage(UpdateApplicationMessage message)
-        {
-        }
-
-        public void HandleMessage(AccountBalanceChangedMessage message)
-        {
-            this.balanceChanged = true;
-        }
-        #endregion
-
-        #region ILoadable implementation 
         public void OnLoad()
         {
             this.Load();
         }
-        #endregion
-
-        #region Private Methods 
-        private static void ShowUpdateDialog()
-        {
-            var dialog = new UpdateView();
-
-            dialog.ShowDialog();
-        }
-        #endregion
     }
 }

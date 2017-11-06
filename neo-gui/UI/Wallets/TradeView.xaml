@@ -3,16 +3,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
         xmlns:dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
-        xmlns:local="clr-namespace:Neo.UI.Wallets"
         xmlns:ui="clr-namespace:Neo.UI"
         xmlns:properties="clr-namespace:Neo.Properties"
+        xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
+        xmlns:local="clr-namespace:Neo.UI.Wallets"
+        dialog:DialogParticipation.Register="{Binding}"
+        DataContext="{markupExtensions:DataContextBinding ViewModel=local:TradeViewModel}"
         Title="{x:Static properties:Strings.TradeTitle}"
-        Width="520" Height="580" ResizeMode="NoResize"
-        dialog:DialogParticipation.Register="{Binding}">
-    <controls:NeoWindow.DataContext>
-        <local:TradeViewModel />
-    </controls:NeoWindow.DataContext>
-
+        Width="520" Height="580" ResizeMode="NoResize">
     <Grid>
         <TabControl x:Name="TabControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <!-- Initiate Tab -->

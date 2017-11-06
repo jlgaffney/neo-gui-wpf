@@ -2,14 +2,19 @@
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Neo.Core;
+using Neo.UI.Base.Dispatching;
 using Neo.UI.Base.MVVM;
 
 namespace Neo.UI.Wallets
 {
     internal class TradeVerificationViewModel : ViewModelBase
     {
-        public TradeVerificationViewModel()
+        private readonly IDispatcher dispatcher;
+
+        public TradeVerificationViewModel(IDispatcher dispatcher)
         {
+            this.dispatcher = dispatcher;
+
             this.Items = new ObservableCollection<TxOutListBoxItem>();
         }
 
@@ -31,18 +36,21 @@ namespace Neo.UI.Wallets
 
         internal void SetOutputs(IEnumerable<TransactionOutput> outputs)
         {
-            foreach (var output in outputs)
+            this.dispatcher.InvokeOnMainUIThread(() =>
             {
-                var asset = Blockchain.Default.GetAssetState(output.AssetId);
-
-                this.Items.Add(new TxOutListBoxItem
+                foreach (var output in outputs)
                 {
-                    AssetName = $"{asset.GetName()} ({asset.Owner})",
-                    AssetId = output.AssetId,
-                    Value = new BigDecimal(output.Value.GetData(), 8),
-                    ScriptHash = output.ScriptHash
-                });
-            }
+                    var asset = Blockchain.Default.GetAssetState(output.AssetId);
+
+                    this.Items.Add(new TxOutListBoxItem
+                    {
+                        AssetName = $"{asset.GetName()} ({asset.Owner})",
+                        AssetId = output.AssetId,
+                        Value = new BigDecimal(output.Value.GetData(), 8),
+                        ScriptHash = output.ScriptHash
+                    });
+                }
+            });
         }
     }
 }

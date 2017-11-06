@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Neo.UI.Base.Messages
 {
@@ -29,5 +30,15 @@ namespace Neo.UI.Base.Messages
             }
         }
         #endregion
+
+        public void Publish<T>(T message)
+        {
+            var messageSubscribers = this._messageHandlers.OfType<IMessageHandler<T>>().ToList();
+
+            foreach (var item in messageSubscribers)
+            {
+                item.HandleMessage(message);
+            }
+        }
     }
 }

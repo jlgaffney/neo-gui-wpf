@@ -2,6 +2,8 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+using Neo.Properties;
+using Neo.UI.Base.Dispatching;
 using Neo.UI.Base.Extensions;
 using Neo.UI.Base.MVVM;
 using Neo.Wallets;
@@ -10,6 +12,8 @@ namespace Neo.UI.Transactions
 {
     public class BulkPayViewModel : ViewModelBase
     {
+        private readonly IDispatcher dispatcher;
+
         private bool assetSelectionEnabled;
 
         private AssetDescriptor selectedAsset;
@@ -18,8 +22,10 @@ namespace Neo.UI.Transactions
 
         private TxOutListBoxItem[] outputs;
 
-        public BulkPayViewModel()
+        public BulkPayViewModel(IDispatcher dispatcher)
         {
+            this.dispatcher = dispatcher;
+
             this.Assets = new ObservableCollection<AssetDescriptor>();
         }
 
@@ -55,7 +61,8 @@ namespace Neo.UI.Transactions
             }
         }
 
-        public string AssetBalance => this.SelectedAsset?.GetAvailable().ToString();
+        public string AssetBalance => this.SelectedAsset == null ? string.Empty
+            : ApplicationContext.Instance.CurrentWallet.GetAvailable(this.SelectedAsset.AssetId).ToString();
 
         public string AddressesAndAmounts
         {
@@ -77,20 +84,54 @@ namespace Neo.UI.Transactions
 
         internal void Load(AssetDescriptor asset = null)
         {
-            this.Assets.Clear();
-
-            if (asset != null)
+            this.dispatcher.InvokeOnMainUIThread(() =>
             {
-                this.Assets.Add(asset);
-                this.SelectedAsset = asset;
-                this.AssetSelectionEnabled = false;
-            }
-            else
-            {
-                this.Assets.AddRange(AssetDescriptor.GetAssets());
+                this.Assets.Clear();
 
-                this.AssetSelectionEnabled = this.Assets.Any();
-            }
+                if (asset != null)
+                {
+                    this.Assets.Add(asset);
+                    this.SelectedAsset = asset;
+                    this.AssetSelectionEnabled = false;
+                }
+                else
+                {
+                    // Add first-class assets to list
+                    foreach (var assetId in ApplicationContext.Instance.CurrentWallet.FindUnspentCoins()
+                        .Select(p => p.Output.AssetId).Distinct())
+                    {
+                        this.Assets.Add(new AssetDescriptor(assetId));
+                    }
+
+                    // Add NEP-5 assets to list
+                    foreach (var s in Settings.Default.NEP5Watched)
+                    {
+                        UInt160 assetId;
+                        try
+                        {
+                            assetId = UInt160.Parse(s);
+                        }
+                        catch
+                        {
+                            continue;
+                        }
+
+                        AssetDescriptor nep5Asset;
+                        try
+                        {
+                            nep5Asset = new AssetDescriptor(assetId);
+                        }
+                        catch (ArgumentException)
+                        {
+                            continue;
+                        }
+
+                        this.Assets.Add(nep5Asset);
+                    }
+
+                    this.AssetSelectionEnabled = this.Assets.Any();
+                }
+            });
         }
 
         private void Ok()

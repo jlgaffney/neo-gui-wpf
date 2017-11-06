@@ -10,6 +10,7 @@ using Neo.Cryptography;
 using Neo.Cryptography.ECC;
 using Neo.Properties;
 using Neo.SmartContract;
+using Neo.UI.Base.Dispatching;
 using Neo.UI.Base.Helpers;
 using Neo.UI.Base.MVVM;
 using Neo.VM;

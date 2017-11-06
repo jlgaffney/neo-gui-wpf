@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using Neo.Core;
+using Neo.UI.Base.Dispatching;
 using Neo.UI.Base.MVVM;
 using Neo.Wallets;
 
@@ -10,6 +11,8 @@ namespace Neo.UI.Assets
 {
     internal class AssetDistributionViewModel : ViewModelBase
     {
+        private readonly IDispatcher dispatcher;
+
         private AssetDescriptor asset;
 
         private string assetId;
@@ -25,8 +28,10 @@ namespace Neo.UI.Assets
 
         private IssueTransaction transaction;
 
-        public AssetDistributionViewModel()
+        public AssetDistributionViewModel(IDispatcher dispatcher)
         {
+            this.dispatcher = dispatcher;
+
             this.Items = new ObservableCollection<TxOutListBoxItem>();
         }
 
@@ -172,7 +177,7 @@ namespace Neo.UI.Assets
             if (UInt256.TryParse(this.AssetId, out var id))
             {
                 state = Blockchain.Default.GetAssetState(id);
-                this.Asset = new AssetDescriptor(state);
+                this.Asset = new AssetDescriptor(id);
             }
             else
             {
@@ -197,7 +202,7 @@ namespace Neo.UI.Assets
                 this.DistributionEnabled = true;
             }
 
-            this.Items.Clear();
+            this.dispatcher.InvokeOnMainUIThread(() => this.Items.Clear());
         }
 
         internal IssueTransaction GetTransaction()

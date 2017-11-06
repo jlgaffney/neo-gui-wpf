@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Markup;
 using Autofac;
@@ -11,7 +12,7 @@ namespace Neo.UI.MarkupExtensions
     {
         #region Public Properties 
         [ConstructorArgument("viewModel")]
-        public string ViewModel { get; set; }
+        public Type ViewModel { get; set; }
         #endregion
 
         #region Constructor 
@@ -20,25 +21,27 @@ namespace Neo.UI.MarkupExtensions
             // NOP
         }
 
-        public DataContextBindingExtension(string viewModel)
+        public DataContextBindingExtension(Type viewModel)
         {
-            this.ViewModel = ViewModel;
+            this.ViewModel = viewModel;
         }
         #endregion
 
         #region MarkupExtension implementation 
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
+            if (this.ViewModel == null) return null;
+
             var provideValueTarget = serviceProvider.GetService(typeof(IProvideValueTarget)) as IProvideValueTarget;
-            var target = provideValueTarget.TargetObject as FrameworkElement;
+            var target = provideValueTarget?.TargetObject as FrameworkElement;
 
-            if (DesignerProperties.GetIsInDesignMode(target))
-            {
-                return null;
-            }
+            if (target == null || DesignerProperties.GetIsInDesignMode(target)) return null;
 
-            var viewModelInstance = ApplicationContext.Instance.ContainerLifetimeScope
-                .Resolve<ViewModelBase>(new NamedParameter("ViewModel", this.ViewModel));
+            var viewModelInstance = ApplicationContext.Instance.ContainerLifetimeScope.Resolve(this.ViewModel);
+
+            if (viewModelInstance == null) return null;
+
+            Debug.Assert(viewModelInstance.GetType() == this.ViewModel);
 
             if (viewModelInstance is ILoadable loadableViewModel)
             {

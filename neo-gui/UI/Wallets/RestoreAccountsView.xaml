@@ -4,12 +4,10 @@
         xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
         xmlns:local="clr-namespace:Neo.UI.Wallets"
         xmlns:properties="clr-namespace:Neo.Properties"
+        xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
+        DataContext="{markupExtensions:DataContextBinding ViewModel=local:RestoreAccountsViewModel}"
         Title="{x:Static properties:Strings.RestoreAccountsTitle}"
         Width="470" Height="470" ResizeMode="CanResizeWithGrip">
-    <controls:NeoWindow.DataContext>
-        <local:RestoreAccountsViewModel />
-    </controls:NeoWindow.DataContext>
-
     <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />

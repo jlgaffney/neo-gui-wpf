@@ -1,15 +1,13 @@
 ﻿<controls:NeoWindow x:Class="Neo.UI.Contracts.ParametersEditorView"
             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-            xmlns:local="clr-namespace:Neo.UI.Contracts"
             xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
             xmlns:properties="clr-namespace:Neo.Properties"
+            xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
+            xmlns:contracts="clr-namespace:Neo.UI.Contracts"
+            DataContext="{markupExtensions:DataContextBinding ViewModel=contracts:ParametersEditorViewModel}"
             Title="{x:Static properties:Strings.SetParametersTitle}"
             Width="720" Height="480" ResizeMode="NoResize">
-    <controls:NeoWindow.DataContext>
-        <local:ParametersEditorViewModel />
-    </controls:NeoWindow.DataContext>
-
     <Grid Margin="12">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />

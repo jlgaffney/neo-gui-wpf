@@ -5,12 +5,10 @@
         xmlns:local="clr-namespace:Neo.UI.Assets"
         xmlns:mahapps="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:properties="clr-namespace:Neo.Properties"
+        xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
+        DataContext="{markupExtensions:DataContextBinding ViewModel=local:AssetRegistrationViewModel}"
         Title="{x:Static properties:Strings.AssetRegistrationTitle}"
         Width="560" SizeToContent="Height" ResizeMode="NoResize">
-    <controls:NeoWindow.DataContext>
-        <local:AssetRegistrationViewModel />
-    </controls:NeoWindow.DataContext>
-
     <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

@@ -2,13 +2,12 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
-        xmlns:local="clr-namespace:Neo.UI.Updater"
         xmlns:properties="clr-namespace:Neo.Properties"
-        Title="{x:Static properties:Strings.UpdateTitle}" Height="350" Width="525">
-    <controls:NeoWindow.DataContext>
-        <local:UpdateViewModel />
-    </controls:NeoWindow.DataContext>
-    
+        xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
+        xmlns:updater="clr-namespace:Neo.UI.Updater"
+        DataContext="{markupExtensions:DataContextBinding ViewModel=updater:UpdateViewModel}"
+        Title="{x:Static properties:Strings.UpdateTitle}"
+        Height="350" Width="525">
     <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

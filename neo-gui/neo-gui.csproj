@@ -171,8 +171,8 @@
     <Reference Include="Microsoft.Win32.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Win32.Primitives.4.3.0\lib\net46\Microsoft.Win32.Primitives.dll</HintPath>
     </Reference>
-    <Reference Include="Neo, Version=2.3.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Neo.2.3.3\lib\net461\Neo.dll</HintPath>
+    <Reference Include="Neo, Version=2.3.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Neo.2.3.5\lib\net461\Neo.dll</HintPath>
     </Reference>
     <Reference Include="Neo.VM, Version=2.0.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Neo.VM.2.0.3\lib\net461\Neo.VM.dll</HintPath>
@@ -296,10 +296,11 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationContext.cs" />
-    <Compile Include="BigDecimal.cs" />
     <Compile Include="IApplicationContext.cs" />
     <Compile Include="UI\Base\BaseRegistrationModule.cs" />
     <Compile Include="UI\Base\Converters\EnumDescriptionTypeConverter.cs" />
+    <Compile Include="UI\Base\Dispatching\Dispatcher.cs" />
+    <Compile Include="UI\Base\Dispatching\IDispatcher.cs" />
     <Compile Include="UI\Base\Extensions\CollectionExtensions.cs" />
     <Compile Include="UI\Base\Extensions\StringExtensions.cs" />
     <Compile Include="PeerState.cs" />
@@ -320,7 +321,6 @@
     <Compile Include="Properties\Settings.cs">
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="AssetDescriptor.cs" />
     <Compile Include="UI\Accounts\CreateMultiSigContractView.xaml.cs">
       <DependentUpon>CreateMultiSigContractView.xaml</DependentUpon>
     </Compile>
@@ -405,8 +405,6 @@
     <Compile Include="UI\AssetItem.cs" />
     <Compile Include="UI\TransactionItem.cs" />
     <Compile Include="UI\Base\Controls\NeoWindow.cs" />
-    <Compile Include="UI\Base\MVVM\EventAggregator.cs" />
-    <Compile Include="UI\Base\MVVM\IHandle.cs" />
     <Compile Include="UI\Base\MVVM\RelayCommand.cs" />
     <Compile Include="UI\Base\MVVM\ViewModelBase.cs" />
     <Compile Include="UI\Accounts\ImportPrivateKeyViewModel.cs" />
@@ -812,7 +810,6 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\SQLite.3.13.0\build\net45\SQLite.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SQLite.3.13.0\build\net45\SQLite.props'))" />
   </Target>
-  <Import Project="..\packages\Xamarin.Forms.2.3.4.247\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.2.3.4.247\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
