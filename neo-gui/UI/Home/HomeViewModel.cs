@@ -557,7 +557,8 @@ namespace Neo.UI.Home
                             Name = assetName,
                             Type = asset.Asset.AssetType.ToString(),
                             Issuer = $"{Strings.UnknownIssuer}[{asset.Asset.Owner}]",
-                            Value = valueText
+                            Value = valueText,
+                            State = asset.Asset
                         };
 
                         /*this.Assets.Groups["unchecked"]
