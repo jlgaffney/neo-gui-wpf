@@ -475,8 +475,8 @@ namespace Neo.UI.Home
         {
             if (ApplicationContext.Instance.CurrentWallet.WalletHeight > Blockchain.Default.Height + 1) return;
 
-            var accountList = this.AccountsViewModel.Accounts.ToList();
-            var assetList = this.AssetsViewModel.Assets.ToList();
+            var accountList = this.AccountsViewModel.Accounts.ConvertToList();
+            var assetList = this.AssetsViewModel.Assets.ConvertToList();
             if (balanceChanged)
             {
                 var coins = ApplicationContext.Instance.CurrentWallet?.GetCoins().Where(p => !p.State.HasFlag(CoinState.Spent)).ToList();
@@ -522,36 +522,54 @@ namespace Neo.UI.Home
 
                 foreach (var asset in assets.Values)
                 {
+                    if (asset.Asset == null || asset.Asset.AssetId == null) continue;
+
                     var valueText = asset.Value + (asset.Asset.AssetId.Equals(Blockchain.UtilityToken.Hash) ? $"+({asset.Claim})" : "");
 
-                    var item = this.AssetsViewModel.GetAsset(asset.Asset.AssetId);
+                    var item = this.AssetsViewModel.Assets.FirstOrDefault(a => a.State != null && a.State.AssetId.Equals(asset.Asset.AssetId));
 
                     if (item != null)
                     {
+                        // Asset item already exists
                         item.Value = valueText;
                     }
                     else
                     {
-                        var assetName = asset.Asset.AssetType == AssetType.GoverningToken ? "NEO" :
-                                        asset.Asset.AssetType == AssetType.UtilityToken ? "NeoGas" :
-                                        asset.Asset.GetName();
+                        // Add new asset item
+                        string assetName;
+                        switch (asset.Asset.AssetType)
+                        {
+                            case AssetType.GoverningToken:
+                                assetName = "NEO";
+                                break;
+
+                            case AssetType.UtilityToken:
+                                assetName = "NeoGas";
+                                break;
+
+                            default:
+                                assetName = asset.Asset.GetName();
+                                break;
+                        }
+
+                        var assetItem = new AssetItem
+                        {
+                            Name = assetName,
+                            Type = asset.Asset.AssetType.ToString(),
+                            Issuer = $"{Strings.UnknownIssuer}[{asset.Asset.Owner}]",
+                            Value = valueText
+                        };
+
+                        /*this.Assets.Groups["unchecked"]
+                        {
+                            Name = asset.Asset.AssetId.ToString(),
+                            Tag = asset.Asset,
+                            UseItemStyleForSubItems = false
+                        };*/
 
                         this.dispatcher.InvokeOnMainUIThread(() =>
                         {
-                            this.AssetsViewModel.Assets.Add(new AssetItem
-                            {
-                                Name = assetName,
-                                Type = asset.Asset.AssetType.ToString(),
-                                Issuer = $"{Strings.UnknownIssuer}[{asset.Asset.Owner}]",
-                                Value = valueText
-                            });
-
-                            /*this.Assets.Groups["unchecked"]
-                            {
-                                Name = asset.Asset.AssetId.ToString(),
-                                Tag = asset.Asset,
-                                UseItemStyleForSubItems = false
-                            };*/
+                            this.AssetsViewModel.Assets.Add(assetItem);
                         });
                     }
                 }
