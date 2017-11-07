@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Neo.Core;
@@ -10,7 +8,7 @@ using Neo.Cryptography;
 using Neo.Cryptography.ECC;
 using Neo.Properties;
 using Neo.SmartContract;
-using Neo.UI.Base.Dispatching;
+using Neo.UI.Base.Collections;
 using Neo.UI.Base.Helpers;
 using Neo.UI.Base.MVVM;
 using Neo.VM;
@@ -30,12 +28,12 @@ namespace Neo.UI.Home
         {
             this.certificateQueryResultCache = new Dictionary<ECPoint, CertificateQueryResult>();
 
-            this.Assets = new ObservableCollection<AssetItem>();
+            this.Assets = new ConcurrentObservableCollection<AssetItem>();
         }
 
         #region Properties
 
-        public ObservableCollection<AssetItem> Assets { get; }
+        public ConcurrentObservableCollection<AssetItem> Assets { get; }
 
         public AssetItem SelectedAsset
         {
@@ -60,25 +58,15 @@ namespace Neo.UI.Home
             {
                 if (this.SelectedAsset == null) return false;
 
-                if (this.SelectedAsset.State == null)
-                {
-                    return false;
-                }
-                else
-                {
-                    var queryResult = GetCertificateQueryResult(this.SelectedAsset.State);
+                if (this.SelectedAsset.State == null) return false;
 
-                    if (queryResult == null)
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        return queryResult.Type == CertificateQueryResultType.Good ||
-                               queryResult.Type == CertificateQueryResultType.Expired ||
-                               queryResult.Type == CertificateQueryResultType.Invalid;
-                    }
-                }
+                var queryResult = GetCertificateQueryResult(this.SelectedAsset.State);
+
+                if (queryResult == null) return false;
+                
+                return queryResult.Type == CertificateQueryResultType.Good ||
+                       queryResult.Type == CertificateQueryResultType.Expired ||
+                       queryResult.Type == CertificateQueryResultType.Invalid;
             }
         }
 
@@ -96,18 +84,7 @@ namespace Neo.UI.Home
         public ICommand DeleteAssetCommand => new RelayCommand(this.DeleteAsset);
 
         #endregion Commands
-
-
-        public AssetItem GetAsset(UInt256 assetId)
-        {
-            return this.Assets.FirstOrDefault(asset =>
-            {
-                if (asset.State == null) return false;
-
-                return asset.State.AssetId.Equals(assetId);
-            });
-        }
-
+        
         #region Menu Command Methods
 
         private void ViewCertificate()

@@ -138,10 +138,19 @@ namespace Neo.UI.Wallets
                 privateKey = BitConverter.GetBytes(ECDSA_PRIVATE_P256_MAGIC).Concat(BitConverter.GetBytes(32)).Concat(publicKey).Concat(key.PrivateKey).ToArray();
             }
 
-            var x509Key = new CX509PrivateKey
+            var x509Key = new CX509PrivateKey();
+
+            // Set property using Reflection so this project can compile if this property isn't available
+            var property = typeof(CX509PrivateKey).GetProperty("AlgorithmName");
+
+            if (property == null)
             {
-                AlgorithmName = "ECDSA_P256"
-            };
+                // TODO Find a way to generate a certificate without setting this property
+            }
+            else
+            {
+                property.SetValue(x509Key, "ECDSA_P256", null);
+            }
 
             x509Key.Import("ECCPRIVATEBLOB", Convert.ToBase64String(privateKey));
 

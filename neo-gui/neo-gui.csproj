@@ -298,6 +298,7 @@
     <Compile Include="ApplicationContext.cs" />
     <Compile Include="IApplicationContext.cs" />
     <Compile Include="UI\Base\BaseRegistrationModule.cs" />
+    <Compile Include="UI\Base\Collections\ConcurrentObservableCollection.cs" />
     <Compile Include="UI\Base\Converters\EnumDescriptionTypeConverter.cs" />
     <Compile Include="UI\Base\Dispatching\Dispatcher.cs" />
     <Compile Include="UI\Base\Dispatching\IDispatcher.cs" />
