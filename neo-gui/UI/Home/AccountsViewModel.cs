@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -10,6 +9,7 @@ using MahApps.Metro.Controls.Dialogs;
 using Neo.Core;
 using Neo.Properties;
 using Neo.UI.Accounts;
+using Neo.UI.Base.Collections;
 using Neo.UI.Base.Dialogs;
 using Neo.UI.Base.Dispatching;
 using Neo.UI.Base.Helpers;
@@ -46,13 +46,13 @@ namespace Neo.UI.Home
             this.messagePublisher = messagePublisher;
             this.dispatcher = dispatcher;
 
-            this.Accounts = new ObservableCollection<AccountItem>();
+            this.Accounts = new ConcurrentObservableCollection<AccountItem>();
         }
 
         #region Properties
         public Action NotifyBalanceChangedAction { get; set; }
 
-        public ObservableCollection<AccountItem> Accounts { get; }
+        public ConcurrentObservableCollection<AccountItem> Accounts { get; }
 
         public AccountItem SelectedAccount
         {

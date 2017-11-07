@@ -16,7 +16,7 @@ using Neo.UI.Base.MVVM;
 
 namespace Neo.UI.Wallets
 {
-    internal class TradeViewModel : ViewModelBase
+    public class TradeViewModel : ViewModelBase
     {
         private readonly IDispatcher dispatcher;
 

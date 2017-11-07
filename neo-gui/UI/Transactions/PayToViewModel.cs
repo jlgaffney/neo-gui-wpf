@@ -30,7 +30,7 @@ namespace Neo.UI.Transactions
             this.Assets = new ObservableCollection<AssetDescriptor>();
         }
 
-        internal ObservableCollection<AssetDescriptor> Assets { get; }
+        public ObservableCollection<AssetDescriptor> Assets { get; }
 
         public bool AssetSelectionEnabled
         {
@@ -45,7 +45,7 @@ namespace Neo.UI.Transactions
             }
         }
 
-        internal AssetDescriptor SelectedAsset
+        public AssetDescriptor SelectedAsset
         {
             get => this.selectedAsset;
             set
@@ -144,7 +144,7 @@ namespace Neo.UI.Transactions
         public ICommand OkCommand => new RelayCommand(this.Ok);
 
 
-        internal void Load(AssetDescriptor asset = null, UInt160 scriptHash = null)
+        public void Load(AssetDescriptor asset = null, UInt160 scriptHash = null)
         {
             this.dispatcher.InvokeOnMainUIThread(() =>
             {
@@ -209,7 +209,7 @@ namespace Neo.UI.Transactions
             this.TryClose();
         }
 
-        internal TxOutListBoxItem GetOutput()
+        public TxOutListBoxItem GetOutput()
         {
             return this.output;
         }

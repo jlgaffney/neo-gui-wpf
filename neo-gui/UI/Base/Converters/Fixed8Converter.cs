@@ -18,7 +18,9 @@ namespace Neo.UI.Base.Converters
 
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
-            if (value is string s) return Fixed8.Parse(s);
+            var str = value as string;
+
+            if (value != null) return Fixed8.Parse(str);
 
             throw new NotSupportedException();
         }

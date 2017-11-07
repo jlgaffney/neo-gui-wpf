@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Neo.Core;
 using Neo.Implementations.Wallets.EntityFramework;
+using Neo.UI.Base.Collections;
 using Neo.UI.Base.Dispatching;
 using Neo.UI.Base.MVVM;
 
@@ -20,10 +19,10 @@ namespace Neo.UI.Home
         {
             this.dispatcher = dispatcher;
 
-            this.Transactions = new ObservableCollection<TransactionItem>();
+            this.Transactions = new ConcurrentObservableCollection<TransactionItem>();
         }
 
-        public ObservableCollection<TransactionItem> Transactions { get; }
+        public ConcurrentObservableCollection<TransactionItem> Transactions { get; }
 
         public TransactionItem SelectedTransaction
         {
@@ -71,7 +70,7 @@ namespace Neo.UI.Home
                     if (transactionIndex >= 0)
                     {
                         // Update transaction info
-                        this.Transactions[transactionIndex] = transactionItem;
+                        this.Transactions.Replace(transactionIndex, transactionItem);
                     }
                     else
                     {
@@ -81,25 +80,26 @@ namespace Neo.UI.Home
                 }
 
                 // Update transaction confirmations
-                foreach (var item in this.Transactions)
+                var transactionList = this.Transactions.ConvertToList();
+                foreach (var transactionItem in transactionList)
                 {
                     uint transactionHeight = 0;
 
-                    if (item.Info?.Height != null)
+                    if (transactionItem.Info?.Height != null)
                     {
-                        transactionHeight = item.Info.Height.Value;
+                        transactionHeight = transactionItem.Info.Height.Value;
                     }
 
                     var confirmations = ((int) Blockchain.Default.Height) - ((int) transactionHeight) + 1;
 
-                    item.SetConfirmations(confirmations);
+                    transactionItem.SetConfirmations(confirmations);
                 }
             });
         }
 
         private int GetTransactionIndex(string transactionId)
         {
-            var translationList = this.Transactions.ToList();
+            var translationList = this.Transactions.ConvertToList();
 
             for (int i = 0; i < translationList.Count; i++)
             {

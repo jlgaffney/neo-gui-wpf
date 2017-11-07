@@ -2,7 +2,7 @@
 
 namespace Neo.UI
 {
-    internal class TxOutListBoxItem : TransferOutput
+    public class TxOutListBoxItem : TransferOutput
     {
         public string AssetName;
 
