@@ -347,11 +347,13 @@
     <Compile Include="UI\Base\Helpers\ColorHelper.cs" />
     <Compile Include="UI\Base\Helpers\TransactionHelper.cs" />
     <Compile Include="UI\Base\Helpers\WindowHelper.cs" />
-    <Compile Include="UI\Base\Messages\IMessageAggregator.cs" />
+    <Compile Include="UI\Base\Messages\IInternalMessageAggregator.cs" />
     <Compile Include="UI\Base\Messages\IMessageHandler.cs" />
     <Compile Include="UI\Base\Messages\IMessagePublisher.cs" />
-    <Compile Include="UI\Base\Messages\MessageAggregator.cs" />
+    <Compile Include="UI\Base\Messages\IMessageSubscriber.cs" />
+    <Compile Include="UI\Base\Messages\InternalMessageAggregator.cs" />
     <Compile Include="UI\Base\Messages\MessagePublisher.cs" />
+    <Compile Include="UI\Base\Messages\MessageSubscriber.cs" />
     <Compile Include="UI\Base\MVVM\ILoadable.cs" />
     <Compile Include="UI\Base\MVVM\IUnloadable.cs" />
     <Compile Include="UI\Base\Localization\LocalizedDescriptionAttribute.cs" />
@@ -382,6 +384,12 @@
     <Compile Include="UI\AccountType.cs" />
     <Compile Include="UI\MarkupExtensions\DataContextBindingExtension.cs" />
     <Compile Include="UI\Messages\AccountBalanceChangedMessage.cs" />
+    <Compile Include="UI\Messages\ClearAccountsMessage.cs" />
+    <Compile Include="UI\Messages\EnableMenuItemsMessage.cs" />
+    <Compile Include="UI\Messages\LoadWalletAddressesMessage.cs" />
+    <Compile Include="UI\Messages\RestoreContractsMessage.cs" />
+    <Compile Include="UI\Messages\UpdateAcountListMessage.cs" />
+    <Compile Include="UI\Messages\WalletBalanceChangedMessage.cs" />
     <Compile Include="UI\TxOutListBox.xaml.cs">
       <DependentUpon>TxOutListBox.xaml</DependentUpon>
     </Compile>

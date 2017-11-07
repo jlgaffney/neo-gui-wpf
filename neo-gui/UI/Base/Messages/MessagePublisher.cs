@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Neo.UI.Base.Messages
+﻿namespace Neo.UI.Base.Messages
 {
     public class MessagePublisher : IMessagePublisher
     {
         #region Private Fields 
-        private readonly IMessageAggregator _messageAggregator;
+        private readonly IInternalMessageAggregator _messageAggregator;
         #endregion
 
         #region Constructor 
-        public MessagePublisher(IMessageAggregator messageAggregator)
+        public MessagePublisher(IInternalMessageAggregator messageAggregator)
         {
             this._messageAggregator = messageAggregator;
         }
@@ -22,7 +16,7 @@ namespace Neo.UI.Base.Messages
         #region IMessagePublisher implementation
         public void Publish<T>(T message)
         {
-            throw new NotImplementedException();
+            this._messageAggregator.Publish(message);
         }
         #endregion
     }

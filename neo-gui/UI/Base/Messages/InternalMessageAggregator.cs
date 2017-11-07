@@ -3,14 +3,14 @@ using System.Linq;
 
 namespace Neo.UI.Base.Messages
 {
-    public class MessageAggregator : IMessageAggregator
+    public class InternalMessageAggregator : IInternalMessageAggregator
     {
         #region Private Fields 
         private IList<IMessageHandler> _messageHandlers;
         #endregion
 
         #region Constructor 
-        public MessageAggregator()
+        public InternalMessageAggregator()
         {
             this._messageHandlers = new List<IMessageHandler>();
         }

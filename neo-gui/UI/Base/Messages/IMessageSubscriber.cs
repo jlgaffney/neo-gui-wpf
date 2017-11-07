@@ -1,11 +1,9 @@
 ﻿namespace Neo.UI.Base.Messages
 {
-    public interface IMessageAggregator
+    public interface IMessageSubscriber
     {
         void Subscribe(IMessageHandler messageHandler);
 
         void Unsubscribe(IMessageHandler messageHandler);
-
-        void Publish<T>(T message);
     }
 }
