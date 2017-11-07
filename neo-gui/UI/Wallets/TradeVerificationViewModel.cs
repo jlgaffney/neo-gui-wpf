@@ -7,7 +7,7 @@ using Neo.UI.Base.MVVM;
 
 namespace Neo.UI.Wallets
 {
-    internal class TradeVerificationViewModel : ViewModelBase
+    public class TradeVerificationViewModel : ViewModelBase
     {
         private readonly IDispatcher dispatcher;
 
@@ -34,7 +34,7 @@ namespace Neo.UI.Wallets
             this.TryClose();
         }
 
-        internal void SetOutputs(IEnumerable<TransactionOutput> outputs)
+        public void SetOutputs(IEnumerable<TransactionOutput> outputs)
         {
             this.dispatcher.InvokeOnMainUIThread(() =>
             {

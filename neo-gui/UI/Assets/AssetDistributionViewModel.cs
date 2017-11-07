@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using Neo.Core;
@@ -9,7 +8,7 @@ using Neo.Wallets;
 
 namespace Neo.UI.Assets
 {
-    internal class AssetDistributionViewModel : ViewModelBase
+    public class AssetDistributionViewModel : ViewModelBase
     {
         private readonly IDispatcher dispatcher;
 
