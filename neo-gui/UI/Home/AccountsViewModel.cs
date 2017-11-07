@@ -6,35 +6,50 @@ using System.Windows;
 using System.Windows.Input;
 
 using MahApps.Metro.Controls.Dialogs;
-
+using Neo.Core;
 using Neo.Properties;
 using Neo.UI.Accounts;
 using Neo.UI.Base.Collections;
 using Neo.UI.Base.Dialogs;
 using Neo.UI.Base.Dispatching;
 using Neo.UI.Base.Helpers;
+using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
 using Neo.UI.Contracts;
+using Neo.UI.Messages;
 using Neo.UI.Voting;
 using Neo.Wallets;
 
 namespace Neo.UI.Home
 {
-    public class AccountsViewModel : ViewModelBase
+    public class AccountsViewModel : 
+        ViewModelBase, 
+        ILoadable, 
+        IMessageHandler<AccountBalanceChangedMessage>,
+        IMessageHandler<EnableMenuItemsMessage>,
+        IMessageHandler<ClearAccountsMessage>,
+        IMessageHandler<LoadWalletAddressesMessage>,
+        IMessageHandler<RestoreContractsMessage>
     {
+        private readonly IMessageSubscriber messageSubscriber;
+        private readonly IMessagePublisher messagePublisher;
         private readonly IDispatcher dispatcher;
 
         private AccountItem selectedAccount;
         
-        public AccountsViewModel(IDispatcher dispatcher)
+        public AccountsViewModel(
+            IMessageSubscriber messageSubscriber, 
+            IMessagePublisher messagePublisher, 
+            IDispatcher dispatcher)
         {
+            this.messageSubscriber = messageSubscriber;
+            this.messagePublisher = messagePublisher;
             this.dispatcher = dispatcher;
 
             this.Accounts = new ConcurrentObservableCollection<AccountItem>();
         }
 
         #region Properties
-
         public Action NotifyBalanceChangedAction { get; set; }
 
         public ConcurrentObservableCollection<AccountItem> Accounts { get; }
@@ -60,11 +75,6 @@ namespace Neo.UI.Home
         }
 
         public bool MenuItemsEnabled => ApplicationContext.Instance.CurrentWallet != null;
-
-        public void UpdateMenuItemsEnabled()
-        {
-            NotifyPropertyChanged(nameof(this.MenuItemsEnabled));
-        }
 
         public bool ViewPrivateKeyEnabled =>
             this.SelectedAccount != null &&
@@ -114,7 +124,7 @@ namespace Neo.UI.Home
         }
 
 
-        internal async void AddAddress(UInt160 scriptHash, bool selected = false)
+        private async void AddAddress(UInt160 scriptHash, bool selected = false)
         {
             var address = Wallet.ToAddress(scriptHash);
             var item = this.GetAccount(address);
@@ -135,7 +145,7 @@ namespace Neo.UI.Home
             this.SelectedAccount = selected ? item : null;
         }
 
-        internal async void AddContract(VerificationContract contract, bool selected = false)
+        private async void AddContract(VerificationContract contract, bool selected = false)
         {
             var item = this.GetAccount(contract.Address);
 
@@ -163,10 +173,7 @@ namespace Neo.UI.Home
             this.SelectedAccount = selected ? item : null;
         }
 
-
-
         #region Account Menu Command Methods
-
         private void CreateNewKey()
         {
             this.SelectedAccount = null;
@@ -380,9 +387,78 @@ namespace Neo.UI.Home
             ApplicationContext.Instance.CurrentWallet.DeleteAddress(scriptHash);
             await this.dispatcher.InvokeOnMainUIThread(() => this.Accounts.Remove(accountToDelete));
 
-            this.NotifyBalanceChangedAction?.Invoke();
+            this.messagePublisher.Publish(new WalletBalanceChangedMessage());
+        }
+        #endregion Account Menu Command Methods
+
+        #region IMessageHandler implementation 
+        public void HandleMessage(AccountBalanceChangedMessage message)
+        {
+            var coins = ApplicationContext.Instance.CurrentWallet?.GetCoins().Where(p => !p.State.HasFlag(CoinState.Spent)).ToList();
+
+            var balanceNeo = coins.Where(p => p.Output.AssetId.Equals(Blockchain.GoverningToken.Hash)).GroupBy(p => p.Output.ScriptHash).ToDictionary(p => p.Key, p => p.Sum(i => i.Output.Value));
+            var balanceGas = coins.Where(p => p.Output.AssetId.Equals(Blockchain.UtilityToken.Hash)).GroupBy(p => p.Output.ScriptHash).ToDictionary(p => p.Key, p => p.Sum(i => i.Output.Value));
+
+            foreach (var account in this.Accounts)
+            {
+                var scriptHash = Wallet.ToScriptHash(account.Address);
+                var neo = balanceNeo.ContainsKey(scriptHash) ? balanceNeo[scriptHash] : Fixed8.Zero;
+                var gas = balanceGas.ContainsKey(scriptHash) ? balanceGas[scriptHash] : Fixed8.Zero;
+                account.Neo = neo;
+                account.Gas = gas;
+            }
+        }
+        #endregion
+
+        #region ILoadable implementation 
+        public void OnLoad()
+        {
+            this.messageSubscriber.Subscribe(this);
         }
 
-        #endregion Account Menu Command Methods
+        public void HandleMessage(EnableMenuItemsMessage message)
+        {
+            this.NotifyPropertyChanged(nameof(this.MenuItemsEnabled));
+        }
+
+        public void HandleMessage(ClearAccountsMessage message)
+        {
+            this.Accounts.Clear();
+        }
+
+        public void HandleMessage(LoadWalletAddressesMessage message)
+        {
+            if (ApplicationContext.Instance.CurrentWallet != null)
+            {
+                // Load accounts
+                foreach (var scriptHash in ApplicationContext.Instance.CurrentWallet.GetAddresses())
+                {
+                    var contract = ApplicationContext.Instance.CurrentWallet.GetContract(scriptHash);
+                    if (contract == null)
+                    {
+                        this.AddAddress(scriptHash);
+                    }
+                    else
+                    {
+                         this.AddContract(contract);
+                    }
+                }
+            }
+        }
+
+        public void HandleMessage(RestoreContractsMessage message)
+        {
+            if (message.Contracts == null || !message.Contracts.Any())
+            {
+                return;
+            }
+
+            foreach (var contract in message.Contracts)
+            {
+                ApplicationContext.Instance.CurrentWallet.AddContract(contract);
+                this.AddContract(contract, true);
+            }
+        }
+        #endregion
     }
 }

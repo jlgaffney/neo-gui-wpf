@@ -40,8 +40,11 @@ namespace Neo.UI.Home
     public class HomeViewModel :
         ViewModelBase,
         ILoadable,
-        IMessageHandler<UpdateApplicationMessage>
+        IMessageHandler<UpdateApplicationMessage>,
+        IMessageHandler<WalletBalanceChangedMessage>
     {
+        private readonly IMessagePublisher _messagePublisher;
+        private readonly IMessageSubscriber _messageSubscriber;
         private readonly IDispatcher dispatcher;
 
         private bool balanceChanged = false;
@@ -60,18 +63,19 @@ namespace Neo.UI.Home
         private readonly object uiUpdateTimerLock = new object();
 
         #region Constructor 
-        public HomeViewModel(IMessageAggregator messageAggregator, IDispatcher dispatcher,
-            AccountsViewModel accountsViewModel, AssetsViewModel assetsViewModel, TransactionsViewModel transactionsViewModel)
+        public HomeViewModel(
+            IMessagePublisher messagePublisher,
+            IMessageSubscriber messageSubscriber, 
+            IDispatcher dispatcher,
+            AssetsViewModel assetsViewModel, 
+            TransactionsViewModel transactionsViewModel)
         {
-            messageAggregator.Subscribe(this);
-
+            this._messagePublisher = messagePublisher;
+            this._messageSubscriber = messageSubscriber;
             this.dispatcher = dispatcher;
 
-            this.AccountsViewModel = accountsViewModel;
             this.AssetsViewModel = assetsViewModel;
             this.TransactionsViewModel = transactionsViewModel;
-
-            this.AccountsViewModel.NotifyBalanceChangedAction = this.NotifyBalanceChanged;
 
             this.SetupUIUpdateTimer();
 
@@ -79,22 +83,7 @@ namespace Neo.UI.Home
         }
         #endregion
 
-        /// <summary>
-        /// NOTE: This method doesn't actually notify anything,
-        /// it sets the <c>balanceChanged</c> field to <c>true</c>.
-        /// 
-        /// When the UI is next updated, if <c>balanceChanged</c>
-        /// is <c>true</c> the account balances are updated.
-        /// </summary>
-        private void NotifyBalanceChanged()
-        {
-            this.balanceChanged = true;
-        }
-
         #region Public Properties
-
-        public AccountsViewModel AccountsViewModel { get; }
-
         public AssetsViewModel AssetsViewModel { get; }
 
         public TransactionsViewModel TransactionsViewModel { get; }
@@ -133,7 +122,6 @@ namespace Neo.UI.Home
         #endregion Public Properies
 
         #region Tool Strip Menu Commands
-
         public ICommand CreateWalletCommand => new RelayCommand(this.CreateWallet);
 
         public ICommand OpenWalletCommand => new RelayCommand(this.OpenWallet);
@@ -246,7 +234,8 @@ namespace Neo.UI.Home
 
             this.dispatcher.InvokeOnMainUIThread(() =>
             {
-                this.AccountsViewModel.Accounts.Clear();
+                this._messagePublisher.Publish(new ClearAccountsMessage());
+
                 this.AssetsViewModel.Assets.Clear();
                 this.TransactionsViewModel.Transactions.Clear();
             });
@@ -263,25 +252,11 @@ namespace Neo.UI.Home
                 ApplicationContext.Instance.CurrentWallet.TransactionsChanged += CurrentWallet_TransactionsChanged;
             }
 
-            this.AccountsViewModel.UpdateMenuItemsEnabled();
+            this._messagePublisher.Publish(new EnableMenuItemsMessage());
             NotifyPropertyChanged(nameof(this.WalletIsOpen));
 
-            if (ApplicationContext.Instance.CurrentWallet != null)
-            {
-                // Load accounts
-                foreach (var scriptHash in ApplicationContext.Instance.CurrentWallet.GetAddresses())
-                {
-                    var contract = ApplicationContext.Instance.CurrentWallet.GetContract(scriptHash);
-                    if (contract == null)
-                    {
-                        this.AccountsViewModel.AddAddress(scriptHash);
-                    }
-                    else
-                    {
-                        this.AccountsViewModel.AddContract(contract);
-                    }
-                }
-            }
+            this._messagePublisher.Publish(new LoadWalletAddressesMessage());
+
             balanceChanged = true;
             checkNep5Balance = true;
         }
@@ -475,7 +450,8 @@ namespace Neo.UI.Home
         {
             if (ApplicationContext.Instance.CurrentWallet.WalletHeight > Blockchain.Default.Height + 1) return;
 
-            var accountList = this.AccountsViewModel.Accounts.ConvertToList();
+            this._messagePublisher.Publish(new UpdateAcountListMessage());
+
             var assetList = this.AssetsViewModel.Assets.ConvertToList();
             if (balanceChanged)
             {
@@ -499,18 +475,6 @@ namespace Neo.UI.Home
                         Value = Fixed8.Zero,
                         Claim = bonus
                     };
-                }
-
-                var balanceNeo = coins.Where(p => p.Output.AssetId.Equals(Blockchain.GoverningToken.Hash)).GroupBy(p => p.Output.ScriptHash).ToDictionary(p => p.Key, p => p.Sum(i => i.Output.Value));
-                var balanceGas = coins.Where(p => p.Output.AssetId.Equals(Blockchain.UtilityToken.Hash)).GroupBy(p => p.Output.ScriptHash).ToDictionary(p => p.Key, p => p.Sum(i => i.Output.Value));
-
-                foreach (var account in accountList)
-                {
-                    var scriptHash = Wallet.ToScriptHash(account.Address);
-                    var neo = balanceNeo.ContainsKey(scriptHash) ? balanceNeo[scriptHash] : Fixed8.Zero;
-                    var gas = balanceGas.ContainsKey(scriptHash) ? balanceGas[scriptHash] : Fixed8.Zero;
-                    account.Neo = neo;
-                    account.Gas = gas;
                 }
 
                 foreach (var asset in assetList.Where(item => item.State != null))
@@ -778,13 +742,7 @@ namespace Neo.UI.Home
 
             var contracts = view.GetContracts();
 
-            if (contracts == null) return;
-
-            foreach (var contract in contracts)
-            {
-                ApplicationContext.Instance.CurrentWallet.AddContract(contract);
-                this.AccountsViewModel.AddContract(contract, true);
-            }
+            this._messagePublisher.Publish(new RestoreContractsMessage(contracts));
         }
 
         private void Exit()
@@ -964,6 +922,14 @@ namespace Neo.UI.Home
             return walletHeight;
         }
 
+        public void OnLoad()
+        {
+            this._messageSubscriber.Subscribe(this);
+
+            this.Load();
+        }
+
+        #region IMessageHandler implementation 
         public void HandleMessage(UpdateApplicationMessage message)
         {
             // Close window
@@ -973,9 +939,10 @@ namespace Neo.UI.Home
             Process.Start(message.UpdateScriptPath);
         }
 
-        public void OnLoad()
+        public void HandleMessage(WalletBalanceChangedMessage message)
         {
-            this.Load();
+            this.balanceChanged = true;
         }
+        #endregion
     }
 }

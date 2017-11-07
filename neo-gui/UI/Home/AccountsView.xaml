@@ -1,11 +1,15 @@
-﻿<ListView x:Class="Neo.UI.Home.AccountsView"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:dialogs="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
-        xmlns:properties="clr-namespace:Neo.Properties"
-        dialogs:DialogParticipation.Register="{Binding}"
-        ItemsSource="{Binding Accounts}" SelectedItem="{Binding SelectedAccount}"
-        Loaded="AccountsView_Loaded" MouseDoubleClick="AccountList_DoubleClick">
+﻿<ListView 
+    x:Class="Neo.UI.Home.AccountsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:Neo.UI.Home"
+    xmlns:dialogs="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+    xmlns:properties="clr-namespace:Neo.Properties"
+    xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
+    dialogs:DialogParticipation.Register="{Binding}"
+    ItemsSource="{Binding Accounts}" SelectedItem="{Binding SelectedAccount}"
+    DataContext="{markupExtensions:DataContextBinding ViewModel=local:AccountsViewModel}"
+    MouseDoubleClick="AccountList_DoubleClick">
     
     <ListView.View>
         <GridView>

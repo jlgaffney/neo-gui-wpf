@@ -99,7 +99,7 @@
         <TabControl Grid.Row="1">
             <!-- Account Tab -->
             <TabItem Header="{x:Static properties:Strings.Account}">
-                <local:AccountsView DataContext="{Binding AccountsViewModel, Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                <local:AccountsView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
             </TabItem>
 
             <!-- Asset Tab -->

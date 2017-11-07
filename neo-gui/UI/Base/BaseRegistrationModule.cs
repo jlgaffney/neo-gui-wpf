@@ -10,9 +10,17 @@ namespace Neo.UI.Base
         {
             // Register message aggregator
             builder
-                .RegisterType<MessageAggregator>()
-                .As<IMessageAggregator>()
+                .RegisterType<InternalMessageAggregator>()
+                .As<IInternalMessageAggregator>()
                 .SingleInstance();
+
+            builder
+                .RegisterType<MessageSubscriber>()
+                .As<IMessageSubscriber>();
+
+            builder
+                .RegisterType<MessagePublisher>()
+                .As<IMessagePublisher>();
 
             // Register thread dispatcher
             builder

@@ -19,7 +19,7 @@ namespace Neo.UI.Updater
 
         private readonly WebClient web = new WebClient();
 
-        private readonly IMessageAggregator messageAggregator;
+        private readonly IMessagePublisher messagePublisher;
 
         private readonly Version latestVersion;
         private readonly string downloadUrl;
@@ -28,9 +28,9 @@ namespace Neo.UI.Updater
 
         private bool buttonsEnabled;
 
-        public UpdateViewModel(IMessageAggregator messageAggregator)
+        public UpdateViewModel(IMessagePublisher messagePublisher)
         {
-            this.messageAggregator = messageAggregator;
+            this.messagePublisher = messagePublisher;
 
             // Setup update information
             this.latestVersion = VersionHelper.LatestVersion;
@@ -137,7 +137,7 @@ namespace Neo.UI.Updater
             this.TryClose();
 
             // Update application
-            this.messageAggregator.Publish(new UpdateApplicationMessage(UpdateFileName));
+            this.messagePublisher.Publish(new UpdateApplicationMessage(UpdateFileName));
         }
 
         #endregion Update Downloader Methods
