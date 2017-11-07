@@ -14,7 +14,7 @@ using Neo.VM;
 
 namespace Neo.UI.Wallets
 {
-    internal class TransferViewModel : ViewModelBase
+    public class TransferViewModel : ViewModelBase
     {
         private string remark = string.Empty;
 
