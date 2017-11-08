@@ -13,14 +13,12 @@ using System.Windows;
 using System.Windows.Input;
 using MahApps.Metro.Controls.Dialogs;
 using Neo.Core;
-using Neo.Cryptography;
 using Neo.Implementations.Blockchains.LevelDB;
 using Neo.Implementations.Wallets.EntityFramework;
 using Neo.IO;
 using Neo.Properties;
 using Neo.SmartContract;
 using Neo.VM;
-using Neo.Wallets;
 using Neo.UI.Assets;
 using Neo.UI.Base.Dispatching;
 using Neo.UI.Base.Helpers;
@@ -69,14 +67,11 @@ namespace Neo.UI.Home
         public HomeViewModel(
             IMessagePublisher messagePublisher,
             IMessageSubscriber messageSubscriber, 
-            IDispatcher dispatcher,
-            TransactionsViewModel transactionsViewModel)
+            IDispatcher dispatcher)
         {
             this.messagePublisher = messagePublisher;
             this.messageSubscriber = messageSubscriber;
             this.dispatcher = dispatcher;
-
-            this.TransactionsViewModel = transactionsViewModel;
 
             this.SetupUIUpdateTimer();
 
@@ -85,8 +80,6 @@ namespace Neo.UI.Home
         #endregion
 
         #region Public Properties
-        public TransactionsViewModel TransactionsViewModel { get; }
-
         public bool WalletIsOpen => ApplicationContext.Instance.CurrentWallet != null;
 
         public string BlockHeight => $"{GetWalletHeight()}/{Blockchain.Default.Height}/{Blockchain.Default.HeaderHeight}";
@@ -235,8 +228,7 @@ namespace Neo.UI.Home
             {
                 this.messagePublisher.Publish(new ClearAccountsMessage());
                 this.messagePublisher.Publish(new ClearAssetsMessage());
-
-                this.TransactionsViewModel.Transactions.Clear();
+                this.messagePublisher.Publish(new ClearTransactionsMessage());
             });
 
             ApplicationContext.Instance.CurrentWallet = wallet;
@@ -272,7 +264,7 @@ namespace Neo.UI.Home
 
         private void CurrentWallet_TransactionsChanged(object sender, IEnumerable<TransactionInfo> transactions)
         {
-            this.TransactionsViewModel.UpdateTransactions(transactions);
+            this.messagePublisher.Publish(new UpdateTransactionsMessage(transactions));
         }
 
         #endregion Wallet Methods
@@ -588,8 +580,7 @@ namespace Neo.UI.Home
             await this.dispatcher.InvokeOnMainUIThread(() =>
             {
                 this.messagePublisher.Publish(new ClearAssetsMessage());
-
-                this.TransactionsViewModel.Transactions.Clear();
+                this.messagePublisher.Publish(new ClearTransactionsMessage());
             });
 
             ApplicationContext.Instance.CurrentWallet.Rebuild();
@@ -782,12 +773,14 @@ namespace Neo.UI.Home
             return walletHeight;
         }
 
+        #region ILoadable Implementation 
         public void OnLoad()
         {
             this.messageSubscriber.Subscribe(this);
 
             this.Load();
         }
+        #endregion
 
         #region IMessageHandler implementation 
         public void HandleMessage(UpdateApplicationMessage message)

@@ -109,7 +109,7 @@
 
             <!-- Transaction Tab -->
             <TabItem Header="{x:Static properties:Strings.TransactionHistory}">
-                <local:TransactionsView DataContext="{Binding TransactionsViewModel, Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                <local:TransactionsView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
             </TabItem>
         </TabControl>
 

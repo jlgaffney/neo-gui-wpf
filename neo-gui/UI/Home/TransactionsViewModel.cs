@@ -5,23 +5,24 @@ using Neo.Core;
 using Neo.Implementations.Wallets.EntityFramework;
 using Neo.UI.Base.Collections;
 using Neo.UI.Base.Dispatching;
+using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
+using Neo.UI.Messages;
 
 namespace Neo.UI.Home
 {
-    public class TransactionsViewModel : ViewModelBase
+    public class TransactionsViewModel : 
+        ViewModelBase,
+        IMessageHandler<ClearTransactionsMessage>,
+        IMessageHandler<UpdateTransactionsMessage>
     {
+        #region Private Fields 
         private readonly IDispatcher dispatcher;
 
         private TransactionItem selectedTransaction;
+        #endregion
 
-        public TransactionsViewModel(IDispatcher dispatcher)
-        {
-            this.dispatcher = dispatcher;
-
-            this.Transactions = new ConcurrentObservableCollection<TransactionItem>();
-        }
-
+        #region Public Properties 
         public ConcurrentObservableCollection<TransactionItem> Transactions { get; }
 
         public TransactionItem SelectedTransaction
@@ -41,10 +42,20 @@ namespace Neo.UI.Home
         }
 
         public bool CopyTransactionIdEnabled => this.SelectedTransaction != null;
-        
-        public ICommand CopyTransactionIdCommand => new RelayCommand(this.CopyTransactionId);
 
-        
+        public ICommand CopyTransactionIdCommand => new RelayCommand(this.CopyTransactionId);
+        #endregion
+
+        #region Constructor 
+        public TransactionsViewModel(IDispatcher dispatcher)
+        {
+            this.dispatcher = dispatcher;
+
+            this.Transactions = new ConcurrentObservableCollection<TransactionItem>();
+        }
+        #endregion
+
+        #region Private Methods 
         private void CopyTransactionId()
         {
             if (this.SelectedTransaction == null) return;
@@ -52,7 +63,7 @@ namespace Neo.UI.Home
             Clipboard.SetDataObject(this.SelectedTransaction.Id);
         }
 
-        public void UpdateTransactions(IEnumerable<TransactionInfo> transactions)
+        private void UpdateTransactions(IEnumerable<TransactionInfo> transactions)
         {
             this.dispatcher.InvokeOnMainUIThread(() =>
             {
@@ -109,5 +120,18 @@ namespace Neo.UI.Home
             // Could not find transaction
             return -1;
         }
+        #endregion
+
+        #region IMessageHandler Implementation 
+        public void HandleMessage(ClearTransactionsMessage message)
+        {
+            this.Transactions.Clear();
+        }
+
+        public void HandleMessage(UpdateTransactionsMessage message)
+        {
+            this.UpdateTransactions(message.Transactions);
+        }
+        #endregion
     }
 }
