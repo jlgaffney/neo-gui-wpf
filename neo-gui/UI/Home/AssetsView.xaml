@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:properties="clr-namespace:Neo.Properties"
         ItemsSource="{Binding Assets}" SelectedItem="{Binding SelectedAsset}"
-        Loaded="AssetsView_Loaded" MouseDoubleClick="AssetList_DoubleClick">
+        MouseDoubleClick="AssetList_DoubleClick">
     <ListView.View>
         <GridView>
             <GridViewColumn Header="{x:Static properties:Strings.Asset}" Width="120" DisplayMemberBinding="{Binding Name}" />
