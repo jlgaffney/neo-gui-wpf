@@ -104,7 +104,7 @@
 
             <!-- Asset Tab -->
             <TabItem Header="{x:Static properties:Strings.Asset}">
-                <local:AssetsView DataContext="{Binding AssetsViewModel, Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                <local:AssetsView  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
             </TabItem>
 
             <!-- Transaction Tab -->
