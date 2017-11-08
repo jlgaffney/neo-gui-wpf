@@ -43,9 +43,12 @@ namespace Neo.UI.Home
         IMessageHandler<UpdateApplicationMessage>,
         IMessageHandler<WalletBalanceChangedMessage>
     {
-        private readonly IMessagePublisher _messagePublisher;
-        private readonly IMessageSubscriber _messageSubscriber;
+        #region Private Fields 
+        private readonly IMessagePublisher messagePublisher;
+        private readonly IMessageSubscriber messageSubscriber;
         private readonly IDispatcher dispatcher;
+
+        private readonly object uiUpdateTimerLock = new object();
 
         private bool balanceChanged = false;
 
@@ -60,21 +63,19 @@ namespace Neo.UI.Home
         private bool newVersionVisible;
 
         private Timer uiUpdateTimer;
-        private readonly object uiUpdateTimerLock = new object();
+        #endregion
 
         #region Constructor 
         public HomeViewModel(
             IMessagePublisher messagePublisher,
             IMessageSubscriber messageSubscriber, 
             IDispatcher dispatcher,
-            AssetsViewModel assetsViewModel, 
             TransactionsViewModel transactionsViewModel)
         {
-            this._messagePublisher = messagePublisher;
-            this._messageSubscriber = messageSubscriber;
+            this.messagePublisher = messagePublisher;
+            this.messageSubscriber = messageSubscriber;
             this.dispatcher = dispatcher;
 
-            this.AssetsViewModel = assetsViewModel;
             this.TransactionsViewModel = transactionsViewModel;
 
             this.SetupUIUpdateTimer();
@@ -84,8 +85,6 @@ namespace Neo.UI.Home
         #endregion
 
         #region Public Properties
-        public AssetsViewModel AssetsViewModel { get; }
-
         public TransactionsViewModel TransactionsViewModel { get; }
 
         public bool WalletIsOpen => ApplicationContext.Instance.CurrentWallet != null;
@@ -234,9 +233,9 @@ namespace Neo.UI.Home
 
             this.dispatcher.InvokeOnMainUIThread(() =>
             {
-                this._messagePublisher.Publish(new ClearAccountsMessage());
+                this.messagePublisher.Publish(new ClearAccountsMessage());
+                this.messagePublisher.Publish(new ClearAssetsMessage());
 
-                this.AssetsViewModel.Assets.Clear();
                 this.TransactionsViewModel.Transactions.Clear();
             });
 
@@ -252,10 +251,10 @@ namespace Neo.UI.Home
                 ApplicationContext.Instance.CurrentWallet.TransactionsChanged += CurrentWallet_TransactionsChanged;
             }
 
-            this._messagePublisher.Publish(new EnableMenuItemsMessage());
+            this.messagePublisher.Publish(new EnableMenuItemsMessage());
             NotifyPropertyChanged(nameof(this.WalletIsOpen));
 
-            this._messagePublisher.Publish(new LoadWalletAddressesMessage());
+            this.messagePublisher.Publish(new LoadWalletAddressesMessage());
 
             balanceChanged = true;
             checkNep5Balance = true;
@@ -450,144 +449,8 @@ namespace Neo.UI.Home
         {
             if (ApplicationContext.Instance.CurrentWallet.WalletHeight > Blockchain.Default.Height + 1) return;
 
-            this._messagePublisher.Publish(new UpdateAcountListMessage());
-
-            var assetList = this.AssetsViewModel.Assets.ConvertToList();
-            if (balanceChanged)
-            {
-                var coins = ApplicationContext.Instance.CurrentWallet?.GetCoins().Where(p => !p.State.HasFlag(CoinState.Spent)).ToList();
-                var bonusAvailable = Blockchain.CalculateBonus(ApplicationContext.Instance.CurrentWallet.GetUnclaimedCoins().Select(p => p.Reference));
-                var bonusUnavailable = Blockchain.CalculateBonus(coins.Where(p => p.State.HasFlag(CoinState.Confirmed) && p.Output.AssetId.Equals(Blockchain.GoverningToken.Hash)).Select(p => p.Reference), Blockchain.Default.Height + 1);
-                var bonus = bonusAvailable + bonusUnavailable;
-
-                var assets = coins.GroupBy(p => p.Output.AssetId, (k, g) => new
-                {
-                    Asset = Blockchain.Default.GetAssetState(k),
-                    Value = g.Sum(p => p.Output.Value),
-                    Claim = k.Equals(Blockchain.UtilityToken.Hash) ? bonus : Fixed8.Zero
-                }).ToDictionary(p => p.Asset.AssetId);
-
-                if (bonus != Fixed8.Zero && !assets.ContainsKey(Blockchain.UtilityToken.Hash))
-                {
-                    assets[Blockchain.UtilityToken.Hash] = new
-                    {
-                        Asset = Blockchain.Default.GetAssetState(Blockchain.UtilityToken.Hash),
-                        Value = Fixed8.Zero,
-                        Claim = bonus
-                    };
-                }
-
-                foreach (var asset in assetList.Where(item => item.State != null))
-                {
-                    if (assets.ContainsKey(asset.State.AssetId)) continue;
-
-                    this.dispatcher.InvokeOnMainUIThread(() => this.AssetsViewModel.Assets.Remove(asset));
-                }
-
-                foreach (var asset in assets.Values)
-                {
-                    if (asset.Asset == null || asset.Asset.AssetId == null) continue;
-
-                    var valueText = asset.Value + (asset.Asset.AssetId.Equals(Blockchain.UtilityToken.Hash) ? $"+({asset.Claim})" : "");
-
-                    var item = this.AssetsViewModel.Assets.FirstOrDefault(a => a.State != null && a.State.AssetId.Equals(asset.Asset.AssetId));
-
-                    if (item != null)
-                    {
-                        // Asset item already exists
-                        item.Value = valueText;
-                    }
-                    else
-                    {
-                        // Add new asset item
-                        string assetName;
-                        switch (asset.Asset.AssetType)
-                        {
-                            case AssetType.GoverningToken:
-                                assetName = "NEO";
-                                break;
-
-                            case AssetType.UtilityToken:
-                                assetName = "NeoGas";
-                                break;
-
-                            default:
-                                assetName = asset.Asset.GetName();
-                                break;
-                        }
-
-                        var assetItem = new AssetItem
-                        {
-                            Name = assetName,
-                            Type = asset.Asset.AssetType.ToString(),
-                            Issuer = $"{Strings.UnknownIssuer}[{asset.Asset.Owner}]",
-                            Value = valueText,
-                            State = asset.Asset
-                        };
-
-                        /*this.Assets.Groups["unchecked"]
-                        {
-                            Name = asset.Asset.AssetId.ToString(),
-                            Tag = asset.Asset,
-                            UseItemStyleForSubItems = false
-                        };*/
-
-                        this.dispatcher.InvokeOnMainUIThread(() =>
-                        {
-                            this.AssetsViewModel.Assets.Add(assetItem);
-                        });
-                    }
-                }
-                balanceChanged = false;
-            }
-
-            
-            foreach (var item in assetList)//.Groups["unchecked"].Items)
-            {
-                if (item.State == null) continue;
-
-                var asset = item.State;
-
-                var queryResult = this.AssetsViewModel.GetCertificateQueryResult(asset);
-
-                if (queryResult == null) continue;
-
-                using (queryResult)
-                {
-                    switch (queryResult.Type)
-                    {
-                        case CertificateQueryResultType.Querying:
-                        case CertificateQueryResultType.QueryFailed:
-                            break;
-                        case CertificateQueryResultType.System:
-                            //subitem.ForeColor = Color.Green;
-                            item.Issuer = Strings.SystemIssuer;
-                            break;
-                        case CertificateQueryResultType.Invalid:
-                            //subitem.ForeColor = Color.Red;
-                            item.Issuer = $"[{Strings.InvalidCertificate}][{asset.Owner}]";
-                            break;
-                        case CertificateQueryResultType.Expired:
-                            //subitem.ForeColor = Color.Yellow;
-                            item.Issuer = $"[{Strings.ExpiredCertificate}]{queryResult.Certificate.Subject}[{asset.Owner}]";
-                            break;
-                        case CertificateQueryResultType.Good:
-                            //subitem.ForeColor = Color.Black;
-                            item.Issuer = $"{queryResult.Certificate.Subject}[{asset.Owner}]";
-                            break;
-                    }
-                    switch (queryResult.Type)
-                    {
-                        case CertificateQueryResultType.System:
-                        case CertificateQueryResultType.Missing:
-                        case CertificateQueryResultType.Invalid:
-                        case CertificateQueryResultType.Expired:
-                        case CertificateQueryResultType.Good:
-                            //item.Group = listView2.Groups["checked"];
-                            break;
-                    }
-                }
-            }
+            this.messagePublisher.Publish(new UpdateAcountListMessage());
+            this.messagePublisher.Publish(new UpdateAssetsBalanceMessage(this.balanceChanged));
         }
 
 
@@ -635,19 +498,15 @@ namespace Neo.UI.Home
                     }
                     else
                     {
-                        this.AssetsViewModel.Assets.Add(new AssetItem
+                        var assetItem = new AssetItem
                         {
                             Name = name,
                             Type = "NEP-5",
                             Issuer = $"ScriptHash:{scriptHash}",
                             Value = valueText,
-                        });
+                        };
 
-                        /*this.Assets.Groups["checked"]
-                        {
-                            Name = script_hash.ToString(),
-                            UseItemStyleForSubItems = false
-                        };*/
+                        this.messagePublisher.Publish(new AddAssetMessage(assetItem));
                     }
                 });
             }
@@ -728,7 +587,8 @@ namespace Neo.UI.Home
         {
             await this.dispatcher.InvokeOnMainUIThread(() =>
             {
-                this.AssetsViewModel.Assets.Clear();
+                this.messagePublisher.Publish(new ClearAssetsMessage());
+
                 this.TransactionsViewModel.Transactions.Clear();
             });
 
@@ -742,7 +602,7 @@ namespace Neo.UI.Home
 
             var contracts = view.GetContracts();
 
-            this._messagePublisher.Publish(new RestoreContractsMessage(contracts));
+            this.messagePublisher.Publish(new RestoreContractsMessage(contracts));
         }
 
         private void Exit()
@@ -924,7 +784,7 @@ namespace Neo.UI.Home
 
         public void OnLoad()
         {
-            this._messageSubscriber.Subscribe(this);
+            this.messageSubscriber.Subscribe(this);
 
             this.Load();
         }
@@ -941,7 +801,7 @@ namespace Neo.UI.Home
 
         public void HandleMessage(WalletBalanceChangedMessage message)
         {
-            this.balanceChanged = true;
+            this.balanceChanged = message.BalanceChanged;
         }
         #endregion
     }

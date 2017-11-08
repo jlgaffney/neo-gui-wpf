@@ -387,7 +387,7 @@ namespace Neo.UI.Home
             ApplicationContext.Instance.CurrentWallet.DeleteAddress(scriptHash);
             await this.dispatcher.InvokeOnMainUIThread(() => this.Accounts.Remove(accountToDelete));
 
-            this.messagePublisher.Publish(new WalletBalanceChangedMessage());
+            this.messagePublisher.Publish(new WalletBalanceChangedMessage(true));
         }
         #endregion Account Menu Command Methods
 
