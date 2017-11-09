@@ -136,7 +136,8 @@ namespace Neo.UI.Home
                     Address = address,
                     Type = AccountType.WatchOnly,
                     Neo = Fixed8.Zero,
-                    Gas = Fixed8.Zero
+                    Gas = Fixed8.Zero,
+                    ScriptHash = scriptHash
                 };
 
                 await this.dispatcher.InvokeOnMainUIThread(() => this.Accounts.Add(item));
