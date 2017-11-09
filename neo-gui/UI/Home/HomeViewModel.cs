@@ -7,6 +7,7 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using System.Security.Cryptography;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
@@ -20,7 +21,6 @@ using Neo.IO;
 using Neo.Properties;
 using Neo.SmartContract;
 using Neo.VM;
-using Neo.Wallets;
 using Neo.UI.Assets;
 using Neo.UI.Base.Dispatching;
 using Neo.UI.Base.Helpers;
@@ -34,6 +34,7 @@ using Neo.UI.Updater;
 using Neo.UI.Wallets;
 using Neo.UI.Voting;
 using Neo.UI.Base.Messages;
+using Timer = System.Timers.Timer;
 
 namespace Neo.UI.Home
 {
@@ -60,7 +61,7 @@ namespace Neo.UI.Home
         private bool newVersionVisible;
 
         private Timer uiUpdateTimer;
-        private readonly object uiUpdateTimerLock = new object();
+        private readonly object uiUpdateLock = new object();
 
         #region Constructor 
         public HomeViewModel(
@@ -78,8 +79,6 @@ namespace Neo.UI.Home
             this.TransactionsViewModel = transactionsViewModel;
 
             this.SetupUIUpdateTimer();
-
-            this.StartUIUpdateTimer();
         }
         #endregion
 
@@ -365,56 +364,50 @@ namespace Neo.UI.Home
 
         private void SetupUIUpdateTimer()
         {
-            lock (this.uiUpdateTimerLock)
+            if (this.uiUpdateTimer != null)
             {
-                if (this.uiUpdateTimer != null)
-                {
-                    // Stop previous timer
-                    this.uiUpdateTimer.Stop();
-
-                    this.uiUpdateTimer.Elapsed -= this.UpdateWallet;
-
-                    this.uiUpdateTimer.Dispose();
-
-                    this.uiUpdateTimer = null;
-                }
-
-                var timer = new Timer
-                {
-                    Interval = 500,
-                    Enabled = true,
-                    AutoReset = true
-                };
-
-                timer.Elapsed += this.UpdateWallet;
-
-                this.uiUpdateTimer = timer;
-            }
-        }
-
-        private void StartUIUpdateTimer()
-        {
-            lock (this.uiUpdateTimerLock)
-            {
-                this.uiUpdateTimer.Start();
-            }
-        }
-
-        private void StopUIUpdateTimer()
-        {
-            lock (this.uiUpdateTimerLock)
-            {
+                // Stop previous timer
                 this.uiUpdateTimer.Stop();
+
+                this.uiUpdateTimer.Elapsed -= this.UpdateUI;
+
+                this.uiUpdateTimer.Dispose();
+
+                this.uiUpdateTimer = null;
             }
+
+            var timer = new Timer
+            {
+                Interval = 500,
+                Enabled = true,
+                AutoReset = true
+            };
+
+            timer.Elapsed += this.UpdateUI;
+
+            this.uiUpdateTimer = timer;
+
+            // Start timer
+            this.uiUpdateTimer.Start();
         }
 
-        private void UpdateWallet(object sender, ElapsedEventArgs e)
+        private void UpdateUI(object sender, ElapsedEventArgs e)
         {
-            var persistenceSpan = DateTime.UtcNow - this.persistenceTime;
+            // Only update UI if it is not already being updated
+            if (!Monitor.TryEnter(this.uiUpdateLock)) return;
 
-            this.UpdateBlockProgress(persistenceSpan);
+            try
+            {
+                var persistenceSpan = DateTime.UtcNow - this.persistenceTime;
 
-            this.UpdateBalances(persistenceSpan);
+                this.UpdateBlockProgress(persistenceSpan);
+
+                this.UpdateBalances(persistenceSpan);
+            }
+            finally
+            {
+                Monitor.Exit(this.uiUpdateLock);
+            }
         }
 
         private void UpdateBlockProgress(TimeSpan persistenceSpan)
@@ -444,13 +437,10 @@ namespace Neo.UI.Home
 
             this.UpdateNEP5TokenBalances(persistenceSpan);
         }
-
         
         private void UpdateAssetBalances()
         {
             if (ApplicationContext.Instance.CurrentWallet.WalletHeight > Blockchain.Default.Height + 1) return;
-
-            this._messagePublisher.Publish(new UpdateAcountListMessage());
 
             var assetList = this.AssetsViewModel.Assets.ConvertToList();
             if (balanceChanged)
@@ -476,6 +466,8 @@ namespace Neo.UI.Home
                         Claim = bonus
                     };
                 }
+
+                this._messagePublisher.Publish(new AccountBalancesChangedMessage());
 
                 foreach (var asset in assetList.Where(item => item.State != null))
                 {
