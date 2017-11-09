@@ -2,29 +2,33 @@
 using Neo.Core;
 using Neo.Implementations.Wallets.EntityFramework;
 using Neo.Properties;
+using Neo.UI.Base.MVVM;
 
 namespace Neo.UI
 {
-    public class TransactionItem
+    public class TransactionItem : ViewModelBase
     {
         private int confirmations;
 
-        public TransactionInfo Info { get; set; }
-
-        public string Id => this.Info?.Transaction.Hash.ToString();
-
         public string Time => this.Info?.Time.ToString(CultureInfo.CurrentUICulture);
+
+        public string Id => this.Info == null ? string.Empty : this.Info.Transaction.Hash.ToString();
+
+        public string Confirmations => this.confirmations > 0 ? this.confirmations.ToString() : Strings.Unconfirmed;
 
         public string Type => this.Info == null ? string.Empty : TransactionTypeToString(this.Info.Transaction.Type);
 
-        public string Confirmations => this.confirmations > 0
-            ? this.confirmations.ToString() : Strings.Unconfirmed;
+        public TransactionInfo Info { get; set; }
 
         public void SetConfirmations(int value)
         {
-            if (confirmations < 0) value = 0;
+            if (this.confirmations == value) return;
+
+            if (this.confirmations < 0) value = 0;
 
             this.confirmations = value;
+
+            NotifyPropertyChanged(nameof(this.Confirmations));
         }
 
         private static string TransactionTypeToString(TransactionType type)
