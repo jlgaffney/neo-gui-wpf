@@ -9,8 +9,6 @@ namespace Neo.UI.Home
     /// </summary>
     public partial class AccountsView
     {
-        private AccountsViewModel viewModel;
-
         public AccountsView()
         {
             InitializeComponent();
@@ -18,8 +16,14 @@ namespace Neo.UI.Home
         
         private void AccountList_DoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (this.viewModel?.SelectedAccount == null) return;
-            var url = string.Format(Settings.Default.Urls.AddressUrl, this.viewModel?.SelectedAccount.Address);
+            var viewModel = this.DataContext as AccountsViewModel;
+
+            if (viewModel == null) return;
+
+            if (viewModel.SelectedAccount == null) return;
+
+            var url = string.Format(Settings.Default.Urls.AddressUrl, viewModel.SelectedAccount.Address);
+
             Process.Start(url);
         }
     }
