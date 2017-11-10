@@ -299,6 +299,8 @@
     <Compile Include="Controllers\BlockChainController.cs" />
     <Compile Include="Controllers\ControllersRegistrationModule.cs" />
     <Compile Include="Controllers\IBlockChainController.cs" />
+    <Compile Include="Controllers\IWalletController.cs" />
+    <Compile Include="Controllers\WalletController.cs" />
     <Compile Include="IApplicationContext.cs" />
     <Compile Include="UI\Base\BaseRegistrationModule.cs" />
     <Compile Include="UI\Base\Collections\ConcurrentObservableCollection.cs" />
