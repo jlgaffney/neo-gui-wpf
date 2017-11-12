@@ -1,5 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Security.Cryptography;
+using Neo.DialogResults;
+using Neo.Helpers;
 using Neo.Implementations.Wallets.EntityFramework;
 using Neo.Properties;
 using Neo.UI.Base.Messages;
@@ -10,6 +14,7 @@ namespace Neo.Controllers
     public class WalletController : IWalletController
     {
         #region Private Fields 
+        private readonly IDialogHelper dialogHelper;
         private readonly IApplicationContext applicationContext;
         private readonly IMessagePublisher messagePublisher;
 
@@ -21,9 +26,11 @@ namespace Neo.Controllers
 
         #region Constructor 
         public WalletController(
+            IDialogHelper dialogHelper,
             IApplicationContext applicationContext,
             IMessagePublisher messagePublisher)
         {
+            this.dialogHelper = dialogHelper;
             this.applicationContext = applicationContext;
             this.messagePublisher = messagePublisher;
         }
@@ -42,7 +49,36 @@ namespace Neo.Controllers
 
         public void OpenWallet(string walletPath, string password)
         {
-            throw new NotImplementedException();
+            var openWalletDialogResult = this.dialogHelper.ShowDialog<OpenWalletDialogResult>("OpenWalletDialog");
+
+            // [TODO] why this verification? Why the magic string?
+            if (UserWallet.GetVersion(walletPath) < Version.Parse("1.3.5"))
+            {
+                var migrationApproved = this.dialogHelper.ShowDialog<YesOrNoDialogResult>("ApproveWalletMigrationDialog");
+
+                if (!migrationApproved.Result.Yes)
+                {
+                    return;
+                }
+
+                this.MigrateWallet(walletPath);
+                this.dialogHelper.ShowDialog("WalletMigrationCompleteDialog");
+            }
+
+            var userWallet = this.OpenWalletWithPath(walletPath, password);
+            if (userWallet == null)
+            {
+                return;
+            }
+
+            if (openWalletDialogResult.Result.OpenInRepairMode)
+            {
+                userWallet.Rebuild();
+            }
+            this.SetCurrentWallet(userWallet);
+
+            Settings.Default.LastWalletPath = walletPath;
+            Settings.Default.Save();
         }
         #endregion
 
@@ -88,6 +124,30 @@ namespace Neo.Controllers
         private void CurrentWalletBalanceChanged(object sender, EventArgs e)
         {
             this.balanceChanged = true;
+        }
+
+        private void MigrateWallet(string walletPath)
+        {
+            var pathOld = Path.ChangeExtension(walletPath, ".old.db3");
+            var pathNew = Path.ChangeExtension(walletPath, ".new.db3");
+            UserWallet.Migrate(walletPath, pathNew);
+            File.Move(walletPath, pathOld);
+            File.Move(pathNew, walletPath);
+        }
+
+        private UserWallet OpenWalletWithPath(string walletPath, string password)
+        {
+            try
+            {
+                return UserWallet.Open(walletPath, password);
+                
+            }
+            catch (CryptographicException)
+            {
+                this.dialogHelper.ShowDialog("WalletPasswordIncorrectDialog", Strings.PasswordIncorrect);
+            }
+
+            return null;
         }
         #endregion
     }
