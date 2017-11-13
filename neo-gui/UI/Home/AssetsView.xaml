@@ -1,4 +1,4 @@
-﻿<ListView 
+<ListView 
     x:Class="Neo.UI.Home.AssetsView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -9,7 +9,6 @@
     SelectedItem="{Binding SelectedAsset}"
     DataContext="{markupExtensions:DataContextBinding ViewModel=local:AssetsViewModel}"
     MouseDoubleClick="AssetList_DoubleClick">
-    
     <ListView.View>
         <GridView>
             <GridViewColumn Header="{x:Static properties:Strings.Asset}" Width="120" DisplayMemberBinding="{Binding Name}" />

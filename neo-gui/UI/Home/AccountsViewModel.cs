@@ -25,7 +25,7 @@ namespace Neo.UI.Home
     public class AccountsViewModel : 
         ViewModelBase, 
         ILoadable, 
-        IMessageHandler<AccountBalanceChangedMessage>,
+        IMessageHandler<AccountBalancesChangedMessage>,
         IMessageHandler<EnableMenuItemsMessage>,
         IMessageHandler<ClearAccountsMessage>,
         IMessageHandler<LoadWalletAddressesMessage>,
@@ -136,7 +136,8 @@ namespace Neo.UI.Home
                     Address = address,
                     Type = AccountType.WatchOnly,
                     Neo = Fixed8.Zero,
-                    Gas = Fixed8.Zero
+                    Gas = Fixed8.Zero,
+                    ScriptHash = scriptHash
                 };
 
                 await this.dispatcher.InvokeOnMainUIThread(() => this.Accounts.Add(item));
@@ -392,14 +393,18 @@ namespace Neo.UI.Home
         #endregion Account Menu Command Methods
 
         #region IMessageHandler implementation 
-        public void HandleMessage(AccountBalanceChangedMessage message)
+        public void HandleMessage(AccountBalancesChangedMessage message)
         {
             var coins = ApplicationContext.Instance.CurrentWallet?.GetCoins().Where(p => !p.State.HasFlag(CoinState.Spent)).ToList();
+
+            if (coins == null) return;
 
             var balanceNeo = coins.Where(p => p.Output.AssetId.Equals(Blockchain.GoverningToken.Hash)).GroupBy(p => p.Output.ScriptHash).ToDictionary(p => p.Key, p => p.Sum(i => i.Output.Value));
             var balanceGas = coins.Where(p => p.Output.AssetId.Equals(Blockchain.UtilityToken.Hash)).GroupBy(p => p.Output.ScriptHash).ToDictionary(p => p.Key, p => p.Sum(i => i.Output.Value));
 
-            foreach (var account in this.Accounts)
+            var accountsList = this.Accounts.ToList();
+
+            foreach (var account in accountsList)
             {
                 var scriptHash = Wallet.ToScriptHash(account.Address);
                 var neo = balanceNeo.ContainsKey(scriptHash) ? balanceNeo[scriptHash] : Fixed8.Zero;
@@ -407,13 +412,6 @@ namespace Neo.UI.Home
                 account.Neo = neo;
                 account.Gas = gas;
             }
-        }
-        #endregion
-
-        #region ILoadable implementation 
-        public void OnLoad()
-        {
-            this.messageSubscriber.Subscribe(this);
         }
 
         public void HandleMessage(EnableMenuItemsMessage message)
@@ -428,20 +426,19 @@ namespace Neo.UI.Home
 
         public void HandleMessage(LoadWalletAddressesMessage message)
         {
-            if (ApplicationContext.Instance.CurrentWallet != null)
+            if (ApplicationContext.Instance.CurrentWallet == null) return;
+
+            // Load accounts
+            foreach (var scriptHash in ApplicationContext.Instance.CurrentWallet.GetAddresses())
             {
-                // Load accounts
-                foreach (var scriptHash in ApplicationContext.Instance.CurrentWallet.GetAddresses())
+                var contract = ApplicationContext.Instance.CurrentWallet.GetContract(scriptHash);
+                if (contract == null)
                 {
-                    var contract = ApplicationContext.Instance.CurrentWallet.GetContract(scriptHash);
-                    if (contract == null)
-                    {
-                        this.AddAddress(scriptHash);
-                    }
-                    else
-                    {
-                         this.AddContract(contract);
-                    }
+                    this.AddAddress(scriptHash);
+                }
+                else
+                {
+                    this.AddContract(contract);
                 }
             }
         }
@@ -458,6 +455,13 @@ namespace Neo.UI.Home
                 ApplicationContext.Instance.CurrentWallet.AddContract(contract);
                 this.AddContract(contract, true);
             }
+        }
+        #endregion
+
+        #region ILoadable implementation 
+        public void OnLoad()
+        {
+            this.messageSubscriber.Subscribe(this);
         }
         #endregion
     }

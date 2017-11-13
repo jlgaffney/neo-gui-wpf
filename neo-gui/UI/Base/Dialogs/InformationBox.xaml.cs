@@ -7,6 +7,11 @@ namespace Neo.UI.Base.Dialogs
     /// </summary>
     public partial class InformationBox
     {
+        private InformationBox()
+        {
+            InitializeComponent();
+        }
+
         public static bool? Show(string text, string message = null, string title = null)
         {
             var box = new InformationBox();
