@@ -1,8 +1,8 @@
 ﻿namespace Neo.UI.Accounts
 {
-    public partial class ImportCustomContractView
+    public partial class ImportCertificateView
     {
-        public ImportCustomContractView()
+        public ImportCertificateView()
         {
             InitializeComponent();
         }

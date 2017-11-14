@@ -8,7 +8,9 @@ using Neo.Core;
 using Neo.Cryptography.ECC;
 using Neo.Properties;
 using Neo.SmartContract;
+using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
+using Neo.UI.Messages;
 using Neo.VM;
 using Neo.Wallets;
 
@@ -18,16 +20,19 @@ namespace Neo.UI.Accounts
     {
         private const int HoursInDay = 24;
         private const int MinutesInHour = 60;
+        
+        private readonly IMessagePublisher messagePublisher;
 
         private ECPoint selectedAccount;
         private DateTime unlockDate;
         private int unlockHour;
         private int unlockMinute;
 
-        private VerificationContract contract;
-
-        public CreateLockAccountViewModel()
+        public CreateLockAccountViewModel(
+            IMessagePublisher messagePublisher)
         {
+            this.messagePublisher = messagePublisher;
+
             this.Accounts = new ObservableCollection<ECPoint>(ApplicationContext.Instance.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p => ApplicationContext.Instance.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey).ToArray());
 
             this.Hours = new List<int>();
@@ -120,16 +125,12 @@ namespace Neo.UI.Accounts
 
         private void Create()
         {
-            this.contract = this.GenerateContract();
+            var contract = this.GenerateContract();
 
             if (contract == null) return;
 
+            this.messagePublisher.Publish(new AddContractMessage(contract));
             this.TryClose();
-        }
-
-        public VerificationContract GetContract()
-        {
-            return this.contract;
         }
 
         private VerificationContract GenerateContract()

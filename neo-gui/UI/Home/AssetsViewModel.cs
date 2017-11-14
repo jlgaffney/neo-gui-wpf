@@ -9,8 +9,9 @@ using Neo.Cryptography.ECC;
 using Neo.Properties;
 using Neo.SmartContract;
 using Neo.UI.Base.Collections;
-using Neo.UI.Base.Helpers;
+using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
+using Neo.UI.Messages;
 using Neo.VM;
 using Neo.Wallets;
 
@@ -20,12 +21,17 @@ namespace Neo.UI.Home
     {
         private static readonly UInt160 RecycleScriptHash = new[] { (byte)OpCode.PUSHT }.ToScriptHash();
 
+        private readonly IMessagePublisher messagePublisher;
+
         private readonly Dictionary<ECPoint, CertificateQueryResult> certificateQueryResultCache;
 
         private AssetItem selectedAsset;
 
-        public AssetsViewModel()
+        public AssetsViewModel(
+            IMessagePublisher messagePublisher)
         {
+            this.messagePublisher = messagePublisher;
+
             this.certificateQueryResultCache = new Dictionary<ECPoint, CertificateQueryResult>();
 
             this.Assets = new ConcurrentObservableCollection<AssetItem>();
@@ -119,7 +125,7 @@ namespace Neo.UI.Home
                 }
             }, fee: Fixed8.Zero);
 
-            TransactionHelper.SignAndShowInformation(transaction);
+            this.messagePublisher.Publish(new SignTransactionAndShowInformationMessage(transaction));
         }
 
         #endregion Menu Command Methods

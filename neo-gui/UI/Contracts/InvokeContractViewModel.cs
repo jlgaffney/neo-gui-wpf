@@ -9,7 +9,9 @@ using Neo.IO.Json;
 using Neo.Properties;
 using Neo.SmartContract;
 using Neo.UI.Base.Controls;
+using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
+using Neo.UI.Messages;
 using Neo.VM;
 
 namespace Neo.UI.Contracts
@@ -17,6 +19,8 @@ namespace Neo.UI.Contracts
     public class InvokeContractViewModel : ViewModelBase
     {
         private static readonly Fixed8 NetworkFee = Fixed8.FromDecimal(0.001m);
+
+        private readonly IMessagePublisher messagePublisher;
 
         private InvocationTransaction transaction;
 
@@ -35,8 +39,11 @@ namespace Neo.UI.Contracts
         
         private bool invokeEnabled;
 
-
-        
+        public InvokeContractViewModel(
+            IMessagePublisher messagePublisher)
+        {
+            this.messagePublisher = messagePublisher;
+        }
 
         #region Public Properties
 
@@ -308,7 +315,13 @@ namespace Neo.UI.Contracts
 
         private void Invoke()
         {
-            // Close window so parent object can get the transaction
+            if (!this.InvokeEnabled) return;
+
+            var tx = this.GetTransaction();
+
+            if (tx == null) return;
+
+            this.messagePublisher.Publish(new SignTransactionAndShowInformationMessage(tx));
             this.TryClose();
         }
 
