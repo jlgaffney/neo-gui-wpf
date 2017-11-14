@@ -36,6 +36,8 @@ namespace Neo
             {
                 LocalNode.UpnpEnabled = true;
 
+                ApplicationContext.Instance.LocalNode = LocalNode;
+
                 // Start GUI normally
                 var app = new App();
                 app.Run();

@@ -1,5 +1,7 @@
 ﻿using System.Windows;
 using Autofac;
+using Neo.Controllers;
+using Neo.Helpers;
 using Neo.UI;
 using Neo.UI.Base;
 using Neo.UI.Base.Themes;
@@ -37,6 +39,8 @@ namespace Neo
 
             autoFacContainerBuilder.RegisterModule<ViewModelsRegistrationModule>();
             autoFacContainerBuilder.RegisterModule<BaseRegistrationModule>();
+            autoFacContainerBuilder.RegisterModule<ControllersRegistrationModule>();
+            autoFacContainerBuilder.RegisterModule<HelpersRegistrationModule>();
 
             var container = autoFacContainerBuilder.Build();
 

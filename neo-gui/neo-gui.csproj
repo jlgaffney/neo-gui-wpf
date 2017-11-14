@@ -261,6 +261,17 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationContext.cs" />
+    <Compile Include="Controllers\BlockChainController.cs" />
+    <Compile Include="Controllers\ControllersRegistrationModule.cs" />
+    <Compile Include="Controllers\IBlockChainController.cs" />
+    <Compile Include="Controllers\IWalletController.cs" />
+    <Compile Include="DialogResults\OpenWalletDialogResult.cs" />
+    <Compile Include="Controllers\WalletController.cs" />
+    <Compile Include="DialogResults\YesOrNoDialogResult.cs" />
+    <Compile Include="Helpers\DialogHelper.cs" />
+    <Compile Include="Helpers\HelpersRegistrationModule.cs" />
+    <Compile Include="Helpers\IDialogHelper.cs" />
+    <Compile Include="Helpers\DialogResult.cs" />
     <Compile Include="IApplicationContext.cs" />
     <Compile Include="UI\Base\BaseRegistrationModule.cs" />
     <Compile Include="UI\Base\Collections\ConcurrentObservableCollection.cs" />
@@ -349,11 +360,20 @@
     <Compile Include="UI\Home\TransactionsViewModel.cs" />
     <Compile Include="UI\AccountType.cs" />
     <Compile Include="UI\MarkupExtensions\DataContextBindingExtension.cs" />
+    <Compile Include="UI\Messages\AccountBalanceChangedMessage.cs" />
+    <Compile Include="UI\Messages\AddAssetMessage.cs" />
+    <Compile Include="UI\Messages\BlockProgressMessage.cs" />
     <Compile Include="UI\Messages\AccountBalancesChangedMessage.cs" />
     <Compile Include="UI\Messages\ClearAccountsMessage.cs" />
+    <Compile Include="UI\Messages\ClearAssetsMessage.cs" />
+    <Compile Include="UI\Messages\ClearTransactionsMessage.cs" />
     <Compile Include="UI\Messages\EnableMenuItemsMessage.cs" />
     <Compile Include="UI\Messages\LoadWalletAddressesMessage.cs" />
+    <Compile Include="UI\Messages\NewVersionAvailableMessage.cs" />
     <Compile Include="UI\Messages\RestoreContractsMessage.cs" />
+    <Compile Include="UI\Messages\UpdateAcountListMessage.cs" />
+    <Compile Include="UI\Messages\UpdateAssetsBalanceMessage.cs" />
+    <Compile Include="UI\Messages\UpdateTransactionsMessage.cs" />
     <Compile Include="UI\Messages\WalletBalanceChangedMessage.cs" />
     <Compile Include="UI\TxOutListBox.xaml.cs">
       <DependentUpon>TxOutListBox.xaml</DependentUpon>
