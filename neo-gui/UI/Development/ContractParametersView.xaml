@@ -4,6 +4,8 @@
             xmlns:properties="clr-namespace:Neo.Properties"
             xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
             xmlns:development="clr-namespace:Neo.UI.Development"
+            xmlns:dialogs="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+            dialogs:DialogParticipation.Register="{Binding}"
             DataContext="{markupExtensions:DataContextBinding ViewModel=development:ContractParametersViewModel}"
             Margin="8">
     <Grid.RowDefinitions>

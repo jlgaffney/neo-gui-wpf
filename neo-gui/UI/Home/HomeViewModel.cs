@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -7,6 +7,7 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using System.Security.Cryptography;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
@@ -32,6 +33,7 @@ using Neo.UI.Updater;
 using Neo.UI.Wallets;
 using Neo.UI.Voting;
 using Neo.UI.Base.Messages;
+using Timer = System.Timers.Timer;
 
 namespace Neo.UI.Home
 {
@@ -46,8 +48,6 @@ namespace Neo.UI.Home
         private readonly IMessageSubscriber messageSubscriber;
         private readonly IDispatcher dispatcher;
 
-        private readonly object uiUpdateTimerLock = new object();
-
         private bool balanceChanged = false;
 
         private bool checkNep5Balance = false;
@@ -60,6 +60,7 @@ namespace Neo.UI.Home
         private string newVersionLabel;
         private bool newVersionVisible;
 
+        private readonly object uiUpdateLock = new object();
         private Timer uiUpdateTimer;
         #endregion
 
@@ -74,8 +75,6 @@ namespace Neo.UI.Home
             this.dispatcher = dispatcher;
 
             this.SetupUIUpdateTimer();
-
-            this.StartUIUpdateTimer();
         }
         #endregion
 
@@ -356,56 +355,50 @@ namespace Neo.UI.Home
 
         private void SetupUIUpdateTimer()
         {
-            lock (this.uiUpdateTimerLock)
+            if (this.uiUpdateTimer != null)
             {
-                if (this.uiUpdateTimer != null)
-                {
-                    // Stop previous timer
-                    this.uiUpdateTimer.Stop();
-
-                    this.uiUpdateTimer.Elapsed -= this.UpdateWallet;
-
-                    this.uiUpdateTimer.Dispose();
-
-                    this.uiUpdateTimer = null;
-                }
-
-                var timer = new Timer
-                {
-                    Interval = 500,
-                    Enabled = true,
-                    AutoReset = true
-                };
-
-                timer.Elapsed += this.UpdateWallet;
-
-                this.uiUpdateTimer = timer;
-            }
-        }
-
-        private void StartUIUpdateTimer()
-        {
-            lock (this.uiUpdateTimerLock)
-            {
-                this.uiUpdateTimer.Start();
-            }
-        }
-
-        private void StopUIUpdateTimer()
-        {
-            lock (this.uiUpdateTimerLock)
-            {
+                // Stop previous timer
                 this.uiUpdateTimer.Stop();
+
+                this.uiUpdateTimer.Elapsed -= this.UpdateUI;
+
+                this.uiUpdateTimer.Dispose();
+
+                this.uiUpdateTimer = null;
             }
+
+            var timer = new Timer
+            {
+                Interval = 500,
+                Enabled = true,
+                AutoReset = true
+            };
+
+            timer.Elapsed += this.UpdateUI;
+
+            this.uiUpdateTimer = timer;
+
+            // Start timer
+            this.uiUpdateTimer.Start();
         }
 
-        private void UpdateWallet(object sender, ElapsedEventArgs e)
+        private void UpdateUI(object sender, ElapsedEventArgs e)
         {
-            var persistenceSpan = DateTime.UtcNow - this.persistenceTime;
+            // Only update UI if it is not already being updated
+            if (!Monitor.TryEnter(this.uiUpdateLock)) return;
 
-            this.UpdateBlockProgress(persistenceSpan);
+            try
+            {
+                var persistenceSpan = DateTime.UtcNow - this.persistenceTime;
 
-            this.UpdateBalances(persistenceSpan);
+                this.UpdateBlockProgress(persistenceSpan);
+
+                this.UpdateBalances(persistenceSpan);
+            }
+            finally
+            {
+                Monitor.Exit(this.uiUpdateLock);
+            }
         }
 
         private void UpdateBlockProgress(TimeSpan persistenceSpan)
@@ -435,13 +428,12 @@ namespace Neo.UI.Home
 
             this.UpdateNEP5TokenBalances(persistenceSpan);
         }
-
         
         private void UpdateAssetBalances()
         {
             if (ApplicationContext.Instance.CurrentWallet.WalletHeight > Blockchain.Default.Height + 1) return;
 
-            this.messagePublisher.Publish(new UpdateAcountListMessage());
+            this.messagePublisher.Publish(new AccountBalancesChangedMessage());
             this.messagePublisher.Publish(new UpdateAssetsBalanceMessage(this.balanceChanged));
         }
 
