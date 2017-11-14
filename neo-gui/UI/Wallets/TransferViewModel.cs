@@ -9,19 +9,24 @@ using Neo.Core;
 using Neo.Properties;
 using Neo.SmartContract;
 using Neo.UI.Base.Dialogs;
+using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
+using Neo.UI.Messages;
 using Neo.VM;
 
 namespace Neo.UI.Wallets
 {
     public class TransferViewModel : ViewModelBase
     {
+        private readonly IMessagePublisher messagePublisher;
+
         private string remark = string.Empty;
 
-        private Transaction transaction;
-
-        public TransferViewModel()
+        public TransferViewModel(
+            IMessagePublisher messagePublisher)
         {
+            this.messagePublisher = messagePublisher;
+
             this.Items = new ObservableCollection<TxOutListBoxItem>();
         }
 
@@ -46,7 +51,20 @@ namespace Neo.UI.Wallets
 
         private void Ok()
         {
-            this.transaction = this.GenerateTransaction();
+            var transaction = this.GenerateTransaction();
+
+            if (transaction == null) return;
+
+            var invocationTransaction = transaction as InvocationTransaction;
+
+            if (invocationTransaction != null)
+            {
+                this.messagePublisher.Publish(new InvokeContractMessage(invocationTransaction));
+            }
+            else
+            {
+                this.messagePublisher.Publish(new SignTransactionAndShowInformationMessage(transaction));
+            }
 
             this.TryClose();
         }
@@ -54,11 +72,6 @@ namespace Neo.UI.Wallets
         public void UpdateOkButtonEnabled()
         {
             NotifyPropertyChanged(nameof(this.OkEnabled));
-        }
-
-        public Transaction GetTransaction()
-        {
-            return this.transaction;
         }
 
         private Transaction GenerateTransaction()

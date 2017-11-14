@@ -3,14 +3,14 @@ using Neo.Wallets;
 
 namespace Neo.UI.Messages
 {
-    public class RestoreContractsMessage
+    public class AddContractsMessage
     {
         #region Public Properties 
-        public IEnumerable<VerificationContract> Contracts { get; private set; }
+        public IEnumerable<VerificationContract> Contracts { get; }
         #endregion
 
         #region Constructor 
-        public RestoreContractsMessage(IEnumerable<VerificationContract> contracts)
+        public AddContractsMessage(IEnumerable<VerificationContract> contracts)
         {
             this.Contracts = contracts;
         }

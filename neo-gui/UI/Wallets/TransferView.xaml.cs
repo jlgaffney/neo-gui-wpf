@@ -1,5 +1,4 @@
 ﻿using System;
-using Neo.Core;
 
 namespace Neo.UI.Wallets
 {
@@ -17,11 +16,6 @@ namespace Neo.UI.Wallets
         private void TxOutListBox_OnItemsChanged(object sender, EventArgs e)
         {
             this.viewModel?.UpdateOkButtonEnabled();
-        }
-
-        public Transaction GetTransaction()
-        {
-            return this.viewModel?.GetTransaction();
         }
     }
 }

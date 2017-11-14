@@ -1,18 +1,24 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Windows.Input;
+using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
+using Neo.UI.Messages;
 using Neo.Wallets;
 
 namespace Neo.UI.Wallets
 {
     public class RestoreAccountsViewModel : ViewModelBase
     {
-        private List<VerificationContract> contracts;
+        private readonly IMessagePublisher messagePublisher;
 
-        public RestoreAccountsViewModel()
+        public RestoreAccountsViewModel(
+            IMessagePublisher messagePublisher)
         {
+            this.messagePublisher = messagePublisher;
+
             var keys = ApplicationContext.Instance.CurrentWallet.GetKeys();
 
             keys = keys.Where(account => ApplicationContext.Instance.CurrentWallet.GetContracts(account.PublicKeyHash).All(contract => !contract.IsStandard));
@@ -34,14 +40,12 @@ namespace Neo.UI.Wallets
 
         private void Ok()
         {
-            this.contracts = this.GenerateContracts();
+            var contracts = this.GenerateContracts();
 
+            if (contracts == null) return;
+
+            this.messagePublisher.Publish(new AddContractsMessage(contracts));
             this.TryClose();
-        }
-        
-        public List<VerificationContract> GetContracts()
-        {
-            return this.contracts;
         }
 
         private List<VerificationContract> GenerateContracts()

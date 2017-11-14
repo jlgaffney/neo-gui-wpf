@@ -8,23 +8,14 @@ namespace Neo.UI.Contracts
     /// </summary>
     public partial class InvokeContractView
     {
-        private readonly InvokeContractViewModel viewModel;
-
-        public InvokeContractView(InvocationTransaction baseTransaction = null)
+        public InvokeContractView(InvocationTransaction baseTransaction)
         {
             InitializeComponent();
-
-            this.viewModel = this.DataContext as InvokeContractViewModel;
 
             this.BaseTransaction = baseTransaction;
         }
 
         public InvocationTransaction BaseTransaction { get; }
-
-        public InvocationTransaction GetTransaction()
-        {
-            return this.viewModel?.GetTransaction();
-        }
 
         public void SetSelectedTab(int tabIndex)
         {
