@@ -49,7 +49,7 @@ namespace Neo.Controllers
 
                 ImportBlocksIfRequired();
 
-                Blockchain.PersistCompleted += Blockchain_PersistCompleted;
+                Blockchain.PersistCompleted += this.BlockchainPersistCompleted;
 
                 // Start node
                 this.applicationContext.LocalNode.Start(Settings.Default.NodePort, Settings.Default.WsPort);
@@ -125,7 +125,7 @@ namespace Neo.Controllers
 
         private void UpdateBalances(TimeSpan persistenceSpan)
         {
-            if (ApplicationContext.Instance.CurrentWallet == null) return;
+            if (this.applicationContext.CurrentWallet == null) return;
 
             this.UpdateAssetBalances();
 
@@ -134,7 +134,7 @@ namespace Neo.Controllers
 
         private void UpdateAssetBalances()
         {
-            if (ApplicationContext.Instance.CurrentWallet.WalletHeight > Blockchain.Default.Height + 1) return;
+            if (this.applicationContext.CurrentWallet.WalletHeight > Blockchain.Default.Height + 1) return;
 
             this.messagePublisher.Publish(new UpdateAcountListMessage());
             this.messagePublisher.Publish(new UpdateAssetsBalanceMessage(this.balanceChanged));
@@ -147,7 +147,7 @@ namespace Neo.Controllers
             if (persistenceSpan <= TimeSpan.FromSeconds(2)) return;
 
             // Update balances
-            var addresses = ApplicationContext.Instance.CurrentWallet.GetAddresses().ToArray();
+            var addresses = this.applicationContext.CurrentWallet.GetAddresses().ToArray();
             foreach (var s in Settings.Default.NEP5Watched)
             {
                 var scriptHash = UInt160.Parse(s);
@@ -270,14 +270,14 @@ namespace Neo.Controllers
             blockchain.VerifyBlocks = true;
         }
 
-        private void Blockchain_PersistCompleted(object sender, Block block)
+        private void BlockchainPersistCompleted(object sender, Block block)
         {
             this.persistenceTime = DateTime.UtcNow;
-            if (ApplicationContext.Instance.CurrentWallet != null)
+            if (this.applicationContext.CurrentWallet != null)
             {
                 this.checkNep5Balance = true;
 
-                var coins = ApplicationContext.Instance.CurrentWallet.GetCoins();
+                var coins = this.applicationContext.CurrentWallet.GetCoins();
                 if (coins.Any(coin => !coin.State.HasFlag(CoinState.Spent) &&
                     coin.Output.AssetId.Equals(Blockchain.GoverningToken.Hash)))
                 {
