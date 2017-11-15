@@ -4,21 +4,26 @@ using System.Windows.Input;
 using Neo.Core;
 using Neo.Cryptography.ECC;
 using Neo.SmartContract;
+using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
+using Neo.UI.Messages;
 using Neo.Wallets;
 
 namespace Neo.UI.Accounts
 {
     public class ImportCustomContractViewModel : ViewModelBase
     {
+        private readonly IMessagePublisher messagePublisher;
+
         private ECPoint selectedRelatedAccount;
         private string parameterList;
         private string script;
 
-        private VerificationContract contract;
-
-        public ImportCustomContractViewModel()
+        public ImportCustomContractViewModel(
+            IMessagePublisher messagePublisher)
         {
+            this.messagePublisher = messagePublisher;
+
             this.RelatedAccounts = new ObservableCollection<ECPoint>(
                 ApplicationContext.Instance.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p =>
                     ApplicationContext.Instance.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey));
@@ -85,14 +90,12 @@ namespace Neo.UI.Accounts
 
         private void Confirm()
         {
-            this.contract = this.GenerateContract();
+            var contract = this.GenerateContract();
 
+            if (contract == null) return;
+
+            this.messagePublisher.Publish(new AddContractMessage(contract));
             this.TryClose();
-        }
-
-        public VerificationContract GetContract()
-        {
-            return this.contract;
         }
 
         private VerificationContract GenerateContract()
@@ -100,10 +103,10 @@ namespace Neo.UI.Accounts
             if (!this.ConfirmEnabled) return null;
 
             var publicKeyHash = this.SelectedRelatedAccount.EncodePoint(true).ToScriptHash();
-            var parameterList = this.ParameterList.HexToBytes().Select(p => (ContractParameterType)p).ToArray();
+            var parameters = this.ParameterList.HexToBytes().Select(p => (ContractParameterType)p).ToArray();
             var redeemScript = this.Script.HexToBytes();
 
-            return VerificationContract.Create(publicKeyHash, parameterList, redeemScript);
+            return VerificationContract.Create(publicKeyHash, parameters, redeemScript);
         }
     }
 }

@@ -2,16 +2,23 @@
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Windows.Input;
+using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
+using Neo.UI.Messages;
 
 namespace Neo.UI.Accounts
 {
-    public class SelectCertificateViewModel : ViewModelBase
+    public class ImportCertificateViewModel : ViewModelBase
     {
+        private readonly IMessagePublisher messagePublisher;
+
         private X509Certificate2 selectedCertificate;
 
-        public SelectCertificateViewModel()
+        public ImportCertificateViewModel(
+            IMessagePublisher messagePublisher)
         {
+            this.messagePublisher = messagePublisher;
+
             // Load certificates
             using (var store = new X509Store())
             {
@@ -42,6 +49,15 @@ namespace Neo.UI.Accounts
         
         public bool OkEnabled => this.SelectedCertificate != null;
 
-        public ICommand OkCommand => new RelayCommand(this.TryClose);
+        public ICommand OkCommand => new RelayCommand(this.Ok);
+
+
+        private void Ok()
+        {
+            if (this.SelectedCertificate == null) return;
+
+            this.messagePublisher.Publish(new ImportCertificateMessage(this.SelectedCertificate));
+            this.TryClose();
+        }
     }
 }

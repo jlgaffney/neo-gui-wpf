@@ -3,13 +3,16 @@ using System.Linq;
 using System.Windows.Input;
 using Neo.Core;
 using Neo.UI.Base.Dispatching;
+using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
+using Neo.UI.Messages;
 using Neo.Wallets;
 
 namespace Neo.UI.Assets
 {
     public class AssetDistributionViewModel : ViewModelBase
     {
+        private readonly IMessagePublisher messagePublisher;
         private readonly IDispatcher dispatcher;
 
         private AssetDescriptor asset;
@@ -25,10 +28,11 @@ namespace Neo.UI.Assets
 
         private bool distributionEnabled;
 
-        private IssueTransaction transaction;
-
-        public AssetDistributionViewModel(IDispatcher dispatcher)
+        public AssetDistributionViewModel(
+            IMessagePublisher messagePublisher,
+            IDispatcher dispatcher)
         {
+            this.messagePublisher = messagePublisher;
             this.dispatcher = dispatcher;
 
             this.Items = new ObservableCollection<TxOutListBoxItem>();
@@ -152,8 +156,11 @@ namespace Neo.UI.Assets
         
         private void Confirm()
         {
-            this.transaction = this.GenerateTransaction();
+            var transaction = this.GenerateTransaction();
 
+            if (transaction == null) return;
+
+            this.messagePublisher.Publish(new SignTransactionAndShowInformationMessage(transaction));
             this.TryClose();
         }
 
@@ -202,11 +209,6 @@ namespace Neo.UI.Assets
             }
 
             this.dispatcher.InvokeOnMainUIThread(() => this.Items.Clear());
-        }
-
-        internal IssueTransaction GetTransaction()
-        {
-            return this.transaction;
         }
 
         private IssueTransaction GenerateTransaction()

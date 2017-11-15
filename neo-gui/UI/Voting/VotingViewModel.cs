@@ -2,7 +2,9 @@
 using System.Windows.Input;
 using Neo.Core;
 using Neo.UI.Base.Extensions;
+using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
+using Neo.UI.Messages;
 using Neo.VM;
 using Neo.Wallets;
 
@@ -10,11 +12,17 @@ namespace Neo.UI.Voting
 {
     public class VotingViewModel : ViewModelBase
     {
+        private readonly IMessagePublisher messagePublisher;
+
         private UInt160 scriptHash;
 
         private string votes;
 
-        private InvocationTransaction transaction;
+        public VotingViewModel(
+            IMessagePublisher messagePublisher)
+        {
+            this.messagePublisher = messagePublisher;
+        }
 
         public string Address { get; private set; }
 
@@ -52,11 +60,6 @@ namespace Neo.UI.Voting
 
             // Update bindable properties
             NotifyPropertyChanged(nameof(this.Address));
-        }
-
-        public InvocationTransaction GetTransaction()
-        {
-            return this.transaction;
         }
 
         private InvocationTransaction GenerateTransaction()
@@ -101,15 +104,16 @@ namespace Neo.UI.Voting
 
         private void Ok()
         {
-            this.transaction = this.GenerateTransaction();
+            var transaction = this.GenerateTransaction();
 
+            if (transaction == null) return;
+
+            this.messagePublisher.Publish(new InvokeContractMessage(transaction));
             this.TryClose();
         }
 
         private void Cancel()
         {
-            this.transaction = null;
-
             this.TryClose();
         }
     }

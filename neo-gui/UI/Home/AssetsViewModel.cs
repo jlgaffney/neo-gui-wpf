@@ -36,6 +36,16 @@ namespace Neo.UI.Home
         private AssetItem selectedAsset;
         #endregion
 
+        public AssetsViewModel(
+            IMessagePublisher messagePublisher)
+        {
+            this.messagePublisher = messagePublisher;
+
+            this.certificateQueryResultCache = new Dictionary<ECPoint, CertificateQueryResult>();
+
+            this.Assets = new ConcurrentObservableCollection<AssetItem>();
+        }
+
         #region Properties
         public ConcurrentObservableCollection<AssetItem> Assets { get; }
 
@@ -129,7 +139,7 @@ namespace Neo.UI.Home
                 }
             }, fee: Fixed8.Zero);
 
-            TransactionHelper.SignAndShowInformation(transaction);
+            this.messagePublisher.Publish(new SignTransactionAndShowInformationMessage(transaction));
         }
         #endregion Menu Command Methods
 

@@ -4,16 +4,26 @@ using System.Linq;
 using System.Windows.Input;
 using Neo.UI.Base.Controls;
 using Neo.UI.Base.Helpers;
+using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
+using Neo.UI.Messages;
 
 namespace Neo.UI.Wallets
 {
     public class ClaimViewModel : ViewModelBase
     {
+        private readonly IMessagePublisher messagePublisher;
+
         private Fixed8 availableGas = Fixed8.Zero;
         private Fixed8 unavailableGas = Fixed8.Zero;
 
         private bool claimEnabled;
+
+        public ClaimViewModel(
+            IMessagePublisher messagePublisher)
+        {
+            this.messagePublisher = messagePublisher;
+        }
 
         #region Public Properties
 
@@ -118,8 +128,10 @@ namespace Neo.UI.Wallets
         private void Claim()
         {
             var claims = ApplicationContext.Instance.CurrentWallet.GetUnclaimedCoins().Select(p => p.Reference).ToArray();
+
             if (claims.Length == 0) return;
-            TransactionHelper.SignAndShowInformation(new ClaimTransaction
+
+            var transaction = new ClaimTransaction
             {
                 Claims = claims,
                 Attributes = new TransactionAttribute[0],
@@ -133,8 +145,9 @@ namespace Neo.UI.Wallets
                         ScriptHash = ApplicationContext.Instance.CurrentWallet.GetChangeAddress()
                     }
                 }
-            });
+            };
 
+            this.messagePublisher.Publish(new SignTransactionAndShowInformationMessage(transaction));
             this.TryClose();
         }
     }

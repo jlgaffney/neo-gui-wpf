@@ -29,7 +29,10 @@ namespace Neo.UI.Home
         IMessageHandler<EnableMenuItemsMessage>,
         IMessageHandler<ClearAccountsMessage>,
         IMessageHandler<LoadWalletAddressesMessage>,
-        IMessageHandler<RestoreContractsMessage>
+        IMessageHandler<AddContractsMessage>,
+        IMessageHandler<AddContractMessage>,
+        IMessageHandler<ImportPrivateKeyMessage>,
+        IMessageHandler<ImportCertificateMessage>
     {
         private readonly IApplicationContext applicationContext;
         private readonly IMessageSubscriber messageSubscriber;
@@ -223,9 +226,9 @@ namespace Neo.UI.Home
             }
         }
 
-        private async void ImportCertificate()
+        private void ImportCertificate()
         {
-            var view = new SelectCertificateView();
+            var view = new ImportCertificateView();
             view.ShowDialog();
 
             if (view.SelectedCertificate == null) return;
@@ -345,23 +348,8 @@ namespace Neo.UI.Home
         {
             if (this.SelectedAccount?.Contract == null) return;
 
-            var contract = this.SelectedAccount.Contract;
-
-            var view = new VotingView(contract.ScriptHash);
+            var view = new VotingView(this.SelectedAccount.Contract.ScriptHash);
             view.ShowDialog();
-
-            var transaction = view.GetTransaction();
-
-            if (transaction == null) return;
-
-            var invokeContractView = new InvokeContractView(transaction);
-            invokeContractView.ShowDialog();
-
-            transaction = invokeContractView.GetTransaction();
-
-            if (transaction == null) return;
-
-            TransactionHelper.SignAndShowInformation(transaction);
         }
 
         private void CopyAddressToClipboard()
@@ -446,17 +434,80 @@ namespace Neo.UI.Home
             }
         }
 
-        public void HandleMessage(RestoreContractsMessage message)
+        public void HandleMessage(AddContractsMessage message)
         {
             if (message.Contracts == null || !message.Contracts.Any())
             {
                 return;
             }
 
+            this.SelectedAccount = null;
+
             foreach (var contract in message.Contracts)
             {
                 this.applicationContext.CurrentWallet.AddContract(contract);
                 this.AddContract(contract, true);
+            }
+        }
+
+        public void HandleMessage(AddContractMessage message)
+        {
+            if (message.Contract == null) return;
+
+            this.SelectedAccount = null;
+
+            ApplicationContext.Instance.CurrentWallet.AddContract(message.Contract);
+            this.AddContract(message.Contract, true);
+        }
+
+        public void HandleMessage(ImportPrivateKeyMessage message)
+        {
+            if (message.WifStrings == null) return;
+
+            if (!message.WifStrings.Any()) return;
+
+            // Import private keys
+            this.SelectedAccount = null;
+
+            foreach (var wif in message.WifStrings)
+            {
+                KeyPair key;
+                try
+                {
+                    key = ApplicationContext.Instance.CurrentWallet.Import(wif);
+                }
+                catch (FormatException)
+                {
+                    // Skip WIF line
+                    continue;
+                }
+                foreach (var contract in ApplicationContext.Instance.CurrentWallet.GetContracts(key.PublicKeyHash))
+                {
+                    this.AddContract(contract, true);
+                }
+            }
+        }
+
+        public async void HandleMessage(ImportCertificateMessage message)
+        {
+            if (message.SelectedCertificate == null) return;
+
+            this.SelectedAccount = null;
+
+            KeyPair key;
+            try
+            {
+                key = ApplicationContext.Instance.CurrentWallet.Import(message.SelectedCertificate);
+            }
+            catch
+            {
+                await DialogCoordinator.Instance.ShowMessageAsync(this, string.Empty, "Certificate import failed!");
+                return;
+            }
+
+            foreach (var contract in ApplicationContext.Instance.CurrentWallet.GetContracts(key.PublicKeyHash))
+            {
+                AddContract(contract, true);
             }
         }
         #endregion

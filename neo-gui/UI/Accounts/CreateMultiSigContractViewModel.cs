@@ -7,13 +7,16 @@ using Neo.Core;
 using Neo.Cryptography.ECC;
 using Neo.Properties;
 using Neo.UI.Base.Dispatching;
+using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
+using Neo.UI.Messages;
 using Neo.Wallets;
 
 namespace Neo.UI.Accounts
 {
     public class CreateMultiSigContractViewModel : ViewModelBase
     {
+        private readonly IMessagePublisher messagePublisher;
         private readonly IDispatcher dispatcher;
 
         private int minimumSignatureNumber;
@@ -24,10 +27,11 @@ namespace Neo.UI.Accounts
         private string newPublicKey;
 
 
-        private VerificationContract contract;
-
-        public CreateMultiSigContractViewModel(IDispatcher dispatcher)
+        public CreateMultiSigContractViewModel(
+            IMessagePublisher messagePublisher,
+            IDispatcher dispatcher)
         {
+            this.messagePublisher = messagePublisher;
             this.dispatcher = dispatcher;
 
             this.PublicKeys = new ObservableCollection<string>();
@@ -114,14 +118,15 @@ namespace Neo.UI.Accounts
 
         private void Confirm()
         {
-            this.contract = this.GenerateContract();
+            var contract = this.GenerateContract();
 
-            if (this.contract == null)
+            if (contract == null)
             {
                 MessageBox.Show(Strings.AddContractFailedMessage);
                 return;
             }
 
+            this.messagePublisher.Publish(new AddContractMessage(contract));
             this.TryClose();
         }
 
@@ -151,11 +156,6 @@ namespace Neo.UI.Accounts
                 this.PublicKeys.Remove(this.SelectedPublicKey);
                 this.MinimumSignatureNumberMaxValue = this.PublicKeys.Count;
             });
-        }
-
-        public VerificationContract GetContract()
-        {
-            return this.contract;
         }
 
         private VerificationContract GenerateContract()

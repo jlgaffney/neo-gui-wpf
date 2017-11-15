@@ -21,6 +21,7 @@ using Neo.Properties;
 using Neo.SmartContract;
 using Neo.VM;
 using Neo.UI.Assets;
+using Neo.UI.Base.Dialogs;
 using Neo.UI.Base.Dispatching;
 using Neo.UI.Base.Helpers;
 using Neo.UI.Base.MVVM;
@@ -41,7 +42,8 @@ namespace Neo.UI.Home
         ViewModelBase,
         ILoadable,
         IMessageHandler<UpdateApplicationMessage>,
-        IMessageHandler<WalletBalanceChangedMessage>
+        IMessageHandler<WalletBalanceChangedMessage>,
+        IMessageHandler<SignTransactionAndShowInformationMessage>
     {
         #region Private Fields 
         private readonly IApplicationContext applicationContext;
@@ -126,7 +128,7 @@ namespace Neo.UI.Home
 
         public ICommand RebuildIndexCommand => new RelayCommand(this.RebuildIndex);
 
-        public ICommand RestoreAccountsCommand => new RelayCommand(this.RestoreAccounts);
+        public ICommand RestoreAccountsCommand => new RelayCommand(RestoreAccounts);
 
         public ICommand ExitCommand => new RelayCommand(this.Exit);
 
@@ -581,7 +583,7 @@ namespace Neo.UI.Home
             this.applicationContext.CurrentWallet.Rebuild();
         }
 
-        private void RestoreAccounts()
+        private static void RestoreAccounts()
         {
             var view = new RestoreAccountsView();
             view.ShowDialog();
@@ -600,22 +602,6 @@ namespace Neo.UI.Home
         {
             var view = new TransferView();
             view.ShowDialog();
-
-            var transaction = view.GetTransaction();
-
-            if (transaction == null) return;
-
-            if (transaction is InvocationTransaction itx)
-            {
-                var invokeContractView = new InvokeContractView(itx);
-                invokeContractView.ShowDialog();
-
-                transaction = invokeContractView.GetTransaction();
-
-                if (transaction == null) return;
-            }
-
-            TransactionHelper.SignAndShowInformation(transaction);
         }
 
         private static void ShowTransactionDialog()
@@ -632,7 +618,8 @@ namespace Neo.UI.Home
 
         private static void Claim()
         {
-            WindowHelper.Show<ClaimView>();
+            var view = new ClaimView();
+            view.Show();
         }
 
         private static void RequestCertificate()
@@ -645,58 +632,17 @@ namespace Neo.UI.Home
         {
             var assetRegistrationView = new AssetRegistrationView();
             assetRegistrationView.ShowDialog();
-
-            var transactionResult = assetRegistrationView.GetTransaction();
-
-            if (transactionResult == null) return;
-
-
-            var invokeContractView = new InvokeContractView(transactionResult);
-            invokeContractView.ShowDialog();
-
-            transactionResult = invokeContractView.GetTransaction();
-
-            if (transactionResult == null) return;
-
-            TransactionHelper.SignAndShowInformation(transactionResult);
         }
 
         private static void DistributeAsset()
         {
             var view = new AssetDistributionView();
             view.ShowDialog();
-
-            var transaction = view.GetTransaction();
-
-            if (transaction == null) return;
-
-            TransactionHelper.SignAndShowInformation(transaction);
         }
 
         private static void DeployContract()
         {
             var view = new DeployContractView();
-            view.ShowDialog();
-
-            var transactionResult = view.GetTransaction();
-
-            if (transactionResult == null) return;
-
-
-            var invokeContractView = new InvokeContractView(transactionResult);
-            invokeContractView.ShowDialog();
-
-            transactionResult = invokeContractView.GetTransaction();
-
-            if (transactionResult == null) return;
-
-
-            TransactionHelper.SignAndShowInformation(transactionResult);
-        }
-
-        private static void InvokeContract()
-        {
-            var view = new InvokeContractView();
             view.ShowDialog();
         }
 
@@ -704,19 +650,6 @@ namespace Neo.UI.Home
         {
             var electionView = new ElectionView();
             electionView.ShowDialog();
-
-            var transactionResult = electionView.GetTransactionResult();
-
-            if (transactionResult == null) return;
-
-            var invokeContractView = new InvokeContractView(transactionResult);
-            invokeContractView.ShowDialog();
-
-            transactionResult = invokeContractView.GetTransaction();
-
-            if (transactionResult == null) return;
-
-            TransactionHelper.SignAndShowInformation(transactionResult);
         }
 
         private static void ShowSettings()
@@ -737,7 +670,8 @@ namespace Neo.UI.Home
 
         private static void ShowDeveloperTools()
         {
-            WindowHelper.Show<DeveloperToolsView>();
+            var view = new DeveloperToolsView();
+            view.Show();
         }
 
         private void ShowAboutNeoDialog()
@@ -750,7 +684,6 @@ namespace Neo.UI.Home
         private static void ShowUpdateDialog()
         {
             var dialog = new UpdateView();
-
             dialog.ShowDialog();
         }
 
@@ -777,6 +710,11 @@ namespace Neo.UI.Home
         }
         #endregion
 
+        private void InvokeContract()
+        {
+            this.messagePublisher.Publish(new InvokeContractMessage(null));
+        }
+
         #region IMessageHandler implementation 
         public void HandleMessage(UpdateApplicationMessage message)
         {
@@ -790,6 +728,48 @@ namespace Neo.UI.Home
         public void HandleMessage(WalletBalanceChangedMessage message)
         {
             this.balanceChanged = message.BalanceChanged;
+        }
+
+        public void HandleMessage(InvokeContractMessage message)
+        {
+            var invokeContractView = new InvokeContractView(message.Transaction);
+            invokeContractView.ShowDialog();
+        }
+        // TODO Move these message handlers to a more appropriate place, they don't need to be in HomeViewModel
+        public void HandleMessage(SignTransactionAndShowInformationMessage message)
+        {
+            var transaction = message.Transaction;
+
+            if (transaction == null)
+            {
+                MessageBox.Show(Strings.InsufficientFunds);
+                return;
+            }
+
+            ContractParametersContext context;
+            try
+            {
+                context = new ContractParametersContext(transaction);
+            }
+            catch (InvalidOperationException)
+            {
+                MessageBox.Show(Strings.UnsynchronizedBlock);
+                return;
+            }
+
+            ApplicationContext.Instance.CurrentWallet.Sign(context);
+
+            if (context.Completed)
+            {
+                context.Verifiable.Scripts = context.GetScripts();
+                ApplicationContext.Instance.CurrentWallet.SaveTransaction(transaction);
+                Program.LocalNode.Relay(transaction);
+                InformationBox.Show(transaction.Hash.ToString(), Strings.SendTxSucceedMessage, Strings.SendTxSucceedTitle);
+            }
+            else
+            {
+                InformationBox.Show(context.ToString(), Strings.IncompletedSignatureMessage, Strings.IncompletedSignatureTitle);
+            }
         }
         #endregion
     }

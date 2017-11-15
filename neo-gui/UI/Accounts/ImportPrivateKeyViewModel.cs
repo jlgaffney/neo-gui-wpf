@@ -1,12 +1,23 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Input;
 using Neo.UI.Base.Extensions;
+using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
+using Neo.UI.Messages;
 
 namespace Neo.UI.Accounts
 {
     public class ImportPrivateKeyViewModel : ViewModelBase
     {
+        private readonly IMessagePublisher messagePublisher;
+
+        public ImportPrivateKeyViewModel(
+            IMessagePublisher messagePublisher)
+        {
+            this.messagePublisher = messagePublisher;
+        }
+
         private string privateKeyWif;
 
         public string PrivateKeyWif
@@ -44,6 +55,7 @@ namespace Neo.UI.Accounts
         {
             if (!this.OkEnabled) return;
 
+            this.messagePublisher.Publish(new ImportPrivateKeyMessage(this.WifStrings.ToList()));
             this.TryClose();
         }
     }

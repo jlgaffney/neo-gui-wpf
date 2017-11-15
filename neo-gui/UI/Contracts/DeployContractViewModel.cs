@@ -5,13 +5,17 @@ using System.Linq;
 using System.Windows.Input;
 using Neo.Core;
 using Neo.SmartContract;
+using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
+using Neo.UI.Messages;
 using Neo.VM;
 
 namespace Neo.UI.Contracts
 {
     public class DeployContractViewModel : ViewModelBase
     {
+        private readonly IMessagePublisher messagePublisher;
+
         private string name;
         private string version;
         private string author;
@@ -23,7 +27,12 @@ namespace Neo.UI.Contracts
         private string code;
         private bool needsStorage;
 
-        private InvocationTransaction transaction;
+        public DeployContractViewModel(
+            IMessagePublisher messagePublisher)
+        {
+            this.messagePublisher = messagePublisher;
+        }
+
 
         public string Name
         {
@@ -229,14 +238,12 @@ namespace Neo.UI.Contracts
 
         private void Deploy()
         {
-            this.transaction = this.GenerateTransaction();
+            var transaction = this.GenerateTransaction();
 
+            if (transaction == null) return;
+
+            this.messagePublisher.Publish(new InvokeContractMessage(transaction));
             this.TryClose();
-        }
-
-        public InvocationTransaction GetTransaction()
-        {
-            return this.transaction;
         }
 
         private InvocationTransaction GenerateTransaction()
