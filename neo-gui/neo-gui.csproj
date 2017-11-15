@@ -360,7 +360,6 @@
     <Compile Include="UI\Home\TransactionsViewModel.cs" />
     <Compile Include="UI\AccountType.cs" />
     <Compile Include="UI\MarkupExtensions\DataContextBindingExtension.cs" />
-    <Compile Include="UI\Messages\AccountBalanceChangedMessage.cs" />
     <Compile Include="UI\Messages\AddAssetMessage.cs" />
     <Compile Include="UI\Messages\BlockProgressMessage.cs" />
     <Compile Include="UI\Messages\AccountBalancesChangedMessage.cs" />

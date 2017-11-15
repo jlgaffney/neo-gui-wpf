@@ -44,6 +44,7 @@ namespace Neo.UI.Home
         IMessageHandler<WalletBalanceChangedMessage>
     {
         #region Private Fields 
+        private readonly IApplicationContext applicationContext;
         private readonly IMessagePublisher messagePublisher;
         private readonly IMessageSubscriber messageSubscriber;
         private readonly IDispatcher dispatcher;
@@ -66,10 +67,12 @@ namespace Neo.UI.Home
 
         #region Constructor 
         public HomeViewModel(
+            IApplicationContext applicationContext,
             IMessagePublisher messagePublisher,
             IMessageSubscriber messageSubscriber, 
             IDispatcher dispatcher)
         {
+            this.applicationContext = applicationContext;
             this.messagePublisher = messagePublisher;
             this.messageSubscriber = messageSubscriber;
             this.dispatcher = dispatcher;
@@ -79,7 +82,7 @@ namespace Neo.UI.Home
         #endregion
 
         #region Public Properties
-        public bool WalletIsOpen => ApplicationContext.Instance.CurrentWallet != null;
+        public bool WalletIsOpen => this.applicationContext.CurrentWallet != null;
 
         public string BlockHeight => $"{GetWalletHeight()}/{Blockchain.Default.Height}/{Blockchain.Default.HeaderHeight}";
         public int NodeCount => Program.LocalNode.RemoteNodeCount;
@@ -199,11 +202,11 @@ namespace Neo.UI.Home
         private void Blockchain_PersistCompleted(object sender, Block block)
         {
             this.persistenceTime = DateTime.UtcNow;
-            if (ApplicationContext.Instance.CurrentWallet != null)
+            if (this.applicationContext.CurrentWallet != null)
             {
                 this.checkNep5Balance = true;
 
-                var coins = ApplicationContext.Instance.CurrentWallet.GetCoins();
+                var coins = this.applicationContext.CurrentWallet.GetCoins();
                 if (coins.Any(coin => !coin.State.HasFlag(CoinState.Spent) &&
                     coin.Output.AssetId.Equals(Blockchain.GoverningToken.Hash)))
                 {
@@ -215,12 +218,12 @@ namespace Neo.UI.Home
 
         private void ChangeWallet(UserWallet wallet)
         {
-            if (ApplicationContext.Instance.CurrentWallet != null)
+            if (this.applicationContext.CurrentWallet != null)
             {
                 // Dispose current wallet
-                ApplicationContext.Instance.CurrentWallet.BalanceChanged -= CurrentWallet_BalanceChanged;
-                ApplicationContext.Instance.CurrentWallet.TransactionsChanged -= CurrentWallet_TransactionsChanged;
-                ApplicationContext.Instance.CurrentWallet.Dispose();
+                this.applicationContext.CurrentWallet.BalanceChanged -= CurrentWallet_BalanceChanged;
+                this.applicationContext.CurrentWallet.TransactionsChanged -= CurrentWallet_TransactionsChanged;
+                this.applicationContext.CurrentWallet.Dispose();
             }
 
             this.dispatcher.InvokeOnMainUIThread(() =>
@@ -230,16 +233,16 @@ namespace Neo.UI.Home
                 this.messagePublisher.Publish(new ClearTransactionsMessage());
             });
 
-            ApplicationContext.Instance.CurrentWallet = wallet;
+            this.applicationContext.CurrentWallet = wallet;
 
-            if (ApplicationContext.Instance.CurrentWallet != null)
+            if (this.applicationContext.CurrentWallet != null)
             {
                 // Setup wallet
-                var transactions = ApplicationContext.Instance.CurrentWallet.LoadTransactions();
+                var transactions = this.applicationContext.CurrentWallet.LoadTransactions();
 
                 CurrentWallet_TransactionsChanged(transactions);
-                ApplicationContext.Instance.CurrentWallet.BalanceChanged += CurrentWallet_BalanceChanged;
-                ApplicationContext.Instance.CurrentWallet.TransactionsChanged += CurrentWallet_TransactionsChanged;
+                this.applicationContext.CurrentWallet.BalanceChanged += CurrentWallet_BalanceChanged;
+                this.applicationContext.CurrentWallet.TransactionsChanged += CurrentWallet_TransactionsChanged;
             }
 
             this.messagePublisher.Publish(new EnableMenuItemsMessage());
@@ -422,7 +425,7 @@ namespace Neo.UI.Home
 
         private void UpdateBalances(TimeSpan persistenceSpan)
         {
-            if (ApplicationContext.Instance.CurrentWallet == null) return;
+            if (this.applicationContext.CurrentWallet == null) return;
 
             this.UpdateAssetBalances();
 
@@ -431,7 +434,7 @@ namespace Neo.UI.Home
         
         private void UpdateAssetBalances()
         {
-            if (ApplicationContext.Instance.CurrentWallet.WalletHeight > Blockchain.Default.Height + 1) return;
+            if (this.applicationContext.CurrentWallet.WalletHeight > Blockchain.Default.Height + 1) return;
 
             this.messagePublisher.Publish(new AccountBalancesChangedMessage());
             this.messagePublisher.Publish(new UpdateAssetsBalanceMessage(this.balanceChanged));
@@ -445,7 +448,7 @@ namespace Neo.UI.Home
             if (persistenceSpan <= TimeSpan.FromSeconds(2)) return;
 
             // Update balances
-            var addresses = ApplicationContext.Instance.CurrentWallet.GetAddresses().ToArray();
+            var addresses = this.applicationContext.CurrentWallet.GetAddresses().ToArray();
             foreach (var s in Settings.Default.NEP5Watched)
             {
                 var scriptHash = UInt160.Parse(s);
@@ -575,7 +578,7 @@ namespace Neo.UI.Home
                 this.messagePublisher.Publish(new ClearTransactionsMessage());
             });
 
-            ApplicationContext.Instance.CurrentWallet.Rebuild();
+            this.applicationContext.CurrentWallet.Rebuild();
         }
 
         private void RestoreAccounts()
@@ -751,15 +754,15 @@ namespace Neo.UI.Home
             dialog.ShowDialog();
         }
 
-        private static uint GetWalletHeight()
+        private uint GetWalletHeight()
         {
             uint walletHeight = 0;
 
-            if (ApplicationContext.Instance.CurrentWallet != null &&
-                ApplicationContext.Instance.CurrentWallet.WalletHeight > 0)
+            if (this.applicationContext.CurrentWallet != null &&
+                this.applicationContext.CurrentWallet.WalletHeight > 0)
             {
                 // Set wallet height
-                walletHeight = ApplicationContext.Instance.CurrentWallet.WalletHeight - 1;
+                walletHeight = this.applicationContext.CurrentWallet.WalletHeight - 1;
             }
 
             return walletHeight;
