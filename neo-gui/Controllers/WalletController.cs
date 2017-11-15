@@ -8,6 +8,7 @@ using Neo.Implementations.Wallets.EntityFramework;
 using Neo.Properties;
 using Neo.UI.Base.Messages;
 using Neo.UI.Messages;
+using Neo.Wallets;
 
 namespace Neo.Controllers
 {
@@ -37,6 +38,10 @@ namespace Neo.Controllers
         #endregion
 
         #region IWalletController implementation 
+        public bool IsWalletOpen => this.currentWallet != null;
+
+        public uint WalletWeight => this.currentWallet.WalletHeight;
+
         public void CreateWallet(string walletPath, string password)
         {
             var newWallet = UserWallet.Create(walletPath, password);
@@ -79,6 +84,17 @@ namespace Neo.Controllers
 
             Settings.Default.LastWalletPath = walletPath;
             Settings.Default.Save();
+        }
+
+        public IEnumerable<UInt160> GetAddresses()
+        {
+            return this.currentWallet.GetAddresses();
+        }
+
+        public IEnumerable<Coin> GetCoins()
+        {
+            // TODO - ISSUE #37 [AboimPinto]: at this point the return should not be a object from the NEO assemblies but a DTO only know by the application with only the necessary fields.
+            return this.currentWallet.GetCoins();
         }
         #endregion
 
