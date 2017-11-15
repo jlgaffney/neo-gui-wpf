@@ -137,6 +137,7 @@ namespace Neo.Controllers
             if (this.applicationContext.CurrentWallet.WalletHeight > Blockchain.Default.Height + 1) return;
 
             this.messagePublisher.Publish(new AccountBalancesChangedMessage());
+
             this.messagePublisher.Publish(new UpdateAssetsBalanceMessage(this.balanceChanged));
         }
 
@@ -148,6 +149,7 @@ namespace Neo.Controllers
 
             // Update balances
             var addresses = this.applicationContext.CurrentWallet.GetAddresses().ToArray();
+
             foreach (var s in Settings.Default.NEP5Watched)
             {
                 var scriptHash = UInt160.Parse(s);
@@ -278,6 +280,7 @@ namespace Neo.Controllers
                 this.checkNep5Balance = true;
 
                 var coins = this.applicationContext.CurrentWallet.GetCoins();
+
                 if (coins.Any(coin => !coin.State.HasFlag(CoinState.Spent) &&
                     coin.Output.AssetId.Equals(Blockchain.GoverningToken.Hash)))
                 {
