@@ -136,7 +136,7 @@ namespace Neo.Controllers
         {
             if (this.applicationContext.CurrentWallet.WalletHeight > Blockchain.Default.Height + 1) return;
 
-            this.messagePublisher.Publish(new UpdateAcountListMessage());
+            this.messagePublisher.Publish(new AccountBalancesChangedMessage());
             this.messagePublisher.Publish(new UpdateAssetsBalanceMessage(this.balanceChanged));
         }
 

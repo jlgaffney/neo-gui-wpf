@@ -31,6 +31,7 @@ namespace Neo.UI.Home
         IMessageHandler<LoadWalletAddressesMessage>,
         IMessageHandler<RestoreContractsMessage>
     {
+        private readonly IApplicationContext applicationContext;
         private readonly IMessageSubscriber messageSubscriber;
         private readonly IMessagePublisher messagePublisher;
         private readonly IDispatcher dispatcher;
@@ -38,10 +39,12 @@ namespace Neo.UI.Home
         private AccountItem selectedAccount;
         
         public AccountsViewModel(
+            IApplicationContext applicationContext,
             IMessageSubscriber messageSubscriber, 
             IMessagePublisher messagePublisher, 
             IDispatcher dispatcher)
         {
+            this.applicationContext = applicationContext;
             this.messageSubscriber = messageSubscriber;
             this.messagePublisher = messagePublisher;
             this.dispatcher = dispatcher;
@@ -74,7 +77,7 @@ namespace Neo.UI.Home
             }
         }
 
-        public bool MenuItemsEnabled => ApplicationContext.Instance.CurrentWallet != null;
+        public bool MenuItemsEnabled => this.applicationContext.CurrentWallet != null;
 
         public bool ViewPrivateKeyEnabled =>
             this.SelectedAccount != null &&
@@ -178,8 +181,8 @@ namespace Neo.UI.Home
         private void CreateNewKey()
         {
             this.SelectedAccount = null;
-            var key = ApplicationContext.Instance.CurrentWallet.CreateKey();
-            foreach (var contract in ApplicationContext.Instance.CurrentWallet.GetContracts(key.PublicKeyHash))
+            var key = this.applicationContext.CurrentWallet.CreateKey();
+            foreach (var contract in this.applicationContext.CurrentWallet.GetContracts(key.PublicKeyHash))
             {
                 AddContract(contract, true);
             }
@@ -206,14 +209,14 @@ namespace Neo.UI.Home
                 KeyPair key;
                 try
                 {
-                    key = ApplicationContext.Instance.CurrentWallet.Import(wif);
+                    key = this.applicationContext.CurrentWallet.Import(wif);
                 }
                 catch (FormatException)
                 {
                     // Skip WIF line
                     continue;
                 }
-                foreach (var contract in ApplicationContext.Instance.CurrentWallet.GetContracts(key.PublicKeyHash))
+                foreach (var contract in this.applicationContext.CurrentWallet.GetContracts(key.PublicKeyHash))
                 {
                     AddContract(contract, true);
                 }
@@ -232,7 +235,7 @@ namespace Neo.UI.Home
             KeyPair key;
             try
             {
-                key = ApplicationContext.Instance.CurrentWallet.Import(view.SelectedCertificate);
+                key = this.applicationContext.CurrentWallet.Import(view.SelectedCertificate);
             }
             catch
             {
@@ -240,7 +243,7 @@ namespace Neo.UI.Home
                 return;
             }
 
-            foreach (var contract in ApplicationContext.Instance.CurrentWallet.GetContracts(key.PublicKeyHash))
+            foreach (var contract in this.applicationContext.CurrentWallet.GetContracts(key.PublicKeyHash))
             {
                 AddContract(contract, true);
             }
@@ -269,7 +272,7 @@ namespace Neo.UI.Home
                     {
                         continue;
                     }
-                    ApplicationContext.Instance.CurrentWallet.AddWatchOnly(scriptHash);
+                    this.applicationContext.CurrentWallet.AddWatchOnly(scriptHash);
                     AddAddress(scriptHash, true);
                 }
             }
@@ -284,7 +287,7 @@ namespace Neo.UI.Home
 
             if (contract == null) return;
 
-            ApplicationContext.Instance.CurrentWallet.AddContract(contract);
+            this.applicationContext.CurrentWallet.AddContract(contract);
             this.SelectedAccount = null;
             AddContract(contract, true);
         }
@@ -298,7 +301,7 @@ namespace Neo.UI.Home
 
             if (contract == null) return;
 
-            ApplicationContext.Instance.CurrentWallet.AddContract(contract);
+            this.applicationContext.CurrentWallet.AddContract(contract);
             this.SelectedAccount = null;
             AddContract(contract, true);
         }
@@ -312,7 +315,7 @@ namespace Neo.UI.Home
 
             if (contract == null) return;
 
-            ApplicationContext.Instance.CurrentWallet.AddContract(contract);
+            this.applicationContext.CurrentWallet.AddContract(contract);
             this.SelectedAccount = null;
             AddContract(contract, true);
         }
@@ -322,7 +325,7 @@ namespace Neo.UI.Home
             if (this.SelectedAccount?.Contract == null) return;
 
             var contract = this.SelectedAccount.Contract;
-            var key = ApplicationContext.Instance.CurrentWallet.GetKeyByScriptHash(contract.ScriptHash);
+            var key = this.applicationContext.CurrentWallet.GetKeyByScriptHash(contract.ScriptHash);
 
             var view = new ViewPrivateKeyView(key, contract.ScriptHash);
             view.ShowDialog();
@@ -385,7 +388,7 @@ namespace Neo.UI.Home
                 ? accountToDelete.ScriptHash
                 : accountToDelete.Contract.ScriptHash;
 
-            ApplicationContext.Instance.CurrentWallet.DeleteAddress(scriptHash);
+            this.applicationContext.CurrentWallet.DeleteAddress(scriptHash);
             await this.dispatcher.InvokeOnMainUIThread(() => this.Accounts.Remove(accountToDelete));
 
             this.messagePublisher.Publish(new WalletBalanceChangedMessage(true));
@@ -395,7 +398,7 @@ namespace Neo.UI.Home
         #region IMessageHandler implementation 
         public void HandleMessage(AccountBalancesChangedMessage message)
         {
-            var coins = ApplicationContext.Instance.CurrentWallet?.GetCoins().Where(p => !p.State.HasFlag(CoinState.Spent)).ToList();
+            var coins = this.applicationContext.CurrentWallet?.GetCoins().Where(p => !p.State.HasFlag(CoinState.Spent)).ToList();
 
             if (coins == null) return;
 
@@ -426,12 +429,12 @@ namespace Neo.UI.Home
 
         public void HandleMessage(LoadWalletAddressesMessage message)
         {
-            if (ApplicationContext.Instance.CurrentWallet == null) return;
+            if (this.applicationContext.CurrentWallet == null) return;
 
             // Load accounts
-            foreach (var scriptHash in ApplicationContext.Instance.CurrentWallet.GetAddresses())
+            foreach (var scriptHash in this.applicationContext.CurrentWallet.GetAddresses())
             {
-                var contract = ApplicationContext.Instance.CurrentWallet.GetContract(scriptHash);
+                var contract = this.applicationContext.CurrentWallet.GetContract(scriptHash);
                 if (contract == null)
                 {
                     this.AddAddress(scriptHash);
@@ -452,7 +455,7 @@ namespace Neo.UI.Home
 
             foreach (var contract in message.Contracts)
             {
-                ApplicationContext.Instance.CurrentWallet.AddContract(contract);
+                this.applicationContext.CurrentWallet.AddContract(contract);
                 this.AddContract(contract, true);
             }
         }
