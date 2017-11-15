@@ -371,7 +371,6 @@
     <Compile Include="UI\Messages\InvokeContractMessage.cs" />
     <Compile Include="UI\Messages\LoadWalletAddressesMessage.cs" />
     <Compile Include="UI\Messages\NewVersionAvailableMessage.cs" />
-    <Compile Include="UI\Messages\RestoreContractsMessage.cs" />
     <Compile Include="UI\Messages\UpdateAssetsBalanceMessage.cs" />
     <Compile Include="UI\Messages\UpdateTransactionsMessage.cs" />
     <Compile Include="UI\Messages\AddContractsMessage.cs" />

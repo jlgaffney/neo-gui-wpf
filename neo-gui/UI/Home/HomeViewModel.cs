@@ -587,10 +587,6 @@ namespace Neo.UI.Home
         {
             var view = new RestoreAccountsView();
             view.ShowDialog();
-
-            var contracts = view.GetContracts();
-
-            this.messagePublisher.Publish(new RestoreContractsMessage(contracts));
         }
 
         private void Exit()

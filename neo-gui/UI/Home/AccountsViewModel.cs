@@ -195,61 +195,12 @@ namespace Neo.UI.Home
         {
             var view = new ImportPrivateKeyView();
             view.ShowDialog();
-
-            var wifStrings = view.WifStrings;
-
-            if (wifStrings == null) return;
-
-            var wifStringList = wifStrings.ToList();
-
-            if (!wifStringList.Any()) return;
-
-            // Import private keys
-            this.SelectedAccount = null;
-
-            foreach (var wif in wifStringList)
-            {
-                KeyPair key;
-                try
-                {
-                    key = this.applicationContext.CurrentWallet.Import(wif);
-                }
-                catch (FormatException)
-                {
-                    // Skip WIF line
-                    continue;
-                }
-                foreach (var contract in this.applicationContext.CurrentWallet.GetContracts(key.PublicKeyHash))
-                {
-                    AddContract(contract, true);
-                }
-            }
         }
 
         private void ImportCertificate()
         {
             var view = new ImportCertificateView();
             view.ShowDialog();
-
-            if (view.SelectedCertificate == null) return;
-
-            this.SelectedAccount = null;
-
-            KeyPair key;
-            try
-            {
-                key = this.applicationContext.CurrentWallet.Import(view.SelectedCertificate);
-            }
-            catch
-            {
-                await DialogCoordinator.Instance.ShowMessageAsync(this, string.Empty, "Certificate import failed!");
-                return;
-            }
-
-            foreach (var contract in this.applicationContext.CurrentWallet.GetContracts(key.PublicKeyHash))
-            {
-                AddContract(contract, true);
-            }
         }
 
         private void ImportWatchOnlyAddress()
@@ -285,42 +236,18 @@ namespace Neo.UI.Home
         {
             var view = new CreateMultiSigContractView();
             view.ShowDialog();
-
-            var contract = view.GetContract();
-
-            if (contract == null) return;
-
-            this.applicationContext.CurrentWallet.AddContract(contract);
-            this.SelectedAccount = null;
-            AddContract(contract, true);
         }
 
         private void CreateLockAddress()
         {
             var view = new CreateLockAccountView();
             view.ShowDialog();
-
-            var contract = view.GetContract();
-
-            if (contract == null) return;
-
-            this.applicationContext.CurrentWallet.AddContract(contract);
-            this.SelectedAccount = null;
-            AddContract(contract, true);
         }
 
         private void ImportCustomContract()
         {
             var view = new ImportCustomContractView();
             view.ShowDialog();
-
-            var contract = view.GetContract();
-
-            if (contract == null) return;
-
-            this.applicationContext.CurrentWallet.AddContract(contract);
-            this.SelectedAccount = null;
-            AddContract(contract, true);
         }
 
         private void ViewPrivateKey()
