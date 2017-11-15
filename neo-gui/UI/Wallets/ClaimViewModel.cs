@@ -12,6 +12,7 @@ namespace Neo.UI.Wallets
 {
     public class ClaimViewModel : ViewModelBase
     {
+        private readonly IApplicationContext applicationContext;
         private readonly IMessagePublisher messagePublisher;
 
         private Fixed8 availableGas = Fixed8.Zero;
@@ -20,8 +21,10 @@ namespace Neo.UI.Wallets
         private bool claimEnabled;
 
         public ClaimViewModel(
+            IApplicationContext applicationContext,
             IMessagePublisher messagePublisher)
         {
+            this.applicationContext = applicationContext;
             this.messagePublisher = messagePublisher;
         }
 
@@ -92,7 +95,7 @@ namespace Neo.UI.Wallets
 
         private void CalculateBonusAvailable()
         {
-            var bonusAvailable = Blockchain.CalculateBonus(ApplicationContext.Instance.CurrentWallet.GetUnclaimedCoins().Select(p => p.Reference));
+            var bonusAvailable = Blockchain.CalculateBonus(this.applicationContext.CurrentWallet.GetUnclaimedCoins().Select(p => p.Reference));
             this.AvailableGas = bonusAvailable;
 
             if (bonusAvailable == Fixed8.Zero)
@@ -103,7 +106,7 @@ namespace Neo.UI.Wallets
 
         private void CalculateBonusUnavailable(uint height)
         {
-            var unspent = ApplicationContext.Instance.CurrentWallet.FindUnspentCoins()
+            var unspent = this.applicationContext.CurrentWallet.FindUnspentCoins()
                 .Where(p => p.Output.AssetId.Equals(Blockchain.GoverningToken.Hash))
                 .Select(p => p.Reference);
 
@@ -127,7 +130,7 @@ namespace Neo.UI.Wallets
 
         private void Claim()
         {
-            var claims = ApplicationContext.Instance.CurrentWallet.GetUnclaimedCoins().Select(p => p.Reference).ToArray();
+            var claims = this.applicationContext.CurrentWallet.GetUnclaimedCoins().Select(p => p.Reference).ToArray();
 
             if (claims.Length == 0) return;
 
@@ -142,7 +145,7 @@ namespace Neo.UI.Wallets
                     {
                         AssetId = Blockchain.UtilityToken.Hash,
                         Value = Blockchain.CalculateBonus(claims),
-                        ScriptHash = ApplicationContext.Instance.CurrentWallet.GetChangeAddress()
+                        ScriptHash = this.applicationContext.CurrentWallet.GetChangeAddress()
                     }
                 }
             };

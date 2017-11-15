@@ -383,7 +383,7 @@ namespace Neo.UI.Home
 
             this.SelectedAccount = null;
 
-            ApplicationContext.Instance.CurrentWallet.AddContract(message.Contract);
+            this.applicationContext.CurrentWallet.AddContract(message.Contract);
             this.AddContract(message.Contract, true);
         }
 
@@ -401,14 +401,14 @@ namespace Neo.UI.Home
                 KeyPair key;
                 try
                 {
-                    key = ApplicationContext.Instance.CurrentWallet.Import(wif);
+                    key = this.applicationContext.CurrentWallet.Import(wif);
                 }
                 catch (FormatException)
                 {
                     // Skip WIF line
                     continue;
                 }
-                foreach (var contract in ApplicationContext.Instance.CurrentWallet.GetContracts(key.PublicKeyHash))
+                foreach (var contract in this.applicationContext.CurrentWallet.GetContracts(key.PublicKeyHash))
                 {
                     this.AddContract(contract, true);
                 }
@@ -424,7 +424,7 @@ namespace Neo.UI.Home
             KeyPair key;
             try
             {
-                key = ApplicationContext.Instance.CurrentWallet.Import(message.SelectedCertificate);
+                key = this.applicationContext.CurrentWallet.Import(message.SelectedCertificate);
             }
             catch
             {
@@ -432,7 +432,7 @@ namespace Neo.UI.Home
                 return;
             }
 
-            foreach (var contract in ApplicationContext.Instance.CurrentWallet.GetContracts(key.PublicKeyHash))
+            foreach (var contract in this.applicationContext.CurrentWallet.GetContracts(key.PublicKeyHash))
             {
                 AddContract(contract, true);
             }

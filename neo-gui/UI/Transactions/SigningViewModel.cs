@@ -10,9 +10,10 @@ namespace Neo.UI.Transactions
 {
     public class SigningViewModel : ViewModelBase
     {
+        private readonly IApplicationContext applicationContext;
+
         private string input;
         private ContractParametersContext output;
-
         private bool broadcastVisible;
 
         public string Input
@@ -51,6 +52,11 @@ namespace Neo.UI.Transactions
 
         public ICommand CloseCommand => new RelayCommand(this.TryClose);
 
+        public SigningViewModel(IApplicationContext applicationContext)
+        {
+            this.applicationContext = applicationContext;
+        }
+
         private void Sign()
         {
             if (string.IsNullOrEmpty(this.Input))
@@ -70,7 +76,7 @@ namespace Neo.UI.Transactions
                 return;
             }
 
-            if (!ApplicationContext.Instance.CurrentWallet.Sign(context))
+            if (!this.applicationContext.CurrentWallet.Sign(context))
             {
                 MessageBox.Show(Strings.SigningFailedKeyNotFoundMessage);
                 return;

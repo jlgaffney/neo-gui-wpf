@@ -12,6 +12,7 @@ namespace Neo.UI.Transactions
 {
     public class BulkPayViewModel : ViewModelBase
     {
+        private readonly IApplicationContext applicationContext;
         private readonly IDispatcher dispatcher;
 
         private bool assetSelectionEnabled;
@@ -22,8 +23,11 @@ namespace Neo.UI.Transactions
 
         private TxOutListBoxItem[] outputs;
 
-        public BulkPayViewModel(IDispatcher dispatcher)
+        public BulkPayViewModel(
+            IApplicationContext applicationContext,
+            IDispatcher dispatcher)
         {
+            this.applicationContext = applicationContext;
             this.dispatcher = dispatcher;
 
             this.Assets = new ObservableCollection<AssetDescriptor>();
@@ -62,7 +66,7 @@ namespace Neo.UI.Transactions
         }
 
         public string AssetBalance => this.SelectedAsset == null ? string.Empty
-            : ApplicationContext.Instance.CurrentWallet.GetAvailable(this.SelectedAsset.AssetId).ToString();
+            : this.applicationContext.CurrentWallet.GetAvailable(this.SelectedAsset.AssetId).ToString();
 
         public string AddressesAndAmounts
         {
@@ -97,7 +101,7 @@ namespace Neo.UI.Transactions
                 else
                 {
                     // Add first-class assets to list
-                    foreach (var assetId in ApplicationContext.Instance.CurrentWallet.FindUnspentCoins()
+                    foreach (var assetId in this.applicationContext.CurrentWallet.FindUnspentCoins()
                         .Select(p => p.Output.AssetId).Distinct())
                     {
                         this.Assets.Add(new AssetDescriptor(assetId));

@@ -753,12 +753,12 @@ namespace Neo.UI.Home
                 return;
             }
 
-            ApplicationContext.Instance.CurrentWallet.Sign(context);
+            this.applicationContext.CurrentWallet.Sign(context);
 
             if (context.Completed)
             {
                 context.Verifiable.Scripts = context.GetScripts();
-                ApplicationContext.Instance.CurrentWallet.SaveTransaction(transaction);
+                this.applicationContext.CurrentWallet.SaveTransaction(transaction);
                 Program.LocalNode.Relay(transaction);
                 InformationBox.Show(transaction.Hash.ToString(), Strings.SendTxSucceedMessage, Strings.SendTxSucceedTitle);
             }

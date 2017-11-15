@@ -12,16 +12,19 @@ namespace Neo.UI.Wallets
 {
     public class RestoreAccountsViewModel : ViewModelBase
     {
+        private readonly IApplicationContext applicationContext;
         private readonly IMessagePublisher messagePublisher;
 
         public RestoreAccountsViewModel(
+            IApplicationContext applicationContext,
             IMessagePublisher messagePublisher)
         {
+            this.applicationContext = applicationContext;
             this.messagePublisher = messagePublisher;
 
-            var keys = ApplicationContext.Instance.CurrentWallet.GetKeys();
+            var keys = this.applicationContext.CurrentWallet.GetKeys();
 
-            keys = keys.Where(account => ApplicationContext.Instance.CurrentWallet.GetContracts(account.PublicKeyHash).All(contract => !contract.IsStandard));
+            keys = keys.Where(account => this.applicationContext.CurrentWallet.GetContracts(account.PublicKeyHash).All(contract => !contract.IsStandard));
 
             this.Accounts = new ObservableCollection<SelectableVerificationContract>(keys.Select(p => VerificationContract.CreateSignatureContract(p.PublicKey)).Select(p => new SelectableVerificationContract(this, p)));
         }

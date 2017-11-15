@@ -11,7 +11,6 @@ using Neo.Properties;
 using Neo.SmartContract;
 using Neo.UI.Base.Collections;
 using Neo.UI.Base.Dispatching;
-using Neo.UI.Base.Helpers;
 using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
 using Neo.UI.Messages;
@@ -29,6 +28,7 @@ namespace Neo.UI.Home
         #region Private Fields 
         private static readonly UInt160 RecycleScriptHash = new[] { (byte)OpCode.PUSHT }.ToScriptHash();
 
+        private readonly IApplicationContext applicationContext;
         private readonly IMessagePublisher messagePublisher;
         private readonly IDispatcher dispatcher;
         private readonly Dictionary<ECPoint, CertificateQueryResult> certificateQueryResultCache;
@@ -37,8 +37,10 @@ namespace Neo.UI.Home
         #endregion
 
         public AssetsViewModel(
+            IApplicationContext applicationContext,
             IMessagePublisher messagePublisher)
         {
+            this.applicationContext = applicationContext;
             this.messagePublisher = messagePublisher;
 
             this.certificateQueryResultCache = new Dictionary<ECPoint, CertificateQueryResult>();
@@ -121,12 +123,12 @@ namespace Neo.UI.Home
         {
             if (this.SelectedAsset == null || this.SelectedAsset.State == null) return;
 
-            var value = ApplicationContext.Instance.CurrentWallet.GetAvailable(this.SelectedAsset.State.AssetId);
+            var value = this.applicationContext.CurrentWallet.GetAvailable(this.SelectedAsset.State.AssetId);
 
             if (MessageBox.Show($"{Strings.DeleteAssetConfirmationMessage}\n{string.Join("\n", $"{this.SelectedAsset.State.GetName()}:{value}")}",
                     Strings.DeleteConfirmation, MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes) return;
 
-            var transaction = ApplicationContext.Instance.CurrentWallet.MakeTransaction(new ContractTransaction
+            var transaction = this.applicationContext.CurrentWallet.MakeTransaction(new ContractTransaction
             {
                 Outputs = new[]
                 {
@@ -176,8 +178,8 @@ namespace Neo.UI.Home
             var assetList = this.Assets.ConvertToList();
             if (message.BalanceChanged)
             {
-                var coins = ApplicationContext.Instance.CurrentWallet?.GetCoins().Where(p => !p.State.HasFlag(CoinState.Spent)).ToList();
-                var bonusAvailable = Blockchain.CalculateBonus(ApplicationContext.Instance.CurrentWallet.GetUnclaimedCoins().Select(p => p.Reference));
+                var coins = this.applicationContext.CurrentWallet?.GetCoins().Where(p => !p.State.HasFlag(CoinState.Spent)).ToList();
+                var bonusAvailable = Blockchain.CalculateBonus(this.applicationContext.CurrentWallet.GetUnclaimedCoins().Select(p => p.Reference));
                 var bonusUnavailable = Blockchain.CalculateBonus(coins.Where(p => p.State.HasFlag(CoinState.Confirmed) && p.Output.AssetId.Equals(Blockchain.GoverningToken.Hash)).Select(p => p.Reference), Blockchain.Default.Height + 1);
                 var bonus = bonusAvailable + bonusUnavailable;
 

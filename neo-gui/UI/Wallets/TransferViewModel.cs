@@ -18,13 +18,16 @@ namespace Neo.UI.Wallets
 {
     public class TransferViewModel : ViewModelBase
     {
+        private readonly IApplicationContext applicationContext;
         private readonly IMessagePublisher messagePublisher;
 
         private string remark = string.Empty;
 
         public TransferViewModel(
+            IApplicationContext applicationContext,
             IMessagePublisher messagePublisher)
         {
+            this.applicationContext = applicationContext;
             this.messagePublisher = messagePublisher;
 
             this.Items = new ObservableCollection<TxOutListBoxItem>();
@@ -94,7 +97,7 @@ namespace Neo.UI.Wallets
             }
             else
             {
-                var addresses = ApplicationContext.Instance.CurrentWallet.GetAddresses().ToArray();
+                var addresses = this.applicationContext.CurrentWallet.GetAddresses().ToArray();
                 var sAttributes = new HashSet<UInt160>();
                 using (var builder = new ScriptBuilder())
                 {
@@ -183,7 +186,7 @@ namespace Neo.UI.Wallets
 
             if (tx is ContractTransaction ctx)
             {
-                tx = ApplicationContext.Instance.CurrentWallet.MakeTransaction(ctx);
+                tx = this.applicationContext.CurrentWallet.MakeTransaction(ctx);
             }
 
             return tx;

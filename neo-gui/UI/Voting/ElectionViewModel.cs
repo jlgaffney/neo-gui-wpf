@@ -3,7 +3,6 @@ using System.Linq;
 using System.Windows.Input;
 using Neo.Core;
 using Neo.Cryptography.ECC;
-using Neo.UI.Base.Extensions;
 using Neo.SmartContract;
 using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
@@ -14,20 +13,23 @@ namespace Neo.UI.Voting
 {
     public class ElectionViewModel : ViewModelBase
     {
+        private readonly IApplicationContext applicationContext;
         private readonly IMessagePublisher messagePublisher;
 
         private ECPoint selectedBookKeeper;
 
         public ElectionViewModel(
+            IApplicationContext applicationContext,
             IMessagePublisher messagePublisher)
         {
+            this.applicationContext = applicationContext;
             this.messagePublisher = messagePublisher;
 
-            if (ApplicationContext.Instance.CurrentWallet == null) return;
+            if (this.applicationContext.CurrentWallet == null) return;
 
             // Load book keepers
-            var bookKeepers = ApplicationContext.Instance.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p =>
-                ApplicationContext.Instance.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey);
+            var bookKeepers = this.applicationContext.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p =>
+                this.applicationContext.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey);
 
             this.BookKeepers = new ObservableCollection<ECPoint>(bookKeepers);
         }

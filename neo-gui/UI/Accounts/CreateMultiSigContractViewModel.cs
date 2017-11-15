@@ -16,6 +16,7 @@ namespace Neo.UI.Accounts
 {
     public class CreateMultiSigContractViewModel : ViewModelBase
     {
+        private readonly IApplicationContext applicationContext;
         private readonly IMessagePublisher messagePublisher;
         private readonly IDispatcher dispatcher;
 
@@ -28,9 +29,11 @@ namespace Neo.UI.Accounts
 
 
         public CreateMultiSigContractViewModel(
+            IApplicationContext applicationContext,
             IMessagePublisher messagePublisher,
             IDispatcher dispatcher)
         {
+            this.applicationContext = applicationContext;
             this.messagePublisher = messagePublisher;
             this.dispatcher = dispatcher;
 
@@ -164,7 +167,7 @@ namespace Neo.UI.Accounts
 
             foreach (var publicKey in publicKeys)
             {
-                var key = ApplicationContext.Instance.CurrentWallet.GetKey(publicKey.EncodePoint(true).ToScriptHash());
+                var key = this.applicationContext.CurrentWallet.GetKey(publicKey.EncodePoint(true).ToScriptHash());
 
                 if (key == null) continue;
 

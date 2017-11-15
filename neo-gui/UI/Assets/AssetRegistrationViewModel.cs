@@ -18,6 +18,7 @@ namespace Neo.UI.Assets
     {
         private static readonly AssetType[] assetTypes = { AssetType.Share, AssetType.Token };
 
+        private readonly IApplicationContext applicationContext;
         private readonly IMessagePublisher messagePublisher;
 
         private AssetType? selectedAssetType;
@@ -35,14 +36,16 @@ namespace Neo.UI.Assets
         private bool formValid;
 
         public AssetRegistrationViewModel(
+            IApplicationContext applicationContext,
             IMessagePublisher messagePublisher)
         {
+            this.applicationContext = applicationContext;
             this.messagePublisher = messagePublisher;
 
             this.AssetTypes = new ObservableCollection<AssetType>(assetTypes);
-            this.Owners = new ObservableCollection<ECPoint>(ApplicationContext.Instance.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p => ApplicationContext.Instance.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey));
-            this.Admins = new ObservableCollection<string>(ApplicationContext.Instance.CurrentWallet.GetContracts().Select(p => p.Address));
-            this.Issuers = new ObservableCollection<string>(ApplicationContext.Instance.CurrentWallet.GetContracts().Select(p => p.Address));
+            this.Owners = new ObservableCollection<ECPoint>(this.applicationContext.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p => this.applicationContext.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey));
+            this.Admins = new ObservableCollection<string>(this.applicationContext.CurrentWallet.GetContracts().Select(p => p.Address));
+            this.Issuers = new ObservableCollection<string>(this.applicationContext.CurrentWallet.GetContracts().Select(p => p.Address));
         }
 
         public ObservableCollection<AssetType> AssetTypes { get; }

@@ -29,6 +29,7 @@ namespace Neo.UI.Wallets
         private bool mergeEnabled;
 
         private UInt160 scriptHash;
+        private readonly IApplicationContext applicationContext;
 
         public TradeViewModel(IDispatcher dispatcher)
         {
@@ -136,6 +137,10 @@ namespace Neo.UI.Wallets
 
         public ICommand MergeCommand => new RelayCommand(this.Merge);
 
+        public TradeViewModel(IApplicationContext applicationContext)
+        {
+            this.applicationContext = applicationContext;
+        }
 
         public override void OnWindowAttached(NeoWindow window)
         {
@@ -151,7 +156,7 @@ namespace Neo.UI.Wallets
         {
             var txOutputs = this.Items.Select(p => p.ToTxOutput());
 
-            var tx = ApplicationContext.Instance.CurrentWallet.MakeTransaction(new ContractTransaction
+            var tx = this.applicationContext.CurrentWallet.MakeTransaction(new ContractTransaction
             {
                 Outputs = txOutputs.ToArray()
             }, fee: Fixed8.Zero);
@@ -195,7 +200,7 @@ namespace Neo.UI.Wallets
 
             try
             {
-                if (inputs.Select(p => Blockchain.Default.GetTransaction(p.PrevHash).Outputs[p.PrevIndex].ScriptHash).Distinct().Any(p => ApplicationContext.Instance.CurrentWallet.ContainsAddress(p)))
+                if (inputs.Select(p => Blockchain.Default.GetTransaction(p.PrevHash).Outputs[p.PrevIndex].ScriptHash).Distinct().Any(p => this.applicationContext.CurrentWallet.ContainsAddress(p)))
                 {
                     await DialogCoordinator.Instance.ShowMessageAsync(this, Strings.Failed, Strings.TradeFailedInvalidDataMessage);
                     return;
@@ -207,7 +212,7 @@ namespace Neo.UI.Wallets
                 return;
             }
 
-            outputs = outputs.Where(p => ApplicationContext.Instance.CurrentWallet.ContainsAddress(p.ScriptHash));
+            outputs = outputs.Where(p => this.applicationContext.CurrentWallet.ContainsAddress(p.ScriptHash));
 
             var verificationView = new TradeVerificationView(outputs);
             verificationView.ShowDialog();
@@ -235,13 +240,13 @@ namespace Neo.UI.Wallets
                 });
             }
 
-            ApplicationContext.Instance.CurrentWallet.Sign(context);
+            this.applicationContext.CurrentWallet.Sign(context);
 
             if (context.Completed)
             {
                 context.Verifiable.Scripts = context.GetScripts();
                 var tx = (ContractTransaction)context.Verifiable;
-                ApplicationContext.Instance.CurrentWallet.SaveTransaction(tx);
+                this.applicationContext.CurrentWallet.SaveTransaction(tx);
                 Program.LocalNode.Relay(tx);
                 InformationBox.Show(tx.Hash.ToString(), Strings.TradeSuccessMessage, Strings.TradeSuccessCaption);
             }
@@ -275,7 +280,7 @@ namespace Neo.UI.Wallets
             {
                 ["vin"] = tx.Inputs.Select(p => p.ToJson()).ToArray(),
                 ["vout"] = tx.Outputs.Select((p, i) => p.ToJson((ushort)i)).ToArray(),
-                ["change_address"] = Wallet.ToAddress(ApplicationContext.Instance.CurrentWallet.GetChangeAddress())
+                ["change_address"] = Wallet.ToAddress(this.applicationContext.CurrentWallet.GetChangeAddress())
             };
             return json;
         }

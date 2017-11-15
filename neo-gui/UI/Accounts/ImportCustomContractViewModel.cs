@@ -13,6 +13,7 @@ namespace Neo.UI.Accounts
 {
     public class ImportCustomContractViewModel : ViewModelBase
     {
+        private readonly IApplicationContext applicationContext;
         private readonly IMessagePublisher messagePublisher;
 
         private ECPoint selectedRelatedAccount;
@@ -20,13 +21,15 @@ namespace Neo.UI.Accounts
         private string script;
 
         public ImportCustomContractViewModel(
+            IApplicationContext applicationContext,
             IMessagePublisher messagePublisher)
         {
+            this.applicationContext = applicationContext;
             this.messagePublisher = messagePublisher;
 
             this.RelatedAccounts = new ObservableCollection<ECPoint>(
-                ApplicationContext.Instance.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p =>
-                    ApplicationContext.Instance.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey));
+                this.applicationContext.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p =>
+                    this.applicationContext.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey));
         }
 
         public ObservableCollection<ECPoint> RelatedAccounts { get; }

@@ -12,6 +12,7 @@ namespace Neo.UI.Assets
 {
     public class AssetDistributionViewModel : ViewModelBase
     {
+        private readonly IApplicationContext applicationContext;
         private readonly IMessagePublisher messagePublisher;
         private readonly IDispatcher dispatcher;
 
@@ -29,9 +30,11 @@ namespace Neo.UI.Assets
         private bool distributionEnabled;
 
         public AssetDistributionViewModel(
+            IApplicationContext applicationContext,
             IMessagePublisher messagePublisher,
             IDispatcher dispatcher)
         {
+            this.applicationContext = applicationContext;
             this.messagePublisher = messagePublisher;
             this.dispatcher = dispatcher;
 
@@ -214,7 +217,7 @@ namespace Neo.UI.Assets
         private IssueTransaction GenerateTransaction()
         {
             if (this.Asset == null) return null;
-            return ApplicationContext.Instance.CurrentWallet.MakeTransaction(new IssueTransaction
+            return this.applicationContext.CurrentWallet.MakeTransaction(new IssueTransaction
             {
                 Version = 1,
                 Outputs = this.Items.GroupBy(p => p.ScriptHash).Select(g => new TransactionOutput
