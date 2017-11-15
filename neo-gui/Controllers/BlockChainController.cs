@@ -22,7 +22,6 @@ namespace Neo.Controllers
     public class BlockChainController : IBlockChainController
     {
         #region Private Fields
-        private readonly object uiUpdateTimerLock = new object();
         private readonly IApplicationContext applicationContext;
         private readonly IMessagePublisher messagePublisher;
         private readonly IDispatcher dispatcher;
@@ -55,31 +54,28 @@ namespace Neo.Controllers
                 this.applicationContext.LocalNode.Start(Settings.Default.NodePort, Settings.Default.WsPort);
             });
 
-            lock (this.uiUpdateTimerLock)
+            
+            if (this.uiUpdateTimer != null)
             {
-                if (this.uiUpdateTimer != null)
-                {
-                    // Stop previous timer
-                    this.uiUpdateTimer.Stop();
+                // Stop previous timer
+                this.uiUpdateTimer.Stop();
 
-                    this.uiUpdateTimer.Elapsed -= this.UpdateWallet;
+                this.uiUpdateTimer.Elapsed -= this.UpdateWallet;
 
-                    this.uiUpdateTimer.Dispose();
+                this.uiUpdateTimer.Dispose();
 
-                    this.uiUpdateTimer = null;
-                }
-
-                var timer = new Timer
-                {
-                    Interval = 500,
-                    Enabled = true,
-                    AutoReset = true
-                };
-
-                timer.Elapsed += this.UpdateWallet;
-
-                this.uiUpdateTimer = timer;
+                this.uiUpdateTimer = null;
             }
+
+            var timer = new Timer
+            {
+                Interval = 500,
+                Enabled = true,
+                AutoReset = true
+            };
+
+            timer.Elapsed += this.UpdateWallet;
+            this.uiUpdateTimer = timer;
         }
         #endregion
 
