@@ -7,7 +7,8 @@
     xmlns:properties="clr-namespace:Neo.Properties"
     xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
     dialogs:DialogParticipation.Register="{Binding}"
-    ItemsSource="{Binding Accounts}" SelectedItem="{Binding SelectedAccount}"
+    ItemsSource="{Binding Accounts}" 
+    SelectedItem="{Binding SelectedAccount}"
     DataContext="{markupExtensions:DataContextBinding ViewModel=local:AccountsViewModel}"
     MouseDoubleClick="AccountList_DoubleClick">
     

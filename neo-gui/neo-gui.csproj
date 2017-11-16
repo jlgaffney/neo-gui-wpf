@@ -261,6 +261,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationContext.cs" />
+    <Compile Include="Controllers\AccountItemExtensionMethods.cs" />
     <Compile Include="Controllers\BlockChainController.cs" />
     <Compile Include="Controllers\ControllersRegistrationModule.cs" />
     <Compile Include="Controllers\IBlockChainController.cs" />
@@ -359,6 +360,7 @@
     <Compile Include="UI\Home\TransactionsViewModel.cs" />
     <Compile Include="UI\AccountType.cs" />
     <Compile Include="UI\MarkupExtensions\DataContextBindingExtension.cs" />
+    <Compile Include="UI\Messages\AccountItemsChangedMessage.cs" />
     <Compile Include="UI\Messages\AddAssetMessage.cs" />
     <Compile Include="UI\Messages\BlockProgressMessage.cs" />
     <Compile Include="UI\Messages\AccountBalancesChangedMessage.cs" />

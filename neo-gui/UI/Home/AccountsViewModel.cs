@@ -1,22 +1,17 @@
 ﻿using System;
-using System.IO;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
-
-using MahApps.Metro.Controls.Dialogs;
 using Neo.Controllers;
 using Neo.Core;
 using Neo.Properties;
 using Neo.UI.Accounts;
-using Neo.UI.Base.Collections;
 using Neo.UI.Base.Dialogs;
 using Neo.UI.Base.Dispatching;
-using Neo.UI.Base.Helpers;
 using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
-using Neo.UI.Contracts;
 using Neo.UI.Messages;
 using Neo.UI.Voting;
 using Neo.Wallets;
@@ -29,40 +24,20 @@ namespace Neo.UI.Home
         IMessageHandler<AccountBalancesChangedMessage>,
         IMessageHandler<EnableMenuItemsMessage>,
         IMessageHandler<ClearAccountsMessage>,
-        IMessageHandler<LoadWalletAddressesMessage>,
-        IMessageHandler<AddContractsMessage>,
-        IMessageHandler<AddContractMessage>,
-        IMessageHandler<ImportPrivateKeyMessage>,
-        IMessageHandler<ImportCertificateMessage>
+        IMessageHandler<AccountItemsChangedMessage>
     {
-        private readonly IApplicationContext applicationContext;
+        #region Private Fields 
         private readonly IWalletController walletController;
         private readonly IMessageSubscriber messageSubscriber;
         private readonly IMessagePublisher messagePublisher;
-        private readonly IDispatcher dispatcher;
 
         private AccountItem selectedAccount;
-        
-        public AccountsViewModel(
-            IApplicationContext applicationContext,
-            IWalletController walletController,
-            IMessageSubscriber messageSubscriber, 
-            IMessagePublisher messagePublisher, 
-            IDispatcher dispatcher)
-        {
-            this.applicationContext = applicationContext;
-            this.walletController = walletController;
-            this.messageSubscriber = messageSubscriber;
-            this.messagePublisher = messagePublisher;
-            this.dispatcher = dispatcher;
-
-            this.Accounts = new ConcurrentObservableCollection<AccountItem>();
-        }
+        #endregion
 
         #region Properties
         public Action NotifyBalanceChangedAction { get; set; }
 
-        public ConcurrentObservableCollection<AccountItem> Accounts { get; }
+        public ObservableCollection<AccountItem> Accounts { get; private set; }
 
         public AccountItem SelectedAccount
         {
@@ -107,7 +82,6 @@ namespace Neo.UI.Home
         #endregion Properties
 
         #region Commands
-
         public ICommand CreateNewAddressCommand => new RelayCommand(this.CreateNewKey);
 
         public ICommand ImportWifPrivateKeyCommand => new RelayCommand(this.ImportWifPrivateKey);
@@ -125,194 +99,21 @@ namespace Neo.UI.Home
         public ICommand ShowVotingDialogCommand => new RelayCommand(this.ShowVotingDialog);
         public ICommand CopyAddressToClipboardCommand => new RelayCommand(this.CopyAddressToClipboard);
         public ICommand DeleteAccountCommand => new RelayCommand(this.DeleteAccount);
-
         #endregion Command
 
-        public AccountItem GetAccount(string address)
+        #region Constructor 
+        public AccountsViewModel(
+            IWalletController walletController,
+            IMessageSubscriber messageSubscriber, 
+            IMessagePublisher messagePublisher)
         {
-            return this.Accounts.FirstOrDefault(account => account.Address == address);
+            this.walletController = walletController;
+            this.messageSubscriber = messageSubscriber;
+            this.messagePublisher = messagePublisher;
+
+            this.Accounts = new ObservableCollection<AccountItem>();
         }
-
-
-        private async void AddAddress(UInt160 scriptHash, bool selected = false)
-        {
-            var address = Wallet.ToAddress(scriptHash);
-            var item = this.GetAccount(address);
-
-            if (item == null)
-            {
-                item = new AccountItem
-                {
-                    Address = address,
-                    Type = AccountType.WatchOnly,
-                    Neo = Fixed8.Zero,
-                    Gas = Fixed8.Zero,
-                    ScriptHash = scriptHash
-                };
-
-                await this.dispatcher.InvokeOnMainUIThread(() => this.Accounts.Add(item));
-            }
-
-            this.SelectedAccount = selected ? item : null;
-        }
-
-        private async void AddContract(VerificationContract contract, bool selected = false)
-        {
-            var item = this.GetAccount(contract.Address);
-
-            if (item?.ScriptHash != null)
-            {
-                var account = item;
-                await this.dispatcher.InvokeOnMainUIThread(() => this.Accounts.Remove(account));
-                item = null;
-            }
-
-            if (item == null)
-            {
-                item = new AccountItem
-                {
-                    Address = contract.Address,
-                    Type = contract.IsStandard ? AccountType.Standard : AccountType.NonStandard,
-                    Neo = Fixed8.Zero,
-                    Gas = Fixed8.Zero,
-                    Contract = contract
-                };
-
-                await this.dispatcher.InvokeOnMainUIThread(() => this.Accounts.Add(item));
-            }
-
-            this.SelectedAccount = selected ? item : null;
-        }
-
-        #region Account Menu Command Methods
-        private void CreateNewKey()
-        {
-            this.SelectedAccount = null;
-            var key = this.applicationContext.CurrentWallet.CreateKey();
-            foreach (var contract in this.applicationContext.CurrentWallet.GetContracts(key.PublicKeyHash))
-            {
-                AddContract(contract, true);
-            }
-        }
-
-        private void ImportWifPrivateKey()
-        {
-            var view = new ImportPrivateKeyView();
-            view.ShowDialog();
-        }
-
-        private void ImportCertificate()
-        {
-            var view = new ImportCertificateView();
-            view.ShowDialog();
-        }
-
-        private void ImportWatchOnlyAddress()
-        {
-            if (!InputBox.Show(out var text, Strings.Address, Strings.ImportWatchOnlyAddress)) return;
-
-            if (string.IsNullOrEmpty(text)) return;
-
-            using (var reader = new StringReader(text))
-            {
-                while (true)
-                {
-                    var address = reader.ReadLine();
-                    if (address == null) break;
-                    address = address.Trim();
-                    if (string.IsNullOrEmpty(address)) continue;
-                    UInt160 scriptHash;
-                    try
-                    {
-                        scriptHash = Wallet.ToScriptHash(address);
-                    }
-                    catch (FormatException)
-                    {
-                        continue;
-                    }
-                    this.applicationContext.CurrentWallet.AddWatchOnly(scriptHash);
-                    AddAddress(scriptHash, true);
-                }
-            }
-        }
-
-        private void CreateMultiSignatureContract()
-        {
-            var view = new CreateMultiSigContractView();
-            view.ShowDialog();
-        }
-
-        private void CreateLockAddress()
-        {
-            var view = new CreateLockAccountView();
-            view.ShowDialog();
-        }
-
-        private void ImportCustomContract()
-        {
-            var view = new ImportCustomContractView();
-            view.ShowDialog();
-        }
-
-        private void ViewPrivateKey()
-        {
-            if (this.SelectedAccount?.Contract == null) return;
-
-            var contract = this.SelectedAccount.Contract;
-            var key = this.applicationContext.CurrentWallet.GetKeyByScriptHash(contract.ScriptHash);
-
-            var view = new ViewPrivateKeyView(key, contract.ScriptHash);
-            view.ShowDialog();
-        }
-
-        private void ViewContract()
-        {
-            if (this.SelectedAccount?.Contract == null) return;
-
-            var contract = this.SelectedAccount.Contract;
-
-            var view = new ViewContractView(contract);
-            view.ShowDialog();
-        }
-
-        private void ShowVotingDialog()
-        {
-            if (this.SelectedAccount?.Contract == null) return;
-
-            var view = new VotingView(this.SelectedAccount.Contract.ScriptHash);
-            view.ShowDialog();
-        }
-
-        private void CopyAddressToClipboard()
-        {
-            if (this.SelectedAccount == null) return;
-
-            try
-            {
-                Clipboard.SetText(this.SelectedAccount.Address);
-            }
-            catch (ExternalException) { }
-        }
-
-        private async void DeleteAccount()
-        {
-            if (this.SelectedAccount == null) return;
-
-            var accountToDelete = this.SelectedAccount;
-
-            if (MessageBox.Show(Strings.DeleteAddressConfirmationMessage, Strings.DeleteAddressConfirmationCaption,
-                MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes) return;
-
-            var scriptHash = accountToDelete.ScriptHash != null
-                ? accountToDelete.ScriptHash
-                : accountToDelete.Contract.ScriptHash;
-
-            this.applicationContext.CurrentWallet.DeleteAddress(scriptHash);
-            await this.dispatcher.InvokeOnMainUIThread(() => this.Accounts.Remove(accountToDelete));
-
-            this.messagePublisher.Publish(new WalletBalanceChangedMessage(true));
-        }
-        #endregion Account Menu Command Methods
+        #endregion
 
         #region IMessageHandler implementation 
         public void HandleMessage(AccountBalancesChangedMessage message)
@@ -348,99 +149,12 @@ namespace Neo.UI.Home
             this.Accounts.Clear();
         }
 
-        public void HandleMessage(LoadWalletAddressesMessage message)
+        public void HandleMessage(AccountItemsChangedMessage message)
         {
-            if (!this.walletController.IsWalletOpen) return;
-
-            // Load accounts
-            foreach (var scriptHash in this.walletController.GetAddresses())
+            this.Accounts.Clear();
+            foreach(var accountItem in message.Accounts)
             {
-                var contract = this.walletController.GetContract(scriptHash);
-                if (contract == null)
-                {
-                    this.AddAddress(scriptHash);
-                }
-                else
-                {
-                    this.AddContract(contract);
-                }
-            }
-        }
-
-        public void HandleMessage(AddContractsMessage message)
-        {
-            if (message.Contracts == null || !message.Contracts.Any())
-            {
-                return;
-            }
-
-            this.SelectedAccount = null;
-
-            foreach (var contract in message.Contracts)
-            {
-                this.applicationContext.CurrentWallet.AddContract(contract);
-                this.AddContract(contract, true);
-            }
-        }
-
-        public void HandleMessage(AddContractMessage message)
-        {
-            if (message.Contract == null) return;
-
-            this.SelectedAccount = null;
-
-            this.applicationContext.CurrentWallet.AddContract(message.Contract);
-            this.AddContract(message.Contract, true);
-        }
-
-        public void HandleMessage(ImportPrivateKeyMessage message)
-        {
-            if (message.WifStrings == null) return;
-
-            if (!message.WifStrings.Any()) return;
-
-            // Import private keys
-            this.SelectedAccount = null;
-
-            foreach (var wif in message.WifStrings)
-            {
-                KeyPair key;
-                try
-                {
-                    key = this.applicationContext.CurrentWallet.Import(wif);
-                }
-                catch (FormatException)
-                {
-                    // Skip WIF line
-                    continue;
-                }
-                foreach (var contract in this.applicationContext.CurrentWallet.GetContracts(key.PublicKeyHash))
-                {
-                    this.AddContract(contract, true);
-                }
-            }
-        }
-
-        public async void HandleMessage(ImportCertificateMessage message)
-        {
-            if (message.SelectedCertificate == null) return;
-
-            this.SelectedAccount = null;
-
-            KeyPair key;
-            try
-            {
-                key = this.applicationContext.CurrentWallet.Import(message.SelectedCertificate);
-            }
-            catch
-            {
-                await DialogCoordinator.Instance.ShowMessageAsync(this, string.Empty, "Certificate import failed!");
-                return;
-            }
-
-            foreach (var contract in this.applicationContext.CurrentWallet.GetContracts(key.PublicKeyHash))
-            {
-                AddContract(contract, true);
+                this.Accounts.Add(accountItem);
             }
         }
         #endregion
@@ -451,5 +165,108 @@ namespace Neo.UI.Home
             this.messageSubscriber.Subscribe(this);
         }
         #endregion
+
+        #region Private Methods 
+        private void CreateNewKey()
+        {
+            this.walletController.CreateNewKey();
+        }
+
+        private void ImportWifPrivateKey()
+        {
+            var view = new ImportPrivateKeyView();
+            view.ShowDialog();
+        }
+
+        private void ImportCertificate()
+        {
+            var view = new ImportCertificateView();
+            view.ShowDialog();
+        }
+
+        private void ImportWatchOnlyAddress()
+        {
+            if (!InputBox.Show(out var text, Strings.Address, Strings.ImportWatchOnlyAddress)) return;
+
+            if (string.IsNullOrEmpty(text)) return;
+
+            this.walletController.ImportWatchOnlyAddress(text);
+        }
+
+        private void CreateMultiSignatureContract()
+        {
+            var view = new CreateMultiSigContractView();
+            view.ShowDialog();
+        }
+
+        private void CreateLockAddress()
+        {
+            var view = new CreateLockAccountView();
+            view.ShowDialog();
+        }
+
+        private void ImportCustomContract()
+        {
+            var view = new ImportCustomContractView();
+            view.ShowDialog();
+        }
+
+        private void ViewPrivateKey()
+        {
+            if (this.SelectedAccount?.Contract == null) return;
+
+            var contract = this.SelectedAccount.Contract;
+            var key = this.walletController.GetKeyByScriptHash(contract.ScriptHash);
+
+            var view = new ViewPrivateKeyView(key, contract.ScriptHash);
+            view.ShowDialog();
+        }
+
+        private void ViewContract()
+        {
+            if (this.SelectedAccount?.Contract == null) return;
+
+            var contract = this.SelectedAccount.Contract;
+
+            var view = new ViewContractView(contract);
+            view.ShowDialog();
+        }
+
+        private void ShowVotingDialog()
+        {
+            if (this.SelectedAccount?.Contract == null) return;
+
+            var view = new VotingView(this.SelectedAccount.Contract.ScriptHash);
+            view.ShowDialog();
+        }
+
+        private void CopyAddressToClipboard()
+        {
+            if (this.SelectedAccount == null) return;
+
+            try
+            {
+                Clipboard.SetText(this.SelectedAccount.Address);
+            }
+            catch (ExternalException) { }
+        }
+
+        private void DeleteAccount()
+        {
+            if (this.SelectedAccount == null) return;
+
+            var accountToDelete = this.SelectedAccount;
+
+            if (MessageBox.Show(Strings.DeleteAddressConfirmationMessage, Strings.DeleteAddressConfirmationCaption,
+                MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes) return;
+
+            var scriptHash = accountToDelete.ScriptHash != null
+                ? accountToDelete.ScriptHash
+                : accountToDelete.Contract.ScriptHash;
+            this.walletController.DeleteAddress(scriptHash);
+
+            this.messagePublisher.Publish(new WalletBalanceChangedMessage(true));
+        }
+        #endregion Account Menu Command Methods
     }
 }

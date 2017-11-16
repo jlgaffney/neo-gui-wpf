@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using Neo.Core;
 using Neo.DialogResults;
@@ -8,34 +9,41 @@ using Neo.Helpers;
 using Neo.Implementations.Wallets.EntityFramework;
 using Neo.Properties;
 using Neo.SmartContract;
+using Neo.UI;
 using Neo.UI.Base.Messages;
 using Neo.UI.Messages;
 using Neo.Wallets;
 
 namespace Neo.Controllers
 {
-    public class WalletController : IWalletController
+    public class WalletController : 
+        IWalletController,
+        IMessageHandler<AddContractsMessage>, 
+        IMessageHandler<AddContractMessage>, 
+        IMessageHandler<ImportPrivateKeyMessage>, 
+        IMessageHandler<ImportCertificateMessage>
     {
         #region Private Fields 
         private readonly IDialogHelper dialogHelper;
-        private readonly IApplicationContext applicationContext;
         private readonly IMessagePublisher messagePublisher;
 
         private UserWallet currentWallet;
 
         private bool balanceChanged;
         private bool checkNep5Balance;
+
+        private IList<AccountItem> accounts;
         #endregion
 
         #region Constructor 
         public WalletController(
             IDialogHelper dialogHelper,
-            IApplicationContext applicationContext,
             IMessagePublisher messagePublisher)
         {
             this.dialogHelper = dialogHelper;
-            this.applicationContext = applicationContext;
             this.messagePublisher = messagePublisher;
+
+            this.accounts = new List<AccountItem>();
         }
         #endregion
 
@@ -56,9 +64,10 @@ namespace Neo.Controllers
 
         public void OpenWallet(string walletPath, string password, bool repairMode)
         {
-            // [TODO] why this verification? Why the magic string?
+            // TODO [AboimPinto] - why this verification? Why the magic string?
             if (UserWallet.GetVersion(walletPath) < Version.Parse("1.3.5"))
             {
+                // TODO - Issue #44 - [AboimPinto] - DialogHelper is not implemented yet.
                 var migrationApproved = this.dialogHelper.ShowDialog<YesOrNoDialogResult>("ApproveWalletMigrationDialog");
 
                 if (!migrationApproved.Result.Yes)
@@ -122,6 +131,130 @@ namespace Neo.Controllers
             // TODO - ISSUE #37 [AboimPinto]: at this point the return should not be a object from the NEO assemblies but a DTO only know by the application with only the necessary fields.
             return this.currentWallet.GetContract(scriptHash);
         }
+
+        public void CreateNewKey()
+        {
+            var newKey = this.currentWallet.CreateKey();
+
+            var contractsForKey = this.currentWallet.GetContracts(newKey.PublicKeyHash);
+            foreach(var contract in contractsForKey)
+            {
+                this.AddContract(contract);
+            }
+        }
+
+        public void ImportWatchOnlyAddress(string addressToImport)
+        {
+            using (var reader = new StringReader(addressToImport))
+            {
+                while (true)
+                {
+                    var address = reader.ReadLine();
+                    if (address == null) break;
+                    address = address.Trim();
+                    if (string.IsNullOrEmpty(address)) continue;
+                    UInt160 scriptHash;
+                    try
+                    {
+                        scriptHash = Wallet.ToScriptHash(address);
+                    }
+                    catch (FormatException)
+                    {
+                        continue;
+                    }
+                    this.currentWallet.AddWatchOnly(scriptHash);
+                    this.AddAddress(scriptHash);
+                }
+            }
+        }
+
+        public KeyPair GetKeyByScriptHash(UInt160 scriptHash)
+        {
+            return this.currentWallet.GetKeyByScriptHash(scriptHash);
+        }
+
+        public void DeleteAddress(UInt160 scriptHash)
+        {
+            var accountItemToDelete = this.accounts.Single(x => x.Address.Equals(scriptHash));
+
+            this.currentWallet.DeleteAddress(scriptHash);
+            this.accounts.Remove(accountItemToDelete);
+
+            this.messagePublisher.Publish(new AccountItemsChangedMessage(this.accounts));
+        }
+        #endregion
+
+        #region IMessageHandler implementation 
+        public void HandleMessage(AddContractsMessage message)
+        {
+            if (message.Contracts == null || !message.Contracts.Any())
+            {
+                return;
+            }
+
+            foreach (var contract in message.Contracts)
+            {
+                this.currentWallet.AddContract(contract);
+                this.AddContract(contract);
+            }
+        }
+
+        public void HandleMessage(AddContractMessage message)
+        {
+            if (message.Contract == null)
+            {
+                return;
+            }
+
+            this.currentWallet.AddContract(message.Contract);
+            this.AddContract(message.Contract);
+        }
+
+        public void HandleMessage(ImportPrivateKeyMessage message)
+        {
+            if (message.WifStrings == null) return;
+
+            if (!message.WifStrings.Any()) return;
+
+            foreach (var wif in message.WifStrings)
+            {
+                KeyPair key;
+                try
+                {
+                    key = this.currentWallet.Import(wif);
+                }
+                catch (FormatException)
+                {
+                    // Skip WIF line
+                    continue;
+                }
+                foreach (var contract in this.currentWallet.GetContracts(key.PublicKeyHash))
+                {
+                    this.AddContract(contract);
+                }
+            }
+        }
+
+        public void HandleMessage(ImportCertificateMessage message)
+        {
+            if (message.SelectedCertificate == null) return;
+
+            KeyPair key;
+            try
+            {
+                key = this.currentWallet.Import(message.SelectedCertificate);
+            }
+            catch
+            {
+                //await DialogCoordinator.Instance.ShowMessageAsync(this, string.Empty, "Certificate import failed!");
+                return;
+            }
+
+            foreach (var contract in this.currentWallet.GetContracts(key.PublicKeyHash))
+            {
+                this.AddContract(contract);
+            }
+        }
         #endregion
 
         #region Private Methods
@@ -152,7 +285,7 @@ namespace Neo.Controllers
             }
 
             this.messagePublisher.Publish(new EnableMenuItemsMessage());
-            this.messagePublisher.Publish(new LoadWalletAddressesMessage());
+            this.LoadWallet();
 
             this.balanceChanged = true;
             this.checkNep5Balance = true;
@@ -190,6 +323,72 @@ namespace Neo.Controllers
             }
 
             return null;
+        }
+
+        private void LoadWallet()
+        {
+            if (!this.IsWalletOpen) return;
+
+            foreach (var walletAddress in this.GetAddresses())
+            {
+                var contract = this.GetContract(walletAddress);
+                if (contract == null)
+                {
+                    this.AddAddress(walletAddress);
+                }
+                else
+                {
+                    this.AddContract(contract);
+                }
+            }
+        }
+
+        private void AddAddress(UInt160 scriptHash)
+        {
+            var address = Wallet.ToAddress(scriptHash);
+            var accountItemForAddress = this.accounts.GetAccountItemForAddress(address);
+
+            if (accountItemForAddress == null)
+            {
+                var newAccountItem = new AccountItem
+                {
+                    Address = address,
+                    Type = AccountType.WatchOnly,
+                    Neo = Fixed8.Zero,
+                    Gas = Fixed8.Zero,
+                    ScriptHash = scriptHash
+                };
+
+                this.accounts.Add(newAccountItem);
+            }
+
+            this.messagePublisher.Publish(new AccountItemsChangedMessage(this.accounts));
+        }
+
+        private void AddContract(VerificationContract contract)
+        {
+            var accountItemForAddress = this.accounts.GetAccountItemForAddress(contract.Address);
+
+            if (accountItemForAddress?.ScriptHash != null)          // [AboimPinto] what this logic mean?
+            {
+                this.accounts.Remove(accountItemForAddress);
+            }
+
+            if (accountItemForAddress == null)
+            {
+                var newAccountItem = new AccountItem
+                {
+                    Address = contract.Address,
+                    Type = contract.IsStandard ? AccountType.Standard : AccountType.NonStandard,
+                    Neo = Fixed8.Zero,
+                    Gas = Fixed8.Zero,
+                    Contract = contract
+                };
+
+                this.accounts.Add(newAccountItem);
+            }
+
+            this.messagePublisher.Publish(new AccountItemsChangedMessage(this.accounts));
         }
         #endregion
     }

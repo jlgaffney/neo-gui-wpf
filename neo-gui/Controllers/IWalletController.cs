@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Neo.Core;
 using Neo.SmartContract;
 using Neo.Wallets;
@@ -24,10 +23,18 @@ namespace Neo.Controllers
 
         void Sign(ContractParametersContext context);
 
+        void CreateNewKey();        // TODO - Issue #43 [AboimPinto] - this method will create a new key or new NEO address? Please review the name.
+
         IEnumerable<UInt160> GetAddresses();
 
         IEnumerable<Coin> GetCoins();
 
         VerificationContract GetContract(UInt160 scriptHash);
+
+        void ImportWatchOnlyAddress(string addressToImport);
+
+        KeyPair GetKeyByScriptHash(UInt160 scriptHash);
+
+        void DeleteAddress(UInt160 scriptHash);
     }
 }
