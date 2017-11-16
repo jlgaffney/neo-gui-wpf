@@ -52,10 +52,8 @@ namespace Neo.Controllers
             Settings.Default.Save();
         }
 
-        public void OpenWallet(string walletPath, string password)
+        public void OpenWallet(string walletPath, string password, bool repairMode)
         {
-            var openWalletDialogResult = this.dialogHelper.ShowDialog<OpenWalletDialogResult>("OpenWalletDialog");
-
             // [TODO] why this verification? Why the magic string?
             if (UserWallet.GetVersion(walletPath) < Version.Parse("1.3.5"))
             {
@@ -76,7 +74,7 @@ namespace Neo.Controllers
                 return;
             }
 
-            if (openWalletDialogResult.Result.OpenInRepairMode)
+            if (repairMode)
             {
                 userWallet.Rebuild();
             }
@@ -95,6 +93,12 @@ namespace Neo.Controllers
         {
             // TODO - ISSUE #37 [AboimPinto]: at this point the return should not be a object from the NEO assemblies but a DTO only know by the application with only the necessary fields.
             return this.currentWallet.GetCoins();
+        }
+
+        public VerificationContract GetContract(UInt160 scriptHash)
+        {
+            // TODO - ISSUE #37 [AboimPinto]: at this point the return should not be a object from the NEO assemblies but a DTO only know by the application with only the necessary fields.
+            return this.currentWallet.GetContract(scriptHash);
         }
         #endregion
 

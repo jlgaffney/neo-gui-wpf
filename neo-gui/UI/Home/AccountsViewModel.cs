@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Input;
 
 using MahApps.Metro.Controls.Dialogs;
+using Neo.Controllers;
 using Neo.Core;
 using Neo.Properties;
 using Neo.UI.Accounts;
@@ -35,6 +36,7 @@ namespace Neo.UI.Home
         IMessageHandler<ImportCertificateMessage>
     {
         private readonly IApplicationContext applicationContext;
+        private readonly IWalletController walletController;
         private readonly IMessageSubscriber messageSubscriber;
         private readonly IMessagePublisher messagePublisher;
         private readonly IDispatcher dispatcher;
@@ -43,11 +45,13 @@ namespace Neo.UI.Home
         
         public AccountsViewModel(
             IApplicationContext applicationContext,
+            IWalletController walletController,
             IMessageSubscriber messageSubscriber, 
             IMessagePublisher messagePublisher, 
             IDispatcher dispatcher)
         {
             this.applicationContext = applicationContext;
+            this.walletController = walletController;
             this.messageSubscriber = messageSubscriber;
             this.messagePublisher = messagePublisher;
             this.dispatcher = dispatcher;
@@ -80,7 +84,7 @@ namespace Neo.UI.Home
             }
         }
 
-        public bool MenuItemsEnabled => this.applicationContext.CurrentWallet != null;
+        public bool MenuItemsEnabled => this.walletController.IsWalletOpen;
 
         public bool ViewPrivateKeyEnabled =>
             this.SelectedAccount != null &&
@@ -313,7 +317,9 @@ namespace Neo.UI.Home
         #region IMessageHandler implementation 
         public void HandleMessage(AccountBalancesChangedMessage message)
         {
-            var coins = this.applicationContext.CurrentWallet?.GetCoins().Where(p => !p.State.HasFlag(CoinState.Spent)).ToList();
+            var coins = this.walletController.GetCoins()
+                .Where(p => !p.State.HasFlag(CoinState.Spent))
+                .ToList();
 
             if (coins == null) return;
 
@@ -344,12 +350,12 @@ namespace Neo.UI.Home
 
         public void HandleMessage(LoadWalletAddressesMessage message)
         {
-            if (this.applicationContext.CurrentWallet == null) return;
+            if (!this.walletController.IsWalletOpen) return;
 
             // Load accounts
-            foreach (var scriptHash in this.applicationContext.CurrentWallet.GetAddresses())
+            foreach (var scriptHash in this.walletController.GetAddresses())
             {
-                var contract = this.applicationContext.CurrentWallet.GetContract(scriptHash);
+                var contract = this.walletController.GetContract(scriptHash);
                 if (contract == null)
                 {
                     this.AddAddress(scriptHash);

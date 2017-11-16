@@ -11,6 +11,11 @@ namespace Neo.Controllers
                 .As<IBlockChainController>()
                 .SingleInstance();
 
+            builder
+                .RegisterType<WalletController>()
+                .As<IWalletController>()
+                .SingleInstance();
+
             base.Load(builder);
         }
     }

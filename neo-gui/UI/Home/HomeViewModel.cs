@@ -35,6 +35,7 @@ using Neo.UI.Wallets;
 using Neo.UI.Voting;
 using Neo.UI.Base.Messages;
 using Timer = System.Timers.Timer;
+using Neo.Controllers;
 
 namespace Neo.UI.Home
 {
@@ -43,9 +44,11 @@ namespace Neo.UI.Home
         ILoadable,
         IMessageHandler<UpdateApplicationMessage>,
         IMessageHandler<WalletBalanceChangedMessage>,
-        IMessageHandler<SignTransactionAndShowInformationMessage>
+        IMessageHandler<SignTransactionAndShowInformationMessage>,
+        IMessageHandler<BlockProgressMessage>
     {
         #region Private Fields 
+        private readonly IWalletController walletController;
         private readonly IApplicationContext applicationContext;
         private readonly IMessagePublisher messagePublisher;
         private readonly IMessageSubscriber messageSubscriber;
@@ -65,29 +68,57 @@ namespace Neo.UI.Home
 
         private readonly object uiUpdateLock = new object();
         private Timer uiUpdateTimer;
+        private string blockHeight;
+        private int nodeCount;
+        private string blockStatus;
         #endregion
 
         #region Constructor 
         public HomeViewModel(
+            IWalletController walletController, 
             IApplicationContext applicationContext,
             IMessagePublisher messagePublisher,
             IMessageSubscriber messageSubscriber, 
             IDispatcher dispatcher)
         {
+            this.walletController = walletController;
             this.applicationContext = applicationContext;
             this.messagePublisher = messagePublisher;
             this.messageSubscriber = messageSubscriber;
             this.dispatcher = dispatcher;
 
-            this.SetupUIUpdateTimer();
+            //this.SetupUIUpdateTimer();
         }
         #endregion
 
         #region Public Properties
         public bool WalletIsOpen => this.applicationContext.CurrentWallet != null;
 
-        public string BlockHeight => $"{GetWalletHeight()}/{Blockchain.Default.Height}/{Blockchain.Default.HeaderHeight}";
-        public int NodeCount => Program.LocalNode.RemoteNodeCount;
+        public string BlockHeight
+        {
+            get
+            {
+                return this.blockHeight;
+            }
+            set
+            {
+                this.blockHeight = value;
+                this.NotifyPropertyChanged(nameof(this.BlockHeight));
+            }
+        }
+
+        public int NodeCount
+        {
+            get
+            {
+                return this.nodeCount;
+            }
+            set
+            {
+                this.nodeCount = value;
+                this.NotifyPropertyChanged(nameof(this.NodeCount));
+            }
+        }
 
         public bool BlockProgressIndeterminate
         {
@@ -195,7 +226,18 @@ namespace Neo.UI.Home
         }
 
         // TODO Update property to return actual status
-        public string BlockStatus => Strings.WaitingForNextBlock + ":";
+        public string BlockStatus
+        {
+            get
+            {
+                return this.blockStatus;
+            }
+            set
+            {
+                this.blockStatus = value;
+                this.NotifyPropertyChanged(nameof(this.BlockStatus));
+            }
+        }
 
         #endregion New Version Properties
 
@@ -322,20 +364,20 @@ namespace Neo.UI.Home
             blockchain.VerifyBlocks = true;
         }
 
-        private void Load()
-        {
-            Task.Run(() =>
-            {
-                CheckForNewerVersion();
+        //private void Load()
+        //{
+        //    Task.Run(() =>
+        //    {
+        //        CheckForNewerVersion();
 
-                ImportBlocksIfRequired();
+        //        ImportBlocksIfRequired();
 
-                Blockchain.PersistCompleted += Blockchain_PersistCompleted;
+        //        Blockchain.PersistCompleted += Blockchain_PersistCompleted;
 
-                // Start node
-                Program.LocalNode.Start(Settings.Default.NodePort, Settings.Default.WsPort);
-            });
-        }
+        //        // Start node
+        //        Program.LocalNode.Start(Settings.Default.NodePort, Settings.Default.WsPort);
+        //    });
+        //}
 
         public void Close()
         {
@@ -358,149 +400,149 @@ namespace Neo.UI.Home
 
         #region UI Update Methods
 
-        private void SetupUIUpdateTimer()
-        {
-            if (this.uiUpdateTimer != null)
-            {
-                // Stop previous timer
-                this.uiUpdateTimer.Stop();
+        //private void SetupUIUpdateTimer()
+        //{
+        //    if (this.uiUpdateTimer != null)
+        //    {
+        //        // Stop previous timer
+        //        this.uiUpdateTimer.Stop();
 
-                this.uiUpdateTimer.Elapsed -= this.UpdateUI;
+        //        this.uiUpdateTimer.Elapsed -= this.UpdateUI;
 
-                this.uiUpdateTimer.Dispose();
+        //        this.uiUpdateTimer.Dispose();
 
-                this.uiUpdateTimer = null;
-            }
+        //        this.uiUpdateTimer = null;
+        //    }
 
-            var timer = new Timer
-            {
-                Interval = 500,
-                Enabled = true,
-                AutoReset = true
-            };
+        //    var timer = new Timer
+        //    {
+        //        Interval = 500,
+        //        Enabled = true,
+        //        AutoReset = true
+        //    };
 
-            timer.Elapsed += this.UpdateUI;
+        //    timer.Elapsed += this.UpdateUI;
 
-            this.uiUpdateTimer = timer;
+        //    this.uiUpdateTimer = timer;
 
-            // Start timer
-            this.uiUpdateTimer.Start();
-        }
+        //    // Start timer
+        //    this.uiUpdateTimer.Start();
+        //}
 
-        private void UpdateUI(object sender, ElapsedEventArgs e)
-        {
-            // Only update UI if it is not already being updated
-            if (!Monitor.TryEnter(this.uiUpdateLock)) return;
+        //private void UpdateUI(object sender, ElapsedEventArgs e)
+        //{
+        //    // Only update UI if it is not already being updated
+        //    if (!Monitor.TryEnter(this.uiUpdateLock)) return;
 
-            try
-            {
-                var persistenceSpan = DateTime.UtcNow - this.persistenceTime;
+        //    try
+        //    {
+        //        var persistenceSpan = DateTime.UtcNow - this.persistenceTime;
 
-                this.UpdateBlockProgress(persistenceSpan);
+        //        this.UpdateBlockProgress(persistenceSpan);
 
-                this.UpdateBalances(persistenceSpan);
-            }
-            finally
-            {
-                Monitor.Exit(this.uiUpdateLock);
-            }
-        }
+        //        this.UpdateBalances(persistenceSpan);
+        //    }
+        //    finally
+        //    {
+        //        Monitor.Exit(this.uiUpdateLock);
+        //    }
+        //}
 
-        private void UpdateBlockProgress(TimeSpan persistenceSpan)
-        {
-            if (persistenceSpan < TimeSpan.Zero) persistenceSpan = TimeSpan.Zero;
+        //private void UpdateBlockProgress(TimeSpan persistenceSpan)
+        //{
+        //    if (persistenceSpan < TimeSpan.Zero) persistenceSpan = TimeSpan.Zero;
 
-            if (persistenceSpan > Blockchain.TimePerBlock)
-            {
-                this.BlockProgressIndeterminate = true;
-            }
-            else
-            {
-                this.BlockProgressIndeterminate = true;
-                this.BlockProgress = persistenceSpan.Seconds;
-            }
+        //    if (persistenceSpan > Blockchain.TimePerBlock)
+        //    {
+        //        this.BlockProgressIndeterminate = true;
+        //    }
+        //    else
+        //    {
+        //        this.BlockProgressIndeterminate = true;
+        //        this.BlockProgress = persistenceSpan.Seconds;
+        //    }
 
-            NotifyPropertyChanged(nameof(this.BlockHeight));
-            NotifyPropertyChanged(nameof(this.NodeCount));
-            NotifyPropertyChanged(nameof(this.BlockStatus));
-        }
+        //    NotifyPropertyChanged(nameof(this.BlockHeight));
+        //    NotifyPropertyChanged(nameof(this.NodeCount));
+        //    NotifyPropertyChanged(nameof(this.BlockStatus));
+        //}
 
-        private void UpdateBalances(TimeSpan persistenceSpan)
-        {
-            if (this.applicationContext.CurrentWallet == null) return;
+        //private void UpdateBalances(TimeSpan persistenceSpan)
+        //{
+        //    if (this.applicationContext.CurrentWallet == null) return;
 
-            this.UpdateAssetBalances();
+        //    this.UpdateAssetBalances();
 
-            this.UpdateNEP5TokenBalances(persistenceSpan);
-        }
+        //    this.UpdateNEP5TokenBalances(persistenceSpan);
+        //}
         
-        private void UpdateAssetBalances()
-        {
-            if (this.applicationContext.CurrentWallet.WalletHeight > Blockchain.Default.Height + 1) return;
+        //private void UpdateAssetBalances()
+        //{
+        //    if (this.applicationContext.CurrentWallet.WalletHeight > Blockchain.Default.Height + 1) return;
 
-            this.messagePublisher.Publish(new AccountBalancesChangedMessage());
-            this.messagePublisher.Publish(new UpdateAssetsBalanceMessage(this.balanceChanged));
-        }
+        //    this.messagePublisher.Publish(new AccountBalancesChangedMessage());
+        //    this.messagePublisher.Publish(new UpdateAssetsBalanceMessage(this.balanceChanged));
+        //}
 
 
-        private async void UpdateNEP5TokenBalances(TimeSpan persistenceSpan)
-        {
-            if (!checkNep5Balance) return;
+        //private async void UpdateNEP5TokenBalances(TimeSpan persistenceSpan)
+        //{
+        //    if (!checkNep5Balance) return;
 
-            if (persistenceSpan <= TimeSpan.FromSeconds(2)) return;
+        //    if (persistenceSpan <= TimeSpan.FromSeconds(2)) return;
 
-            // Update balances
-            var addresses = this.applicationContext.CurrentWallet.GetAddresses().ToArray();
-            foreach (var s in Settings.Default.NEP5Watched)
-            {
-                var scriptHash = UInt160.Parse(s);
-                byte[] script;
-                using (var builder = new ScriptBuilder())
-                {
-                    foreach (var address in addresses)
-                    {
-                        builder.EmitAppCall(scriptHash, "balanceOf", address);
-                    }
-                    builder.Emit(OpCode.DEPTH, OpCode.PACK);
-                    builder.EmitAppCall(scriptHash, "decimals");
-                    builder.EmitAppCall(scriptHash, "name");
-                    script = builder.ToArray();
-                }
+        //    // Update balances
+        //    var addresses = this.applicationContext.CurrentWallet.GetAddresses().ToArray();
+        //    foreach (var s in Settings.Default.NEP5Watched)
+        //    {
+        //        var scriptHash = UInt160.Parse(s);
+        //        byte[] script;
+        //        using (var builder = new ScriptBuilder())
+        //        {
+        //            foreach (var address in addresses)
+        //            {
+        //                builder.EmitAppCall(scriptHash, "balanceOf", address);
+        //            }
+        //            builder.Emit(OpCode.DEPTH, OpCode.PACK);
+        //            builder.EmitAppCall(scriptHash, "decimals");
+        //            builder.EmitAppCall(scriptHash, "name");
+        //            script = builder.ToArray();
+        //        }
 
-                var engine = ApplicationEngine.Run(script);
-                if (engine.State.HasFlag(VMState.FAULT)) continue;
+        //        var engine = ApplicationEngine.Run(script);
+        //        if (engine.State.HasFlag(VMState.FAULT)) continue;
 
-                var name = engine.EvaluationStack.Pop().GetString();
-                var decimals = (byte)engine.EvaluationStack.Pop().GetBigInteger();
-                var amount = engine.EvaluationStack.Pop().GetArray().Aggregate(BigInteger.Zero, (x, y) => x + y.GetBigInteger());
-                if (amount == 0) continue;
-                var balance = new BigDecimal(amount, decimals);
-                var valueText = balance.ToString();
+        //        var name = engine.EvaluationStack.Pop().GetString();
+        //        var decimals = (byte)engine.EvaluationStack.Pop().GetBigInteger();
+        //        var amount = engine.EvaluationStack.Pop().GetArray().Aggregate(BigInteger.Zero, (x, y) => x + y.GetBigInteger());
+        //        if (amount == 0) continue;
+        //        var balance = new BigDecimal(amount, decimals);
+        //        var valueText = balance.ToString();
 
-                await this.dispatcher.InvokeOnMainUIThread(() =>
-                {
-                    var item = (AssetItem) null; //this.GetAsset(scriptHash);
+        //        await this.dispatcher.InvokeOnMainUIThread(() =>
+        //        {
+        //            var item = (AssetItem) null; //this.GetAsset(scriptHash);
 
-                    if (item != null)
-                    {
-                        item.Value = valueText;
-                    }
-                    else
-                    {
-                        var assetItem = new AssetItem
-                        {
-                            Name = name,
-                            Type = "NEP-5",
-                            Issuer = $"ScriptHash:{scriptHash}",
-                            Value = valueText,
-                        };
+        //            if (item != null)
+        //            {
+        //                item.Value = valueText;
+        //            }
+        //            else
+        //            {
+        //                var assetItem = new AssetItem
+        //                {
+        //                    Name = name,
+        //                    Type = "NEP-5",
+        //                    Issuer = $"ScriptHash:{scriptHash}",
+        //                    Value = valueText,
+        //                };
 
-                        this.messagePublisher.Publish(new AddAssetMessage(assetItem));
-                    }
-                });
-            }
-            checkNep5Balance = false;
-        }
+        //                this.messagePublisher.Publish(new AddAssetMessage(assetItem));
+        //            }
+        //        });
+        //    }
+        //    checkNep5Balance = false;
+        //}
 
         #endregion UI Update Methods
         
@@ -515,50 +557,18 @@ namespace Neo.UI.Home
 
             if (string.IsNullOrEmpty(walletPath) || string.IsNullOrEmpty(password)) return;
 
-            var wallet = UserWallet.Create(walletPath, password);
-
-            this.ChangeWallet(wallet);
-            Settings.Default.LastWalletPath = walletPath;
-            Settings.Default.Save();
+            this.walletController.CreateWallet(walletPath, password);
         }
 
-        private async void OpenWallet()
+        private void OpenWallet()
         {
             var view = new OpenWalletView();
             view.ShowDialog();
 
+            //var openWalletDialogResult = this.dialogHelper.ShowDialog<OpenWalletDialogResult>("OpenWalletDialog");
             if (!view.GetWalletOpenInfo(out var walletPath, out var password, out var repairMode)) return;
-            
-            if (UserWallet.GetVersion(walletPath) < Version.Parse("1.3.5"))
-            {
-                var migrateApproved = await DialogCoordinator.Instance.ShowMessageAsync(this,
-                    Strings.MigrateWalletCaption, Strings.MigrateWalletMessage,
-                        MessageDialogStyle.AffirmativeAndNegative);
 
-                if (migrateApproved != MessageDialogResult.Affirmative) return;
-
-                var pathOld = Path.ChangeExtension(walletPath, ".old.db3");
-                var pathNew = Path.ChangeExtension(walletPath, ".new.db3");
-                UserWallet.Migrate(walletPath, pathNew);
-                File.Move(walletPath, pathOld);
-                File.Move(pathNew, walletPath);
-
-                await DialogCoordinator.Instance.ShowMessageAsync(this, string.Empty, $"{Strings.MigrateWalletSucceedMessage}\n{pathOld}");
-            }
-            UserWallet wallet;
-            try
-            {
-                wallet = UserWallet.Open(walletPath, password);
-            }
-            catch (CryptographicException)
-            {
-                await DialogCoordinator.Instance.ShowMessageAsync(this, string.Empty, Strings.PasswordIncorrect);
-                return;
-            }
-            if (repairMode) wallet.Rebuild();
-            ChangeWallet(wallet);
-            Settings.Default.LastWalletPath = walletPath;
-            Settings.Default.Save();
+            this.walletController.OpenWallet(walletPath, password, repairMode);
         }
 
         public void CloseWallet()
@@ -702,7 +712,7 @@ namespace Neo.UI.Home
         {
             this.messageSubscriber.Subscribe(this);
 
-            this.Load();
+            //this.Load();
         }
         #endregion
 
@@ -731,6 +741,7 @@ namespace Neo.UI.Home
             var invokeContractView = new InvokeContractView(message.Transaction);
             invokeContractView.ShowDialog();
         }
+
         // TODO Move these message handlers to a more appropriate place, they don't need to be in HomeViewModel
         public void HandleMessage(SignTransactionAndShowInformationMessage message)
         {
@@ -759,13 +770,22 @@ namespace Neo.UI.Home
             {
                 context.Verifiable.Scripts = context.GetScripts();
                 this.applicationContext.CurrentWallet.SaveTransaction(transaction);
-                Program.LocalNode.Relay(transaction);
+                this.applicationContext.LocalNode.Relay(transaction);
                 InformationBox.Show(transaction.Hash.ToString(), Strings.SendTxSucceedMessage, Strings.SendTxSucceedTitle);
             }
             else
             {
                 InformationBox.Show(context.ToString(), Strings.IncompletedSignatureMessage, Strings.IncompletedSignatureTitle);
             }
+        }
+
+        public void HandleMessage(BlockProgressMessage message)
+        {
+            this.BlockProgressIndeterminate = message.BlockProgressIndeterminate;
+            this.BlockProgress = message.BlockProgress;
+            this.BlockHeight = message.BlockHeight;
+            this.NodeCount = message.NodeCount;
+            this.BlockStatus = message.BlockStatus;
         }
         #endregion
     }

@@ -105,7 +105,7 @@ namespace Neo.UI.Transactions
 
             var inventory = (IInventory) this.output.Verifiable;
 
-            Program.LocalNode.Relay(inventory);
+            this.applicationContext.LocalNode.Relay(inventory);
 
             InformationBox.Show(inventory.Hash.ToString(), Strings.RelaySuccessText, Strings.RelaySuccessTitle);
 

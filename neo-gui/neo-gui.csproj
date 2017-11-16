@@ -273,6 +273,7 @@
     <Compile Include="Helpers\IDialogHelper.cs" />
     <Compile Include="Helpers\DialogResult.cs" />
     <Compile Include="IApplicationContext.cs" />
+    <Compile Include="NeoGuiRegistrationModule.cs" />
     <Compile Include="UI\Base\BaseRegistrationModule.cs" />
     <Compile Include="UI\Base\Collections\ConcurrentObservableCollection.cs" />
     <Compile Include="UI\Base\Converters\EnumDescriptionTypeConverter.cs" />

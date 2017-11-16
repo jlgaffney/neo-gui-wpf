@@ -247,7 +247,7 @@ namespace Neo.UI.Wallets
                 context.Verifiable.Scripts = context.GetScripts();
                 var tx = (ContractTransaction)context.Verifiable;
                 this.applicationContext.CurrentWallet.SaveTransaction(tx);
-                Program.LocalNode.Relay(tx);
+                this.applicationContext.LocalNode.Relay(tx);
                 InformationBox.Show(tx.Hash.ToString(), Strings.TradeSuccessMessage, Strings.TradeSuccessCaption);
             }
             else

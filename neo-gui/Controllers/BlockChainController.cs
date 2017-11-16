@@ -9,6 +9,7 @@ using Neo.Core;
 using Neo.Implementations.Blockchains.LevelDB;
 using Neo.Implementations.Wallets.EntityFramework;
 using Neo.IO;
+using Neo.Network;
 using Neo.Properties;
 using Neo.SmartContract;
 using Neo.UI;
@@ -27,6 +28,8 @@ namespace Neo.Controllers
         private readonly IMessagePublisher messagePublisher;
         private readonly IDispatcher dispatcher;
 
+        private LocalNode localNode;
+
         private DateTime persistenceTime = DateTime.MinValue;
         private Timer uiUpdateTimer;
         private bool balanceChanged;
@@ -44,6 +47,17 @@ namespace Neo.Controllers
             this.applicationContext = applicationContext;
             this.messagePublisher = messagePublisher;
             this.dispatcher = dispatcher;
+        }
+        #endregion
+
+        #region IBlockChainController implementation 
+        public void StartLocalNode()
+        {
+            this.localNode = new LocalNode
+            {
+                UpnpEnabled = true
+            };
+            this.applicationContext.LocalNode = this.localNode;
 
             Task.Run(() =>
             {
@@ -54,31 +68,17 @@ namespace Neo.Controllers
                 Blockchain.PersistCompleted += this.BlockchainPersistCompleted;
 
                 // Start node
-                this.applicationContext.LocalNode.Start(Settings.Default.NodePort, Settings.Default.WsPort);
+                this.localNode.Start(Settings.Default.NodePort, Settings.Default.WsPort);
             });
 
-            
-            if (this.uiUpdateTimer != null)
-            {
-                // Stop previous timer
-                this.uiUpdateTimer.Stop();
-
-                this.uiUpdateTimer.Elapsed -= this.UpdateWallet;
-
-                this.uiUpdateTimer.Dispose();
-
-                this.uiUpdateTimer = null;
-            }
-
-            var timer = new Timer
+            this.uiUpdateTimer = new Timer
             {
                 Interval = 500,
                 Enabled = true,
                 AutoReset = true
             };
 
-            timer.Elapsed += this.UpdateWallet;
-            this.uiUpdateTimer = timer;
+            this.uiUpdateTimer.Elapsed += this.UpdateWallet;
         }
         #endregion
 
@@ -88,7 +88,6 @@ namespace Neo.Controllers
             var persistenceSpan = DateTime.UtcNow - this.persistenceTime;
 
             this.UpdateBlockProgress(persistenceSpan);
-
             this.UpdateBalances(persistenceSpan);
         }
 
@@ -113,7 +112,7 @@ namespace Neo.Controllers
             }
 
             var blockHeight = $"{GetWalletHeight()}/{Blockchain.Default.Height}/{Blockchain.Default.HeaderHeight}";
-            var nodeCount = this.applicationContext.LocalNode.RemoteNodeCount;
+            var nodeCount = this.localNode.RemoteNodeCount;
             var blockStatus = $"{Strings.WaitingForNextBlock}:";
 
             var blockProgressMessage = new BlockProgressMessage(

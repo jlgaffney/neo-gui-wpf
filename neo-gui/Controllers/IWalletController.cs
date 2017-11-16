@@ -12,10 +12,12 @@ namespace Neo.Controllers
 
         void CreateWallet(string walletPath, string password);
 
-        void OpenWallet(string walletPath, string password);
+        void OpenWallet(string walletPath, string password, bool repairMode);
 
         IEnumerable<UInt160> GetAddresses();
 
         IEnumerable<Coin> GetCoins();
+
+        VerificationContract GetContract(UInt160 scriptHash);
     }
 }

@@ -202,7 +202,7 @@ namespace Neo.UI.Development
 
             var inventory = (IInventory) context.Verifiable;
 
-            Program.LocalNode.Relay(inventory);
+            this.applicationContext.LocalNode.Relay(inventory);
 
             InformationBox.Show(inventory.Hash.ToString(), Strings.RelaySuccessText, Strings.RelaySuccessTitle);
         }

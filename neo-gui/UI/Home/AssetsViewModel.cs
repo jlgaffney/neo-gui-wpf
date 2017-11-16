@@ -36,18 +36,6 @@ namespace Neo.UI.Home
         private AssetItem selectedAsset;
         #endregion
 
-        public AssetsViewModel(
-            IApplicationContext applicationContext,
-            IMessagePublisher messagePublisher)
-        {
-            this.applicationContext = applicationContext;
-            this.messagePublisher = messagePublisher;
-
-            this.certificateQueryResultCache = new Dictionary<ECPoint, CertificateQueryResult>();
-
-            this.Assets = new ConcurrentObservableCollection<AssetItem>();
-        }
-
         #region Properties
         public ConcurrentObservableCollection<AssetItem> Assets { get; }
 
@@ -100,11 +88,11 @@ namespace Neo.UI.Home
         #region Constructor 
         public AssetsViewModel(IMessagePublisher messagePublisher, IDispatcher dispatcher)
         {
-            this.certificateQueryResultCache = new Dictionary<ECPoint, CertificateQueryResult>();
-
-            this.Assets = new ConcurrentObservableCollection<AssetItem>();
             this.messagePublisher = messagePublisher;
             this.dispatcher = dispatcher;
+
+            this.certificateQueryResultCache = new Dictionary<ECPoint, CertificateQueryResult>();
+            this.Assets = new ConcurrentObservableCollection<AssetItem>();
         }
         #endregion
         

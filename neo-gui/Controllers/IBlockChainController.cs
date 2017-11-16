@@ -8,5 +8,6 @@ namespace Neo.Controllers
 {
     public interface IBlockChainController
     {
+        void StartLocalNode();
     }
 }
