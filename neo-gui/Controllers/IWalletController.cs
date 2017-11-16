@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Neo.Core;
+using Neo.SmartContract;
 using Neo.Wallets;
 
 namespace Neo.Controllers
@@ -13,6 +15,14 @@ namespace Neo.Controllers
         void CreateWallet(string walletPath, string password);
 
         void OpenWallet(string walletPath, string password, bool repairMode);
+
+        void CloseWallet();
+
+        void RebuildWalletIndexes();
+
+        void SaveTransaction(Transaction transaction);
+
+        void Sign(ContractParametersContext context);
 
         IEnumerable<UInt160> GetAddresses();
 

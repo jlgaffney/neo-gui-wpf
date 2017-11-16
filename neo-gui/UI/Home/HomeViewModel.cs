@@ -1,29 +1,14 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Numerics;
 using System.Reflection;
-using System.Security.Cryptography;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Timers;
 using System.Windows;
 using System.Windows.Input;
 using MahApps.Metro.Controls.Dialogs;
-using Neo.Core;
-using Neo.Implementations.Blockchains.LevelDB;
-using Neo.Implementations.Wallets.EntityFramework;
-using Neo.IO;
 using Neo.Properties;
 using Neo.SmartContract;
-using Neo.VM;
 using Neo.UI.Assets;
 using Neo.UI.Base.Dialogs;
 using Neo.UI.Base.Dispatching;
-using Neo.UI.Base.Helpers;
 using Neo.UI.Base.MVVM;
 using Neo.UI.Contracts;
 using Neo.UI.Development;
@@ -34,7 +19,6 @@ using Neo.UI.Updater;
 using Neo.UI.Wallets;
 using Neo.UI.Voting;
 using Neo.UI.Base.Messages;
-using Timer = System.Timers.Timer;
 using Neo.Controllers;
 
 namespace Neo.UI.Home
@@ -48,26 +32,20 @@ namespace Neo.UI.Home
         IMessageHandler<BlockProgressMessage>
     {
         #region Private Fields 
+        private readonly IBlockChainController blockChainController;
         private readonly IWalletController walletController;
-        private readonly IApplicationContext applicationContext;
         private readonly IMessagePublisher messagePublisher;
         private readonly IMessageSubscriber messageSubscriber;
         private readonly IDispatcher dispatcher;
 
         private bool balanceChanged = false;
 
-        private bool checkNep5Balance = false;
-        private DateTime persistenceTime = DateTime.MinValue;
-
         private bool blockProgressIndeterminate;
         private int blockProgress;
-
 
         private string newVersionLabel;
         private bool newVersionVisible;
 
-        private readonly object uiUpdateLock = new object();
-        private Timer uiUpdateTimer;
         private string blockHeight;
         private int nodeCount;
         private string blockStatus;
@@ -75,24 +53,22 @@ namespace Neo.UI.Home
 
         #region Constructor 
         public HomeViewModel(
+            IBlockChainController blockChainController,
             IWalletController walletController, 
-            IApplicationContext applicationContext,
             IMessagePublisher messagePublisher,
             IMessageSubscriber messageSubscriber, 
             IDispatcher dispatcher)
         {
+            this.blockChainController = blockChainController;
             this.walletController = walletController;
-            this.applicationContext = applicationContext;
             this.messagePublisher = messagePublisher;
             this.messageSubscriber = messageSubscriber;
             this.dispatcher = dispatcher;
-
-            //this.SetupUIUpdateTimer();
         }
         #endregion
 
         #region Public Properties
-        public bool WalletIsOpen => this.applicationContext.CurrentWallet != null;
+        public bool WalletIsOpen => this.walletController.IsWalletOpen;
 
         public string BlockHeight
         {
@@ -241,311 +217,6 @@ namespace Neo.UI.Home
 
         #endregion New Version Properties
 
-        #region Wallet Methods
-
-        private void Blockchain_PersistCompleted(object sender, Block block)
-        {
-            this.persistenceTime = DateTime.UtcNow;
-            if (this.applicationContext.CurrentWallet != null)
-            {
-                this.checkNep5Balance = true;
-
-                var coins = this.applicationContext.CurrentWallet.GetCoins();
-                if (coins.Any(coin => !coin.State.HasFlag(CoinState.Spent) &&
-                    coin.Output.AssetId.Equals(Blockchain.GoverningToken.Hash)))
-                {
-                    balanceChanged = true;
-                }
-            }
-            CurrentWallet_TransactionsChanged(Enumerable.Empty<TransactionInfo>());
-        }
-
-        private void ChangeWallet(UserWallet wallet)
-        {
-            if (this.applicationContext.CurrentWallet != null)
-            {
-                // Dispose current wallet
-                this.applicationContext.CurrentWallet.BalanceChanged -= CurrentWallet_BalanceChanged;
-                this.applicationContext.CurrentWallet.TransactionsChanged -= CurrentWallet_TransactionsChanged;
-                this.applicationContext.CurrentWallet.Dispose();
-            }
-
-            this.dispatcher.InvokeOnMainUIThread(() =>
-            {
-                this.messagePublisher.Publish(new ClearAccountsMessage());
-                this.messagePublisher.Publish(new ClearAssetsMessage());
-                this.messagePublisher.Publish(new ClearTransactionsMessage());
-            });
-
-            this.applicationContext.CurrentWallet = wallet;
-
-            if (this.applicationContext.CurrentWallet != null)
-            {
-                // Setup wallet
-                var transactions = this.applicationContext.CurrentWallet.LoadTransactions();
-
-                CurrentWallet_TransactionsChanged(transactions);
-                this.applicationContext.CurrentWallet.BalanceChanged += CurrentWallet_BalanceChanged;
-                this.applicationContext.CurrentWallet.TransactionsChanged += CurrentWallet_TransactionsChanged;
-            }
-
-            this.messagePublisher.Publish(new EnableMenuItemsMessage());
-            NotifyPropertyChanged(nameof(this.WalletIsOpen));
-
-            this.messagePublisher.Publish(new LoadWalletAddressesMessage());
-
-            balanceChanged = true;
-            checkNep5Balance = true;
-        }
-
-        private void CurrentWallet_BalanceChanged(object sender, EventArgs e)
-        {
-            balanceChanged = true;
-        }
-
-        private void CurrentWallet_TransactionsChanged(IEnumerable<TransactionInfo> transactions)
-        {
-            Application.Current.Dispatcher.BeginInvoke(new Action<object, IEnumerable<TransactionInfo>>(CurrentWallet_TransactionsChanged), null, transactions);
-        }
-
-        private void CurrentWallet_TransactionsChanged(object sender, IEnumerable<TransactionInfo> transactions)
-        {
-            this.messagePublisher.Publish(new UpdateTransactionsMessage(transactions));
-        }
-
-        #endregion Wallet Methods
-
-        #region Blockchain Methods
-
-        private void ImportBlocksIfRequired()
-        {
-            const string acc_path = "chain.acc";
-            const string acc_zip_path = acc_path + ".zip";
-
-            // Check if blocks need importing
-            if (File.Exists(acc_path))
-            {
-                // Import blocks
-                using (var fileStream = new FileStream(acc_path, FileMode.Open, FileAccess.Read, FileShare.None))
-                {
-                    ImportBlocks(fileStream);
-                }
-                File.Delete(acc_path);
-            }
-            else if (File.Exists(acc_zip_path))
-            {
-                using (var fileStream = new FileStream(acc_zip_path, FileMode.Open, FileAccess.Read, FileShare.None))
-                using (var zip = new ZipArchive(fileStream, ZipArchiveMode.Read))
-                using (var zipStream = zip.GetEntry(acc_path).Open())
-                {
-                    ImportBlocks(zipStream);
-                }
-                File.Delete(acc_zip_path);
-            }
-        }
-
-        private void ImportBlocks(Stream stream)
-        {
-            var blockchain = (LevelDBBlockchain)Blockchain.Default;
-            blockchain.VerifyBlocks = false;
-            using (var reader = new BinaryReader(stream))
-            {
-                var count = reader.ReadUInt32();
-                for (int height = 0; height < count; height++)
-                {
-                    var array = reader.ReadBytes(reader.ReadInt32());
-
-                    if (height <= Blockchain.Default.Height) continue;
-
-                    var block = array.AsSerializable<Block>();
-                    Blockchain.Default.AddBlock(block);
-                }
-            }
-            blockchain.VerifyBlocks = true;
-        }
-
-        //private void Load()
-        //{
-        //    Task.Run(() =>
-        //    {
-        //        CheckForNewerVersion();
-
-        //        ImportBlocksIfRequired();
-
-        //        Blockchain.PersistCompleted += Blockchain_PersistCompleted;
-
-        //        // Start node
-        //        Program.LocalNode.Start(Settings.Default.NodePort, Settings.Default.WsPort);
-        //    });
-        //}
-
-        public void Close()
-        {
-            Blockchain.PersistCompleted -= Blockchain_PersistCompleted;
-            this.CloseWallet();
-        }
-
-        private void CheckForNewerVersion()
-        {
-            var latestVersion = VersionHelper.LatestVersion;
-            var currentVersion = VersionHelper.CurrentVersion;
-
-            if (latestVersion == null || latestVersion <= currentVersion) return;
-
-            this.NewVersionLabel = $"{Strings.DownloadNewVersion}: {latestVersion}";
-            this.NewVersionVisible = true;
-        }
-
-        #endregion Blockchain Methods
-
-        #region UI Update Methods
-
-        //private void SetupUIUpdateTimer()
-        //{
-        //    if (this.uiUpdateTimer != null)
-        //    {
-        //        // Stop previous timer
-        //        this.uiUpdateTimer.Stop();
-
-        //        this.uiUpdateTimer.Elapsed -= this.UpdateUI;
-
-        //        this.uiUpdateTimer.Dispose();
-
-        //        this.uiUpdateTimer = null;
-        //    }
-
-        //    var timer = new Timer
-        //    {
-        //        Interval = 500,
-        //        Enabled = true,
-        //        AutoReset = true
-        //    };
-
-        //    timer.Elapsed += this.UpdateUI;
-
-        //    this.uiUpdateTimer = timer;
-
-        //    // Start timer
-        //    this.uiUpdateTimer.Start();
-        //}
-
-        //private void UpdateUI(object sender, ElapsedEventArgs e)
-        //{
-        //    // Only update UI if it is not already being updated
-        //    if (!Monitor.TryEnter(this.uiUpdateLock)) return;
-
-        //    try
-        //    {
-        //        var persistenceSpan = DateTime.UtcNow - this.persistenceTime;
-
-        //        this.UpdateBlockProgress(persistenceSpan);
-
-        //        this.UpdateBalances(persistenceSpan);
-        //    }
-        //    finally
-        //    {
-        //        Monitor.Exit(this.uiUpdateLock);
-        //    }
-        //}
-
-        //private void UpdateBlockProgress(TimeSpan persistenceSpan)
-        //{
-        //    if (persistenceSpan < TimeSpan.Zero) persistenceSpan = TimeSpan.Zero;
-
-        //    if (persistenceSpan > Blockchain.TimePerBlock)
-        //    {
-        //        this.BlockProgressIndeterminate = true;
-        //    }
-        //    else
-        //    {
-        //        this.BlockProgressIndeterminate = true;
-        //        this.BlockProgress = persistenceSpan.Seconds;
-        //    }
-
-        //    NotifyPropertyChanged(nameof(this.BlockHeight));
-        //    NotifyPropertyChanged(nameof(this.NodeCount));
-        //    NotifyPropertyChanged(nameof(this.BlockStatus));
-        //}
-
-        //private void UpdateBalances(TimeSpan persistenceSpan)
-        //{
-        //    if (this.applicationContext.CurrentWallet == null) return;
-
-        //    this.UpdateAssetBalances();
-
-        //    this.UpdateNEP5TokenBalances(persistenceSpan);
-        //}
-        
-        //private void UpdateAssetBalances()
-        //{
-        //    if (this.applicationContext.CurrentWallet.WalletHeight > Blockchain.Default.Height + 1) return;
-
-        //    this.messagePublisher.Publish(new AccountBalancesChangedMessage());
-        //    this.messagePublisher.Publish(new UpdateAssetsBalanceMessage(this.balanceChanged));
-        //}
-
-
-        //private async void UpdateNEP5TokenBalances(TimeSpan persistenceSpan)
-        //{
-        //    if (!checkNep5Balance) return;
-
-        //    if (persistenceSpan <= TimeSpan.FromSeconds(2)) return;
-
-        //    // Update balances
-        //    var addresses = this.applicationContext.CurrentWallet.GetAddresses().ToArray();
-        //    foreach (var s in Settings.Default.NEP5Watched)
-        //    {
-        //        var scriptHash = UInt160.Parse(s);
-        //        byte[] script;
-        //        using (var builder = new ScriptBuilder())
-        //        {
-        //            foreach (var address in addresses)
-        //            {
-        //                builder.EmitAppCall(scriptHash, "balanceOf", address);
-        //            }
-        //            builder.Emit(OpCode.DEPTH, OpCode.PACK);
-        //            builder.EmitAppCall(scriptHash, "decimals");
-        //            builder.EmitAppCall(scriptHash, "name");
-        //            script = builder.ToArray();
-        //        }
-
-        //        var engine = ApplicationEngine.Run(script);
-        //        if (engine.State.HasFlag(VMState.FAULT)) continue;
-
-        //        var name = engine.EvaluationStack.Pop().GetString();
-        //        var decimals = (byte)engine.EvaluationStack.Pop().GetBigInteger();
-        //        var amount = engine.EvaluationStack.Pop().GetArray().Aggregate(BigInteger.Zero, (x, y) => x + y.GetBigInteger());
-        //        if (amount == 0) continue;
-        //        var balance = new BigDecimal(amount, decimals);
-        //        var valueText = balance.ToString();
-
-        //        await this.dispatcher.InvokeOnMainUIThread(() =>
-        //        {
-        //            var item = (AssetItem) null; //this.GetAsset(scriptHash);
-
-        //            if (item != null)
-        //            {
-        //                item.Value = valueText;
-        //            }
-        //            else
-        //            {
-        //                var assetItem = new AssetItem
-        //                {
-        //                    Name = name,
-        //                    Type = "NEP-5",
-        //                    Issuer = $"ScriptHash:{scriptHash}",
-        //                    Value = valueText,
-        //                };
-
-        //                this.messagePublisher.Publish(new AddAssetMessage(assetItem));
-        //            }
-        //        });
-        //    }
-        //    checkNep5Balance = false;
-        //}
-
-        #endregion UI Update Methods
-        
         #region Main Menu Command Methods
 
         private void CreateWallet()
@@ -573,7 +244,8 @@ namespace Neo.UI.Home
 
         public void CloseWallet()
         {
-            this.ChangeWallet(null);
+            this.walletController.CloseWallet();
+            //this.ChangeWallet(null);
         }
 
         private static void ChangePassword()
@@ -590,7 +262,7 @@ namespace Neo.UI.Home
                 this.messagePublisher.Publish(new ClearTransactionsMessage());
             });
 
-            this.applicationContext.CurrentWallet.Rebuild();
+            this.walletController.RebuildWalletIndexes();
         }
 
         private static void RestoreAccounts()
@@ -671,6 +343,7 @@ namespace Neo.UI.Home
 
         private static void ShowOfficialWebsite()
         {
+            // TODO Issue #40: this static call need to be abstract
             Process.Start("https://neo.org/");
         }
 
@@ -693,26 +366,10 @@ namespace Neo.UI.Home
             dialog.ShowDialog();
         }
 
-        private uint GetWalletHeight()
-        {
-            uint walletHeight = 0;
-
-            if (this.applicationContext.CurrentWallet != null &&
-                this.applicationContext.CurrentWallet.WalletHeight > 0)
-            {
-                // Set wallet height
-                walletHeight = this.applicationContext.CurrentWallet.WalletHeight - 1;
-            }
-
-            return walletHeight;
-        }
-
         #region ILoadable Implementation 
         public void OnLoad()
         {
             this.messageSubscriber.Subscribe(this);
-
-            //this.Load();
         }
         #endregion
 
@@ -736,13 +393,14 @@ namespace Neo.UI.Home
             this.balanceChanged = message.BalanceChanged;
         }
 
+        // TODO [AboimPinto] #38: HomeViewModel doesn isn't the message receiver of this message. I could not find any class that is the receiver of this message. This need to be reviewed.
         public void HandleMessage(InvokeContractMessage message)
         {
             var invokeContractView = new InvokeContractView(message.Transaction);
             invokeContractView.ShowDialog();
         }
 
-        // TODO Move these message handlers to a more appropriate place, they don't need to be in HomeViewModel
+        // TODO: Issue: #39 - Move these message handlers to a more appropriate place, they don't need to be in HomeViewModel
         public void HandleMessage(SignTransactionAndShowInformationMessage message)
         {
             var transaction = message.Transaction;
@@ -764,13 +422,16 @@ namespace Neo.UI.Home
                 return;
             }
 
-            this.applicationContext.CurrentWallet.Sign(context);
+            this.walletController.Sign(context);
 
             if (context.Completed)
             {
                 context.Verifiable.Scripts = context.GetScripts();
-                this.applicationContext.CurrentWallet.SaveTransaction(transaction);
-                this.applicationContext.LocalNode.Relay(transaction);
+
+                // TODO [AboimPinto] this method should be added to the WalletController or the BlockChainController
+                this.walletController.SaveTransaction(transaction);
+                this.blockChainController.Relay(transaction);
+
                 InformationBox.Show(transaction.Hash.ToString(), Strings.SendTxSucceedMessage, Strings.SendTxSucceedTitle);
             }
             else

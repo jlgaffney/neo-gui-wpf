@@ -80,6 +80,11 @@ namespace Neo.Controllers
 
             this.uiUpdateTimer.Elapsed += this.UpdateWallet;
         }
+
+        public void Relay(Transaction transaction)
+        {
+            this.localNode.Relay(transaction);
+        }
         #endregion
 
         #region Private Methods 

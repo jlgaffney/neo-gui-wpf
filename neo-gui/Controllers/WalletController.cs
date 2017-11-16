@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
+using Neo.Core;
 using Neo.DialogResults;
 using Neo.Helpers;
 using Neo.Implementations.Wallets.EntityFramework;
 using Neo.Properties;
+using Neo.SmartContract;
 using Neo.UI.Base.Messages;
 using Neo.UI.Messages;
 using Neo.Wallets;
@@ -84,6 +86,26 @@ namespace Neo.Controllers
             Settings.Default.Save();
         }
 
+        public void CloseWallet()
+        {
+            this.SetCurrentWallet(null);
+        }
+
+        public void RebuildWalletIndexes()
+        {
+            this.currentWallet.Rebuild();
+        }
+
+        public void SaveTransaction(Transaction transaction)
+        {
+            this.currentWallet.SaveTransaction(transaction);
+        }
+
+        public void Sign(ContractParametersContext context)
+        {
+            this.currentWallet.Sign(context);
+        }
+
         public IEnumerable<UInt160> GetAddresses()
         {
             return this.currentWallet.GetAddresses();
@@ -105,7 +127,7 @@ namespace Neo.Controllers
         #region Private Methods
         private void SetCurrentWallet(UserWallet wallet)
         {
-            if (this.currentWallet != null)
+            if (this.IsWalletOpen)
             {
                 // Dispose current wallet
                 this.currentWallet.BalanceChanged -= this.CurrentWalletBalanceChanged;
@@ -119,7 +141,7 @@ namespace Neo.Controllers
 
             this.currentWallet = wallet;
 
-            if (this.currentWallet != null)
+            if (this.IsWalletOpen)
             {
                 // Setup wallet
                 var transactions = this.currentWallet.LoadTransactions();

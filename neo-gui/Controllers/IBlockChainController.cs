@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Neo.Core;
 
 namespace Neo.Controllers
 {
     public interface IBlockChainController
     {
         void StartLocalNode();
+
+        void Relay(Transaction transaction);
     }
 }
