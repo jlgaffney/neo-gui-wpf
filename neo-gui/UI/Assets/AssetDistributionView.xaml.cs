@@ -16,11 +16,6 @@ namespace Neo.UI.Assets
             this.viewModel?.SetAsset(asset);
         }
 
-        public IssueTransaction GetTransaction()
-        {
-            return this.viewModel?.GetTransaction();
-        }
-
         private void TxOutListBox_OnItemsChanged(object sender, EventArgs e)
         {
             this.viewModel?.UpdateConfirmButtonEnabled();

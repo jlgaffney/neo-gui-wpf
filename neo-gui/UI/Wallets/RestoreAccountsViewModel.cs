@@ -1,21 +1,30 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Windows.Input;
+using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
+using Neo.UI.Messages;
 using Neo.Wallets;
 
 namespace Neo.UI.Wallets
 {
     public class RestoreAccountsViewModel : ViewModelBase
     {
-        private List<VerificationContract> contracts;
+        private readonly IApplicationContext applicationContext;
+        private readonly IMessagePublisher messagePublisher;
 
-        public RestoreAccountsViewModel()
+        public RestoreAccountsViewModel(
+            IApplicationContext applicationContext,
+            IMessagePublisher messagePublisher)
         {
-            var keys = ApplicationContext.Instance.CurrentWallet.GetKeys();
+            this.applicationContext = applicationContext;
+            this.messagePublisher = messagePublisher;
 
-            keys = keys.Where(account => ApplicationContext.Instance.CurrentWallet.GetContracts(account.PublicKeyHash).All(contract => !contract.IsStandard));
+            var keys = this.applicationContext.CurrentWallet.GetKeys();
+
+            keys = keys.Where(account => this.applicationContext.CurrentWallet.GetContracts(account.PublicKeyHash).All(contract => !contract.IsStandard));
 
             this.Accounts = new ObservableCollection<SelectableVerificationContract>(keys.Select(p => VerificationContract.CreateSignatureContract(p.PublicKey)).Select(p => new SelectableVerificationContract(this, p)));
         }
@@ -34,14 +43,12 @@ namespace Neo.UI.Wallets
 
         private void Ok()
         {
-            this.contracts = this.GenerateContracts();
+            var contracts = this.GenerateContracts();
 
+            if (contracts == null) return;
+
+            this.messagePublisher.Publish(new AddContractsMessage(contracts));
             this.TryClose();
-        }
-        
-        public List<VerificationContract> GetContracts()
-        {
-            return this.contracts;
         }
 
         private List<VerificationContract> GenerateContracts()

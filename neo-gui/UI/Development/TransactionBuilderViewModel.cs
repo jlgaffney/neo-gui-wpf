@@ -16,11 +16,10 @@ namespace Neo.UI.Development
 {
     public class TransactionBuilderViewModel : ViewModelBase
     {
+        private readonly IApplicationContext applicationContext;
+
         private TransactionType selectedTransactionType;
-
         private TransactionWrapper transactionWrapper;
-
-
 
         public TransactionType[] TransactionTypes => new[]
         {
@@ -69,9 +68,14 @@ namespace Neo.UI.Development
 
         public bool SidePanelEnabled => this.TransactionWrapper != null;
 
-        public bool SetupOutputsEnabled => ApplicationContext.Instance.CurrentWallet != null;
+        public bool SetupOutputsEnabled => this.applicationContext.CurrentWallet != null;
 
-        public bool FindUnspentCoinsEnabled => ApplicationContext.Instance.CurrentWallet != null;
+        public bool FindUnspentCoinsEnabled => this.applicationContext.CurrentWallet != null;
+
+        public TransactionBuilderViewModel(IApplicationContext applicationContext)
+        {
+            this.applicationContext = applicationContext;
+        }
 
         #region Commands
 
@@ -145,7 +149,7 @@ namespace Neo.UI.Development
         private void FindUnspentCoins()
         {
             var wrapper = (TransactionWrapper)this.TransactionWrapper;
-            var transaction = ApplicationContext.Instance.CurrentWallet.MakeTransaction(wrapper.Unwrap());
+            var transaction = this.applicationContext.CurrentWallet.MakeTransaction(wrapper.Unwrap());
             if (transaction == null)
             {
                 MessageBox.Show(Strings.InsufficientFunds);

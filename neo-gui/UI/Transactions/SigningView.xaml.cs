@@ -2,7 +2,7 @@
 {
     public partial class SigningView
     {
-        internal SigningView()
+        public SigningView()
         {
             InitializeComponent();
         }

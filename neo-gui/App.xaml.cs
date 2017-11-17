@@ -21,7 +21,10 @@ namespace Neo
 
             BuildContainer();
 
-            this.MainWindow = updateIsRequired ? (Window) new UpdateView() : new HomeView();
+            var blockChainController = ApplicationContext.Instance.ContainerLifetimeScope.Resolve(typeof(IBlockChainController)) as IBlockChainController;
+            blockChainController.StartLocalNode();
+
+            this.MainWindow = updateIsRequired ? (Window)new UpdateView() : new HomeView();
         }
 
         protected override void OnStartup(StartupEventArgs e)
@@ -37,6 +40,7 @@ namespace Neo
         {
             var autoFacContainerBuilder = new ContainerBuilder();
 
+            autoFacContainerBuilder.RegisterModule<NeoGuiRegistrationModule>();
             autoFacContainerBuilder.RegisterModule<ViewModelsRegistrationModule>();
             autoFacContainerBuilder.RegisterModule<BaseRegistrationModule>();
             autoFacContainerBuilder.RegisterModule<ControllersRegistrationModule>();

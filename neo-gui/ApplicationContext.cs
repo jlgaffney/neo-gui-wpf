@@ -10,13 +10,7 @@ namespace Neo
         #region Singleton Pattern
         private static readonly Lazy<ApplicationContext> lazyInstance = new Lazy<ApplicationContext>(() => new ApplicationContext());
 
-        // Prevent other classes from calling constructor
-        private ApplicationContext()
-        {
-        }
-
         public static ApplicationContext Instance => lazyInstance.Value;
-
         #endregion
 
         public ILifetimeScope ContainerLifetimeScope { get; set; }

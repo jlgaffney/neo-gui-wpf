@@ -6,7 +6,9 @@ using System.Windows.Input;
 using Neo.Core;
 using Neo.Cryptography.ECC;
 using Neo.SmartContract;
+using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
+using Neo.UI.Messages;
 using Neo.VM;
 using Neo.Wallets;
 
@@ -15,6 +17,9 @@ namespace Neo.UI.Assets
     public class AssetRegistrationViewModel : ViewModelBase
     {
         private static readonly AssetType[] assetTypes = { AssetType.Share, AssetType.Token };
+
+        private readonly IApplicationContext applicationContext;
+        private readonly IMessagePublisher messagePublisher;
 
         private AssetType? selectedAssetType;
         private ECPoint selectedOwner;
@@ -30,14 +35,17 @@ namespace Neo.UI.Assets
 
         private bool formValid;
 
-        private InvocationTransaction transaction;
-
-        public AssetRegistrationViewModel()
+        public AssetRegistrationViewModel(
+            IApplicationContext applicationContext,
+            IMessagePublisher messagePublisher)
         {
+            this.applicationContext = applicationContext;
+            this.messagePublisher = messagePublisher;
+
             this.AssetTypes = new ObservableCollection<AssetType>(assetTypes);
-            this.Owners = new ObservableCollection<ECPoint>(ApplicationContext.Instance.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p => ApplicationContext.Instance.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey));
-            this.Admins = new ObservableCollection<string>(ApplicationContext.Instance.CurrentWallet.GetContracts().Select(p => p.Address));
-            this.Issuers = new ObservableCollection<string>(ApplicationContext.Instance.CurrentWallet.GetContracts().Select(p => p.Address));
+            this.Owners = new ObservableCollection<ECPoint>(this.applicationContext.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p => this.applicationContext.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey));
+            this.Admins = new ObservableCollection<string>(this.applicationContext.CurrentWallet.GetContracts().Select(p => p.Address));
+            this.Issuers = new ObservableCollection<string>(this.applicationContext.CurrentWallet.GetContracts().Select(p => p.Address));
         }
 
         public ObservableCollection<AssetType> AssetTypes { get; }
@@ -199,11 +207,6 @@ namespace Neo.UI.Assets
 
         public ICommand OkCommand => new RelayCommand(this.Ok);
 
-        public InvocationTransaction GetTransaction()
-        {
-            return this.transaction;
-        }
-
         private InvocationTransaction GenerateTransaction()
         {
             var assetType = this.SelectedAssetType;
@@ -256,8 +259,11 @@ namespace Neo.UI.Assets
 
             if (!this.OkEnabled) return;
 
-            this.transaction = this.GenerateTransaction();
+            var transaction = this.GenerateTransaction();
 
+            if (transaction == null) return;
+
+            this.messagePublisher.Publish(new InvokeContractMessage(transaction));
             this.TryClose();
         }
     }

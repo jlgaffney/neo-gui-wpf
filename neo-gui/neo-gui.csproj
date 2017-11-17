@@ -193,7 +193,7 @@
     <Reference Include="Replicon.Cryptography.SCrypt, Version=1.1.6.13, Culture=neutral, PublicKeyToken=4e0c787cc79e77b2, processorArchitecture=MSIL">
       <HintPath>..\packages\Replicon.Cryptography.SCrypt.1.1.6.13\lib\net40\Replicon.Cryptography.SCrypt.dll</HintPath>
     </Reference>
-	<Reference Include="SQLitePCLRaw.batteries_green, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a84b7dcfb1391f7f, processorArchitecture=MSIL">
+    <Reference Include="SQLitePCLRaw.batteries_green, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a84b7dcfb1391f7f, processorArchitecture=MSIL">
       <HintPath>..\packages\SQLitePCLRaw.bundle_green.1.1.7\lib\net45\SQLitePCLRaw.batteries_green.dll</HintPath>
     </Reference>
     <Reference Include="SQLitePCLRaw.batteries_v2, Version=1.0.0.0, Culture=neutral, PublicKeyToken=8226ea5df37bcae9, processorArchitecture=MSIL">
@@ -261,6 +261,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationContext.cs" />
+    <Compile Include="Controllers\AccountItemExtensionMethods.cs" />
     <Compile Include="Controllers\BlockChainController.cs" />
     <Compile Include="Controllers\ControllersRegistrationModule.cs" />
     <Compile Include="Controllers\IBlockChainController.cs" />
@@ -273,6 +274,7 @@
     <Compile Include="Helpers\IDialogHelper.cs" />
     <Compile Include="Helpers\DialogResult.cs" />
     <Compile Include="IApplicationContext.cs" />
+    <Compile Include="NeoGuiRegistrationModule.cs" />
     <Compile Include="UI\Base\BaseRegistrationModule.cs" />
     <Compile Include="UI\Base\Collections\ConcurrentObservableCollection.cs" />
     <Compile Include="UI\Base\Converters\EnumDescriptionTypeConverter.cs" />
@@ -302,8 +304,8 @@
       <DependentUpon>CreateMultiSigContractView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Accounts\CreateMultiSigContractViewModel.cs" />
-    <Compile Include="UI\Accounts\SelectCertificateView.xaml.cs">
-      <DependentUpon>SelectCertificateView.xaml</DependentUpon>
+    <Compile Include="UI\Accounts\ImportCertificateView.xaml.cs">
+      <DependentUpon>ImportCertificateView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Accounts\CreateLockAccountViewModel.cs" />
     <Compile Include="UI\Accounts\ImportCustomContractView.xaml.cs">
@@ -313,7 +315,7 @@
     <Compile Include="UI\Accounts\CreateLockAccountView.xaml.cs">
       <DependentUpon>CreateLockAccountView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Accounts\SelectCertificateViewModel.cs" />
+    <Compile Include="UI\Accounts\ImportCertificateViewModel.cs" />
     <Compile Include="UI\Assets\AssetDistributionView.xaml.cs">
       <DependentUpon>AssetDistributionView.xaml</DependentUpon>
     </Compile>
@@ -322,8 +324,6 @@
       <DependentUpon>TransactionPropertyGrid.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Base\Helpers\ColorHelper.cs" />
-    <Compile Include="UI\Base\Helpers\TransactionHelper.cs" />
-    <Compile Include="UI\Base\Helpers\WindowHelper.cs" />
     <Compile Include="UI\Base\Messages\IInternalMessageAggregator.cs" />
     <Compile Include="UI\Base\Messages\IMessageHandler.cs" />
     <Compile Include="UI\Base\Messages\IMessagePublisher.cs" />
@@ -360,20 +360,24 @@
     <Compile Include="UI\Home\TransactionsViewModel.cs" />
     <Compile Include="UI\AccountType.cs" />
     <Compile Include="UI\MarkupExtensions\DataContextBindingExtension.cs" />
-    <Compile Include="UI\Messages\AccountBalanceChangedMessage.cs" />
+    <Compile Include="UI\Messages\AccountItemsChangedMessage.cs" />
     <Compile Include="UI\Messages\AddAssetMessage.cs" />
     <Compile Include="UI\Messages\BlockProgressMessage.cs" />
     <Compile Include="UI\Messages\AccountBalancesChangedMessage.cs" />
     <Compile Include="UI\Messages\ClearAccountsMessage.cs" />
+    <Compile Include="UI\Messages\AddContractMessage.cs" />
     <Compile Include="UI\Messages\ClearAssetsMessage.cs" />
     <Compile Include="UI\Messages\ClearTransactionsMessage.cs" />
     <Compile Include="UI\Messages\EnableMenuItemsMessage.cs" />
+    <Compile Include="UI\Messages\ImportCertificateMessage.cs" />
+    <Compile Include="UI\Messages\ImportPrivateKeyMessage.cs" />
+    <Compile Include="UI\Messages\InvokeContractMessage.cs" />
     <Compile Include="UI\Messages\LoadWalletAddressesMessage.cs" />
     <Compile Include="UI\Messages\NewVersionAvailableMessage.cs" />
-    <Compile Include="UI\Messages\RestoreContractsMessage.cs" />
-    <Compile Include="UI\Messages\UpdateAcountListMessage.cs" />
     <Compile Include="UI\Messages\UpdateAssetsBalanceMessage.cs" />
     <Compile Include="UI\Messages\UpdateTransactionsMessage.cs" />
+    <Compile Include="UI\Messages\AddContractsMessage.cs" />
+    <Compile Include="UI\Messages\SignTransactionAndShowInformationMessage.cs" />
     <Compile Include="UI\Messages\WalletBalanceChangedMessage.cs" />
     <Compile Include="UI\TxOutListBox.xaml.cs">
       <DependentUpon>TxOutListBox.xaml</DependentUpon>
@@ -688,7 +692,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="UI\Accounts\SelectCertificateView.xaml">
+    <Page Include="UI\Accounts\ImportCertificateView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

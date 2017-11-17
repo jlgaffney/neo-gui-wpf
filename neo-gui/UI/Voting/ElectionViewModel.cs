@@ -3,24 +3,33 @@ using System.Linq;
 using System.Windows.Input;
 using Neo.Core;
 using Neo.Cryptography.ECC;
-using Neo.UI.Base.Extensions;
 using Neo.SmartContract;
+using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
+using Neo.UI.Messages;
 using Neo.VM;
 
 namespace Neo.UI.Voting
 {
     public class ElectionViewModel : ViewModelBase
     {
+        private readonly IApplicationContext applicationContext;
+        private readonly IMessagePublisher messagePublisher;
+
         private ECPoint selectedBookKeeper;
 
-        public ElectionViewModel()
+        public ElectionViewModel(
+            IApplicationContext applicationContext,
+            IMessagePublisher messagePublisher)
         {
-            if (ApplicationContext.Instance.CurrentWallet == null) return;
+            this.applicationContext = applicationContext;
+            this.messagePublisher = messagePublisher;
+
+            if (this.applicationContext.CurrentWallet == null) return;
 
             // Load book keepers
-            var bookKeepers = ApplicationContext.Instance.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p =>
-                ApplicationContext.Instance.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey);
+            var bookKeepers = this.applicationContext.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p =>
+                this.applicationContext.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey);
 
             this.BookKeepers = new ObservableCollection<ECPoint>(bookKeepers);
         }
@@ -43,24 +52,21 @@ namespace Neo.UI.Voting
             }
         }
 
-        public InvocationTransaction Transaction { get; private set; }
-
         public bool OkEnabled => this.SelectedBookKeeper != null;
         
         public ICommand OkCommand => new RelayCommand(this.Ok);
 
         private void Ok()
         {
-            var transaction = this.GetTransaction();
+            var transaction = this.GenerateTransaction();
 
             if (transaction == null) return;
 
-            this.Transaction = transaction;
-
+            this.messagePublisher.Publish(new InvokeContractMessage(transaction));
             this.TryClose();
         }
 
-        private InvocationTransaction GetTransaction()
+        private InvocationTransaction GenerateTransaction()
         {
             if (this.SelectedBookKeeper == null) return null;
 

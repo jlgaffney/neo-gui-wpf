@@ -11,17 +11,19 @@ namespace Neo.UI.Wallets
 {
     public class CertificateApplicationViewModel : ViewModelBase
     {
-        private ECPoint selectedPublicKey;
+        private readonly IApplicationContext applicationContext;
 
+        private ECPoint selectedPublicKey;
         private string cn;
         private string c;
         private string s;
         private string serialNumber;
 
-        public CertificateApplicationViewModel()
+        public CertificateApplicationViewModel(IApplicationContext applicationContext)
         {
-            this.PublicKeys = ApplicationContext.Instance.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p =>
-                ApplicationContext.Instance.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey).ToArray();
+            this.PublicKeys = this.applicationContext.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p =>
+                this.applicationContext.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey).ToArray();
+            this.applicationContext = applicationContext;
         }
 
         public ECPoint[] PublicKeys { get; }
@@ -128,7 +130,7 @@ namespace Neo.UI.Wallets
             if (saveFileDialog.ShowDialog() != true) return;
 
             var point = this.SelectedPublicKey;
-            var key = ApplicationContext.Instance.CurrentWallet.GetKey(point);
+            var key = this.applicationContext.CurrentWallet.GetKey(point);
             var publicKey = point.EncodePoint(false).Skip(1).ToArray();
 
             byte[] privateKey;

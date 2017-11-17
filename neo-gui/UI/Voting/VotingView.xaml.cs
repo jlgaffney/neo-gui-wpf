@@ -1,6 +1,4 @@
-﻿using Neo.Core;
-
-namespace Neo.UI.Voting
+﻿namespace Neo.UI.Voting
 {
     public partial class VotingView
     {
@@ -11,11 +9,6 @@ namespace Neo.UI.Voting
             var viewModel = this.DataContext as VotingViewModel;
 
             viewModel?.SetScriptHash(scriptHash);
-        }
-
-        public InvocationTransaction GetTransaction()
-        {
-            return (this.DataContext as VotingViewModel)?.GetTransaction();
         }
     }
 }

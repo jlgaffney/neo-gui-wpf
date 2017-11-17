@@ -16,6 +16,7 @@ namespace Neo.UI.Development
 {
     public class ContractParametersViewModel : ViewModelBase
     {
+        private readonly IApplicationContext applicationContext;
         private readonly IDispatcher dispatcher;
 
         private ContractParametersContext context;
@@ -29,8 +30,11 @@ namespace Neo.UI.Development
         private bool showEnabled;
         private bool broadcastVisible;
 
-        public ContractParametersViewModel(IDispatcher dispatcher)
+        public ContractParametersViewModel(
+            IApplicationContext applicationContext,
+            IDispatcher dispatcher)
         {
+            this.applicationContext = applicationContext;
             this.dispatcher = dispatcher;
 
             this.ScriptHashAddresses = new ObservableCollection<string>();
@@ -44,7 +48,7 @@ namespace Neo.UI.Development
             {
                 var emptyCollection = new ObservableCollection<ContractParameter>();
 
-                if (ApplicationContext.Instance.CurrentWallet == null) return emptyCollection;
+                if (this.applicationContext.CurrentWallet == null) return emptyCollection;
 
                 if (string.IsNullOrEmpty(this.SelectedScriptHashAddress)) return emptyCollection;
 
@@ -198,7 +202,7 @@ namespace Neo.UI.Development
 
             var inventory = (IInventory) context.Verifiable;
 
-            Program.LocalNode.Relay(inventory);
+            this.applicationContext.LocalNode.Relay(inventory);
 
             InformationBox.Show(inventory.Hash.ToString(), Strings.RelaySuccessText, Strings.RelaySuccessTitle);
         }

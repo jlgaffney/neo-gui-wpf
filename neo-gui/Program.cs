@@ -2,15 +2,12 @@
 using System.IO;
 using Neo.Core;
 using Neo.Implementations.Blockchains.LevelDB;
-using Neo.Network;
 using Neo.Properties;
 
 namespace Neo
 {
     internal static class Program
     {
-        public static LocalNode LocalNode;
-
         [STAThread]
         public static void Main()
         {
@@ -25,6 +22,7 @@ namespace Neo
                 return;
             }
 
+            // TODO: [AboimPinto] All this code related with NEO BlockChain should be inside the BlockChainController.
             // Install root certificate
             if (!RootCertificate.InstallCertificate()) return;
 
@@ -32,12 +30,7 @@ namespace Neo
             PeerState.TryLoad();
 
             using (Blockchain.RegisterBlockchain(new LevelDBBlockchain(Settings.Default.DataDirectoryPath))) // Setup blockchain
-            using (LocalNode = new LocalNode()) // Setup node
             {
-                LocalNode.UpnpEnabled = true;
-
-                ApplicationContext.Instance.LocalNode = LocalNode;
-
                 // Start GUI normally
                 var app = new App();
                 app.Run();

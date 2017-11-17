@@ -9,7 +9,9 @@ using Neo.IO.Json;
 using Neo.Properties;
 using Neo.SmartContract;
 using Neo.UI.Base.Controls;
+using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
+using Neo.UI.Messages;
 using Neo.VM;
 
 namespace Neo.UI.Contracts
@@ -17,6 +19,9 @@ namespace Neo.UI.Contracts
     public class InvokeContractViewModel : ViewModelBase
     {
         private static readonly Fixed8 NetworkFee = Fixed8.FromDecimal(0.001m);
+
+        private readonly IApplicationContext applicationContext;
+        private readonly IMessagePublisher messagePublisher;
 
         private InvocationTransaction transaction;
 
@@ -35,8 +40,13 @@ namespace Neo.UI.Contracts
         
         private bool invokeEnabled;
 
-
-        
+        public InvokeContractViewModel(
+            IApplicationContext applicationContext,
+            IMessagePublisher messagePublisher)
+        {
+            this.applicationContext = applicationContext;
+            this.messagePublisher = messagePublisher;
+        }
 
         #region Public Properties
 
@@ -181,7 +191,7 @@ namespace Neo.UI.Contracts
 
             var transactionFee = this.transaction.Gas.Equals(Fixed8.Zero) ? NetworkFee : Fixed8.Zero;
 
-            return ApplicationContext.Instance.CurrentWallet.MakeTransaction(new InvocationTransaction
+            return this.applicationContext.CurrentWallet.MakeTransaction(new InvocationTransaction
             {
                 Version = transaction.Version,
                 Script = transaction.Script,
@@ -308,7 +318,13 @@ namespace Neo.UI.Contracts
 
         private void Invoke()
         {
-            // Close window so parent object can get the transaction
+            if (!this.InvokeEnabled) return;
+
+            var tx = this.GetTransaction();
+
+            if (tx == null) return;
+
+            this.messagePublisher.Publish(new SignTransactionAndShowInformationMessage(tx));
             this.TryClose();
         }
 

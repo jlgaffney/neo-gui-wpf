@@ -7,18 +7,16 @@ namespace Neo.UI.Home
     /// </summary>
     public partial class HomeView
     {
-        private readonly HomeViewModel viewModel;
-
         public HomeView()
         {
             InitializeComponent();
-
-            this.viewModel = this.DataContext as HomeViewModel;
         }
 
         public void Window_Closing(object sender, CancelEventArgs e)
         {
-            this.viewModel?.Close();
+            // TODO - Issue #42 [AboimPinto] - the closing of the windows event should go to ViewModel through the IUnloadable interface.
+            //var viewModel = this.DataContext as HomeViewModel;
+            //viewModel?.Close();
         }
     }
 }

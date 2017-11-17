@@ -7,6 +7,8 @@ namespace Neo.UI.Wallets
 {
     public class ChangePasswordViewModel : ViewModelBase
     {
+        private readonly IApplicationContext applicationContext;
+
         private string oldPassword;
         private string newPassword;
         private string reEnteredNewPassword;
@@ -19,6 +21,11 @@ namespace Neo.UI.Wallets
         public ICommand ChangePasswordCommand => new RelayCommand(this.ChangePassword);
 
         public ICommand CancelCommand => new RelayCommand(this.Cancel);
+
+        public ChangePasswordViewModel(IApplicationContext applicationContext)
+        {
+            this.applicationContext = applicationContext;
+        }
 
         public void UpdateOldPassword(string updatedPassword)
         {
@@ -53,7 +60,7 @@ namespace Neo.UI.Wallets
                 return;
             }
 
-            var changedSuccessfully = ApplicationContext.Instance.CurrentWallet.ChangePassword(this.oldPassword, this.newPassword);
+            var changedSuccessfully = this.applicationContext.CurrentWallet.ChangePassword(this.oldPassword, this.newPassword);
 
             if (changedSuccessfully)
             {

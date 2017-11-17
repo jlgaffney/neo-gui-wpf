@@ -7,13 +7,17 @@ using Neo.Core;
 using Neo.Cryptography.ECC;
 using Neo.Properties;
 using Neo.UI.Base.Dispatching;
+using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
+using Neo.UI.Messages;
 using Neo.Wallets;
 
 namespace Neo.UI.Accounts
 {
     public class CreateMultiSigContractViewModel : ViewModelBase
     {
+        private readonly IApplicationContext applicationContext;
+        private readonly IMessagePublisher messagePublisher;
         private readonly IDispatcher dispatcher;
 
         private int minimumSignatureNumber;
@@ -24,10 +28,13 @@ namespace Neo.UI.Accounts
         private string newPublicKey;
 
 
-        private VerificationContract contract;
-
-        public CreateMultiSigContractViewModel(IDispatcher dispatcher)
+        public CreateMultiSigContractViewModel(
+            IApplicationContext applicationContext,
+            IMessagePublisher messagePublisher,
+            IDispatcher dispatcher)
         {
+            this.applicationContext = applicationContext;
+            this.messagePublisher = messagePublisher;
             this.dispatcher = dispatcher;
 
             this.PublicKeys = new ObservableCollection<string>();
@@ -114,14 +121,15 @@ namespace Neo.UI.Accounts
 
         private void Confirm()
         {
-            this.contract = this.GenerateContract();
+            var contract = this.GenerateContract();
 
-            if (this.contract == null)
+            if (contract == null)
             {
                 MessageBox.Show(Strings.AddContractFailedMessage);
                 return;
             }
 
+            this.messagePublisher.Publish(new AddContractMessage(contract));
             this.TryClose();
         }
 
@@ -153,18 +161,13 @@ namespace Neo.UI.Accounts
             });
         }
 
-        public VerificationContract GetContract()
-        {
-            return this.contract;
-        }
-
         private VerificationContract GenerateContract()
         {
             var publicKeys = this.PublicKeys.Select(p => ECPoint.DecodePoint(p.HexToBytes(), ECCurve.Secp256r1)).ToArray();
 
             foreach (var publicKey in publicKeys)
             {
-                var key = ApplicationContext.Instance.CurrentWallet.GetKey(publicKey.EncodePoint(true).ToScriptHash());
+                var key = this.applicationContext.CurrentWallet.GetKey(publicKey.EncodePoint(true).ToScriptHash());
 
                 if (key == null) continue;
 
