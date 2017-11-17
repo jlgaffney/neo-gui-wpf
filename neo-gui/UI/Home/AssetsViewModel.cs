@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -7,6 +6,7 @@ using System.Windows.Input;
 using Neo.Core;
 using Neo.Cryptography;
 using Neo.Cryptography.ECC;
+using Neo.Helpers;
 using Neo.Properties;
 using Neo.SmartContract;
 using Neo.UI.Base.Collections;
@@ -29,6 +29,7 @@ namespace Neo.UI.Home
         private static readonly UInt160 RecycleScriptHash = new[] { (byte)OpCode.PUSHT }.ToScriptHash();
 
         private readonly IApplicationContext applicationContext;
+        private readonly IExternalProcessHelper extertenalProcessHelper;
         private readonly IMessagePublisher messagePublisher;
         private readonly IDispatcher dispatcher;
         private readonly Dictionary<ECPoint, CertificateQueryResult> certificateQueryResultCache;
@@ -86,9 +87,14 @@ namespace Neo.UI.Home
         #endregion Commands
 
         #region Constructor 
-        public AssetsViewModel(IApplicationContext applicationContext, IMessagePublisher messagePublisher, IDispatcher dispatcher)
+        public AssetsViewModel(
+            IApplicationContext applicationContext, 
+            IExternalProcessHelper extertenalProcessHelper,
+            IMessagePublisher messagePublisher, 
+            IDispatcher dispatcher)
         {
             this.applicationContext = applicationContext;
+            this.extertenalProcessHelper = extertenalProcessHelper;
             this.messagePublisher = messagePublisher;
             this.dispatcher = dispatcher;
 
@@ -105,7 +111,8 @@ namespace Neo.UI.Home
             var hash = Contract.CreateSignatureRedeemScript(this.SelectedAsset.State.Owner).ToScriptHash();
             var address = Wallet.ToAddress(hash);
             var path = Path.Combine(Settings.Default.CertCachePath, $"{address}.cer");
-            Process.Start(path);
+
+            this.extertenalProcessHelper.OpenInExternalBrowser(path);
         }
 
         private void DeleteAsset()
