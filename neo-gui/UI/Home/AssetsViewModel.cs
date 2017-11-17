@@ -86,8 +86,9 @@ namespace Neo.UI.Home
         #endregion Commands
 
         #region Constructor 
-        public AssetsViewModel(IMessagePublisher messagePublisher, IDispatcher dispatcher)
+        public AssetsViewModel(IApplicationContext applicationContext, IMessagePublisher messagePublisher, IDispatcher dispatcher)
         {
+            this.applicationContext = applicationContext;
             this.messagePublisher = messagePublisher;
             this.dispatcher = dispatcher;
 
