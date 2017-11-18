@@ -43,6 +43,7 @@ namespace Neo.UI.Home
         ILoadable,
         IMessageHandler<UpdateApplicationMessage>,
         IMessageHandler<WalletBalanceChangedMessage>,
+        IMessageHandler<InvokeContractMessage>,
         IMessageHandler<SignTransactionAndShowInformationMessage>
     {
         private readonly IMessagePublisher messagePublisher;
