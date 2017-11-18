@@ -1,13 +1,16 @@
-﻿<controls:NeoWindow x:Class="Neo.UI.Wallets.OpenWalletView"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
-        xmlns:local="clr-namespace:Neo.UI.Wallets"
-        xmlns:properties="clr-namespace:Neo.Properties"
-        xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
-        DataContext="{markupExtensions:DataContextBinding ViewModel=local:OpenWalletViewModel}"
-        Title="{x:Static properties:Strings.OpenWalletTitle}"
-        Width="525" SizeToContent="Height" ResizeMode="NoResize">
+﻿<controls:NeoWindow 
+    x:Class="Neo.UI.Wallets.OpenWalletView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
+    xmlns:local="clr-namespace:Neo.UI.Wallets"
+    xmlns:properties="clr-namespace:Neo.Properties"
+    xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
+    DataContext="{markupExtensions:DataContextBinding ViewModel=local:OpenWalletViewModel}"
+    Title="{x:Static properties:Strings.OpenWalletTitle}"
+    Width="525" 
+    SizeToContent="Height" 
+    ResizeMode="NoResize">
 
     <controls:NeoWindow.InputBindings>
         <KeyBinding Key="Enter" Command="{Binding ConfirmCommand}" />

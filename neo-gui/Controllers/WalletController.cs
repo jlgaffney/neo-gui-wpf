@@ -75,13 +75,13 @@ namespace Neo.Controllers
                 // TODO - Issue #44 - [AboimPinto] - DialogHelper is not implemented yet.
                 var migrationApproved = this.dialogHelper.ShowDialog<YesOrNoDialogResult>("ApproveWalletMigrationDialog");
 
-                if (!migrationApproved.Result.Yes)
+                if (!migrationApproved.Yes)
                 {
                     return;
                 }
 
                 this.MigrateWallet(walletPath);
-                this.dialogHelper.ShowDialog("WalletMigrationCompleteDialog");
+                //this.dialogHelper.ShowDialog("WalletMigrationCompleteDialog");
             }
 
             var userWallet = this.OpenWalletWithPath(walletPath, password);
@@ -461,7 +461,7 @@ namespace Neo.Controllers
             }
             catch (CryptographicException)
             {
-                this.dialogHelper.ShowDialog("WalletPasswordIncorrectDialog", Strings.PasswordIncorrect);
+                //this.dialogHelper.ShowDialog("WalletPasswordIncorrectDialog", Strings.PasswordIncorrect);
             }
 
             return null;

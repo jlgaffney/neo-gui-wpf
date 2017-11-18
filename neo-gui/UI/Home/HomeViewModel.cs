@@ -21,6 +21,7 @@ using Neo.UI.Voting;
 using Neo.UI.Base.Messages;
 using Neo.Controllers;
 using Neo.Helpers;
+using Neo.DialogResults;
 
 namespace Neo.UI.Home
 {
@@ -36,6 +37,7 @@ namespace Neo.UI.Home
         #region Private Fields 
         private readonly IBlockChainController blockChainController;
         private readonly IWalletController walletController;
+        private readonly IDialogHelper dialogHelper;
         private readonly IExternalProcessHelper extertenalProcessHelper;
         private readonly IMessagePublisher messagePublisher;
         private readonly IMessageSubscriber messageSubscriber;
@@ -58,6 +60,7 @@ namespace Neo.UI.Home
         public HomeViewModel(
             IBlockChainController blockChainController,
             IWalletController walletController,
+            IDialogHelper dialogHelper, 
             IExternalProcessHelper extertenalProcessHelper,
             IMessagePublisher messagePublisher,
             IMessageSubscriber messageSubscriber, 
@@ -65,6 +68,7 @@ namespace Neo.UI.Home
         {
             this.blockChainController = blockChainController;
             this.walletController = walletController;
+            this.dialogHelper = dialogHelper;
             this.extertenalProcessHelper = extertenalProcessHelper;
             this.messagePublisher = messagePublisher;
             this.messageSubscriber = messageSubscriber;
@@ -238,13 +242,8 @@ namespace Neo.UI.Home
 
         private void OpenWallet()
         {
-            var view = new OpenWalletView();
-            view.ShowDialog();
-
-            //var openWalletDialogResult = this.dialogHelper.ShowDialog<OpenWalletDialogResult>("OpenWalletDialog");
-            if (!view.GetWalletOpenInfo(out var walletPath, out var password, out var repairMode)) return;
-
-            this.walletController.OpenWallet(walletPath, password, repairMode);
+            var openWalletDialogresult = this.dialogHelper.ShowDialog<OpenWalletDialogResult>();
+            this.walletController.OpenWallet(openWalletDialogresult.WalletPath, openWalletDialogresult.Password, openWalletDialogresult.OpenInRepairMode);
         }
 
         public void CloseWallet()

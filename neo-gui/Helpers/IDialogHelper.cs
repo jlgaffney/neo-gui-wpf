@@ -5,8 +5,6 @@
     /// </summary>
     public interface IDialogHelper
     {
-        void ShowDialog(string dialogName, params string[] parameters);
-
-        DialogResult<T> ShowDialog<T>(string dialogName, params string[] parameters);
+        T ShowDialog<T>(params string[] parameters);
     }
 }
