@@ -27,6 +27,10 @@ namespace Neo.Controllers
         private readonly IApplicationContext applicationContext;
         private readonly IMessagePublisher messagePublisher;
         private readonly IDispatcher dispatcher;
+        
+        private bool disposed = false;
+
+        private Blockchain blockChain;
 
         private LocalNode localNode;
 
@@ -51,7 +55,47 @@ namespace Neo.Controllers
         #endregion
 
         #region IBlockChainController implementation 
-        public void StartLocalNode()
+
+        public void Setup(bool setupLocalNode = true)
+        {
+            if (setupLocalNode)
+            {
+                this.SetupLocalNode();
+            }
+            else
+            {
+                this.SetupRemoteNode();
+            }
+        }
+
+        public void Relay(Transaction transaction)
+        {
+            this.localNode.Relay(transaction);
+        }
+
+        #endregion
+
+        #region Private Methods 
+
+        private void SetupLocalNode()
+        {
+            if (!RootCertificate.InstallCertificate()) return;
+
+            PeerState.TryLoad();
+
+            // Setup blockchain
+            this.blockChain = Blockchain.RegisterBlockchain(new LevelDBBlockchain(Settings.Default.DataDirectoryPath));
+
+            this.StartLocalNode();
+        }
+
+        private void SetupRemoteNode()
+        {
+            // Remote node is not supported yet
+            throw new NotImplementedException();
+        }
+
+        private void StartLocalNode()
         {
             this.localNode = new LocalNode
             {
@@ -81,13 +125,6 @@ namespace Neo.Controllers
             this.uiUpdateTimer.Elapsed += this.UpdateWallet;
         }
 
-        public void Relay(Transaction transaction)
-        {
-            this.localNode.Relay(transaction);
-        }
-        #endregion
-
-        #region Private Methods 
         private void UpdateWallet(object sender, ElapsedEventArgs e)
         {
             var persistenceSpan = DateTime.UtcNow - this.persistenceTime;
@@ -296,6 +333,37 @@ namespace Neo.Controllers
 
             this.messagePublisher.Publish(new UpdateTransactionsMessage(Enumerable.Empty<TransactionInfo>()));
         }
+        #endregion
+        
+        #region IDisposable implementation
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!this.disposed)
+            {
+                if (disposing)
+                {
+                    this.blockChain.Dispose();
+
+                    // Save peer state
+                    PeerState.Save();
+
+                    this.disposed = true;
+                }
+            }
+        }
+
+        ~BlockChainController()
+        {
+            Dispose(false);
+        }
+
         #endregion
     }
 }

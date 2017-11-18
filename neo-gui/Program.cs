@@ -1,8 +1,5 @@
 ﻿using System;
 using System.IO;
-using Neo.Core;
-using Neo.Implementations.Blockchains.LevelDB;
-using Neo.Properties;
 
 namespace Neo
 {
@@ -13,31 +10,8 @@ namespace Neo
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-            // Check if application needs updating
-            if (VersionHelper.UpdateIsRequired)
-            {
-                // Prevent GUI from starting normally until it has been updated
-                var app = new App(true);
-                app.Run();
-                return;
-            }
-
-            // TODO: [AboimPinto] All this code related with NEO BlockChain should be inside the BlockChainController.
-            // Install root certificate
-            if (!RootCertificate.InstallCertificate()) return;
-
-            // Try load peer state
-            PeerState.TryLoad();
-
-            using (Blockchain.RegisterBlockchain(new LevelDBBlockchain(Settings.Default.DataDirectoryPath))) // Setup blockchain
-            {
-                // Start GUI normally
-                var app = new App();
-                app.Run();
-            }
-
-            // Save peer state
-            PeerState.Save();
+            var app = new App();
+            app.Run();
         }
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)

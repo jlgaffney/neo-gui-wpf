@@ -379,6 +379,9 @@
     <Compile Include="UI\Messages\AddContractsMessage.cs" />
     <Compile Include="UI\Messages\SignTransactionAndShowInformationMessage.cs" />
     <Compile Include="UI\Messages\WalletBalanceChangedMessage.cs" />
+    <Compile Include="UI\NeoSplashScreen.xaml.cs">
+      <DependentUpon>NeoSplashScreen.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\TxOutListBox.xaml.cs">
       <DependentUpon>TxOutListBox.xaml</DependentUpon>
     </Compile>
@@ -659,6 +662,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Base\Resources\CustomAccentThemeResources.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\NeoSplashScreen.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
