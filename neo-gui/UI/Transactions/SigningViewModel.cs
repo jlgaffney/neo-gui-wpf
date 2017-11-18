@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Input;
+using Neo.Controllers;
 using Neo.Network;
 using Neo.Properties;
 using Neo.SmartContract;
@@ -11,6 +12,7 @@ namespace Neo.UI.Transactions
     public class SigningViewModel : ViewModelBase
     {
         private readonly IApplicationContext applicationContext;
+        private readonly IWalletController walletController;
 
         private string input;
         private ContractParametersContext output;
@@ -52,9 +54,12 @@ namespace Neo.UI.Transactions
 
         public ICommand CloseCommand => new RelayCommand(this.TryClose);
 
-        public SigningViewModel(IApplicationContext applicationContext)
+        public SigningViewModel(
+            IApplicationContext applicationContext,
+            IWalletController walletController)
         {
             this.applicationContext = applicationContext;
+            this.walletController = walletController;
         }
 
         private void Sign()
@@ -76,7 +81,7 @@ namespace Neo.UI.Transactions
                 return;
             }
 
-            if (!this.applicationContext.CurrentWallet.Sign(context))
+            if (!this.walletController.Sign(context))
             {
                 MessageBox.Show(Strings.SigningFailedKeyNotFoundMessage);
                 return;

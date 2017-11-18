@@ -1,6 +1,5 @@
 ﻿using System;
 using Autofac;
-using Neo.Implementations.Wallets.EntityFramework;
 using Neo.Network;
 
 namespace Neo
@@ -14,8 +13,6 @@ namespace Neo
         #endregion
 
         public ILifetimeScope ContainerLifetimeScope { get; set; }
-
-        public UserWallet CurrentWallet { get; set; }
 
         public LocalNode LocalNode { get; set; }
     }

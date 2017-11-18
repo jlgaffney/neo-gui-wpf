@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using Neo.Controllers;
 using Neo.Core;
 using Neo.Cryptography.ECC;
 using Neo.Properties;
@@ -16,7 +17,7 @@ namespace Neo.UI.Accounts
 {
     public class CreateMultiSigContractViewModel : ViewModelBase
     {
-        private readonly IApplicationContext applicationContext;
+        private readonly IWalletController walletController;
         private readonly IMessagePublisher messagePublisher;
         private readonly IDispatcher dispatcher;
 
@@ -29,11 +30,11 @@ namespace Neo.UI.Accounts
 
 
         public CreateMultiSigContractViewModel(
-            IApplicationContext applicationContext,
+            IWalletController walletController,
             IMessagePublisher messagePublisher,
             IDispatcher dispatcher)
         {
-            this.applicationContext = applicationContext;
+            this.walletController = walletController;
             this.messagePublisher = messagePublisher;
             this.dispatcher = dispatcher;
 
@@ -167,7 +168,7 @@ namespace Neo.UI.Accounts
 
             foreach (var publicKey in publicKeys)
             {
-                var key = this.applicationContext.CurrentWallet.GetKey(publicKey.EncodePoint(true).ToScriptHash());
+                var key = this.walletController.GetKey(publicKey.EncodePoint(true).ToScriptHash());
 
                 if (key == null) continue;
 

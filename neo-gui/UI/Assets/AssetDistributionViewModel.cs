@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+using Neo.Controllers;
 using Neo.Core;
 using Neo.UI.Base.Dispatching;
 using Neo.UI.Base.Messages;
@@ -12,7 +13,7 @@ namespace Neo.UI.Assets
 {
     public class AssetDistributionViewModel : ViewModelBase
     {
-        private readonly IApplicationContext applicationContext;
+        private readonly IWalletController walletController;
         private readonly IMessagePublisher messagePublisher;
         private readonly IDispatcher dispatcher;
 
@@ -30,11 +31,11 @@ namespace Neo.UI.Assets
         private bool distributionEnabled;
 
         public AssetDistributionViewModel(
-            IApplicationContext applicationContext,
+            IWalletController walletController,
             IMessagePublisher messagePublisher,
             IDispatcher dispatcher)
         {
-            this.applicationContext = applicationContext;
+            this.walletController = walletController;
             this.messagePublisher = messagePublisher;
             this.dispatcher = dispatcher;
 
@@ -217,7 +218,7 @@ namespace Neo.UI.Assets
         private IssueTransaction GenerateTransaction()
         {
             if (this.Asset == null) return null;
-            return this.applicationContext.CurrentWallet.MakeTransaction(new IssueTransaction
+            return this.walletController.MakeTransaction(new IssueTransaction
             {
                 Version = 1,
                 Outputs = this.Items.GroupBy(p => p.ScriptHash).Select(g => new TransactionOutput

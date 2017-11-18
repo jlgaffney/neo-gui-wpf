@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+using Neo.Controllers;
 using Neo.Core;
 using Neo.Cryptography.ECC;
 using Neo.SmartContract;
@@ -13,7 +14,6 @@ namespace Neo.UI.Accounts
 {
     public class ImportCustomContractViewModel : ViewModelBase
     {
-        private readonly IApplicationContext applicationContext;
         private readonly IMessagePublisher messagePublisher;
 
         private ECPoint selectedRelatedAccount;
@@ -21,15 +21,14 @@ namespace Neo.UI.Accounts
         private string script;
 
         public ImportCustomContractViewModel(
-            IApplicationContext applicationContext,
+            IWalletController walletController,
             IMessagePublisher messagePublisher)
         {
-            this.applicationContext = applicationContext;
             this.messagePublisher = messagePublisher;
 
             this.RelatedAccounts = new ObservableCollection<ECPoint>(
-                this.applicationContext.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p =>
-                    this.applicationContext.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey));
+                walletController.GetContracts().Where(p => p.IsStandard).Select(p =>
+                    walletController.GetKey(p.PublicKeyHash).PublicKey));
         }
 
         public ObservableCollection<ECPoint> RelatedAccounts { get; }

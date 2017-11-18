@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using MahApps.Metro.Controls.Dialogs;
+using Neo.Controllers;
 using Neo.UI.Base.Controls;
 using Neo.UI.Base.Dialogs;
 using Neo.UI.Base.Dispatching;
@@ -18,6 +19,8 @@ namespace Neo.UI.Wallets
 {
     public class TradeViewModel : ViewModelBase
     {
+        private readonly IApplicationContext applicationContext;
+        private readonly IWalletController walletController;
         private readonly IDispatcher dispatcher;
 
         private TradeView view;
@@ -29,10 +32,14 @@ namespace Neo.UI.Wallets
         private bool mergeEnabled;
 
         private UInt160 scriptHash;
-        private readonly IApplicationContext applicationContext;
 
-        public TradeViewModel(IDispatcher dispatcher)
+        public TradeViewModel(
+            IApplicationContext applicationContext, 
+            IWalletController walletController,
+            IDispatcher dispatcher)
         {
+            this.applicationContext = applicationContext;
+            this.walletController = walletController;
             this.dispatcher = dispatcher;
 
             this.Items = new ObservableCollection<TxOutListBoxItem>();
@@ -137,11 +144,6 @@ namespace Neo.UI.Wallets
 
         public ICommand MergeCommand => new RelayCommand(this.Merge);
 
-        public TradeViewModel(IApplicationContext applicationContext)
-        {
-            this.applicationContext = applicationContext;
-        }
-
         public override void OnWindowAttached(NeoWindow window)
         {
             this.view = window as TradeView;
@@ -156,7 +158,7 @@ namespace Neo.UI.Wallets
         {
             var txOutputs = this.Items.Select(p => p.ToTxOutput());
 
-            var tx = this.applicationContext.CurrentWallet.MakeTransaction(new ContractTransaction
+            var tx = this.walletController.MakeTransaction(new ContractTransaction
             {
                 Outputs = txOutputs.ToArray()
             }, fee: Fixed8.Zero);
@@ -200,7 +202,7 @@ namespace Neo.UI.Wallets
 
             try
             {
-                if (inputs.Select(p => Blockchain.Default.GetTransaction(p.PrevHash).Outputs[p.PrevIndex].ScriptHash).Distinct().Any(p => this.applicationContext.CurrentWallet.ContainsAddress(p)))
+                if (inputs.Select(p => Blockchain.Default.GetTransaction(p.PrevHash).Outputs[p.PrevIndex].ScriptHash).Distinct().Any(p => this.walletController.WalletContainsAddress(p)))
                 {
                     await DialogCoordinator.Instance.ShowMessageAsync(this, Strings.Failed, Strings.TradeFailedInvalidDataMessage);
                     return;
@@ -212,7 +214,7 @@ namespace Neo.UI.Wallets
                 return;
             }
 
-            outputs = outputs.Where(p => this.applicationContext.CurrentWallet.ContainsAddress(p.ScriptHash));
+            outputs = outputs.Where(p => this.walletController.WalletContainsAddress(p.ScriptHash));
 
             var verificationView = new TradeVerificationView(outputs);
             verificationView.ShowDialog();
@@ -240,13 +242,13 @@ namespace Neo.UI.Wallets
                 });
             }
 
-            this.applicationContext.CurrentWallet.Sign(context);
+            this.walletController.Sign(context);
 
             if (context.Completed)
             {
                 context.Verifiable.Scripts = context.GetScripts();
                 var tx = (ContractTransaction)context.Verifiable;
-                this.applicationContext.CurrentWallet.SaveTransaction(tx);
+                this.walletController.SaveTransaction(tx);
                 this.applicationContext.LocalNode.Relay(tx);
                 InformationBox.Show(tx.Hash.ToString(), Strings.TradeSuccessMessage, Strings.TradeSuccessCaption);
             }
@@ -280,7 +282,7 @@ namespace Neo.UI.Wallets
             {
                 ["vin"] = tx.Inputs.Select(p => p.ToJson()).ToArray(),
                 ["vout"] = tx.Outputs.Select((p, i) => p.ToJson((ushort)i)).ToArray(),
-                ["change_address"] = Wallet.ToAddress(this.applicationContext.CurrentWallet.GetChangeAddress())
+                ["change_address"] = Wallet.ToAddress(this.walletController.GetChangeAddress())
             };
             return json;
         }

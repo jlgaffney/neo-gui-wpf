@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
+using Neo.Controllers;
 using Neo.UI.Base.Controls;
-using Neo.UI.Base.Helpers;
 using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
 using Neo.UI.Messages;
@@ -13,6 +13,7 @@ namespace Neo.UI.Wallets
     public class ClaimViewModel : ViewModelBase
     {
         private readonly IApplicationContext applicationContext;
+        private readonly IWalletController walletController;
         private readonly IMessagePublisher messagePublisher;
 
         private Fixed8 availableGas = Fixed8.Zero;
@@ -22,9 +23,11 @@ namespace Neo.UI.Wallets
 
         public ClaimViewModel(
             IApplicationContext applicationContext,
+            IWalletController walletController,
             IMessagePublisher messagePublisher)
         {
             this.applicationContext = applicationContext;
+            this.walletController = walletController;
             this.messagePublisher = messagePublisher;
         }
 
@@ -91,11 +94,11 @@ namespace Neo.UI.Wallets
         private void Blockchain_PersistCompleted(object sender, Block block)
         {
             CalculateBonusUnavailable(block.Index + 1);
-        }    
+        }
 
         private void CalculateBonusAvailable()
         {
-            var bonusAvailable = Blockchain.CalculateBonus(this.applicationContext.CurrentWallet.GetUnclaimedCoins().Select(p => p.Reference));
+            var bonusAvailable = Blockchain.CalculateBonus(this.walletController.GetUnclaimedCoins().Select(p => p.Reference));
             this.AvailableGas = bonusAvailable;
 
             if (bonusAvailable == Fixed8.Zero)
@@ -106,7 +109,7 @@ namespace Neo.UI.Wallets
 
         private void CalculateBonusUnavailable(uint height)
         {
-            var unspent = this.applicationContext.CurrentWallet.FindUnspentCoins()
+            var unspent = this.walletController.FindUnspentCoins()
                 .Where(p => p.Output.AssetId.Equals(Blockchain.GoverningToken.Hash))
                 .Select(p => p.Reference);
 
@@ -130,7 +133,7 @@ namespace Neo.UI.Wallets
 
         private void Claim()
         {
-            var claims = this.applicationContext.CurrentWallet.GetUnclaimedCoins().Select(p => p.Reference).ToArray();
+            var claims = this.walletController.GetUnclaimedCoins().Select(p => p.Reference).ToArray();
 
             if (claims.Length == 0) return;
 
@@ -145,7 +148,7 @@ namespace Neo.UI.Wallets
                     {
                         AssetId = Blockchain.UtilityToken.Hash,
                         Value = Blockchain.CalculateBonus(claims),
-                        ScriptHash = this.applicationContext.CurrentWallet.GetChangeAddress()
+                        ScriptHash = this.walletController.GetChangeAddress()
                     }
                 }
             };

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Neo.Core;
+using Neo.Cryptography.ECC;
 using Neo.SmartContract;
 using Neo.UI;
 using Neo.Wallets;
@@ -24,24 +25,50 @@ namespace Neo.Controllers
 
         void SaveTransaction(Transaction transaction);
 
-        void Sign(ContractParametersContext context);
+        bool Sign(ContractParametersContext context);
 
         void CreateNewKey();        // TODO - Issue #43 [AboimPinto] - this method will create a new key or new NEO address? Please review the name.
+
+        KeyPair GetKeyByScriptHash(UInt160 scriptHash);
+
+        KeyPair GetKey(ECPoint publicKey);
+
+        KeyPair GetKey(UInt160 publicKeyHash);
 
         IEnumerable<KeyPair> GetKeys();
 
         IEnumerable<UInt160> GetAddresses();
 
+        VerificationContract GetContract(UInt160 scriptHash);
+
+        IEnumerable<VerificationContract> GetContracts();
+
         IEnumerable<VerificationContract> GetContracts(UInt160 publicKeyHash);
 
         IEnumerable<Coin> GetCoins();
 
-        VerificationContract GetContract(UInt160 scriptHash);
+        IEnumerable<Coin> GetUnclaimedCoins();
 
-        KeyPair GetKeyByScriptHash(UInt160 scriptHash);
+        IEnumerable<Coin> FindUnspentCoins();
+        
+        UInt160 GetChangeAddress();
+
+        bool WalletContainsAddress(UInt160 scriptHash);
+
+        BigDecimal GetAvailable(UIntBase assetId);
+
+        Fixed8 GetAvailable(UInt256 assetId);
 
         void ImportWatchOnlyAddress(string addressToImport);
 
         void DeleteAccount(AccountItem account);
+
+        Transaction MakeTransaction(Transaction transaction, UInt160 changeAddress = null, Fixed8 fee = default(Fixed8));
+
+        ContractTransaction MakeTransaction(ContractTransaction transaction, UInt160 changeAddress = null, Fixed8 fee = default(Fixed8));
+
+        InvocationTransaction MakeTransaction(InvocationTransaction transaction, UInt160 changeAddress = null, Fixed8 fee = default(Fixed8));
+
+        IssueTransaction MakeTransaction(IssueTransaction transaction, UInt160 changeAddress = null, Fixed8 fee = default(Fixed8));
     }
 }

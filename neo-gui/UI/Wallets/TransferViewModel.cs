@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Windows.Input;
+using Neo.Controllers;
 using Neo.Core;
 using Neo.Properties;
 using Neo.SmartContract;
@@ -18,16 +18,16 @@ namespace Neo.UI.Wallets
 {
     public class TransferViewModel : ViewModelBase
     {
-        private readonly IApplicationContext applicationContext;
+        private readonly IWalletController walletController;
         private readonly IMessagePublisher messagePublisher;
 
         private string remark = string.Empty;
 
         public TransferViewModel(
-            IApplicationContext applicationContext,
+            IWalletController walletController,
             IMessagePublisher messagePublisher)
         {
-            this.applicationContext = applicationContext;
+            this.walletController = walletController;
             this.messagePublisher = messagePublisher;
 
             this.Items = new ObservableCollection<TxOutListBoxItem>();
@@ -97,7 +97,7 @@ namespace Neo.UI.Wallets
             }
             else
             {
-                var addresses = this.applicationContext.CurrentWallet.GetAddresses().ToArray();
+                var addresses = this.walletController.GetAddresses().ToArray();
                 var sAttributes = new HashSet<UInt160>();
                 using (var builder = new ScriptBuilder())
                 {
@@ -186,7 +186,7 @@ namespace Neo.UI.Wallets
 
             if (tx is ContractTransaction ctx)
             {
-                tx = this.applicationContext.CurrentWallet.MakeTransaction(ctx);
+                tx = this.walletController.MakeTransaction(ctx);
             }
 
             return tx;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Security.Cryptography;
 using Neo.Core;
 using Neo.DialogResults;
@@ -13,6 +14,7 @@ using Neo.UI;
 using Neo.UI.Base.Messages;
 using Neo.UI.Messages;
 using Neo.Wallets;
+using ECPoint = Neo.Cryptography.ECC.ECPoint;
 
 namespace Neo.Controllers
 {
@@ -120,9 +122,24 @@ namespace Neo.Controllers
             this.currentWallet.SaveTransaction(transaction);
         }
 
-        public void Sign(ContractParametersContext context)
+        public bool Sign(ContractParametersContext context)
         {
-            this.currentWallet.Sign(context);
+            return this.currentWallet.Sign(context);
+        }
+
+        public KeyPair GetKeyByScriptHash(UInt160 scriptHash)
+        {
+            return this.currentWallet?.GetKeyByScriptHash(scriptHash);
+        }
+
+        public KeyPair GetKey(ECPoint publicKey)
+        {
+            return this.currentWallet?.GetKey(publicKey);
+        }
+
+        public KeyPair GetKey(UInt160 publicKeyHash)
+        {
+            return this.currentWallet?.GetKey(publicKeyHash);
         }
 
         public IEnumerable<KeyPair> GetKeys()
@@ -143,6 +160,16 @@ namespace Neo.Controllers
             }
 
             return this.currentWallet.GetAddresses();
+        }
+
+        public IEnumerable<VerificationContract> GetContracts()
+        {
+            if (!this.WalletIsOpen)
+            {
+                return Enumerable.Empty<VerificationContract>();
+            }
+
+            return this.currentWallet.GetContracts();
         }
 
         public IEnumerable<VerificationContract> GetContracts(UInt160 publicKeyHash)
@@ -167,16 +194,61 @@ namespace Neo.Controllers
             return this.currentWallet.GetCoins();
         }
 
+        public IEnumerable<Coin> GetUnclaimedCoins()
+        {
+            if (!this.WalletIsOpen)
+            {
+                return Enumerable.Empty<Coin>();
+            }
+
+            return this.currentWallet.GetUnclaimedCoins();
+        }
+
+        public IEnumerable<Coin> FindUnspentCoins()
+        {
+            if (!this.WalletIsOpen)
+            {
+                return Enumerable.Empty<Coin>();
+            }
+
+            return this.currentWallet.FindUnspentCoins();
+        }
+
+        public UInt160 GetChangeAddress()
+        {
+            return this.currentWallet?.GetChangeAddress();
+        }
+
+        public bool WalletContainsAddress(UInt160 scriptHash)
+        {
+            return this.WalletIsOpen && this.currentWallet.ContainsAddress(scriptHash);
+        }
+
+        public BigDecimal GetAvailable(UIntBase assetId)
+        {
+            if (!this.WalletIsOpen)
+            {
+                return new BigDecimal(BigInteger.Zero, 0);
+            }
+
+            return this.currentWallet.GetAvailable(assetId);
+        }
+
+        public Fixed8 GetAvailable(UInt256 assetId)
+        {
+            if (!this.WalletIsOpen)
+            {
+                return Fixed8.Zero;
+            }
+
+            return this.currentWallet.GetAvailable(assetId);
+        }
+
         public VerificationContract GetContract(UInt160 scriptHash)
         {
             // TODO - ISSUE #37 [AboimPinto]: at this point the return should not be a object from the NEO assemblies but a DTO only know by the application with only the necessary fields.
 
             return currentWallet?.GetContract(scriptHash);
-        }
-
-        public KeyPair GetKeyByScriptHash(UInt160 scriptHash)
-        {
-            return this.currentWallet?.GetKeyByScriptHash(scriptHash);
         }
 
         public void CreateNewKey()
@@ -231,6 +303,27 @@ namespace Neo.Controllers
 
             this.messagePublisher.Publish(new AccountItemsChangedMessage(this.accounts));
         }
+
+        public Transaction MakeTransaction(Transaction transaction, UInt160 changeAddress = null, Fixed8 fee = default(Fixed8))
+        {
+            return this.currentWallet?.MakeTransaction(transaction);
+        }
+
+        public ContractTransaction MakeTransaction(ContractTransaction transaction, UInt160 changeAddress = null, Fixed8 fee = default(Fixed8))
+        {
+            return this.currentWallet?.MakeTransaction(transaction, changeAddress, fee);
+        }
+
+        public InvocationTransaction MakeTransaction(InvocationTransaction transaction, UInt160 changeAddress = null, Fixed8 fee = default(Fixed8))
+        {
+            return this.currentWallet?.MakeTransaction(transaction, changeAddress, fee);
+        }
+
+        public IssueTransaction MakeTransaction(IssueTransaction transaction, UInt160 changeAddress = null, Fixed8 fee = default(Fixed8))
+        {
+            return this.currentWallet?.MakeTransaction(transaction, changeAddress, fee);
+        }
+
         #endregion
 
         #region IMessageHandler implementation 

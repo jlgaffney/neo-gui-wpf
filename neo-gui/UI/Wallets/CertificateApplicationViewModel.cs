@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Input;
 using CERTENROLLLib;
 using Microsoft.Win32;
+using Neo.Controllers;
 using Neo.Cryptography.ECC;
 using Neo.UI.Base.MVVM;
 
@@ -11,7 +12,7 @@ namespace Neo.UI.Wallets
 {
     public class CertificateApplicationViewModel : ViewModelBase
     {
-        private readonly IApplicationContext applicationContext;
+        private readonly IWalletController walletController;
 
         private ECPoint selectedPublicKey;
         private string cn;
@@ -19,11 +20,13 @@ namespace Neo.UI.Wallets
         private string s;
         private string serialNumber;
 
-        public CertificateApplicationViewModel(IApplicationContext applicationContext)
+        public CertificateApplicationViewModel(
+            IWalletController walletController)
         {
-            this.PublicKeys = this.applicationContext.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p =>
-                this.applicationContext.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey).ToArray();
-            this.applicationContext = applicationContext;
+            this.walletController = walletController;
+
+            this.PublicKeys = this.walletController.GetContracts().Where(p => p.IsStandard).Select(p =>
+                this.walletController.GetKey(p.PublicKeyHash).PublicKey).ToArray();
         }
 
         public ECPoint[] PublicKeys { get; }
@@ -130,7 +133,7 @@ namespace Neo.UI.Wallets
             if (saveFileDialog.ShowDialog() != true) return;
 
             var point = this.SelectedPublicKey;
-            var key = this.applicationContext.CurrentWallet.GetKey(point);
+            var key = this.walletController.GetKey(point);
             var publicKey = point.EncodePoint(false).Skip(1).ToArray();
 
             byte[] privateKey;
