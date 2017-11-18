@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using System.Windows.Input;
+using Neo.Controllers;
 using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
 using Neo.UI.Messages;
@@ -12,19 +13,15 @@ namespace Neo.UI.Wallets
 {
     public class RestoreAccountsViewModel : ViewModelBase
     {
-        private readonly IApplicationContext applicationContext;
         private readonly IMessagePublisher messagePublisher;
 
         public RestoreAccountsViewModel(
-            IApplicationContext applicationContext,
+            IWalletController walletController,
             IMessagePublisher messagePublisher)
         {
-            this.applicationContext = applicationContext;
             this.messagePublisher = messagePublisher;
 
-            var keys = this.applicationContext.CurrentWallet.GetKeys();
-
-            keys = keys.Where(account => this.applicationContext.CurrentWallet.GetContracts(account.PublicKeyHash).All(contract => !contract.IsStandard));
+            var keys = walletController.GetKeys().Where(account => walletController.GetContracts(account.PublicKeyHash).All(contract => !contract.IsStandard)).ToList();
 
             this.Accounts = new ObservableCollection<SelectableVerificationContract>(keys.Select(p => VerificationContract.CreateSignatureContract(p.PublicKey)).Select(p => new SelectableVerificationContract(this, p)));
         }

@@ -368,7 +368,7 @@
     <Compile Include="UI\Messages\AddContractMessage.cs" />
     <Compile Include="UI\Messages\ClearAssetsMessage.cs" />
     <Compile Include="UI\Messages\ClearTransactionsMessage.cs" />
-    <Compile Include="UI\Messages\EnableMenuItemsMessage.cs" />
+    <Compile Include="UI\Messages\CurrentWalletHasChangedMessage.cs" />
     <Compile Include="UI\Messages\ImportCertificateMessage.cs" />
     <Compile Include="UI\Messages\ImportPrivateKeyMessage.cs" />
     <Compile Include="UI\Messages\InvokeContractMessage.cs" />

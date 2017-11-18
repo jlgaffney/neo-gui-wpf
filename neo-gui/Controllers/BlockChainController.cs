@@ -131,7 +131,7 @@ namespace Neo.Controllers
 
         private void UpdateBalances(TimeSpan persistenceSpan)
         {
-            if (!this.walletController.IsWalletOpen) return;
+            if (!this.walletController.WalletIsOpen) return;
 
             this.UpdateAssetBalances();
 
@@ -140,7 +140,7 @@ namespace Neo.Controllers
 
         private void UpdateAssetBalances()
         {
-            if (this.walletController.WalletWeight > Blockchain.Default.Height + 1) return;
+            if (this.walletController.WalletHeight > Blockchain.Default.Height + 1) return;
 
             this.messagePublisher.Publish(new AccountBalancesChangedMessage());
             this.messagePublisher.Publish(new UpdateAssetsBalanceMessage(this.balanceChanged));
@@ -210,11 +210,11 @@ namespace Neo.Controllers
         {
             uint walletHeight = 0;
 
-            if (this.walletController.IsWalletOpen &&
-                this.walletController.WalletWeight > 0)
+            if (this.walletController.WalletIsOpen &&
+                this.walletController.WalletHeight > 0)
             {
                 // Set wallet height
-                walletHeight = this.walletController.WalletWeight - 1;
+                walletHeight = this.walletController.WalletHeight - 1;
             }
 
             return walletHeight;
@@ -280,7 +280,7 @@ namespace Neo.Controllers
         private void BlockchainPersistCompleted(object sender, Block block)
         {
             this.persistenceTime = DateTime.UtcNow;
-            if (this.walletController.IsWalletOpen)
+            if (this.walletController.WalletIsOpen)
             {
                 this.checkNep5Balance = true;
 

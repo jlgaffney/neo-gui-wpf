@@ -1,7 +1,6 @@
 ﻿using System.Windows.Input;
 using Microsoft.Win32;
 using Neo.UI.Base.MVVM;
-using Neo.UI.Messages;
 
 namespace Neo.UI.Wallets
 {
@@ -31,7 +30,7 @@ namespace Neo.UI.Wallets
 
         public bool RepairMode
         {
-            get { return this.repairMode; }
+            get => this.repairMode;
             set
             {
                 if (this.repairMode == value) return;
@@ -98,6 +97,8 @@ namespace Neo.UI.Wallets
 
         private void Confirm()
         {
+            if (!this.ConfirmEnabled) return;
+
             this.confirmed = true;
 
             this.TryClose();
