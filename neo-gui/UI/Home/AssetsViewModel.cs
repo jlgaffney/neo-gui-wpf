@@ -89,8 +89,10 @@ namespace Neo.UI.Home
         public ICommand ViewCertificateCommand => new RelayCommand(this.ViewCertificate);
         public ICommand DeleteAssetCommand => new RelayCommand(this.DeleteAsset);
 
+        public ICommand ViewSelectedAssetDetailsCommand => new RelayCommand(this.ViewSelectedAssetDetails);
+
         #endregion Commands
-        
+
         #region Menu Command Methods
 
         private void ViewCertificate()
@@ -130,6 +132,15 @@ namespace Neo.UI.Home
 
         #endregion Menu Command Methods
 
+        private void ViewSelectedAssetDetails()
+        {
+            if (this.SelectedAsset == null) return;
+
+            var url = string.Format(Settings.Default.Urls.AssetUrl, this.SelectedAsset.Name.Substring(2));
+
+            Process.Start(url);
+        }
+
         internal CertificateQueryResult GetCertificateQueryResult(AssetState asset)
         {
             CertificateQueryResult result;
@@ -153,6 +164,20 @@ namespace Neo.UI.Home
             }
 
             return result;
+        }
+
+        public AssetItem GetAsset(UInt160 scriptHashNEP5)
+        {
+            if (scriptHashNEP5 == null) return null;
+
+            return this.Assets.FirstOrDefault(a => a.ScriptHashNEP5 != null && a.ScriptHashNEP5.Equals(scriptHashNEP5));
+        }
+
+        public AssetItem GetAsset(UInt256 assetId)
+        {
+            if (assetId == null) return null;
+
+            return this.Assets.FirstOrDefault(a => a.State != null && a.State.AssetId != null && a.State.AssetId.Equals(assetId));
         }
     }
 }

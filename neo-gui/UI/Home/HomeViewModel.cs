@@ -24,7 +24,6 @@ using Neo.VM;
 using Neo.UI.Assets;
 using Neo.UI.Base.Dialogs;
 using Neo.UI.Base.Dispatching;
-using Neo.UI.Base.Helpers;
 using Neo.UI.Base.MVVM;
 using Neo.UI.Contracts;
 using Neo.UI.Development;
@@ -136,6 +135,8 @@ namespace Neo.UI.Home
         public ICommand RestoreAccountsCommand => new RelayCommand(RestoreAccounts);
 
         public ICommand ExitCommand => new RelayCommand(this.Exit);
+
+        public ICommand CloseCommand => new RelayCommand(this.Close);
 
         public ICommand TransferCommand => new RelayCommand(Transfer);
 
@@ -343,7 +344,7 @@ namespace Neo.UI.Home
             });
         }
 
-        public void Close()
+        private void Close()
         {
             Blockchain.PersistCompleted -= Blockchain_PersistCompleted;
             this.CloseWallet();
@@ -484,7 +485,7 @@ namespace Neo.UI.Home
 
                     var valueText = asset.Value + (asset.Asset.AssetId.Equals(Blockchain.UtilityToken.Hash) ? $"+({asset.Claim})" : "");
 
-                    var item = this.AssetsViewModel.Assets.FirstOrDefault(a => a.State != null && a.State.AssetId.Equals(asset.Asset.AssetId));
+                    var item = this.AssetsViewModel.GetAsset(asset.Asset.AssetId);
 
                     if (item != null)
                     {
@@ -621,7 +622,7 @@ namespace Neo.UI.Home
 
                 await this.dispatcher.InvokeOnMainUIThread(() =>
                 {
-                    var item = (AssetItem) null; //this.GetAsset(scriptHash);
+                    var item = this.AssetsViewModel.GetAsset(scriptHash);
 
                     if (item != null)
                     {
@@ -635,6 +636,7 @@ namespace Neo.UI.Home
                             Type = "NEP-5",
                             Issuer = $"ScriptHash:{scriptHash}",
                             Value = valueText,
+                            ScriptHashNEP5 = scriptHash
                         });
 
                         /*this.Assets.Groups["checked"]

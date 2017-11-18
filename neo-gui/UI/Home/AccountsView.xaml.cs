@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using System.Windows.Input;
-using Neo.Properties;
+﻿using System.Windows.Input;
 
 namespace Neo.UI.Home
 {
@@ -16,15 +14,7 @@ namespace Neo.UI.Home
         
         private void AccountList_DoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var viewModel = this.DataContext as AccountsViewModel;
-
-            if (viewModel == null) return;
-
-            if (viewModel.SelectedAccount == null) return;
-
-            var url = string.Format(Settings.Default.Urls.AddressUrl, viewModel.SelectedAccount.Address);
-
-            Process.Start(url);
+            (this.DataContext as AccountsViewModel)?.ViewSelectedAccountDetailsCommand.Execute(null);
         }
     }
 }

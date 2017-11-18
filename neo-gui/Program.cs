@@ -26,7 +26,7 @@ namespace Neo
             }
 
             // Install root certificate
-            if (!RootCertificate.InstallCertificate()) return;
+            if (!RootCertificate.InstallRootCertificate()) return;
 
             // Try load peer state
             PeerState.TryLoad();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -119,9 +120,20 @@ namespace Neo.UI.Home
         public ICommand CopyAddressToClipboardCommand => new RelayCommand(this.CopyAddressToClipboard);
         public ICommand DeleteAccountCommand => new RelayCommand(this.DeleteAccount);
 
+        public ICommand ViewSelectedAccountDetailsCommand => new RelayCommand(this.ViewSelectedAccountDetails);
+        
         #endregion Command
 
-        public AccountItem GetAccount(string address)
+        private void ViewSelectedAccountDetails()
+        {
+            if (this.SelectedAccount == null) return;
+
+            var url = string.Format(Settings.Default.Urls.AddressUrl, this.SelectedAccount.Address);
+
+            Process.Start(url);
+        }
+
+        private AccountItem GetAccount(string address)
         {
             return this.Accounts.FirstOrDefault(account => account.Address == address);
         }

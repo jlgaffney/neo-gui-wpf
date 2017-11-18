@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using Neo.Core;
 using Neo.Implementations.Wallets.EntityFramework;
+using Neo.Properties;
 using Neo.UI.Base.Collections;
 using Neo.UI.Base.Dispatching;
 using Neo.UI.Base.MVVM;
@@ -44,6 +46,18 @@ namespace Neo.UI.Home
         
         public ICommand CopyTransactionIdCommand => new RelayCommand(this.CopyTransactionId);
 
+        public ICommand ViewSelectedTransactionDetailsCommand => new RelayCommand(this.ViewSelectedTransactionDetails);
+
+        private void ViewSelectedTransactionDetails()
+        {
+            if (this.SelectedTransaction == null) return;
+
+            if (string.IsNullOrEmpty(this.SelectedTransaction.Id)) return;
+
+            var url = string.Format(Settings.Default.Urls.TransactionUrl, this.SelectedTransaction.Id.Substring(2));
+
+            Process.Start(url);
+        }
         
         private void CopyTransactionId()
         {

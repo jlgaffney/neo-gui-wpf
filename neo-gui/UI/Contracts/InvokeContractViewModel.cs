@@ -8,7 +8,6 @@ using Neo.Core;
 using Neo.IO.Json;
 using Neo.Properties;
 using Neo.SmartContract;
-using Neo.UI.Base.Controls;
 using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
 using Neo.UI.Messages;
@@ -162,23 +161,13 @@ namespace Neo.UI.Contracts
         public ICommand CancelCommand => new RelayCommand(this.Cancel);
 
         #endregion Commands
-
-        public override void OnWindowAttached(NeoWindow window)
+        
+        public void SetBaseTransaction(InvocationTransaction baseTransaction)
         {
-            base.OnWindowAttached(window);
+            if (baseTransaction == null) return;
 
-            var invokeContractView = window as InvokeContractView;
+            this.transaction = baseTransaction;
 
-            if (invokeContractView == null) return;
-
-            // Check if invocation base transaction was provided
-            var tx = invokeContractView.BaseTransaction;
-
-            if (tx == null) return;
-
-            this.transaction = tx;
-
-            invokeContractView.SetSelectedTab(1);
             this.CustomScript = this.transaction.Script.ToHexString();
         }
 

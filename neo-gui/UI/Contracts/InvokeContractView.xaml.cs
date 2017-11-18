@@ -12,10 +12,14 @@ namespace Neo.UI.Contracts
         {
             InitializeComponent();
 
-            this.BaseTransaction = baseTransaction;
-        }
+            var viewModel = this.DataContext as InvokeContractViewModel;
 
-        public InvocationTransaction BaseTransaction { get; }
+            if (viewModel == null) return;
+
+            viewModel.SetBaseTransaction(baseTransaction);
+
+            this.SetSelectedTab(1);
+        }
 
         public void SetSelectedTab(int tabIndex)
         {

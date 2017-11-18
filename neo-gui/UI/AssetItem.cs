@@ -63,5 +63,7 @@ namespace Neo.UI
         }
 
         public AssetState State { get; set; }
+
+        public UInt160 ScriptHashNEP5 { get; set; }
     }
 }
