@@ -1250,6 +1250,15 @@ namespace Neo.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to neo-gui.
+        /// </summary>
+        public static string NeoGuiTitle {
+            get {
+                return ResourceManager.GetString("NeoGuiTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to NEP-5 Contracts List.
         /// </summary>
         public static string NEP5ContractsList {

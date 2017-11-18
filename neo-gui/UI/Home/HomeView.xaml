@@ -10,7 +10,7 @@
     xmlns:properties="clr-namespace:Neo.Properties"
     dialog:DialogParticipation.Register="{Binding}"
     DataContext="{markupExtensions:DataContextBinding ViewModel=local:HomeViewModel}"
-    Title="neo-gui" 
+    Title="{x:Static properties:Strings.NeoGuiTitle}" 
     Height="520" 
     Width="740"
     Closing="Window_Closing">

@@ -8,6 +8,11 @@
         DataContext="{markupExtensions:DataContextBinding ViewModel=local:OpenWalletViewModel}"
         Title="{x:Static properties:Strings.OpenWalletTitle}"
         Width="525" SizeToContent="Height" ResizeMode="NoResize">
+
+    <controls:NeoWindow.InputBindings>
+        <KeyBinding Key="Enter" Command="{Binding ConfirmCommand}" />
+    </controls:NeoWindow.InputBindings>
+    
     <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

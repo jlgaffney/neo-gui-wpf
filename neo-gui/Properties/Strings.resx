@@ -835,4 +835,7 @@ Note: updated files cannot be openned by clients in older versions!</value>
   <data name="WalletFile" xml:space="preserve">
     <value>Wallet File</value>
   </data>
+  <data name="NeoGuiTitle" xml:space="preserve">
+    <value>neo-gui</value>
+  </data>
 </root>

@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Input;
+using Neo.Controllers;
 using Neo.Core;
 using Neo.Cryptography.ECC;
 using Neo.SmartContract;
@@ -18,7 +19,6 @@ namespace Neo.UI.Assets
     {
         private static readonly AssetType[] assetTypes = { AssetType.Share, AssetType.Token };
 
-        private readonly IApplicationContext applicationContext;
         private readonly IMessagePublisher messagePublisher;
 
         private AssetType? selectedAssetType;
@@ -36,16 +36,18 @@ namespace Neo.UI.Assets
         private bool formValid;
 
         public AssetRegistrationViewModel(
-            IApplicationContext applicationContext,
+            IWalletController walletController,
             IMessagePublisher messagePublisher)
         {
-            this.applicationContext = applicationContext;
             this.messagePublisher = messagePublisher;
 
             this.AssetTypes = new ObservableCollection<AssetType>(assetTypes);
-            this.Owners = new ObservableCollection<ECPoint>(this.applicationContext.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p => this.applicationContext.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey));
-            this.Admins = new ObservableCollection<string>(this.applicationContext.CurrentWallet.GetContracts().Select(p => p.Address));
-            this.Issuers = new ObservableCollection<string>(this.applicationContext.CurrentWallet.GetContracts().Select(p => p.Address));
+
+            var contracts = walletController.GetContracts().ToList();
+
+            this.Owners = new ObservableCollection<ECPoint>(contracts.Where(p => p.IsStandard).Select(p => walletController.GetKey(p.PublicKeyHash).PublicKey));
+            this.Admins = new ObservableCollection<string>(contracts.Select(p => p.Address));
+            this.Issuers = new ObservableCollection<string>(contracts.Select(p => p.Address));
         }
 
         public ObservableCollection<AssetType> AssetTypes { get; }

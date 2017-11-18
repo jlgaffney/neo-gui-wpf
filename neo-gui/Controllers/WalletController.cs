@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Security.Cryptography;
 using Neo.Core;
 using Neo.DialogResults;
@@ -13,6 +14,7 @@ using Neo.UI;
 using Neo.UI.Base.Messages;
 using Neo.UI.Messages;
 using Neo.Wallets;
+using ECPoint = Neo.Cryptography.ECC.ECPoint;
 
 namespace Neo.Controllers
 {
@@ -32,25 +34,28 @@ namespace Neo.Controllers
         private bool balanceChanged;
         private bool checkNep5Balance;
 
-        private IList<AccountItem> accounts;
+        private readonly IList<AccountItem> accounts;
         #endregion
 
         #region Constructor 
         public WalletController(
             IDialogHelper dialogHelper,
-            IMessagePublisher messagePublisher)
+            IMessagePublisher messagePublisher,
+            IMessageSubscriber messageSubscriber)
         {
             this.dialogHelper = dialogHelper;
             this.messagePublisher = messagePublisher;
+
+            messageSubscriber.Subscribe(this);
 
             this.accounts = new List<AccountItem>();
         }
         #endregion
 
         #region IWalletController implementation 
-        public bool IsWalletOpen => this.currentWallet != null;
+        public bool WalletIsOpen => this.currentWallet != null;
 
-        public uint WalletWeight => this.currentWallet.WalletHeight;
+        public uint WalletHeight => !this.WalletIsOpen ? 0 : this.currentWallet.WalletHeight;
 
         public void CreateWallet(string walletPath, string password)
         {
@@ -100,6 +105,13 @@ namespace Neo.Controllers
             this.SetCurrentWallet(null);
         }
 
+        public bool ChangePassword(string oldPassword, string newPassword)
+        {
+            if (!this.WalletIsOpen) return false;
+
+            return this.currentWallet.ChangePassword(oldPassword, newPassword);
+        }
+
         public void RebuildWalletIndexes()
         {
             this.currentWallet.Rebuild();
@@ -110,26 +122,133 @@ namespace Neo.Controllers
             this.currentWallet.SaveTransaction(transaction);
         }
 
-        public void Sign(ContractParametersContext context)
+        public bool Sign(ContractParametersContext context)
         {
-            this.currentWallet.Sign(context);
+            return this.currentWallet.Sign(context);
+        }
+
+        public KeyPair GetKeyByScriptHash(UInt160 scriptHash)
+        {
+            return this.currentWallet?.GetKeyByScriptHash(scriptHash);
+        }
+
+        public KeyPair GetKey(ECPoint publicKey)
+        {
+            return this.currentWallet?.GetKey(publicKey);
+        }
+
+        public KeyPair GetKey(UInt160 publicKeyHash)
+        {
+            return this.currentWallet?.GetKey(publicKeyHash);
+        }
+
+        public IEnumerable<KeyPair> GetKeys()
+        {
+            if (!this.WalletIsOpen)
+            {
+                return Enumerable.Empty<KeyPair>();
+            }
+
+            return this.currentWallet.GetKeys();
         }
 
         public IEnumerable<UInt160> GetAddresses()
         {
+            if (!this.WalletIsOpen)
+            {
+                return Enumerable.Empty<UInt160>();
+            }
+
             return this.currentWallet.GetAddresses();
+        }
+
+        public IEnumerable<VerificationContract> GetContracts()
+        {
+            if (!this.WalletIsOpen)
+            {
+                return Enumerable.Empty<VerificationContract>();
+            }
+
+            return this.currentWallet.GetContracts();
+        }
+
+        public IEnumerable<VerificationContract> GetContracts(UInt160 publicKeyHash)
+        {
+            if (!this.WalletIsOpen)
+            {
+                return Enumerable.Empty<VerificationContract>();
+            }
+
+            return this.currentWallet.GetContracts(publicKeyHash);
         }
 
         public IEnumerable<Coin> GetCoins()
         {
             // TODO - ISSUE #37 [AboimPinto]: at this point the return should not be a object from the NEO assemblies but a DTO only know by the application with only the necessary fields.
+
+            if (!this.WalletIsOpen)
+            {
+                return Enumerable.Empty<Coin>();
+            }
+
             return this.currentWallet.GetCoins();
+        }
+
+        public IEnumerable<Coin> GetUnclaimedCoins()
+        {
+            if (!this.WalletIsOpen)
+            {
+                return Enumerable.Empty<Coin>();
+            }
+
+            return this.currentWallet.GetUnclaimedCoins();
+        }
+
+        public IEnumerable<Coin> FindUnspentCoins()
+        {
+            if (!this.WalletIsOpen)
+            {
+                return Enumerable.Empty<Coin>();
+            }
+
+            return this.currentWallet.FindUnspentCoins();
+        }
+
+        public UInt160 GetChangeAddress()
+        {
+            return this.currentWallet?.GetChangeAddress();
+        }
+
+        public bool WalletContainsAddress(UInt160 scriptHash)
+        {
+            return this.WalletIsOpen && this.currentWallet.ContainsAddress(scriptHash);
+        }
+
+        public BigDecimal GetAvailable(UIntBase assetId)
+        {
+            if (!this.WalletIsOpen)
+            {
+                return new BigDecimal(BigInteger.Zero, 0);
+            }
+
+            return this.currentWallet.GetAvailable(assetId);
+        }
+
+        public Fixed8 GetAvailable(UInt256 assetId)
+        {
+            if (!this.WalletIsOpen)
+            {
+                return Fixed8.Zero;
+            }
+
+            return this.currentWallet.GetAvailable(assetId);
         }
 
         public VerificationContract GetContract(UInt160 scriptHash)
         {
             // TODO - ISSUE #37 [AboimPinto]: at this point the return should not be a object from the NEO assemblies but a DTO only know by the application with only the necessary fields.
-            return this.currentWallet.GetContract(scriptHash);
+
+            return currentWallet?.GetContract(scriptHash);
         }
 
         public void CreateNewKey()
@@ -168,20 +287,43 @@ namespace Neo.Controllers
             }
         }
 
-        public KeyPair GetKeyByScriptHash(UInt160 scriptHash)
+        public void DeleteAccount(AccountItem accountToDelete)
         {
-            return this.currentWallet.GetKeyByScriptHash(scriptHash);
-        }
+            if (accountToDelete == null)
+            {
+                throw new ArgumentNullException(nameof(accountToDelete));
+            }
 
-        public void DeleteAddress(UInt160 scriptHash)
-        {
-            var accountItemToDelete = this.accounts.Single(x => x.Address.Equals(scriptHash));
+            var scriptHash = accountToDelete.ScriptHash != null
+                ? accountToDelete.ScriptHash
+                : accountToDelete.Contract.ScriptHash;
 
             this.currentWallet.DeleteAddress(scriptHash);
-            this.accounts.Remove(accountItemToDelete);
+            this.accounts.Remove(accountToDelete);
 
             this.messagePublisher.Publish(new AccountItemsChangedMessage(this.accounts));
         }
+
+        public Transaction MakeTransaction(Transaction transaction, UInt160 changeAddress = null, Fixed8 fee = default(Fixed8))
+        {
+            return this.currentWallet?.MakeTransaction(transaction);
+        }
+
+        public ContractTransaction MakeTransaction(ContractTransaction transaction, UInt160 changeAddress = null, Fixed8 fee = default(Fixed8))
+        {
+            return this.currentWallet?.MakeTransaction(transaction, changeAddress, fee);
+        }
+
+        public InvocationTransaction MakeTransaction(InvocationTransaction transaction, UInt160 changeAddress = null, Fixed8 fee = default(Fixed8))
+        {
+            return this.currentWallet?.MakeTransaction(transaction, changeAddress, fee);
+        }
+
+        public IssueTransaction MakeTransaction(IssueTransaction transaction, UInt160 changeAddress = null, Fixed8 fee = default(Fixed8))
+        {
+            return this.currentWallet?.MakeTransaction(transaction, changeAddress, fee);
+        }
+
         #endregion
 
         #region IMessageHandler implementation 
@@ -260,7 +402,7 @@ namespace Neo.Controllers
         #region Private Methods
         private void SetCurrentWallet(UserWallet wallet)
         {
-            if (this.IsWalletOpen)
+            if (this.WalletIsOpen)
             {
                 // Dispose current wallet
                 this.currentWallet.BalanceChanged -= this.CurrentWalletBalanceChanged;
@@ -274,7 +416,7 @@ namespace Neo.Controllers
 
             this.currentWallet = wallet;
 
-            if (this.IsWalletOpen)
+            if (this.WalletIsOpen)
             {
                 // Setup wallet
                 var transactions = this.currentWallet.LoadTransactions();
@@ -284,7 +426,7 @@ namespace Neo.Controllers
                 this.currentWallet.TransactionsChanged += this.CurrentWalletTransactionsChanged;
             }
 
-            this.messagePublisher.Publish(new EnableMenuItemsMessage());
+            this.messagePublisher.Publish(new CurrentWalletHasChangedMessage());
             this.LoadWallet();
 
             this.balanceChanged = true;
@@ -327,7 +469,7 @@ namespace Neo.Controllers
 
         private void LoadWallet()
         {
-            if (!this.IsWalletOpen) return;
+            if (!this.WalletIsOpen) return;
 
             foreach (var walletAddress in this.GetAddresses())
             {

@@ -27,6 +27,7 @@ namespace Neo.UI.Home
         ViewModelBase,
         ILoadable,
         IMessageHandler<UpdateApplicationMessage>,
+        IMessageHandler<CurrentWalletHasChangedMessage>,
         IMessageHandler<WalletBalanceChangedMessage>,
         IMessageHandler<SignTransactionAndShowInformationMessage>,
         IMessageHandler<BlockProgressMessage>
@@ -68,7 +69,7 @@ namespace Neo.UI.Home
         #endregion
 
         #region Public Properties
-        public bool WalletIsOpen => this.walletController.IsWalletOpen;
+        public bool WalletIsOpen => this.walletController.WalletIsOpen;
 
         public string BlockHeight
         {
@@ -386,6 +387,11 @@ namespace Neo.UI.Home
 
             // Start update
             Process.Start(message.UpdateScriptPath);
+        }
+
+        public void HandleMessage(CurrentWalletHasChangedMessage message)
+        {
+            this.NotifyPropertyChanged(nameof(this.WalletIsOpen));
         }
 
         public void HandleMessage(WalletBalanceChangedMessage message)

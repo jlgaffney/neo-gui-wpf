@@ -4,6 +4,7 @@ using Neo.Controllers;
 using Neo.Helpers;
 using Neo.UI;
 using Neo.UI.Base;
+using Neo.UI.Base.Dispatching;
 using Neo.UI.Base.Themes;
 using Neo.UI.Home;
 using Neo.UI.Updater;
@@ -15,25 +16,65 @@ namespace Neo
     /// </summary>
     public partial class App
     {
-        internal App(bool updateIsRequired = false)
+        private IBlockChainController blockChainController;
+
+        internal App()
         {
             this.InitializeComponent();
 
-            BuildContainer();
-
-            var blockChainController = ApplicationContext.Instance.ContainerLifetimeScope.Resolve(typeof(IBlockChainController)) as IBlockChainController;
-            blockChainController.StartLocalNode();
-
-            this.MainWindow = updateIsRequired ? (Window)new UpdateView() : new HomeView();
+            this.Setup();
         }
 
-        protected override void OnStartup(StartupEventArgs e)
+        private void Setup()
         {
+            BuildContainer();
+
+            var dispatcher =
+                ApplicationContext.Instance.ContainerLifetimeScope.Resolve(typeof(IDispatcher)) as IDispatcher;
+
             ThemeHelper.LoadTheme();
 
-            this.MainWindow?.Show();
+            NeoSplashScreen splashScreen = null;
+            dispatcher?.InvokeOnMainUIThread(() =>
+            {
+                splashScreen = new NeoSplashScreen();
+                splashScreen.Show();
+            });
 
-            base.OnStartup(e);
+            var updateIsRequired = false;
+            try
+            {
+                updateIsRequired = VersionHelper.UpdateIsRequired;
+
+                if (updateIsRequired) return;
+
+                // Application is starting normally, setup blockchain
+                this.blockChainController =
+                    ApplicationContext.Instance.ContainerLifetimeScope.Resolve(typeof(IBlockChainController)) as
+                        IBlockChainController;
+
+                this.blockChainController?.Setup();
+            }
+            finally
+            {
+                dispatcher?.InvokeOnMainUIThread(() =>
+                {
+                    this.MainWindow = updateIsRequired ? (Window) new UpdateView() : new HomeView();
+
+                    splashScreen.Close();
+
+                    this.MainWindow?.Show();
+                });
+            }
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            // Dispose of IBlockChainController instance
+            this.blockChainController.Dispose();
+            this.blockChainController = null;
+
+            base.OnExit(e);
         }
 
         private static void BuildContainer()

@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using Neo.Controllers;
 using Neo.Core;
 using Neo.Cryptography.ECC;
 using Neo.Properties;
@@ -21,7 +22,6 @@ namespace Neo.UI.Accounts
         private const int HoursInDay = 24;
         private const int MinutesInHour = 60;
 
-        private readonly IApplicationContext applicationContext;
         private readonly IMessagePublisher messagePublisher;
 
         private ECPoint selectedAccount;
@@ -30,13 +30,12 @@ namespace Neo.UI.Accounts
         private int unlockMinute;
 
         public CreateLockAccountViewModel(
-            IApplicationContext applicationContext,
+            IWalletController walletController,
             IMessagePublisher messagePublisher)
         {
-            this.applicationContext = applicationContext;
             this.messagePublisher = messagePublisher;
 
-            this.Accounts = new ObservableCollection<ECPoint>(this.applicationContext.CurrentWallet.GetContracts().Where(p => p.IsStandard).Select(p => this.applicationContext.CurrentWallet.GetKey(p.PublicKeyHash).PublicKey).ToArray());
+            this.Accounts = new ObservableCollection<ECPoint>(walletController.GetContracts().Where(p => p.IsStandard).Select(p => walletController.GetKey(p.PublicKeyHash).PublicKey).ToArray());
 
             this.Hours = new List<int>();
 

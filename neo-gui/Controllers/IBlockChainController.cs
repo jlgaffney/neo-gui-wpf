@@ -1,10 +1,11 @@
-﻿using Neo.Core;
+﻿using System;
+using Neo.Core;
 
 namespace Neo.Controllers
 {
-    public interface IBlockChainController
+    public interface IBlockChainController : IDisposable
     {
-        void StartLocalNode();
+        void Setup(bool setupLocalNode = true);
 
         void Relay(Transaction transaction);
     }

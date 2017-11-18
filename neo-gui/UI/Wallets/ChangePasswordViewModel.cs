@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Input;
+using Neo.Controllers;
 using Neo.Properties;
 using Neo.UI.Base.MVVM;
 
@@ -8,6 +9,7 @@ namespace Neo.UI.Wallets
     public class ChangePasswordViewModel : ViewModelBase
     {
         private readonly IApplicationContext applicationContext;
+        private readonly IWalletController walletController;
 
         private string oldPassword;
         private string newPassword;
@@ -22,9 +24,12 @@ namespace Neo.UI.Wallets
 
         public ICommand CancelCommand => new RelayCommand(this.Cancel);
 
-        public ChangePasswordViewModel(IApplicationContext applicationContext)
+        public ChangePasswordViewModel(
+            IApplicationContext applicationContext,
+            IWalletController walletController)
         {
             this.applicationContext = applicationContext;
+            this.walletController = walletController;
         }
 
         public void UpdateOldPassword(string updatedPassword)
@@ -60,7 +65,7 @@ namespace Neo.UI.Wallets
                 return;
             }
 
-            var changedSuccessfully = this.applicationContext.CurrentWallet.ChangePassword(this.oldPassword, this.newPassword);
+            var changedSuccessfully = this.walletController.ChangePassword(this.oldPassword, this.newPassword);
 
             if (changedSuccessfully)
             {

@@ -9,7 +9,6 @@ using Neo.Core;
 using Neo.Properties;
 using Neo.UI.Accounts;
 using Neo.UI.Base.Dialogs;
-using Neo.UI.Base.Dispatching;
 using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
 using Neo.UI.Messages;
@@ -22,7 +21,7 @@ namespace Neo.UI.Home
         ViewModelBase, 
         ILoadable, 
         IMessageHandler<AccountBalancesChangedMessage>,
-        IMessageHandler<EnableMenuItemsMessage>,
+        IMessageHandler<CurrentWalletHasChangedMessage>,
         IMessageHandler<ClearAccountsMessage>,
         IMessageHandler<AccountItemsChangedMessage>
     {
@@ -59,7 +58,7 @@ namespace Neo.UI.Home
             }
         }
 
-        public bool MenuItemsEnabled => this.walletController.IsWalletOpen;
+        public bool MenuItemsEnabled => this.walletController.WalletIsOpen;
 
         public bool ViewPrivateKeyEnabled =>
             this.SelectedAccount != null &&
@@ -139,7 +138,7 @@ namespace Neo.UI.Home
             }
         }
 
-        public void HandleMessage(EnableMenuItemsMessage message)
+        public void HandleMessage(CurrentWalletHasChangedMessage message)
         {
             this.NotifyPropertyChanged(nameof(this.MenuItemsEnabled));
         }
@@ -260,10 +259,7 @@ namespace Neo.UI.Home
             if (MessageBox.Show(Strings.DeleteAddressConfirmationMessage, Strings.DeleteAddressConfirmationCaption,
                 MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes) return;
 
-            var scriptHash = accountToDelete.ScriptHash != null
-                ? accountToDelete.ScriptHash
-                : accountToDelete.Contract.ScriptHash;
-            this.walletController.DeleteAddress(scriptHash);
+            this.walletController.DeleteAccount(accountToDelete);
 
             this.messagePublisher.Publish(new WalletBalanceChangedMessage(true));
         }

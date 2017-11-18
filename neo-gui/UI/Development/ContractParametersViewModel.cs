@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using MahApps.Metro.Controls.Dialogs;
+using Neo.Controllers;
 using Neo.UI.Base.Extensions;
 using Neo.Network;
 using Neo.Properties;
@@ -17,6 +18,7 @@ namespace Neo.UI.Development
     public class ContractParametersViewModel : ViewModelBase
     {
         private readonly IApplicationContext applicationContext;
+        private readonly IWalletController walletController;
         private readonly IDispatcher dispatcher;
 
         private ContractParametersContext context;
@@ -32,9 +34,11 @@ namespace Neo.UI.Development
 
         public ContractParametersViewModel(
             IApplicationContext applicationContext,
+            IWalletController walletController,
             IDispatcher dispatcher)
         {
             this.applicationContext = applicationContext;
+            this.walletController = walletController;
             this.dispatcher = dispatcher;
 
             this.ScriptHashAddresses = new ObservableCollection<string>();
@@ -48,7 +52,7 @@ namespace Neo.UI.Development
             {
                 var emptyCollection = new ObservableCollection<ContractParameter>();
 
-                if (this.applicationContext.CurrentWallet == null) return emptyCollection;
+                if (!this.walletController.WalletIsOpen) return emptyCollection;
 
                 if (string.IsNullOrEmpty(this.SelectedScriptHashAddress)) return emptyCollection;
 
