@@ -10,6 +10,10 @@ namespace Neo.Helpers
                 .RegisterType<DialogHelper>()
                 .As<IDialogHelper>();
 
+            builder
+                .RegisterType<ExternalProcessHelper>()
+                .As<IExternalProcessHelper>();
+
             base.Load(builder);
         }
     }

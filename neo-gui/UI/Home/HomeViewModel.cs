@@ -20,6 +20,7 @@ using Neo.UI.Wallets;
 using Neo.UI.Voting;
 using Neo.UI.Base.Messages;
 using Neo.Controllers;
+using Neo.Helpers;
 
 namespace Neo.UI.Home
 {
@@ -35,6 +36,7 @@ namespace Neo.UI.Home
         #region Private Fields 
         private readonly IBlockChainController blockChainController;
         private readonly IWalletController walletController;
+        private readonly IExternalProcessHelper extertenalProcessHelper;
         private readonly IMessagePublisher messagePublisher;
         private readonly IMessageSubscriber messageSubscriber;
         private readonly IDispatcher dispatcher;
@@ -55,13 +57,15 @@ namespace Neo.UI.Home
         #region Constructor 
         public HomeViewModel(
             IBlockChainController blockChainController,
-            IWalletController walletController, 
+            IWalletController walletController,
+            IExternalProcessHelper extertenalProcessHelper,
             IMessagePublisher messagePublisher,
             IMessageSubscriber messageSubscriber, 
             IDispatcher dispatcher)
         {
             this.blockChainController = blockChainController;
             this.walletController = walletController;
+            this.extertenalProcessHelper = extertenalProcessHelper;
             this.messagePublisher = messagePublisher;
             this.messageSubscriber = messageSubscriber;
             this.dispatcher = dispatcher;
@@ -342,10 +346,9 @@ namespace Neo.UI.Home
             // TODO Implement
         }
 
-        private static void ShowOfficialWebsite()
+        private void ShowOfficialWebsite()
         {
-            // TODO Issue #40: this static call need to be abstract
-            Process.Start("https://neo.org/");
+            this.extertenalProcessHelper.OpenInExternalBrowser("https://neo.org/");
         }
 
         private static void ShowDeveloperTools()

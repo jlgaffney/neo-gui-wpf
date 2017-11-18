@@ -270,6 +270,8 @@
     <Compile Include="Controllers\WalletController.cs" />
     <Compile Include="DialogResults\YesOrNoDialogResult.cs" />
     <Compile Include="Helpers\DialogHelper.cs" />
+    <Compile Include="Helpers\ExternalProcessHelper.cs" />
+    <Compile Include="Helpers\IExternalProcessHelper.cs" />
     <Compile Include="Helpers\HelpersRegistrationModule.cs" />
     <Compile Include="Helpers\IDialogHelper.cs" />
     <Compile Include="Helpers\DialogResult.cs" />

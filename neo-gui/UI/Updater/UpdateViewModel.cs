@@ -1,10 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Windows.Input;
+using Neo.Helpers;
 using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
 using Neo.UI.Messages;
@@ -19,6 +19,7 @@ namespace Neo.UI.Updater
 
         private readonly WebClient web = new WebClient();
 
+        private readonly IExternalProcessHelper externalProcessHelper;
         private readonly IMessagePublisher messagePublisher;
 
         private readonly Version latestVersion;
@@ -28,8 +29,11 @@ namespace Neo.UI.Updater
 
         private bool buttonsEnabled;
 
-        public UpdateViewModel(IMessagePublisher messagePublisher)
+        public UpdateViewModel(
+            IExternalProcessHelper externalProcessHelper,
+            IMessagePublisher messagePublisher)
         {
+            this.externalProcessHelper = externalProcessHelper;
             this.messagePublisher = messagePublisher;
 
             // Setup update information
@@ -83,14 +87,14 @@ namespace Neo.UI.Updater
 
         public ICommand CloseCommand => new RelayCommand(this.TryClose);
 
-        private static void GoToOfficialWebsite()
+        private void GoToOfficialWebsite()
         {
-            Process.Start("https://neo.org/");
+            this.externalProcessHelper.OpenInExternalBrowser("https://neo.org/");
         }
 
         private void GoToDownloadPage()
         {
-            Process.Start(this.downloadUrl);
+            this.externalProcessHelper.OpenInExternalBrowser(this.downloadUrl);
         }
 
         #region Update Downloader Methods
