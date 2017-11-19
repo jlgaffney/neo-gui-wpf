@@ -19,7 +19,7 @@ namespace Neo.UI.Wallets
 {
     public class TradeViewModel : ViewModelBase
     {
-        private readonly IApplicationContext applicationContext;
+        private readonly IBlockChainController blockChainController;
         private readonly IWalletController walletController;
         private readonly IDispatcher dispatcher;
 
@@ -34,11 +34,11 @@ namespace Neo.UI.Wallets
         private UInt160 scriptHash;
 
         public TradeViewModel(
-            IApplicationContext applicationContext, 
+            IBlockChainController blockChainController, 
             IWalletController walletController,
             IDispatcher dispatcher)
         {
-            this.applicationContext = applicationContext;
+            this.blockChainController = blockChainController;
             this.walletController = walletController;
             this.dispatcher = dispatcher;
 
@@ -249,7 +249,7 @@ namespace Neo.UI.Wallets
                 context.Verifiable.Scripts = context.GetScripts();
                 var tx = (ContractTransaction)context.Verifiable;
                 this.walletController.SaveTransaction(tx);
-                this.applicationContext.LocalNode.Relay(tx);
+                this.blockChainController.Relay(tx);
                 InformationBox.Show(tx.Hash.ToString(), Strings.TradeSuccessMessage, Strings.TradeSuccessCaption);
             }
             else

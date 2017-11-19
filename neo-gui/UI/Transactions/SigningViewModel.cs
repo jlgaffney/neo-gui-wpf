@@ -12,11 +12,21 @@ namespace Neo.UI.Transactions
     public class SigningViewModel : ViewModelBase
     {
         private readonly IApplicationContext applicationContext;
+        private readonly IBlockChainController blockChainController;
         private readonly IWalletController walletController;
 
         private string input;
         private ContractParametersContext output;
         private bool broadcastVisible;
+
+        public SigningViewModel(
+            IApplicationContext applicationContext,
+            IWalletController walletController)
+        {
+            this.blockChainController = blockChainController;
+            this.applicationContext = applicationContext;
+            this.walletController = walletController;
+        }
 
         public string Input
         {
@@ -53,14 +63,6 @@ namespace Neo.UI.Transactions
         public ICommand CopyCommand => new RelayCommand(this.Copy);
 
         public ICommand CloseCommand => new RelayCommand(this.TryClose);
-
-        public SigningViewModel(
-            IApplicationContext applicationContext,
-            IWalletController walletController)
-        {
-            this.applicationContext = applicationContext;
-            this.walletController = walletController;
-        }
 
         private void Sign()
         {
@@ -110,7 +112,7 @@ namespace Neo.UI.Transactions
 
             var inventory = (IInventory) this.output.Verifiable;
 
-            this.applicationContext.LocalNode.Relay(inventory);
+            this.blockChainController.Relay(inventory);
 
             InformationBox.Show(inventory.Hash.ToString(), Strings.RelaySuccessText, Strings.RelaySuccessTitle);
 

@@ -18,6 +18,7 @@ namespace Neo.UI.Development
     public class ContractParametersViewModel : ViewModelBase
     {
         private readonly IApplicationContext applicationContext;
+        private readonly IBlockChainController blockChainController;
         private readonly IWalletController walletController;
         private readonly IDispatcher dispatcher;
 
@@ -34,10 +35,12 @@ namespace Neo.UI.Development
 
         public ContractParametersViewModel(
             IApplicationContext applicationContext,
+            IBlockChainController blockChainController,
             IWalletController walletController,
             IDispatcher dispatcher)
         {
             this.applicationContext = applicationContext;
+            this.blockChainController = blockChainController;
             this.walletController = walletController;
             this.dispatcher = dispatcher;
 
@@ -206,7 +209,7 @@ namespace Neo.UI.Development
 
             var inventory = (IInventory) context.Verifiable;
 
-            this.applicationContext.LocalNode.Relay(inventory);
+            this.blockChainController.Relay(inventory);
 
             InformationBox.Show(inventory.Hash.ToString(), Strings.RelaySuccessText, Strings.RelaySuccessTitle);
         }

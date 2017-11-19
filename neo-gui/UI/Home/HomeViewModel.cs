@@ -31,6 +31,7 @@ namespace Neo.UI.Home
         IMessageHandler<UpdateApplicationMessage>,
         IMessageHandler<CurrentWalletHasChangedMessage>,
         IMessageHandler<WalletBalanceChangedMessage>,
+        IMessageHandler<InvokeContractMessage>,
         IMessageHandler<SignTransactionAndShowInformationMessage>,
         IMessageHandler<BlockProgressMessage>
     {

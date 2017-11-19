@@ -1,6 +1,5 @@
 ﻿using System;
 using Autofac;
-using Neo.Network;
 
 namespace Neo
 {
@@ -13,7 +12,5 @@ namespace Neo
         #endregion
 
         public ILifetimeScope ContainerLifetimeScope { get; set; }
-
-        public LocalNode LocalNode { get; set; }
     }
 }
