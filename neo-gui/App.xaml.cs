@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using Autofac;
 using Neo.Controllers;
@@ -19,7 +21,7 @@ namespace Neo
     {
         private IBlockChainController blockChainController;
 
-        internal App()
+        private App()
         {
             this.InitializeComponent();
 
@@ -28,6 +30,8 @@ namespace Neo
 
         private void Setup()
         {
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
             BuildContainer();
 
             var dispatcher = ApplicationContext.Instance.ContainerLifetimeScope.Resolve(typeof(IDispatcher)) as IDispatcher;
@@ -97,5 +101,40 @@ namespace Neo
             applicationContext.ContainerLifetimeScope = container.BeginLifetimeScope();
             ApplicationContext.Instance.ContainerLifetimeScope = container.BeginLifetimeScope();
         }
+
+        #region Unhandled exception methods
+
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            using (var fileStream = new FileStream("error.log", FileMode.Create, FileAccess.Write, FileShare.None))
+            using (var writer = new StreamWriter(fileStream))
+            {
+                PrintErrorLogs(writer, (Exception)e.ExceptionObject);
+            }
+        }
+
+        private static void PrintErrorLogs(StreamWriter writer, Exception ex)
+        {
+            writer.WriteLine(ex.GetType());
+            writer.WriteLine(ex.Message);
+            writer.WriteLine(ex.StackTrace);
+
+            // Print inner exceptions if there are any
+            if (ex is AggregateException ex2)
+            {
+                foreach (var innerException in ex2.InnerExceptions)
+                {
+                    writer.WriteLine();
+                    PrintErrorLogs(writer, innerException);
+                }
+            }
+            else if (ex.InnerException != null)
+            {
+                writer.WriteLine();
+                PrintErrorLogs(writer, ex.InnerException);
+            }
+        }
+
+        #endregion
     }
 }
