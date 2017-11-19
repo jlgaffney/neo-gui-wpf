@@ -1,4 +1,6 @@
 ﻿using System.Windows.Input;
+using System.Windows.Media;
+using Neo.UI.Base.Themes;
 
 namespace Neo.UI
 {
@@ -10,6 +12,8 @@ namespace Neo.UI
         public NeoSplashScreen()
         {
             InitializeComponent();
+
+            this.Border.BorderBrush = new SolidColorBrush(NeoTheme.Current.WindowBorderColor);
         }
 
         private void NeoSplashScreen_OnPreviewMouseMove(object sender, MouseEventArgs e)

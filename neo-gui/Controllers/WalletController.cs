@@ -25,6 +25,8 @@ namespace Neo.Controllers
         IMessageHandler<ImportPrivateKeyMessage>, 
         IMessageHandler<ImportCertificateMessage>
     {
+        private const string MinimumMigratedWalletVersion = "1.3.5";
+
         #region Private Fields 
         private readonly IDialogHelper dialogHelper;
         private readonly IMessagePublisher messagePublisher;
@@ -69,8 +71,7 @@ namespace Neo.Controllers
 
         public void OpenWallet(string walletPath, string password, bool repairMode)
         {
-            // TODO [AboimPinto] - why this verification? Why the magic string?
-            if (UserWallet.GetVersion(walletPath) < Version.Parse("1.3.5"))
+            if (UserWallet.GetVersion(walletPath) < Version.Parse(MinimumMigratedWalletVersion))
             {
                 // TODO - Issue #44 - [AboimPinto] - DialogHelper is not implemented yet.
                 var migrationApproved = this.dialogHelper.ShowDialog<YesOrNoDialogResult>("ApproveWalletMigrationDialog");
