@@ -1,4 +1,6 @@
-﻿namespace Neo.UI
+﻿using System.Windows.Input;
+
+namespace Neo.UI
 {
     /// <summary>
     /// Interaction logic for NeoSplashScreen.xaml
@@ -8,6 +10,13 @@
         public NeoSplashScreen()
         {
             InitializeComponent();
+        }
+
+        private void NeoSplashScreen_OnPreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton != MouseButtonState.Pressed) return;
+
+            this.DragMove();
         }
     }
 }

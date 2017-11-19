@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Threading.Tasks;
+using System.Windows;
 using Autofac;
 using Neo.Controllers;
 using Neo.Helpers;
@@ -29,43 +30,45 @@ namespace Neo
         {
             BuildContainer();
 
-            var dispatcher =
-                ApplicationContext.Instance.ContainerLifetimeScope.Resolve(typeof(IDispatcher)) as IDispatcher;
+            var dispatcher = ApplicationContext.Instance.ContainerLifetimeScope.Resolve(typeof(IDispatcher)) as IDispatcher;
 
-            ThemeHelper.LoadTheme();
-
-            NeoSplashScreen splashScreen = null;
-            dispatcher?.InvokeOnMainUIThread(() =>
+            Task.Run(() =>
             {
-                splashScreen = new NeoSplashScreen();
-                splashScreen.Show();
-            });
+                ThemeHelper.LoadTheme();
 
-            var updateIsRequired = false;
-            try
-            {
-                updateIsRequired = VersionHelper.UpdateIsRequired;
-
-                if (updateIsRequired) return;
-
-                // Application is starting normally, setup blockchain
-                this.blockChainController =
-                    ApplicationContext.Instance.ContainerLifetimeScope.Resolve(typeof(IBlockChainController)) as
-                        IBlockChainController;
-
-                this.blockChainController?.Setup();
-            }
-            finally
-            {
+                NeoSplashScreen splashScreen = null;
                 dispatcher?.InvokeOnMainUIThread(() =>
                 {
-                    this.MainWindow = updateIsRequired ? (Window) new UpdateView() : new HomeView();
-
-                    splashScreen.Close();
-
-                    this.MainWindow?.Show();
+                    splashScreen = new NeoSplashScreen();
+                    splashScreen.Show();
                 });
-            }
+
+                var updateIsRequired = false;
+                try
+                {
+                    updateIsRequired = VersionHelper.UpdateIsRequired;
+
+                    if (updateIsRequired) return;
+
+                    // Application is starting normally, setup blockchain
+                    this.blockChainController =
+                        ApplicationContext.Instance.ContainerLifetimeScope.Resolve(typeof(IBlockChainController)) as
+                            IBlockChainController;
+
+                    this.blockChainController?.Setup();
+                }
+                finally
+                {
+                    dispatcher?.InvokeOnMainUIThread(() =>
+                    {
+                        this.MainWindow = updateIsRequired ? (Window) new UpdateView() : new HomeView();
+
+                        splashScreen.Close();
+
+                        this.MainWindow?.Show();
+                    });
+                }
+            });
         }
 
         protected override void OnExit(ExitEventArgs e)
