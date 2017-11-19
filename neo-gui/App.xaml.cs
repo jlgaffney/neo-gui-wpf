@@ -86,9 +86,12 @@ namespace Neo
             autoFacContainerBuilder.RegisterModule<BaseRegistrationModule>();
             autoFacContainerBuilder.RegisterModule<ControllersRegistrationModule>();
             autoFacContainerBuilder.RegisterModule<HelpersRegistrationModule>();
+            autoFacContainerBuilder.RegisterModule<DialogsRegistrationModule>();
 
             var container = autoFacContainerBuilder.Build();
 
+            var applicationContext = container.Resolve<IApplicationContext>();
+            applicationContext.ContainerLifetimeScope = container.BeginLifetimeScope();
             ApplicationContext.Instance.ContainerLifetimeScope = container.BeginLifetimeScope();
         }
     }

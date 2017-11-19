@@ -1,18 +1,35 @@
-﻿using System;
+﻿using Autofac;
 
 namespace Neo.Helpers
 {
     public class DialogHelper : IDialogHelper
     {
-        #region IDialogHelper implementation 
-        public void ShowDialog(string dialogName, params string[] parameters)
-        {
+        #region Private Fields 
+        private readonly IApplicationContext applicationContext;
+        #endregion
 
+        #region Constructor 
+        public DialogHelper(IApplicationContext applicationContext)
+        {
+            this.applicationContext = applicationContext;
         }
+        #endregion
 
-        public DialogResult<T> ShowDialog<T>(string dialogName, params string[] parameters)
+        #region IDialogHelper implementation 
+        public T ShowDialog<T>(params string[] parameters)
         {
-            return default(DialogResult<T>);
+            T dialogResult = default(T);
+
+            var view = this.applicationContext.ContainerLifetimeScope.Resolve<IDialog<T>>();
+            var viewModel = view.DataContext as IDialogViewModel<T>;
+            viewModel.SetDialogResult += (sender, e) =>
+            {
+                dialogResult = e;
+            };
+
+            view.ShowDialog();
+
+            return dialogResult;
         }
         #endregion
     }

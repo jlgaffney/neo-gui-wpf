@@ -270,6 +270,10 @@
     <Compile Include="Controllers\WalletController.cs" />
     <Compile Include="DialogResults\YesOrNoDialogResult.cs" />
     <Compile Include="Helpers\DialogHelper.cs" />
+    <Compile Include="Helpers\ExternalProcessHelper.cs" />
+    <Compile Include="Helpers\IDialog.cs" />
+    <Compile Include="Helpers\IDialogViewModel.cs" />
+    <Compile Include="Helpers\IExternalProcessHelper.cs" />
     <Compile Include="Helpers\HelpersRegistrationModule.cs" />
     <Compile Include="Helpers\IDialogHelper.cs" />
     <Compile Include="Helpers\DialogResult.cs" />
@@ -342,6 +346,7 @@
     <Compile Include="UI\Base\Themes\NeoTheme.cs" />
     <Compile Include="UI\Base\Themes\ThemeStyle.cs" />
     <Compile Include="UI\Base\Themes\ThemeHelper.cs" />
+    <Compile Include="UI\DialogsRegistrationModule.cs" />
     <Compile Include="UI\Home\TransactionsView.xaml.cs">
       <DependentUpon>TransactionsView.xaml</DependentUpon>
     </Compile>
@@ -806,6 +811,9 @@
     <Page Include="UI\Updater\UpdateView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="UI\Dialogs\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.7\build\net35\SQLitePCLRaw.lib.e_sqlite3.linux.targets" Condition="Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.7\build\net35\SQLitePCLRaw.lib.e_sqlite3.linux.targets')" />

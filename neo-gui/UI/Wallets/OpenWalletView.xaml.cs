@@ -1,6 +1,8 @@
 ﻿using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using Neo.DialogResults;
+using Neo.Helpers;
 using Neo.Properties;
 
 namespace Neo.UI.Wallets
@@ -8,7 +10,7 @@ namespace Neo.UI.Wallets
     /// <summary>
     /// Interaction logic for OpenWalletView.xaml
     /// </summary>
-    public partial class OpenWalletView
+    public partial class OpenWalletView : IDialog<OpenWalletDialogResult>
     {
         private readonly OpenWalletViewModel viewModel;
 

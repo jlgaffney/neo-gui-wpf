@@ -1,17 +1,23 @@
-﻿using System.Windows.Input;
+﻿using System;
+using System.Windows.Input;
 using Microsoft.Win32;
+using Neo.DialogResults;
+using Neo.Helpers;
 using Neo.UI.Base.MVVM;
 
 namespace Neo.UI.Wallets
 {
-    public class OpenWalletViewModel : ViewModelBase
+    public class OpenWalletViewModel : ViewModelBase, IDialogViewModel<OpenWalletDialogResult>
     {
+        #region Private Fields
         private string walletPath;
         private string password;
         private bool repairMode;
 
         private bool confirmed;
+        #endregion
 
+        #region Public Properties 
         public string WalletPath
         {
             get => this.walletPath;
@@ -57,7 +63,15 @@ namespace Neo.UI.Wallets
         public ICommand GetWalletPathCommand => new RelayCommand(this.GetWalletPath);
 
         public ICommand ConfirmCommand => new RelayCommand(this.Confirm);
+        #endregion
 
+        #region IDialogViewModel implementation 
+        public event EventHandler<OpenWalletDialogResult> SetDialogResult;
+
+        public OpenWalletDialogResult DialogResult { get; private set; }
+        #endregion
+
+        #region Public Methods 
         public void UpdatePassword(string updatedPassword)
         {
             this.password = updatedPassword;
@@ -80,7 +94,9 @@ namespace Neo.UI.Wallets
 
             return true;
         }
+        #endregion
 
+        #region Private Methods 
         private void GetWalletPath()
         {
             var openFileDialog = new OpenFileDialog
@@ -101,7 +117,17 @@ namespace Neo.UI.Wallets
 
             this.confirmed = true;
 
+            if (this.SetDialogResult != null)
+            {
+                var dialogResult = new OpenWalletDialogResult(
+                    this.WalletPath, 
+                    this.password, 
+                    this.RepairMode);
+                this.SetDialogResult(this, dialogResult);
+            }
+
             this.TryClose();
         }
+        #endregion
     }
 }
