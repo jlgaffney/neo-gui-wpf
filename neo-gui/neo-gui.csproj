@@ -253,6 +253,12 @@
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="ToastNotifications, Version=2.2.5.0, Culture=neutral, PublicKeyToken=e89d9d7314a7c797, processorArchitecture=MSIL">
+      <HintPath>..\packages\ToastNotifications.2.2.5\lib\net40\ToastNotifications.dll</HintPath>
+    </Reference>
+    <Reference Include="ToastNotifications.Messages, Version=2.2.5.0, Culture=neutral, PublicKeyToken=e89d9d7314a7c797, processorArchitecture=MSIL">
+      <HintPath>..\packages\ToastNotifications.Messages.2.2.5\lib\net40\ToastNotifications.Messages.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
@@ -277,6 +283,8 @@
     <Compile Include="Helpers\HelpersRegistrationModule.cs" />
     <Compile Include="Helpers\IDialogHelper.cs" />
     <Compile Include="Helpers\DialogResult.cs" />
+    <Compile Include="Helpers\INotificationHelper.cs" />
+    <Compile Include="Helpers\NotificationHelper.cs" />
     <Compile Include="IApplicationContext.cs" />
     <Compile Include="NeoGuiRegistrationModule.cs" />
     <Compile Include="UI\Base\BaseRegistrationModule.cs" />

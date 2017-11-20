@@ -14,6 +14,11 @@ namespace Neo.Helpers
                 .RegisterType<ExternalProcessHelper>()
                 .As<IExternalProcessHelper>();
 
+            builder
+                .RegisterType<NotificationHelper>()
+                .As<INotificationHelper>()
+                .SingleInstance();
+
             base.Load(builder);
         }
     }

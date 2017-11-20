@@ -31,11 +31,9 @@ namespace Neo.UI.Home
         IMessageHandler<UpdateApplicationMessage>,
         IMessageHandler<CurrentWalletHasChangedMessage>,
         IMessageHandler<WalletBalanceChangedMessage>,
-        IMessageHandler<SignTransactionAndShowInformationMessage>,
         IMessageHandler<BlockProgressMessage>
     {
         #region Private Fields 
-        private readonly IBlockChainController blockChainController;
         private readonly IWalletController walletController;
         private readonly IDialogHelper dialogHelper;
         private readonly IExternalProcessHelper extertenalProcessHelper;
@@ -58,7 +56,6 @@ namespace Neo.UI.Home
 
         #region Constructor 
         public HomeViewModel(
-            IBlockChainController blockChainController,
             IWalletController walletController,
             IDialogHelper dialogHelper, 
             IExternalProcessHelper extertenalProcessHelper,
@@ -66,7 +63,6 @@ namespace Neo.UI.Home
             IMessageSubscriber messageSubscriber, 
             IDispatcher dispatcher)
         {
-            this.blockChainController = blockChainController;
             this.walletController = walletController;
             this.dialogHelper = dialogHelper;
             this.extertenalProcessHelper = extertenalProcessHelper;
@@ -406,46 +402,6 @@ namespace Neo.UI.Home
         {
             var invokeContractView = new InvokeContractView(message.Transaction);
             invokeContractView.ShowDialog();
-        }
-
-        // TODO: Issue: #39 - Move these message handlers to a more appropriate place, they don't need to be in HomeViewModel
-        public void HandleMessage(SignTransactionAndShowInformationMessage message)
-        {
-            var transaction = message.Transaction;
-
-            if (transaction == null)
-            {
-                MessageBox.Show(Strings.InsufficientFunds);
-                return;
-            }
-
-            ContractParametersContext context;
-            try
-            {
-                context = new ContractParametersContext(transaction);
-            }
-            catch (InvalidOperationException)
-            {
-                MessageBox.Show(Strings.UnsynchronizedBlock);
-                return;
-            }
-
-            this.walletController.Sign(context);
-
-            if (context.Completed)
-            {
-                context.Verifiable.Scripts = context.GetScripts();
-
-                // TODO [AboimPinto] this method should be added to the WalletController or the BlockChainController
-                this.walletController.SaveTransaction(transaction);
-                this.blockChainController.Relay(transaction);
-
-                InformationBox.Show(transaction.Hash.ToString(), Strings.SendTxSucceedMessage, Strings.SendTxSucceedTitle);
-            }
-            else
-            {
-                InformationBox.Show(context.ToString(), Strings.IncompletedSignatureMessage, Strings.IncompletedSignatureTitle);
-            }
         }
 
         public void HandleMessage(BlockProgressMessage message)

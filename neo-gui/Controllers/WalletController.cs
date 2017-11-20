@@ -23,10 +23,13 @@ namespace Neo.Controllers
         IMessageHandler<AddContractsMessage>, 
         IMessageHandler<AddContractMessage>, 
         IMessageHandler<ImportPrivateKeyMessage>, 
-        IMessageHandler<ImportCertificateMessage>
+        IMessageHandler<ImportCertificateMessage>,
+        IMessageHandler<SignTransactionAndShowInformationMessage>
     {
         #region Private Fields 
+        private readonly IBlockChainController blockChainController;
         private readonly IDialogHelper dialogHelper;
+        private readonly INotificationHelper notificationHelper;
         private readonly IMessagePublisher messagePublisher;
 
         private UserWallet currentWallet;
@@ -39,11 +42,15 @@ namespace Neo.Controllers
 
         #region Constructor 
         public WalletController(
+            IBlockChainController blockChainController,
             IDialogHelper dialogHelper,
+            INotificationHelper notificationHelper,
             IMessagePublisher messagePublisher,
             IMessageSubscriber messageSubscriber)
         {
+            this.blockChainController = blockChainController;
             this.dialogHelper = dialogHelper;
+            this.notificationHelper = notificationHelper;
             this.messagePublisher = messagePublisher;
 
             messageSubscriber.Subscribe(this);
@@ -395,6 +402,44 @@ namespace Neo.Controllers
             foreach (var contract in this.currentWallet.GetContracts(key.PublicKeyHash))
             {
                 this.AddContract(contract);
+            }
+        }
+
+        public void HandleMessage(SignTransactionAndShowInformationMessage message)
+        {
+            var transaction = message.Transaction;
+
+            if (transaction == null)
+            {
+                this.notificationHelper.ShowErrorNotification(Strings.InsufficientFunds);
+                return;
+            }
+
+            ContractParametersContext context;
+            try
+            {
+                context = new ContractParametersContext(transaction);
+            }
+            catch (InvalidOperationException)
+            {
+                this.notificationHelper.ShowErrorNotification(Strings.UnsynchronizedBlock);
+                return;
+            }
+
+            this.Sign(context);
+
+            if (context.Completed)
+            {
+                context.Verifiable.Scripts = context.GetScripts();
+
+                this.SaveTransaction(transaction);
+                this.blockChainController.Relay(transaction);
+
+                this.notificationHelper.ShowSuccessNotification($"{Strings.SendTxSucceedMessage} {transaction.Hash.ToString()}");
+            }
+            else
+            {
+                this.notificationHelper.ShowSuccessNotification($"{Strings.IncompletedSignatureMessage} {context.ToString()}");
             }
         }
         #endregion
