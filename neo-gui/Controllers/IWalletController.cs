@@ -27,7 +27,7 @@ namespace Neo.Controllers
 
         bool Sign(ContractParametersContext context);
 
-        void CreateNewKey();        // TODO - Issue #43 [AboimPinto] - this method will create a new key or new NEO address? Please review the name.
+        void CreateNewKey();
 
         KeyPair GetKeyByScriptHash(UInt160 scriptHash);
 

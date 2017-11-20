@@ -1,5 +1,6 @@
 ﻿using System;
 using Neo.Core;
+using Neo.Network;
 
 namespace Neo.Controllers
 {
@@ -8,5 +9,7 @@ namespace Neo.Controllers
         void Setup(bool setupLocalNode = true);
 
         void Relay(Transaction transaction);
+
+        void Relay(IInventory inventory);
     }
 }

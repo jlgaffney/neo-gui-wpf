@@ -73,6 +73,11 @@ namespace Neo.Controllers
             this.localNode.Relay(transaction);
         }
 
+        public void Relay(IInventory inventory)
+        {
+            this.localNode.Relay(inventory);
+        }
+
         #endregion
 
         #region Private Methods 
@@ -101,7 +106,6 @@ namespace Neo.Controllers
             {
                 UpnpEnabled = true
             };
-            this.applicationContext.LocalNode = this.localNode;
 
             Task.Run(() =>
             {

@@ -31,6 +31,7 @@ namespace Neo.UI.Home
         IMessageHandler<UpdateApplicationMessage>,
         IMessageHandler<CurrentWalletHasChangedMessage>,
         IMessageHandler<WalletBalanceChangedMessage>,
+        IMessageHandler<InvokeContractMessage>,
         IMessageHandler<BlockProgressMessage>
     {
         #region Private Fields 
@@ -397,7 +398,6 @@ namespace Neo.UI.Home
             this.balanceChanged = message.BalanceChanged;
         }
 
-        // TODO [AboimPinto] #38: HomeViewModel doesn isn't the message receiver of this message. I could not find any class that is the receiver of this message. This need to be reviewed.
         public void HandleMessage(InvokeContractMessage message)
         {
             var invokeContractView = new InvokeContractView(message.Transaction);

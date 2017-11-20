@@ -3,19 +3,24 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:properties="clr-namespace:Neo.Properties"
         Title="{x:Static properties:Strings.NeoGuiTitle}"
-        Width="525" Height="340" ResizeMode="NoResize" WindowStyle="None">
+        Width="420"
+        Height="280"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        PreviewMouseMove="NeoSplashScreen_OnPreviewMouseMove">
+    <Border x:Name="Border" BorderThickness="1"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid Margin="12" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
- <Grid Margin="12">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+            <Image Grid.Row="0" Source="pack://application:,,,/Resources/logo_72.png" Width="60" Height="60"  HorizontalAlignment="Center" VerticalAlignment="Center" />
 
-        <Image Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <Label Grid.Row="1" Content="{x:Static properties:Strings.NeoGuiTitle}" FontSize="26" Margin="0 4 0 20" HorizontalAlignment="Center" VerticalAlignment="Center" />
 
-        <Label Grid.Row="1" Content="{x:Static properties:Strings.NeoGuiTitle}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-
-        <ProgressBar Grid.Row="2" IsIndeterminate="True" HorizontalAlignment="Center" VerticalAlignment="Center" />
-    </Grid>
+            <ProgressBar Grid.Row="2" IsIndeterminate="True" Width="80" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Grid>
+    </Border>
 </Window>
