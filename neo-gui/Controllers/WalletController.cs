@@ -66,6 +66,28 @@ namespace Neo.Controllers
 
         public uint WalletHeight => !this.WalletIsOpen ? 0 : this.currentWallet.WalletHeight;
 
+        public bool WalletNeedUpgrade(string walletPath)
+        {
+            if (UserWallet.GetVersion(walletPath) < Version.Parse(MinimumMigratedWalletVersion))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public void UpgradeWallet(string walletPath)
+        {
+            var pathOld = Path.ChangeExtension(walletPath, ".old.db3");
+            var pathNew = Path.ChangeExtension(walletPath, ".new.db3");
+            UserWallet.Migrate(walletPath, pathNew);
+            File.Move(walletPath, pathOld);
+            File.Move(pathNew, walletPath);
+
+            // TODO [AboimPinto]: this string need to be localized.
+            this.notificationHelper.ShowInformationNotification("Wallet migration completed.");
+        }
+
         public void CreateWallet(string walletPath, string password)
         {
             var newWallet = UserWallet.Create(walletPath, password);
@@ -78,20 +100,6 @@ namespace Neo.Controllers
 
         public void OpenWallet(string walletPath, string password, bool repairMode)
         {
-            if (UserWallet.GetVersion(walletPath) < Version.Parse(MinimumMigratedWalletVersion))
-            {
-                // TODO - Issue #44 - [AboimPinto] - DialogHelper is not implemented yet.
-                var migrationApproved = this.dialogHelper.ShowDialog<YesOrNoDialogResult>("ApproveWalletMigrationDialog");
-
-                if (!migrationApproved.Yes)
-                {
-                    return;
-                }
-
-                this.MigrateWallet(walletPath);
-                //this.dialogHelper.ShowDialog("WalletMigrationCompleteDialog");
-            }
-
             var userWallet = this.OpenWalletWithPath(walletPath, password);
             if (userWallet == null)
             {
@@ -487,15 +495,6 @@ namespace Neo.Controllers
         private void CurrentWalletBalanceChanged(object sender, EventArgs e)
         {
             this.balanceChanged = true;
-        }
-
-        private void MigrateWallet(string walletPath)
-        {
-            var pathOld = Path.ChangeExtension(walletPath, ".old.db3");
-            var pathNew = Path.ChangeExtension(walletPath, ".new.db3");
-            UserWallet.Migrate(walletPath, pathNew);
-            File.Move(walletPath, pathOld);
-            File.Move(pathNew, walletPath);
         }
 
         private UserWallet OpenWalletWithPath(string walletPath, string password)

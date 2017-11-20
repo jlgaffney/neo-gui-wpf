@@ -13,6 +13,10 @@ namespace Neo.Controllers
 
         uint WalletHeight { get; }
 
+        bool WalletNeedUpgrade(string walletPath);
+
+        void UpgradeWallet(string walletPath);
+
         void CreateWallet(string walletPath, string password);
 
         void OpenWallet(string walletPath, string password, bool repairMode);

@@ -240,6 +240,23 @@ namespace Neo.UI.Home
         private void OpenWallet()
         {
             var openWalletDialogresult = this.dialogHelper.ShowDialog<OpenWalletDialogResult>();
+
+            if (openWalletDialogresult == null)
+            {
+                return;
+            }
+
+            if (this.walletController.WalletNeedUpgrade(openWalletDialogresult.WalletPath))
+            {
+                var migrationApproved = this.dialogHelper.ShowDialog<YesOrNoDialogResult>("ApproveWalletMigrationDialog");
+                if (!migrationApproved.Yes)
+                {
+                    return;
+                }
+
+                this.walletController.UpgradeWallet(openWalletDialogresult.WalletPath);
+            }
+            
             this.walletController.OpenWallet(openWalletDialogresult.WalletPath, openWalletDialogresult.Password, openWalletDialogresult.OpenInRepairMode);
         }
 
