@@ -375,6 +375,7 @@
     <Compile Include="UI\MarkupExtensions\DataContextBindingExtension.cs" />
     <Compile Include="UI\Messages\AccountItemsChangedMessage.cs" />
     <Compile Include="UI\Messages\AddAssetMessage.cs" />
+    <Compile Include="UI\Messages\BlockchainPersistCompletMessage.cs" />
     <Compile Include="UI\Messages\BlockProgressMessage.cs" />
     <Compile Include="UI\Messages\AccountBalancesChangedMessage.cs" />
     <Compile Include="UI\Messages\ClearAccountsMessage.cs" />
@@ -391,6 +392,7 @@
     <Compile Include="UI\Messages\UpdateTransactionsMessage.cs" />
     <Compile Include="UI\Messages\AddContractsMessage.cs" />
     <Compile Include="UI\Messages\SignTransactionAndShowInformationMessage.cs" />
+    <Compile Include="UI\Messages\UpdateWalletMessage.cs" />
     <Compile Include="UI\Messages\WalletBalanceChangedMessage.cs" />
     <Compile Include="UI\NeoSplashScreen.xaml.cs">
       <DependentUpon>NeoSplashScreen.xaml</DependentUpon>

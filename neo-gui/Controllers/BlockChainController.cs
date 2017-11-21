@@ -23,10 +23,8 @@ namespace Neo.Controllers
     public class BlockChainController : IBlockChainController
     {
         #region Private Fields
-        private readonly IWalletController walletController;
         private readonly IApplicationContext applicationContext;
         private readonly IMessagePublisher messagePublisher;
-        private readonly IDispatcher dispatcher;
         
         private bool disposed = false;
 
@@ -36,21 +34,15 @@ namespace Neo.Controllers
 
         private DateTime persistenceTime = DateTime.MinValue;
         private Timer uiUpdateTimer;
-        private bool balanceChanged;
-        private bool checkNep5Balance;
         #endregion
 
         #region Constructor 
         public BlockChainController(
-            IWalletController walletController,
             IApplicationContext applicationContext, 
-            IMessagePublisher messagePublisher, 
-            IDispatcher dispatcher)
+            IMessagePublisher messagePublisher)
         {
-            this.walletController = walletController;
             this.applicationContext = applicationContext;
             this.messagePublisher = messagePublisher;
-            this.dispatcher = dispatcher;
         }
         #endregion
 
@@ -134,7 +126,7 @@ namespace Neo.Controllers
             var persistenceSpan = DateTime.UtcNow - this.persistenceTime;
 
             this.UpdateBlockProgress(persistenceSpan);
-            this.UpdateBalances(persistenceSpan);
+            this.messagePublisher.Publish(new UpdateWalletMessage(persistenceSpan));
         }
 
         private void UpdateBlockProgress(TimeSpan persistenceSpan)
@@ -157,7 +149,7 @@ namespace Neo.Controllers
                 blockProgress = persistenceSpan.Seconds;
             }
 
-            var blockHeight = $"{GetWalletHeight()}/{Blockchain.Default.Height}/{Blockchain.Default.HeaderHeight}";
+            var blockHeight = $"{Blockchain.Default.Height}/{Blockchain.Default.HeaderHeight}";
             var nodeCount = this.localNode.RemoteNodeCount;
             var blockStatus = $"{Strings.WaitingForNextBlock}:";
 
@@ -168,97 +160,6 @@ namespace Neo.Controllers
                 nodeCount, 
                 blockStatus);
             this.messagePublisher.Publish(blockProgressMessage);
-        }
-
-        private void UpdateBalances(TimeSpan persistenceSpan)
-        {
-            if (!this.walletController.WalletIsOpen) return;
-
-            this.UpdateAssetBalances();
-
-            this.UpdateNEP5TokenBalances(persistenceSpan);
-        }
-
-        private void UpdateAssetBalances()
-        {
-            if (this.walletController.WalletHeight > Blockchain.Default.Height + 1) return;
-
-            this.messagePublisher.Publish(new AccountBalancesChangedMessage());
-            this.messagePublisher.Publish(new UpdateAssetsBalanceMessage(this.balanceChanged));
-        }
-
-        private async void UpdateNEP5TokenBalances(TimeSpan persistenceSpan)
-        {
-            if (!checkNep5Balance) return;
-
-            if (persistenceSpan <= TimeSpan.FromSeconds(2)) return;
-
-            // Update balances
-            var addresses = this.walletController.GetAddresses();
-
-            foreach (var s in Settings.Default.NEP5Watched)
-            {
-                var scriptHash = UInt160.Parse(s);
-                byte[] script;
-                using (var builder = new ScriptBuilder())
-                {
-                    foreach (var address in addresses)
-                    {
-                        builder.EmitAppCall(scriptHash, "balanceOf", address);
-                    }
-                    builder.Emit(OpCode.DEPTH, OpCode.PACK);
-                    builder.EmitAppCall(scriptHash, "decimals");
-                    builder.EmitAppCall(scriptHash, "name");
-                    script = builder.ToArray();
-                }
-
-                var engine = ApplicationEngine.Run(script);
-                if (engine.State.HasFlag(VMState.FAULT)) continue;
-
-                var name = engine.EvaluationStack.Pop().GetString();
-                var decimals = (byte)engine.EvaluationStack.Pop().GetBigInteger();
-                var amount = engine.EvaluationStack.Pop().GetArray().Aggregate(BigInteger.Zero, (x, y) => x + y.GetBigInteger());
-                if (amount == 0) continue;
-                var balance = new BigDecimal(amount, decimals);
-                var valueText = balance.ToString();
-
-                await this.dispatcher.InvokeOnMainUIThread(() =>
-                {
-                    var item = (AssetItem)null; //this.GetAsset(scriptHash);
-
-                    if (item != null)
-                    {
-                        item.Value = valueText;
-                    }
-                    else
-                    {
-                        var assetItem = new AssetItem
-                        {
-                            Name = name,
-                            Type = "NEP-5",
-                            Issuer = $"ScriptHash:{scriptHash}",
-                            Value = valueText,
-                        };
-
-                        this.messagePublisher.Publish(new AddAssetMessage(assetItem));
-                    }
-                });
-            }
-            checkNep5Balance = false;
-        }
-
-        private uint GetWalletHeight()
-        {
-            uint walletHeight = 0;
-
-            if (this.walletController.WalletIsOpen &&
-                this.walletController.WalletHeight > 0)
-            {
-                // Set wallet height
-                walletHeight = this.walletController.WalletHeight - 1;
-            }
-
-            return walletHeight;
         }
 
         private void CheckForNewerVersion()
@@ -320,22 +221,7 @@ namespace Neo.Controllers
 
         private void BlockchainPersistCompleted(object sender, Block block)
         {
-            this.persistenceTime = DateTime.UtcNow;
-            if (this.walletController.WalletIsOpen)
-            {
-                this.checkNep5Balance = true;
-
-                var coins = this.walletController.GetCoins();
-
-                if (coins.Any(
-                    coin => !coin.State.HasFlag(CoinState.Spent) &&
-                    coin.Output.AssetId.Equals(Blockchain.GoverningToken.Hash)))
-                {
-                    balanceChanged = true;
-                }
-            }
-
-            this.messagePublisher.Publish(new UpdateTransactionsMessage(Enumerable.Empty<TransactionInfo>()));
+            this.messagePublisher.Publish(new BlockchainPersistCompletMessage());
         }
         #endregion
         

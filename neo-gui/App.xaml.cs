@@ -20,6 +20,7 @@ namespace Neo
     public partial class App
     {
         private IBlockChainController blockChainController;
+        private IApplicationContext applicationContext;
 
         private App()
         {
@@ -34,7 +35,7 @@ namespace Neo
 
             BuildContainer();
 
-            var dispatcher = ApplicationContext.Instance.ContainerLifetimeScope.Resolve(typeof(IDispatcher)) as IDispatcher;
+            var dispatcher = this.applicationContext.ContainerLifetimeScope.Resolve(typeof(IDispatcher)) as IDispatcher;
 
             Task.Run(() =>
             {
@@ -56,7 +57,7 @@ namespace Neo
 
                     // Application is starting normally, setup blockchain
                     this.blockChainController =
-                        ApplicationContext.Instance.ContainerLifetimeScope.Resolve(typeof(IBlockChainController)) as
+                        this.applicationContext.ContainerLifetimeScope.Resolve(typeof(IBlockChainController)) as
                             IBlockChainController;
 
                     this.blockChainController?.Setup();
@@ -84,7 +85,7 @@ namespace Neo
             base.OnExit(e);
         }
 
-        private static void BuildContainer()
+        private void BuildContainer()
         {
             var autoFacContainerBuilder = new ContainerBuilder();
 
@@ -97,8 +98,8 @@ namespace Neo
 
             var container = autoFacContainerBuilder.Build();
 
-            var applicationContext = container.Resolve<IApplicationContext>();
-            applicationContext.ContainerLifetimeScope = container.BeginLifetimeScope();
+            this.applicationContext = container.Resolve<IApplicationContext>();
+            this.applicationContext.ContainerLifetimeScope = container.BeginLifetimeScope();
             ApplicationContext.Instance.ContainerLifetimeScope = container.BeginLifetimeScope();
         }
 
