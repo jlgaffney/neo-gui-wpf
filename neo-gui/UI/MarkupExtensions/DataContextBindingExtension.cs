@@ -10,6 +10,10 @@ namespace Neo.UI.MarkupExtensions
 {
     public class DataContextBindingExtension : MarkupExtension
     {
+        #region Private fields
+        private static ILifetimeScope containerLifetimeScope;
+        #endregion
+
         #region Public Properties 
         [ConstructorArgument("viewModel")]
         public Type ViewModel { get; set; }
@@ -37,7 +41,7 @@ namespace Neo.UI.MarkupExtensions
 
             if (target == null || DesignerProperties.GetIsInDesignMode(target)) return null;
 
-            var viewModelInstance = ApplicationContext.Instance.ContainerLifetimeScope.Resolve(this.ViewModel);
+            var viewModelInstance = containerLifetimeScope.Resolve(this.ViewModel);
 
             if (viewModelInstance == null) return null;
 
@@ -49,6 +53,13 @@ namespace Neo.UI.MarkupExtensions
             }
 
             return viewModelInstance;
+        }
+        #endregion
+
+        #region Static methods
+        public static void SetLifetimeScope(ILifetimeScope lifetimeScope)
+        {
+            containerLifetimeScope = lifetimeScope;
         }
         #endregion
     }
