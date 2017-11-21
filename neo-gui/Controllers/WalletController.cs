@@ -13,6 +13,7 @@ using Neo.SmartContract;
 using Neo.UI;
 using Neo.UI.Base.Messages;
 using Neo.UI.Messages;
+using Neo.VM;
 using Neo.Wallets;
 using ECPoint = Neo.Cryptography.ECC.ECPoint;
 
@@ -23,12 +24,16 @@ namespace Neo.Controllers
         IMessageHandler<AddContractsMessage>, 
         IMessageHandler<AddContractMessage>, 
         IMessageHandler<ImportPrivateKeyMessage>, 
-        IMessageHandler<ImportCertificateMessage>
+        IMessageHandler<ImportCertificateMessage>,
+        IMessageHandler<SignTransactionAndShowInformationMessage>, 
+        IMessageHandler<UpdateWalletMessage>, 
+        IMessageHandler<BlockchainPersistCompletMessage>
     {
         private const string MinimumMigratedWalletVersion = "1.3.5";
 
         #region Private Fields 
-        private readonly IDialogHelper dialogHelper;
+        private readonly IBlockChainController blockChainController;
+        private readonly INotificationHelper notificationHelper;
         private readonly IMessagePublisher messagePublisher;
 
         private UserWallet currentWallet;
@@ -41,11 +46,13 @@ namespace Neo.Controllers
 
         #region Constructor 
         public WalletController(
-            IDialogHelper dialogHelper,
+            IBlockChainController blockChainController,
+            INotificationHelper notificationHelper,
             IMessagePublisher messagePublisher,
             IMessageSubscriber messageSubscriber)
         {
-            this.dialogHelper = dialogHelper;
+            this.blockChainController = blockChainController;
+            this.notificationHelper = notificationHelper;
             this.messagePublisher = messagePublisher;
 
             messageSubscriber.Subscribe(this);
@@ -59,6 +66,28 @@ namespace Neo.Controllers
 
         public uint WalletHeight => !this.WalletIsOpen ? 0 : this.currentWallet.WalletHeight;
 
+        public bool WalletNeedUpgrade(string walletPath)
+        {
+            if (UserWallet.GetVersion(walletPath) < Version.Parse(MinimumMigratedWalletVersion))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public void UpgradeWallet(string walletPath)
+        {
+            var pathOld = Path.ChangeExtension(walletPath, ".old.db3");
+            var pathNew = Path.ChangeExtension(walletPath, ".new.db3");
+            UserWallet.Migrate(walletPath, pathNew);
+            File.Move(walletPath, pathOld);
+            File.Move(pathNew, walletPath);
+
+            // TODO [AboimPinto]: this string need to be localized.
+            this.notificationHelper.ShowInformationNotification("Wallet migration completed.");
+        }
+
         public void CreateWallet(string walletPath, string password)
         {
             var newWallet = UserWallet.Create(walletPath, password);
@@ -71,20 +100,6 @@ namespace Neo.Controllers
 
         public void OpenWallet(string walletPath, string password, bool repairMode)
         {
-            if (UserWallet.GetVersion(walletPath) < Version.Parse(MinimumMigratedWalletVersion))
-            {
-                // TODO - Issue #44 - [AboimPinto] - DialogHelper is not implemented yet.
-                var migrationApproved = this.dialogHelper.ShowDialog<YesOrNoDialogResult>("ApproveWalletMigrationDialog");
-
-                if (!migrationApproved.Yes)
-                {
-                    return;
-                }
-
-                this.MigrateWallet(walletPath);
-                //this.dialogHelper.ShowDialog("WalletMigrationCompleteDialog");
-            }
-
             var userWallet = this.OpenWalletWithPath(walletPath, password);
             if (userWallet == null)
             {
@@ -398,6 +413,72 @@ namespace Neo.Controllers
                 this.AddContract(contract);
             }
         }
+
+        public void HandleMessage(SignTransactionAndShowInformationMessage message)
+        {
+            var transaction = message.Transaction;
+
+            if (transaction == null)
+            {
+                this.notificationHelper.ShowErrorNotification(Strings.InsufficientFunds);
+                return;
+            }
+
+            ContractParametersContext context;
+            try
+            {
+                context = new ContractParametersContext(transaction);
+            }
+            catch (InvalidOperationException)
+            {
+                this.notificationHelper.ShowErrorNotification(Strings.UnsynchronizedBlock);
+                return;
+            }
+
+            this.Sign(context);
+
+            if (context.Completed)
+            {
+                context.Verifiable.Scripts = context.GetScripts();
+
+                this.SaveTransaction(transaction);
+                this.blockChainController.Relay(transaction);
+
+                this.notificationHelper.ShowSuccessNotification($"{Strings.SendTxSucceedMessage} {transaction.Hash.ToString()}");
+            }
+            else
+            {
+                this.notificationHelper.ShowSuccessNotification($"{Strings.IncompletedSignatureMessage} {context.ToString()}");
+            }
+        }
+
+        public void HandleMessage(UpdateWalletMessage message)
+        {
+            if (!this.WalletIsOpen) return;
+
+            this.UpdateAssetBalances();
+
+            this.UpdateNEP5TokenBalances(message.PersistenceSpan);
+        }
+
+        public void HandleMessage(BlockchainPersistCompletMessage message)
+        {
+            if (this.WalletIsOpen)
+            {
+                this.checkNep5Balance = true;
+
+                var coins = this.GetCoins();
+
+                if (coins.Any(
+                    coin => !coin.State.HasFlag(CoinState.Spent) &&
+                    coin.Output.AssetId.Equals(Blockchain.GoverningToken.Hash)))
+                {
+                    this.balanceChanged = true;
+                }
+            }
+
+            this.messagePublisher.Publish(new UpdateTransactionsMessage(Enumerable.Empty<TransactionInfo>()));
+        }
         #endregion
 
         #region Private Methods
@@ -444,15 +525,6 @@ namespace Neo.Controllers
             this.balanceChanged = true;
         }
 
-        private void MigrateWallet(string walletPath)
-        {
-            var pathOld = Path.ChangeExtension(walletPath, ".old.db3");
-            var pathNew = Path.ChangeExtension(walletPath, ".new.db3");
-            UserWallet.Migrate(walletPath, pathNew);
-            File.Move(walletPath, pathOld);
-            File.Move(pathNew, walletPath);
-        }
-
         private UserWallet OpenWalletWithPath(string walletPath, string password)
         {
             try
@@ -462,7 +534,7 @@ namespace Neo.Controllers
             }
             catch (CryptographicException)
             {
-                //this.dialogHelper.ShowDialog("WalletPasswordIncorrectDialog", Strings.PasswordIncorrect);
+                this.notificationHelper.ShowErrorNotification(Strings.PasswordIncorrect);
             }
 
             return null;
@@ -532,6 +604,71 @@ namespace Neo.Controllers
             }
 
             this.messagePublisher.Publish(new AccountItemsChangedMessage(this.accounts));
+        }
+
+        private void UpdateAssetBalances()
+        {
+            if (this.WalletHeight > Blockchain.Default.Height + 1) return;
+
+            this.messagePublisher.Publish(new AccountBalancesChangedMessage());
+            this.messagePublisher.Publish(new UpdateAssetsBalanceMessage(this.balanceChanged));
+        }
+
+        private void UpdateNEP5TokenBalances(TimeSpan persistenceSpan)
+        {
+            if (!checkNep5Balance) return;
+
+            if (persistenceSpan <= TimeSpan.FromSeconds(2)) return;
+
+            // Update balances
+            var addresses = this.GetAddresses();
+
+            foreach (var s in Settings.Default.NEP5Watched)
+            {
+                var scriptHash = UInt160.Parse(s);
+                byte[] script;
+                using (var builder = new ScriptBuilder())
+                {
+                    foreach (var address in addresses)
+                    {
+                        builder.EmitAppCall(scriptHash, "balanceOf", address);
+                    }
+                    builder.Emit(OpCode.DEPTH, OpCode.PACK);
+                    builder.EmitAppCall(scriptHash, "decimals");
+                    builder.EmitAppCall(scriptHash, "name");
+                    script = builder.ToArray();
+                }
+
+                var engine = ApplicationEngine.Run(script);
+                if (engine.State.HasFlag(VMState.FAULT)) continue;
+
+                var name = engine.EvaluationStack.Pop().GetString();
+                var decimals = (byte)engine.EvaluationStack.Pop().GetBigInteger();
+                var amount = engine.EvaluationStack.Pop().GetArray().Aggregate(BigInteger.Zero, (x, y) => x + y.GetBigInteger());
+                if (amount == 0) continue;
+                var balance = new BigDecimal(amount, decimals);
+                var valueText = balance.ToString();
+
+                var item = (AssetItem)null; 
+
+                if (item != null)
+                {
+                    item.Value = valueText;
+                }
+                else
+                {
+                    var assetItem = new AssetItem
+                    {
+                        Name = name,
+                        Type = "NEP-5",
+                        Issuer = $"ScriptHash:{scriptHash}",
+                        Value = valueText,
+                    };
+
+                    this.messagePublisher.Publish(new AddAssetMessage(assetItem));
+                }
+            }
+            checkNep5Balance = false;
         }
         #endregion
     }
