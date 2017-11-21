@@ -10,6 +10,7 @@ using Neo.UI.Base;
 using Neo.UI.Base.Dispatching;
 using Neo.UI.Base.Themes;
 using Neo.UI.Home;
+using Neo.UI.MarkupExtensions;
 using Neo.UI.Updater;
 
 namespace Neo
@@ -97,10 +98,12 @@ namespace Neo
             autoFacContainerBuilder.RegisterModule<DialogsRegistrationModule>();
 
             var container = autoFacContainerBuilder.Build();
+            var lifetimeScope = container.BeginLifetimeScope();
 
             this.applicationContext = container.Resolve<IApplicationContext>();
-            this.applicationContext.ContainerLifetimeScope = container.BeginLifetimeScope();
-            ApplicationContext.Instance.ContainerLifetimeScope = container.BeginLifetimeScope();
+
+            this.applicationContext.ContainerLifetimeScope = lifetimeScope;
+            DataContextBindingExtension.SetLifetimeScope(lifetimeScope);
         }
 
         #region Unhandled exception methods
