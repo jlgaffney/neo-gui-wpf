@@ -663,6 +663,7 @@ namespace Neo.Controllers
                         Type = "NEP-5",
                         Issuer = $"ScriptHash:{scriptHash}",
                         Value = valueText,
+                        ScriptHashNEP5 = scriptHash
                     };
 
                     this.messagePublisher.Publish(new AddAssetMessage(assetItem));

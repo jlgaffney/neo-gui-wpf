@@ -2,7 +2,9 @@
 using System.Windows;
 using System.Windows.Input;
 using Neo.Core;
+using Neo.Helpers;
 using Neo.Implementations.Wallets.EntityFramework;
+using Neo.Properties;
 using Neo.UI.Base.Collections;
 using Neo.UI.Base.Dispatching;
 using Neo.UI.Base.Messages;
@@ -18,6 +20,7 @@ namespace Neo.UI.Home
     {
         #region Private Fields 
         private readonly IDispatcher dispatcher;
+        private readonly IExternalProcessHelper externalProcessHelper;
 
         private TransactionItem selectedTransaction;
         #endregion
@@ -44,12 +47,17 @@ namespace Neo.UI.Home
         public bool CopyTransactionIdEnabled => this.SelectedTransaction != null;
 
         public ICommand CopyTransactionIdCommand => new RelayCommand(this.CopyTransactionId);
+
+        public ICommand ViewSelectedTransactionDetailsCommand => new RelayCommand(this.ViewSelectedTransactionDetails);
         #endregion
 
         #region Constructor 
-        public TransactionsViewModel(IDispatcher dispatcher)
+        public TransactionsViewModel(
+            IDispatcher dispatcher,
+            IExternalProcessHelper externalProcessHelper)
         {
             this.dispatcher = dispatcher;
+            this.externalProcessHelper = externalProcessHelper;
 
             this.Transactions = new ConcurrentObservableCollection<TransactionItem>();
         }
@@ -119,6 +127,17 @@ namespace Neo.UI.Home
 
             // Could not find transaction
             return -1;
+        }
+
+        private void ViewSelectedTransactionDetails()
+        {
+            if (this.SelectedTransaction == null) return;
+
+            if (string.IsNullOrEmpty(this.SelectedTransaction.Id)) return;
+
+            var url = string.Format(Settings.Default.Urls.TransactionUrl, this.SelectedTransaction.Id.Substring(2));
+
+            this.externalProcessHelper.OpenInExternalBrowser(url);
         }
         #endregion
 

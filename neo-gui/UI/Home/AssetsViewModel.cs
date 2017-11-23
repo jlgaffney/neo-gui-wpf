@@ -30,7 +30,7 @@ namespace Neo.UI.Home
         private static readonly UInt160 RecycleScriptHash = new[] { (byte)OpCode.PUSHT }.ToScriptHash();
 
         private readonly IApplicationContext applicationContext;
-        private readonly IExternalProcessHelper extertenalProcessHelper;
+        private readonly IExternalProcessHelper externalProcessHelper;
         private readonly IWalletController walletController;
         private readonly IMessagePublisher messagePublisher;
         private readonly IDispatcher dispatcher;
@@ -86,19 +86,21 @@ namespace Neo.UI.Home
         #region Commands
         public ICommand ViewCertificateCommand => new RelayCommand(this.ViewCertificate);
         public ICommand DeleteAssetCommand => new RelayCommand(this.DeleteAsset);
+
+        public ICommand ViewSelectedAssetDetailsCommand => new RelayCommand(this.ViewSelectedAssetDetails);
         #endregion Commands
 
         #region Constructor 
         public AssetsViewModel(
             IApplicationContext applicationContext,
             IWalletController walletController,
-            IExternalProcessHelper extertenalProcessHelper,
+            IExternalProcessHelper externalProcessHelper,
             IMessagePublisher messagePublisher, 
             IDispatcher dispatcher)
         {
             this.applicationContext = applicationContext;
             this.walletController = walletController;
-            this.extertenalProcessHelper = extertenalProcessHelper;
+            this.externalProcessHelper = externalProcessHelper;
             this.messagePublisher = messagePublisher;
             this.dispatcher = dispatcher;
 
@@ -116,7 +118,7 @@ namespace Neo.UI.Home
             var address = Wallet.ToAddress(hash);
             var path = Path.Combine(Settings.Default.CertCachePath, $"{address}.cer");
 
-            this.extertenalProcessHelper.OpenInExternalBrowser(path);
+            this.externalProcessHelper.OpenInExternalBrowser(path);
         }
 
         private void DeleteAsset()
@@ -170,6 +172,15 @@ namespace Neo.UI.Home
 
             return result;
         }
+
+        private void ViewSelectedAssetDetails()
+        {
+            if (this.SelectedAsset == null) return;
+
+            var url = string.Format(Settings.Default.Urls.AssetUrl, this.SelectedAsset.Name.Substring(2));
+
+            this.externalProcessHelper.OpenInExternalBrowser(url);
+        }
         #endregion
 
         #region IMessageHandler implementation 
@@ -213,7 +224,7 @@ namespace Neo.UI.Home
 
                     var valueText = asset.Value + (asset.Asset.AssetId.Equals(Blockchain.UtilityToken.Hash) ? $"+({asset.Claim})" : "");
 
-                    var item = this.Assets.FirstOrDefault(a => a.State != null && a.State.AssetId.Equals(asset.Asset.AssetId));
+                    var item = this.GetAsset(asset.Asset.AssetId);
 
                     if (item != null)
                     {

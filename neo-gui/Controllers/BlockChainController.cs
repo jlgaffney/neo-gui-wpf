@@ -1,29 +1,21 @@
 ﻿using System;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using System.Numerics;
 using System.Threading.Tasks;
 using System.Timers;
 using Neo.Core;
 using Neo.Implementations.Blockchains.LevelDB;
-using Neo.Implementations.Wallets.EntityFramework;
 using Neo.IO;
 using Neo.Network;
 using Neo.Properties;
-using Neo.SmartContract;
-using Neo.UI;
-using Neo.UI.Base.Dispatching;
 using Neo.UI.Base.Messages;
 using Neo.UI.Messages;
-using Neo.VM;
 
 namespace Neo.Controllers
 {
     public class BlockChainController : IBlockChainController
     {
         #region Private Fields
-        private readonly IApplicationContext applicationContext;
         private readonly IMessagePublisher messagePublisher;
         
         private bool disposed = false;
@@ -33,15 +25,13 @@ namespace Neo.Controllers
         private LocalNode localNode;
 
         private DateTime persistenceTime = DateTime.MinValue;
-        private Timer uiUpdateTimer;
+        private Timer updateTimer;
         #endregion
 
         #region Constructor 
         public BlockChainController(
-            IApplicationContext applicationContext, 
             IMessagePublisher messagePublisher)
         {
-            this.applicationContext = applicationContext;
             this.messagePublisher = messagePublisher;
         }
         #endregion
@@ -76,7 +66,7 @@ namespace Neo.Controllers
 
         private void SetupLocalNode()
         {
-            if (!RootCertificate.InstallCertificate()) return;
+            if (!RootCertificate.InstallRootCertificate()) return;
 
             PeerState.TryLoad();
 
@@ -111,14 +101,14 @@ namespace Neo.Controllers
                 this.localNode.Start(Settings.Default.NodePort, Settings.Default.WsPort);
             });
 
-            this.uiUpdateTimer = new Timer
+            this.updateTimer = new Timer
             {
                 Interval = 500,
                 Enabled = true,
                 AutoReset = true
             };
 
-            this.uiUpdateTimer.Elapsed += this.UpdateWallet;
+            this.updateTimer.Elapsed += this.UpdateWallet;
         }
 
         private void UpdateWallet(object sender, ElapsedEventArgs e)

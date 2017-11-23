@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Input;
 using Neo.Controllers;
 using Neo.Core;
+using Neo.Helpers;
 using Neo.Properties;
 using Neo.UI.Accounts;
 using Neo.UI.Base.Dialogs;
@@ -29,6 +30,7 @@ namespace Neo.UI.Home
         private readonly IWalletController walletController;
         private readonly IMessageSubscriber messageSubscriber;
         private readonly IMessagePublisher messagePublisher;
+        private readonly IExternalProcessHelper externalProcessHelper;
 
         private AccountItem selectedAccount;
         #endregion
@@ -98,17 +100,21 @@ namespace Neo.UI.Home
         public ICommand ShowVotingDialogCommand => new RelayCommand(this.ShowVotingDialog);
         public ICommand CopyAddressToClipboardCommand => new RelayCommand(this.CopyAddressToClipboard);
         public ICommand DeleteAccountCommand => new RelayCommand(this.DeleteAccount);
-        #endregion Command
 
+        public ICommand ViewSelectedAccountDetailsCommand => new RelayCommand(this.ViewSelectedAccountDetails);
+        #endregion Command
+        
         #region Constructor 
         public AccountsViewModel(
             IWalletController walletController,
             IMessageSubscriber messageSubscriber, 
-            IMessagePublisher messagePublisher)
+            IMessagePublisher messagePublisher,
+            IExternalProcessHelper externalProcessHelper)
         {
             this.walletController = walletController;
             this.messageSubscriber = messageSubscriber;
             this.messagePublisher = messagePublisher;
+            this.externalProcessHelper = externalProcessHelper;
 
             this.Accounts = new ObservableCollection<AccountItem>();
         }
@@ -262,6 +268,15 @@ namespace Neo.UI.Home
             this.walletController.DeleteAccount(accountToDelete);
 
             this.messagePublisher.Publish(new WalletBalanceChangedMessage(true));
+        }
+
+        private void ViewSelectedAccountDetails()
+        {
+            if (this.SelectedAccount == null) return;
+            
+            var url = string.Format(Settings.Default.Urls.AddressUrl, this.SelectedAccount.Address);
+            
+            this.externalProcessHelper.OpenInExternalBrowser(url);
         }
         #endregion Account Menu Command Methods
     }

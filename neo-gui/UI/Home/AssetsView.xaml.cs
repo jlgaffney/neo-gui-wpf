@@ -1,6 +1,4 @@
-using System.Diagnostics;
 using System.Windows.Input;
-using Neo.Properties;
 
 namespace Neo.UI.Home
 {
@@ -16,15 +14,7 @@ namespace Neo.UI.Home
 
         private void AssetList_DoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var viewModel = this.DataContext as AssetsViewModel;
-
-            if (viewModel == null) return;
-
-            if (viewModel.SelectedAsset == null) return;
-
-            var url = string.Format(Settings.Default.Urls.AssetUrl, viewModel.SelectedAsset.Name.Substring(2));
-
-            Process.Start(url);
+            (this.DataContext as AssetsViewModel)?.ViewSelectedAssetDetailsCommand.Execute(null);
         }
     }
 }

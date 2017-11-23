@@ -12,9 +12,7 @@
     DataContext="{markupExtensions:DataContextBinding ViewModel=local:HomeViewModel}"
     Title="{x:Static properties:Strings.NeoGuiTitle}" 
     Height="520" 
-    Width="740"
-    Closing="Window_Closing">
-
+    Width="740">
     <controls:NeoWindow.InputBindings>
         <KeyBinding Key="N" Modifiers="Control" Command="{Binding CreateWalletCommand}" />
         <KeyBinding Key="O" Modifiers="Control" Command="{Binding OpenWalletCommand}" />

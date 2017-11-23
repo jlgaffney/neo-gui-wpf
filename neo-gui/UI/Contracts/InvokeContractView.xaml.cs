@@ -12,12 +12,16 @@ namespace Neo.UI.Contracts
         {
             InitializeComponent();
 
-            this.BaseTransaction = baseTransaction;
+            var viewModel = this.DataContext as InvokeContractViewModel;
+
+            if (viewModel == null) return;
+
+            viewModel.SetBaseTransaction(baseTransaction);
+
+            this.SetSelectedTab(1);
         }
 
-        public InvocationTransaction BaseTransaction { get; }
-
-        public void SetSelectedTab(int tabIndex)
+        private void SetSelectedTab(int tabIndex)
         {
             if (tabIndex < 0 || tabIndex >= this.TabControl.Items.Count) throw new IndexOutOfRangeException();
 

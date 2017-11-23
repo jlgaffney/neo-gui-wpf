@@ -287,7 +287,6 @@
     <Compile Include="Helpers\NotificationHelper.cs" />
     <Compile Include="IApplicationContext.cs" />
     <Compile Include="NeoGuiRegistrationModule.cs" />
-    <Compile Include="UI\Base\BaseRegistrationModule.cs" />
     <Compile Include="UI\Base\Collections\ConcurrentObservableCollection.cs" />
     <Compile Include="UI\Base\Converters\EnumDescriptionTypeConverter.cs" />
     <Compile Include="UI\Base\Dispatching\Dispatcher.cs" />
@@ -425,7 +424,6 @@
     <Compile Include="UI\Accounts\ImportPrivateKeyViewModel.cs" />
     <Compile Include="UI\Accounts\ViewContractViewModel.cs" />
     <Compile Include="UI\Assets\AssetRegistrationViewModel.cs" />
-    <Compile Include="UI\Contracts\ContractDetailsViewModel.cs" />
     <Compile Include="UI\Contracts\InvokeContractViewModel.cs" />
     <Compile Include="UI\Development\ContractParametersViewModel.cs" />
     <Compile Include="UI\Development\TransactionBuilderViewModel.cs" />
@@ -466,9 +464,6 @@
     </Compile>
     <Compile Include="UI\Assets\AssetRegistrationView.xaml.cs">
       <DependentUpon>AssetRegistrationView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Contracts\ContractDetailsView.xaml.cs">
-      <DependentUpon>ContractDetailsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Contracts\InvokeContractView.xaml.cs">
       <DependentUpon>InvokeContractView.xaml</DependentUpon>
@@ -750,10 +745,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Assets\AssetRegistrationView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UI\Contracts\ContractDetailsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

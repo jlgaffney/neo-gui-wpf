@@ -1,13 +1,9 @@
-using System;
 using System.Diagnostics;
 using System.Reflection;
-using System.Windows;
 using System.Windows.Input;
 using MahApps.Metro.Controls.Dialogs;
 using Neo.Properties;
-using Neo.SmartContract;
 using Neo.UI.Assets;
-using Neo.UI.Base.Dialogs;
 using Neo.UI.Base.Dispatching;
 using Neo.UI.Base.MVVM;
 using Neo.UI.Contracts;
@@ -178,7 +174,7 @@ namespace Neo.UI.Home
         public ICommand ShowUpdateDialogCommand => new RelayCommand(ShowUpdateDialog);
 
         #endregion Tool Strip Menu Commands
-        
+
         #region New Version Properties
 
         public string NewVersionLabel
@@ -376,7 +372,7 @@ namespace Neo.UI.Home
         }
 
         #endregion Main Menu Command Methods
-
+        
         private static void ShowUpdateDialog()
         {
             var dialog = new UpdateView();
