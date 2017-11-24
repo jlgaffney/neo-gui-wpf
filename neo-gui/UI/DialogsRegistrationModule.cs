@@ -1,6 +1,6 @@
 ﻿using Autofac;
 using Neo.DialogResults;
-using Neo.Helpers;
+using Neo.Gui.Helpers.Interfaces;
 using Neo.UI.Wallets;
 
 namespace Neo.UI

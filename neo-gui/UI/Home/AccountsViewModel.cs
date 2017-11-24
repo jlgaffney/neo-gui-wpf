@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
 using Neo.Controllers;
-using Neo.Core;
-using Neo.Helpers;
+using Neo.Gui.Helpers.Interfaces;
 using Neo.Properties;
 using Neo.UI.Accounts;
 using Neo.UI.Base.Dialogs;
@@ -14,17 +12,15 @@ using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
 using Neo.UI.Messages;
 using Neo.UI.Voting;
-using Neo.Wallets;
 
 namespace Neo.UI.Home
 {
     public class AccountsViewModel : 
         ViewModelBase, 
-        ILoadable, 
-        IMessageHandler<AccountBalancesChangedMessage>,
+        ILoadable,
         IMessageHandler<CurrentWalletHasChangedMessage>,
         IMessageHandler<ClearAccountsMessage>,
-        IMessageHandler<AccountItemsChangedMessage>
+        IMessageHandler<AccountAddedMessage>
     {
         #region Private Fields 
         private readonly IWalletController walletController;
@@ -121,29 +117,6 @@ namespace Neo.UI.Home
         #endregion
 
         #region IMessageHandler implementation 
-        public void HandleMessage(AccountBalancesChangedMessage message)
-        {
-            var coins = this.walletController.GetCoins()
-                .Where(p => !p.State.HasFlag(CoinState.Spent))
-                .ToList();
-
-            if (coins == null) return;
-
-            var balanceNeo = coins.Where(p => p.Output.AssetId.Equals(Blockchain.GoverningToken.Hash)).GroupBy(p => p.Output.ScriptHash).ToDictionary(p => p.Key, p => p.Sum(i => i.Output.Value));
-            var balanceGas = coins.Where(p => p.Output.AssetId.Equals(Blockchain.UtilityToken.Hash)).GroupBy(p => p.Output.ScriptHash).ToDictionary(p => p.Key, p => p.Sum(i => i.Output.Value));
-
-            var accountsList = this.Accounts.ToList();
-
-            foreach (var account in accountsList)
-            {
-                var scriptHash = Wallet.ToScriptHash(account.Address);
-                var neo = balanceNeo.ContainsKey(scriptHash) ? balanceNeo[scriptHash] : Fixed8.Zero;
-                var gas = balanceGas.ContainsKey(scriptHash) ? balanceGas[scriptHash] : Fixed8.Zero;
-                account.Neo = neo;
-                account.Gas = gas;
-            }
-        }
-
         public void HandleMessage(CurrentWalletHasChangedMessage message)
         {
             this.NotifyPropertyChanged(nameof(this.MenuItemsEnabled));
@@ -154,13 +127,9 @@ namespace Neo.UI.Home
             this.Accounts.Clear();
         }
 
-        public void HandleMessage(AccountItemsChangedMessage message)
+        public void HandleMessage(AccountAddedMessage message)
         {
-            this.Accounts.Clear();
-            foreach(var accountItem in message.Accounts)
-            {
-                this.Accounts.Add(accountItem);
-            }
+            this.Accounts.Add(message.Account);
         }
         #endregion
 
@@ -266,8 +235,7 @@ namespace Neo.UI.Home
                 MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes) return;
 
             this.walletController.DeleteAccount(accountToDelete);
-
-            this.messagePublisher.Publish(new WalletBalanceChangedMessage(true));
+            this.Accounts.Remove(accountToDelete);
         }
 
         private void ViewSelectedAccountDetails()

@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Neo.Gui.Helpers.Interfaces;
 
 namespace Neo.Helpers
 {

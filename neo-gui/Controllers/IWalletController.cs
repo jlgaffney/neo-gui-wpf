@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Neo.Core;
+using Neo.Cryptography;
 using Neo.Cryptography.ECC;
 using Neo.SmartContract;
 using Neo.UI;
@@ -12,6 +13,8 @@ namespace Neo.Controllers
         bool WalletIsOpen { get; }
 
         uint WalletHeight { get; }
+
+        bool WalletIsSynchronized { get; }
 
         bool WalletNeedUpgrade(string walletPath);
 
@@ -74,5 +77,7 @@ namespace Neo.Controllers
         InvocationTransaction MakeTransaction(InvocationTransaction transaction, UInt160 changeAddress = null, Fixed8 fee = default(Fixed8));
 
         IssueTransaction MakeTransaction(IssueTransaction transaction, UInt160 changeAddress = null, Fixed8 fee = default(Fixed8));
+
+        bool CanViewCertificate(AssetItem item);
     }
 }

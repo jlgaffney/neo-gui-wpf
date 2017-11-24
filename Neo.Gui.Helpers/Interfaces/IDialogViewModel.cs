@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Neo.Helpers
+namespace Neo.Gui.Helpers.Interfaces
 {
     public interface IDialogViewModel<TDialogResult>
     {

@@ -277,13 +277,8 @@
     <Compile Include="DialogResults\YesOrNoDialogResult.cs" />
     <Compile Include="Helpers\DialogHelper.cs" />
     <Compile Include="Helpers\ExternalProcessHelper.cs" />
-    <Compile Include="Helpers\IDialog.cs" />
-    <Compile Include="Helpers\IDialogViewModel.cs" />
-    <Compile Include="Helpers\IExternalProcessHelper.cs" />
     <Compile Include="Helpers\HelpersRegistrationModule.cs" />
-    <Compile Include="Helpers\IDialogHelper.cs" />
     <Compile Include="Helpers\DialogResult.cs" />
-    <Compile Include="Helpers\INotificationHelper.cs" />
     <Compile Include="Helpers\NotificationHelper.cs" />
     <Compile Include="IApplicationContext.cs" />
     <Compile Include="NeoGuiRegistrationModule.cs" />
@@ -373,11 +368,11 @@
     <Compile Include="UI\Home\TransactionsViewModel.cs" />
     <Compile Include="UI\AccountType.cs" />
     <Compile Include="UI\MarkupExtensions\DataContextBindingExtension.cs" />
-    <Compile Include="UI\Messages\AccountItemsChangedMessage.cs" />
-    <Compile Include="UI\Messages\AddAssetMessage.cs" />
+    <Compile Include="UI\Messages\TransactionsHaveChangedMessage.cs" />
+    <Compile Include="UI\Messages\AccountAddedMessage.cs" />
+    <Compile Include="UI\Messages\AssetAddedMessage.cs" />
     <Compile Include="UI\Messages\BlockchainPersistCompletMessage.cs" />
     <Compile Include="UI\Messages\BlockProgressMessage.cs" />
-    <Compile Include="UI\Messages\AccountBalancesChangedMessage.cs" />
     <Compile Include="UI\Messages\ClearAccountsMessage.cs" />
     <Compile Include="UI\Messages\AddContractMessage.cs" />
     <Compile Include="UI\Messages\ClearAssetsMessage.cs" />
@@ -388,12 +383,9 @@
     <Compile Include="UI\Messages\InvokeContractMessage.cs" />
     <Compile Include="UI\Messages\LoadWalletAddressesMessage.cs" />
     <Compile Include="UI\Messages\NewVersionAvailableMessage.cs" />
-    <Compile Include="UI\Messages\UpdateAssetsBalanceMessage.cs" />
-    <Compile Include="UI\Messages\UpdateTransactionsMessage.cs" />
     <Compile Include="UI\Messages\AddContractsMessage.cs" />
     <Compile Include="UI\Messages\SignTransactionAndShowInformationMessage.cs" />
     <Compile Include="UI\Messages\UpdateWalletMessage.cs" />
-    <Compile Include="UI\Messages\WalletBalanceChangedMessage.cs" />
     <Compile Include="UI\NeoSplashScreen.xaml.cs">
       <DependentUpon>NeoSplashScreen.xaml</DependentUpon>
     </Compile>
@@ -818,6 +810,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\logo_72.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Neo.Gui.Helpers\Neo.Gui.Helpers.csproj">
+      <Project>{929fdf79-f89d-4b4f-bb56-dbd1d31528b4}</Project>
+      <Name>Neo.Gui.Helpers</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.7\build\net35\SQLitePCLRaw.lib.e_sqlite3.linux.targets" Condition="Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.7\build\net35\SQLitePCLRaw.lib.e_sqlite3.linux.targets')" />

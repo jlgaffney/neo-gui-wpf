@@ -4,7 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Windows.Input;
-using Neo.Helpers;
+using Neo.Gui.Helpers.Interfaces;
 using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
 using Neo.UI.Messages;

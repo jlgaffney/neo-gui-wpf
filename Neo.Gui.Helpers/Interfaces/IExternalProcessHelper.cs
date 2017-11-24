@@ -1,4 +1,4 @@
-﻿namespace Neo.Helpers
+﻿namespace Neo.Gui.Helpers.Interfaces
 {
     public interface IExternalProcessHelper
     {

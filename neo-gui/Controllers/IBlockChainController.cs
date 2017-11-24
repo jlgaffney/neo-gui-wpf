@@ -6,6 +6,8 @@ namespace Neo.Controllers
 {
     public interface IBlockChainController : IDisposable
     {
+        uint BlockHeight { get; }
+
         void Setup(bool setupLocalNode = true);
 
         void Relay(Transaction transaction);

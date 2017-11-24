@@ -16,8 +16,8 @@ using Neo.UI.Wallets;
 using Neo.UI.Voting;
 using Neo.UI.Base.Messages;
 using Neo.Controllers;
-using Neo.Helpers;
 using Neo.DialogResults;
+using Neo.Gui.Helpers.Interfaces;
 
 namespace Neo.UI.Home
 {
@@ -26,7 +26,6 @@ namespace Neo.UI.Home
         ILoadable,
         IMessageHandler<UpdateApplicationMessage>,
         IMessageHandler<CurrentWalletHasChangedMessage>,
-        IMessageHandler<WalletBalanceChangedMessage>,
         IMessageHandler<InvokeContractMessage>,
         IMessageHandler<BlockProgressMessage>
     {
@@ -37,8 +36,6 @@ namespace Neo.UI.Home
         private readonly IMessagePublisher messagePublisher;
         private readonly IMessageSubscriber messageSubscriber;
         private readonly IDispatcher dispatcher;
-
-        private bool balanceChanged = false;
 
         private bool blockProgressIndeterminate;
         private int blockProgress;
@@ -51,7 +48,7 @@ namespace Neo.UI.Home
         private string blockStatus;
         #endregion
 
-        #region Constructor 
+        #region Constructor
         public HomeViewModel(
             IWalletController walletController,
             IDialogHelper dialogHelper, 
@@ -404,11 +401,6 @@ namespace Neo.UI.Home
         public void HandleMessage(CurrentWalletHasChangedMessage message)
         {
             this.NotifyPropertyChanged(nameof(this.WalletIsOpen));
-        }
-
-        public void HandleMessage(WalletBalanceChangedMessage message)
-        {
-            this.balanceChanged = message.BalanceChanged;
         }
 
         public void HandleMessage(InvokeContractMessage message)

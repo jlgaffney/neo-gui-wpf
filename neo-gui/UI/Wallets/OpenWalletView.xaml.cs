@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using Neo.DialogResults;
-using Neo.Helpers;
+using Neo.Gui.Helpers.Interfaces;
 using Neo.Properties;
 
 namespace Neo.UI.Wallets

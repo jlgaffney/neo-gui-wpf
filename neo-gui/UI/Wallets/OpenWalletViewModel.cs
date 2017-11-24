@@ -2,7 +2,7 @@
 using System.Windows.Input;
 using Microsoft.Win32;
 using Neo.DialogResults;
-using Neo.Helpers;
+using Neo.Gui.Helpers.Interfaces;
 using Neo.UI.Base.MVVM;
 
 namespace Neo.UI.Wallets

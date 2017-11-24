@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using Neo.Gui.Helpers.Interfaces;
 using ToastNotifications;
 using ToastNotifications.Lifetime;
 using ToastNotifications.Messages;

@@ -1,17 +1,12 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using Neo.Controllers;
 using Neo.Core;
-using Neo.Cryptography;
-using Neo.Cryptography.ECC;
-using Neo.Helpers;
+using Neo.Gui.Helpers.Interfaces;
 using Neo.Properties;
 using Neo.SmartContract;
 using Neo.UI.Base.Collections;
-using Neo.UI.Base.Dispatching;
 using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
 using Neo.UI.Messages;
@@ -21,21 +16,18 @@ using Neo.Wallets;
 namespace Neo.UI.Home
 {
     public class AssetsViewModel : 
-        ViewModelBase, 
-        IMessageHandler<UpdateAssetsBalanceMessage>,
+        ViewModelBase,
+        ILoadable,
         IMessageHandler<ClearAssetsMessage>,
-        IMessageHandler<AddAssetMessage>
+        IMessageHandler<AssetAddedMessage>
     {
         #region Private Fields 
         private static readonly UInt160 RecycleScriptHash = new[] { (byte)OpCode.PUSHT }.ToScriptHash();
 
-        private readonly IApplicationContext applicationContext;
         private readonly IExternalProcessHelper externalProcessHelper;
         private readonly IWalletController walletController;
+        private readonly IMessageSubscriber messageSubscriber;
         private readonly IMessagePublisher messagePublisher;
-        private readonly IDispatcher dispatcher;
-        private readonly Dictionary<ECPoint, CertificateQueryResult> certificateQueryResultCache;
-
         private AssetItem selectedAsset;
         #endregion
 
@@ -67,13 +59,7 @@ namespace Neo.UI.Home
 
                 if (this.SelectedAsset.State == null) return false;
 
-                var queryResult = GetCertificateQueryResult(this.SelectedAsset.State);
-
-                if (queryResult == null) return false;
-
-                return queryResult.Type == CertificateQueryResultType.Good ||
-                       queryResult.Type == CertificateQueryResultType.Expired ||
-                       queryResult.Type == CertificateQueryResultType.Invalid;
+                return this.walletController.CanViewCertificate(this.SelectedAsset);
             }
         }
 
@@ -92,19 +78,16 @@ namespace Neo.UI.Home
 
         #region Constructor 
         public AssetsViewModel(
-            IApplicationContext applicationContext,
             IWalletController walletController,
             IExternalProcessHelper externalProcessHelper,
-            IMessagePublisher messagePublisher, 
-            IDispatcher dispatcher)
+            IMessageSubscriber messageSubscriber,
+            IMessagePublisher messagePublisher)
         {
-            this.applicationContext = applicationContext;
             this.walletController = walletController;
             this.externalProcessHelper = externalProcessHelper;
+            this.messageSubscriber = messageSubscriber;
             this.messagePublisher = messagePublisher;
-            this.dispatcher = dispatcher;
 
-            this.certificateQueryResultCache = new Dictionary<ECPoint, CertificateQueryResult>();
             this.Assets = new ConcurrentObservableCollection<AssetItem>();
         }
         #endregion
@@ -148,31 +131,6 @@ namespace Neo.UI.Home
         #endregion Menu Command Methods
 
         #region Private Methods 
-        private CertificateQueryResult GetCertificateQueryResult(AssetState asset)
-        {
-            CertificateQueryResult result;
-            if (asset.AssetType == AssetType.GoverningToken || asset.AssetType == AssetType.UtilityToken)
-            {
-                result = new CertificateQueryResult { Type = CertificateQueryResultType.System };
-            }
-            else
-            {
-                if (!this.certificateQueryResultCache.ContainsKey(asset.Owner))
-                {
-                    result = CertificateQueryService.Query(asset.Owner);
-
-                    if (result == null) return null;
-
-                    // Cache query result
-                    this.certificateQueryResultCache.Add(asset.Owner, result);
-                }
-
-                result = this.certificateQueryResultCache[asset.Owner];
-            }
-
-            return result;
-        }
-
         private void ViewSelectedAssetDetails()
         {
             if (this.SelectedAsset == null) return;
@@ -183,156 +141,24 @@ namespace Neo.UI.Home
         }
         #endregion
 
-        #region IMessageHandler implementation 
-        public void HandleMessage(UpdateAssetsBalanceMessage message)
+        #region ILoadable implementation
+
+        public void OnLoad()
         {
-            var assetList = this.Assets.ConvertToList();
-            if (message.BalanceChanged)
-            {
-                var coins = this.walletController.GetCoins().Where(p => !p.State.HasFlag(CoinState.Spent)).ToList();
-                var bonusAvailable = Blockchain.CalculateBonus(this.walletController.GetUnclaimedCoins().Select(p => p.Reference));
-                var bonusUnavailable = Blockchain.CalculateBonus(coins.Where(p => p.State.HasFlag(CoinState.Confirmed) && p.Output.AssetId.Equals(Blockchain.GoverningToken.Hash)).Select(p => p.Reference), Blockchain.Default.Height + 1);
-                var bonus = bonusAvailable + bonusUnavailable;
-
-                var assets = coins.GroupBy(p => p.Output.AssetId, (k, g) => new
-                {
-                    Asset = Blockchain.Default.GetAssetState(k),
-                    Value = g.Sum(p => p.Output.Value),
-                    Claim = k.Equals(Blockchain.UtilityToken.Hash) ? bonus : Fixed8.Zero
-                }).ToDictionary(p => p.Asset.AssetId);
-
-                if (bonus != Fixed8.Zero && !assets.ContainsKey(Blockchain.UtilityToken.Hash))
-                {
-                    assets[Blockchain.UtilityToken.Hash] = new
-                    {
-                        Asset = Blockchain.Default.GetAssetState(Blockchain.UtilityToken.Hash),
-                        Value = Fixed8.Zero,
-                        Claim = bonus
-                    };
-                }
-
-                foreach (var asset in assetList.Where(item => item.State != null))
-                {
-                    if (assets.ContainsKey(asset.State.AssetId)) continue;
-
-                    this.dispatcher.InvokeOnMainUIThread(() => this.Assets.Remove(asset));
-                }
-
-                foreach (var asset in assets.Values)
-                {
-                    if (asset.Asset == null || asset.Asset.AssetId == null) continue;
-
-                    var valueText = asset.Value + (asset.Asset.AssetId.Equals(Blockchain.UtilityToken.Hash) ? $"+({asset.Claim})" : "");
-
-                    var item = this.GetAsset(asset.Asset.AssetId);
-
-                    if (item != null)
-                    {
-                        // Asset item already exists
-                        item.Value = valueText;
-                    }
-                    else
-                    {
-                        // Add new asset item
-                        string assetName;
-                        switch (asset.Asset.AssetType)
-                        {
-                            case AssetType.GoverningToken:
-                                assetName = "NEO";
-                                break;
-
-                            case AssetType.UtilityToken:
-                                assetName = "NeoGas";
-                                break;
-
-                            default:
-                                assetName = asset.Asset.GetName();
-                                break;
-                        }
-
-                        var assetItem = new AssetItem
-                        {
-                            Name = assetName,
-                            Type = asset.Asset.AssetType.ToString(),
-                            Issuer = $"{Strings.UnknownIssuer}[{asset.Asset.Owner}]",
-                            Value = valueText,
-                            State = asset.Asset
-                        };
-
-                        /*this.Assets.Groups["unchecked"]
-                        {
-                            Name = asset.Asset.AssetId.ToString(),
-                            Tag = asset.Asset,
-                            UseItemStyleForSubItems = false
-                        };*/
-
-                        this.dispatcher.InvokeOnMainUIThread(() =>
-                        {
-                            this.Assets.Add(assetItem);
-                        });
-                    }
-                }
-
-                this.messagePublisher.Publish(new WalletBalanceChangedMessage(true));
-            }
-
-
-            foreach (var item in assetList)//.Groups["unchecked"].Items)
-            {
-                if (item.State == null) continue;
-
-                var asset = item.State;
-
-                var queryResult = this.GetCertificateQueryResult(asset);
-
-                if (queryResult == null) continue;
-
-                using (queryResult)
-                {
-                    switch (queryResult.Type)
-                    {
-                        case CertificateQueryResultType.Querying:
-                        case CertificateQueryResultType.QueryFailed:
-                            break;
-                        case CertificateQueryResultType.System:
-                            //subitem.ForeColor = Color.Green;
-                            item.Issuer = Strings.SystemIssuer;
-                            break;
-                        case CertificateQueryResultType.Invalid:
-                            //subitem.ForeColor = Color.Red;
-                            item.Issuer = $"[{Strings.InvalidCertificate}][{asset.Owner}]";
-                            break;
-                        case CertificateQueryResultType.Expired:
-                            //subitem.ForeColor = Color.Yellow;
-                            item.Issuer = $"[{Strings.ExpiredCertificate}]{queryResult.Certificate.Subject}[{asset.Owner}]";
-                            break;
-                        case CertificateQueryResultType.Good:
-                            //subitem.ForeColor = Color.Black;
-                            item.Issuer = $"{queryResult.Certificate.Subject}[{asset.Owner}]";
-                            break;
-                    }
-                    switch (queryResult.Type)
-                    {
-                        case CertificateQueryResultType.System:
-                        case CertificateQueryResultType.Missing:
-                        case CertificateQueryResultType.Invalid:
-                        case CertificateQueryResultType.Expired:
-                        case CertificateQueryResultType.Good:
-                            //item.Group = listView2.Groups["checked"];
-                            break;
-                    }
-                }
-            }
+            this.messageSubscriber.Subscribe(this);
         }
+        #endregion
+
+        #region IMessageHandler implementation
 
         public void HandleMessage(ClearAssetsMessage message)
         {
             this.Assets.Clear();
         }
 
-        public void HandleMessage(AddAssetMessage message)
+        public void HandleMessage(AssetAddedMessage message)
         {
-            this.Assets.Add(message.AssetItem);
+            this.Assets.Add(message.Asset);
         }
         #endregion
     }

@@ -38,6 +38,8 @@ namespace Neo.Controllers
 
         #region IBlockChainController implementation 
 
+        public uint BlockHeight => Blockchain.Default.Height;
+
         public void Setup(bool setupLocalNode = true)
         {
             if (setupLocalNode)
@@ -48,6 +50,15 @@ namespace Neo.Controllers
             {
                 this.SetupRemoteNode();
             }
+
+            this.updateTimer = new Timer
+            {
+                Interval = 500,
+                Enabled = true,
+                AutoReset = true
+            };
+
+            this.updateTimer.Elapsed += this.Refresh;
         }
 
         public void Relay(Transaction transaction)
@@ -100,22 +111,18 @@ namespace Neo.Controllers
                 // Start node
                 this.localNode.Start(Settings.Default.NodePort, Settings.Default.WsPort);
             });
-
-            this.updateTimer = new Timer
-            {
-                Interval = 500,
-                Enabled = true,
-                AutoReset = true
-            };
-
-            this.updateTimer.Elapsed += this.UpdateWallet;
         }
 
-        private void UpdateWallet(object sender, ElapsedEventArgs e)
+        private void Refresh(object sender, ElapsedEventArgs e)
         {
             var persistenceSpan = DateTime.UtcNow - this.persistenceTime;
 
             this.UpdateBlockProgress(persistenceSpan);
+            this.UpdateWallet(persistenceSpan);
+        }
+
+        private void UpdateWallet(TimeSpan persistenceSpan)
+        {
             this.messagePublisher.Publish(new UpdateWalletMessage(persistenceSpan));
         }
 

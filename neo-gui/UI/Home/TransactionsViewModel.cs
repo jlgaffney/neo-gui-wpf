@@ -1,12 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
-using Neo.Core;
-using Neo.Helpers;
-using Neo.Implementations.Wallets.EntityFramework;
+using Neo.Gui.Helpers.Interfaces;
 using Neo.Properties;
 using Neo.UI.Base.Collections;
-using Neo.UI.Base.Dispatching;
 using Neo.UI.Base.Messages;
 using Neo.UI.Base.MVVM;
 using Neo.UI.Messages;
@@ -15,11 +11,12 @@ namespace Neo.UI.Home
 {
     public class TransactionsViewModel : 
         ViewModelBase,
+        ILoadable,
         IMessageHandler<ClearTransactionsMessage>,
-        IMessageHandler<UpdateTransactionsMessage>
+        IMessageHandler<TransactionsHaveChangedMessage>
     {
         #region Private Fields 
-        private readonly IDispatcher dispatcher;
+        private readonly IMessageSubscriber messageSubscriber;
         private readonly IExternalProcessHelper externalProcessHelper;
 
         private TransactionItem selectedTransaction;
@@ -53,13 +50,21 @@ namespace Neo.UI.Home
 
         #region Constructor 
         public TransactionsViewModel(
-            IDispatcher dispatcher,
+            IMessageSubscriber messageSubscriber,
             IExternalProcessHelper externalProcessHelper)
         {
-            this.dispatcher = dispatcher;
+            this.messageSubscriber = messageSubscriber;
             this.externalProcessHelper = externalProcessHelper;
 
             this.Transactions = new ConcurrentObservableCollection<TransactionItem>();
+        }
+        #endregion
+
+        #region ILoadable implementation
+
+        public void OnLoad()
+        {
+            this.messageSubscriber.Subscribe(this);
         }
         #endregion
 
@@ -69,64 +74,6 @@ namespace Neo.UI.Home
             if (this.SelectedTransaction == null) return;
 
             Clipboard.SetDataObject(this.SelectedTransaction.Id);
-        }
-
-        private void UpdateTransactions(IEnumerable<TransactionInfo> transactions)
-        {
-            this.dispatcher.InvokeOnMainUIThread(() =>
-            {
-                // Update transaction list
-                foreach (var transactionInfo in transactions)
-                {
-                    var transactionItem = new TransactionItem
-                    {
-                        Info = transactionInfo
-                    };
-
-                    var transactionIndex = this.GetTransactionIndex(transactionItem.Id);
-
-                    // Check transaction exists in list
-                    if (transactionIndex >= 0)
-                    {
-                        // Update transaction info
-                        this.Transactions.Replace(transactionIndex, transactionItem);
-                    }
-                    else
-                    {
-                        // Add transaction to list
-                        this.Transactions.Insert(0, transactionItem);
-                    }
-                }
-
-                // Update transaction confirmations
-                var transactionList = this.Transactions.ConvertToList();
-                foreach (var transactionItem in transactionList)
-                {
-                    uint transactionHeight = 0;
-
-                    if (transactionItem.Info?.Height != null)
-                    {
-                        transactionHeight = transactionItem.Info.Height.Value;
-                    }
-
-                    var confirmations = ((int) Blockchain.Default.Height) - ((int) transactionHeight) + 1;
-
-                    transactionItem.SetConfirmations(confirmations);
-                }
-            });
-        }
-
-        private int GetTransactionIndex(string transactionId)
-        {
-            var translationList = this.Transactions.ConvertToList();
-
-            for (int i = 0; i < translationList.Count; i++)
-            {
-                if (translationList[i].Id == transactionId) return i;
-            }
-
-            // Could not find transaction
-            return -1;
         }
 
         private void ViewSelectedTransactionDetails()
@@ -147,9 +94,14 @@ namespace Neo.UI.Home
             this.Transactions.Clear();
         }
 
-        public void HandleMessage(UpdateTransactionsMessage message)
+        public void HandleMessage(TransactionsHaveChangedMessage message)
         {
-            this.UpdateTransactions(message.Transactions);
+            this.Transactions.Clear();
+
+            foreach (var transaction in message.Transactions)
+            {
+                this.Transactions.Add(transaction);
+            }
         }
         #endregion
     }
