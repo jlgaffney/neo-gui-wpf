@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+using System;
+using System.Diagnostics;
+using System.Reflection;
 using Neo.Gui.Helpers.Interfaces;
 
 namespace Neo.Helpers

@@ -6,7 +6,6 @@ using System.Numerics;
 using System.Security.Cryptography;
 using System.Timers;
 using Neo.Core;
-using Neo.Cryptography;
 using Neo.Gui.Helpers.Interfaces;
 using Neo.Implementations.Wallets.EntityFramework;
 using Neo.Properties;

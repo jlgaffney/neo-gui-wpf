@@ -1,8 +1,10 @@
-﻿using System.IO;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using Neo.Controllers;
 using Neo.Core;
+using Neo.Cryptography;
+using Neo.Cryptography.ECC;
 using Neo.Gui.Helpers.Interfaces;
 using Neo.Properties;
 using Neo.SmartContract;
