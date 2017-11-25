@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Neo" Version="2.4.0" />
+    <PackageReference Include="Neo.VM" Version="2.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.1" />
+  </ItemGroup>
+
+</Project>

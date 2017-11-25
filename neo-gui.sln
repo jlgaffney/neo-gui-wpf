@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.10
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "neo-gui", "neo-gui\neo-gui.csproj", "{CFC243F0-F4E3-4754-8E21-8BA17E1C1788}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo.Gui.Wpf", "Neo.Gui.Wpf\Neo.Gui.Wpf.csproj", "{CFC243F0-F4E3-4754-8E21-8BA17E1C1788}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo.Gui.ViewModels.Tests", "Neo.Gui.ViewModels.Tests\Neo.Gui.ViewModels.Tests.csproj", "{B55307C0-BE48-4148-A1CD-D42ADFC360D6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo.Gui.Helpers", "Neo.Gui.Helpers\Neo.Gui.Helpers.csproj", "{929FDF79-F89D-4B4F-BB56-DBD1D31528B4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo.Gui.Base", "Neo.Gui.Base\Neo.Gui.Base.csproj", "{929FDF79-F89D-4B4F-BB56-DBD1D31528B4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,0 +1,63 @@
+﻿<controls:NeoWindow x:Class="Neo.UI.Wallets.CertificateApplicationView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:Neo.UI.Base.Controls"
+        xmlns:local="clr-namespace:Neo.UI.Wallets"
+        xmlns:properties="clr-namespace:Neo.Gui.Wpf.Properties"
+        xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
+        DataContext="{markupExtensions:DataContextBinding ViewModel=local:CertificateApplicationViewModel}"
+        Title="{x:Static properties:Strings.CertificateApplicationTitle}"
+        Width="560" SizeToContent="Height" ResizeMode="NoResize">
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <GroupBox Grid.Row="0" Header="{x:Static properties:Strings.Account}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="110" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Column="0" Content="{x:Static properties:Strings.PublicKey}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                <ComboBox Grid.Column="1" ItemsSource="{Binding PublicKeys}" SelectedItem="{Binding SelectedPublicKey}" Margin="4" Padding="4" HorizontalAlignment="Stretch" />
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Grid.Row="1" Header="{x:Static properties:Strings.Organization}">
+            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="110" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0" Grid.Column="0" Content="CN:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding CN, UpdateSourceTrigger=PropertyChanged}" Margin="4" Padding="4" HorizontalAlignment="Stretch" />
+
+                <Label Grid.Row="1" Grid.Column="0" Content="C:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding C, UpdateSourceTrigger=PropertyChanged}" Margin="4" Padding="4" HorizontalAlignment="Left" Width="200" />
+
+                <Label Grid.Row="2" Grid.Column="0" Content="S:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding S, UpdateSourceTrigger=PropertyChanged}" Margin="4" Padding="4" HorizontalAlignment="Left" Width="200" />
+
+                <Label Grid.Row="3" Grid.Column="0" Content="SERIALNUMBER:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding SerialNumber, UpdateSourceTrigger=PropertyChanged}" Margin="4" Padding="4" HorizontalAlignment="Stretch" />
+            </Grid>
+        </GroupBox>
+        
+        <DockPanel Grid.Row="2" HorizontalAlignment="Right" Margin="0 8 0 0">
+            <Button Content="{x:Static properties:Strings.OK}" Width="60" Margin="0 0 8 0" Command="{Binding RequestCertificateCommand}" IsEnabled="{Binding RequestCertificateEnabled}" />
+            <Button Content="{x:Static properties:Strings.Cancel}" Width="60" Command="{Binding CancelCommand}" />
+        </DockPanel>
+    </Grid>
+</controls:NeoWindow>
