@@ -55,13 +55,13 @@ namespace Neo
                     updateIsRequired = VersionHelper.UpdateIsRequired;
 
                     if (updateIsRequired) return;
-
+                    
                     // Application is starting normally, setup blockchain
                     this.blockChainController =
                         this.applicationContext.ContainerLifetimeScope.Resolve(typeof(IBlockChainController)) as
                             IBlockChainController;
 
-                    this.blockChainController?.Setup();
+                    this.blockChainController?.Initialize();
                 }
                 finally
                 {
@@ -105,6 +105,17 @@ namespace Neo
             this.applicationContext.ContainerLifetimeScope = lifetimeScope;
             DataContextBindingExtension.SetLifetimeScope(lifetimeScope);
         }
+
+        // TODO Find appropriate place to check for a newer version
+        /*private void CheckForNewerVersion()
+        {
+            var latestVersion = VersionHelper.LatestVersion;
+            var currentVersion = VersionHelper.CurrentVersion;
+
+            if (latestVersion == null || latestVersion <= currentVersion) return;
+
+            this.messagePublisher.Publish(new NewVersionAvailableMessage($"{Strings.DownloadNewVersion}: {latestVersion}"));
+        }*/
 
         #region Unhandled exception methods
 

@@ -11,7 +11,6 @@ namespace Neo.UI.Transactions
 {
     public class SigningViewModel : ViewModelBase
     {
-        private readonly IApplicationContext applicationContext;
         private readonly IBlockChainController blockChainController;
         private readonly IWalletController walletController;
 
@@ -20,11 +19,10 @@ namespace Neo.UI.Transactions
         private bool broadcastVisible;
 
         public SigningViewModel(
-            IApplicationContext applicationContext,
+            IBlockChainController blockChainController,
             IWalletController walletController)
         {
             this.blockChainController = blockChainController;
-            this.applicationContext = applicationContext;
             this.walletController = walletController;
         }
 

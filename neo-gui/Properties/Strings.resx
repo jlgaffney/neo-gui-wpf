@@ -135,6 +135,9 @@
   <data name="Accept" xml:space="preserve">
     <value>Accept</value>
   </data>
+  <data name="Accounts" xml:space="preserve">
+    <value>Accounts</value>
+  </data>
   <data name="Account" xml:space="preserve">
     <value>Account</value>
   </data>
@@ -161,6 +164,9 @@
   </data>
   <data name="Apply" xml:space="preserve">
     <value>Apply</value>
+  </data>
+  <data name="Assets" xml:space="preserve">
+    <value>Assets</value>
   </data>
   <data name="Asset" xml:space="preserve">
     <value>Asset</value>
@@ -625,7 +631,7 @@ Note: updated files cannot be openned by clients in older versions!</value>
   <data name="TradeSuccessMessage" xml:space="preserve">
     <value>Transaction sent, this is the TXID:</value>
   </data>
-  <data name="TransactionHistory" xml:space="preserve">
+  <data name="Transactions" xml:space="preserve">
     <value>Transactions</value>
   </data>
   <data name="TransactionId" xml:space="preserve">

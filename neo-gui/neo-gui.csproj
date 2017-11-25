@@ -268,10 +268,13 @@
     </Compile>
     <Compile Include="ApplicationContext.cs" />
     <Compile Include="Controllers\AccountItemExtensionMethods.cs" />
-    <Compile Include="Controllers\BlockChainController.cs" />
+    <Compile Include="Controllers\LocalBlockChainController.cs" />
+    <Compile Include="Controllers\BlockChainStatus.cs" />
     <Compile Include="Controllers\ControllersRegistrationModule.cs" />
     <Compile Include="Controllers\IBlockChainController.cs" />
     <Compile Include="Controllers\IWalletController.cs" />
+    <Compile Include="Controllers\RemoteBlockChainController.cs" />
+    <Compile Include="Controllers\WalletStatus.cs" />
     <Compile Include="DialogResults\OpenWalletDialogResult.cs" />
     <Compile Include="Controllers\WalletController.cs" />
     <Compile Include="DialogResults\YesOrNoDialogResult.cs" />
@@ -372,7 +375,7 @@
     <Compile Include="UI\Messages\AccountAddedMessage.cs" />
     <Compile Include="UI\Messages\AssetAddedMessage.cs" />
     <Compile Include="UI\Messages\BlockchainPersistCompletMessage.cs" />
-    <Compile Include="UI\Messages\BlockProgressMessage.cs" />
+    <Compile Include="UI\Messages\WalletStatusMessage.cs" />
     <Compile Include="UI\Messages\ClearAccountsMessage.cs" />
     <Compile Include="UI\Messages\AddContractMessage.cs" />
     <Compile Include="UI\Messages\ClearAssetsMessage.cs" />

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography;
+using System.Timers;
 using Neo.Core;
 using Neo.Cryptography;
 using Neo.Gui.Helpers.Interfaces;
@@ -26,7 +27,6 @@ namespace Neo.Controllers
         IMessageHandler<ImportPrivateKeyMessage>,
         IMessageHandler<ImportCertificateMessage>,
         IMessageHandler<SignTransactionAndShowInformationMessage>,
-        IMessageHandler<UpdateWalletMessage>,
         IMessageHandler<BlockchainPersistCompletMessage>
     {
         private const string MinimumMigratedWalletVersion = "1.3.5";
@@ -71,6 +71,16 @@ namespace Neo.Controllers
             this.transactions = new List<TransactionItem>();
 
             this.certificateQueryResultCache = new Dictionary<ECPoint, CertificateQueryResult>();
+
+            // Setup automatic refresh timer
+            var refreshTimer = new Timer
+            {
+                Interval = 500,
+                Enabled = true,
+                AutoReset = true
+            };
+
+            refreshTimer.Elapsed += this.Refresh;
         }
 
         #endregion
@@ -96,6 +106,8 @@ namespace Neo.Controllers
 
         public void UpgradeWallet(string walletPath)
         {
+            if (string.IsNullOrEmpty(walletPath)) return;
+
             var pathOld = Path.ChangeExtension(walletPath, ".old.db3");
             var pathNew = Path.ChangeExtension(walletPath, ".new.db3");
             UserWallet.Migrate(walletPath, pathNew);
@@ -282,7 +294,7 @@ namespace Neo.Controllers
         {
             // TODO - ISSUE #37 [AboimPinto]: at this point the return should not be a object from the NEO assemblies but a DTO only know by the application with only the necessary fields.
 
-            return currentWallet?.GetContract(scriptHash);
+            return this.currentWallet?.GetContract(scriptHash);
         }
 
         public void CreateNewKey()
@@ -292,7 +304,7 @@ namespace Neo.Controllers
             var contractsForKey = this.currentWallet.GetContracts(newKey.PublicKeyHash);
             foreach (var contract in contractsForKey)
             {
-                this.AddContract(contract);
+                this.AddAccountItemFromContract(contract);
             }
         }
 
@@ -316,7 +328,7 @@ namespace Neo.Controllers
                         continue;
                     }
                     this.currentWallet.AddWatchOnly(scriptHash);
-                    this.AddAddress(scriptHash);
+                    this.AddAccountItemFromAddress(scriptHash);
                 }
             }
         }
@@ -390,7 +402,7 @@ namespace Neo.Controllers
             foreach (var contract in message.Contracts)
             {
                 this.currentWallet.AddContract(contract);
-                this.AddContract(contract);
+                this.AddAccountItemFromContract(contract);
             }
         }
 
@@ -402,7 +414,7 @@ namespace Neo.Controllers
             }
 
             this.currentWallet.AddContract(message.Contract);
-            this.AddContract(message.Contract);
+            this.AddAccountItemFromContract(message.Contract);
         }
 
         public void HandleMessage(ImportPrivateKeyMessage message)
@@ -425,7 +437,7 @@ namespace Neo.Controllers
                 }
                 foreach (var contract in this.currentWallet.GetContracts(key.PublicKeyHash))
                 {
-                    this.AddContract(contract);
+                    this.AddAccountItemFromContract(contract);
                 }
             }
         }
@@ -447,7 +459,7 @@ namespace Neo.Controllers
 
             foreach (var contract in this.currentWallet.GetContracts(key.PublicKeyHash))
             {
-                this.AddContract(contract);
+                this.AddAccountItemFromContract(contract);
             }
         }
 
@@ -491,20 +503,6 @@ namespace Neo.Controllers
             }
         }
 
-        public void HandleMessage(UpdateWalletMessage message)
-        {
-            if (!this.WalletIsOpen) return;
-
-            lock (this.walletUpdateLock)
-            {
-                this.UpdateAccountBalances();
-
-                this.UpdateFirstClassAssetBalances();
-
-                this.UpdateNEP5TokenBalances(message.PersistenceSpan);
-            }
-        }
-
         public void HandleMessage(BlockchainPersistCompletMessage message)
         {
             if (this.WalletIsOpen)
@@ -521,12 +519,34 @@ namespace Neo.Controllers
                 }
             }
 
-            this.messagePublisher.Publish(new ClearTransactionsMessage());
+            this.UpdateTransactions();
         }
 
         #endregion
 
         #region Private Methods
+        
+        private void Refresh(object sender, ElapsedEventArgs e)
+        {
+            var blockChainStatus = this.blockChainController.GetStatus();
+
+            var walletStatus = new WalletStatus(this.WalletHeight, blockChainStatus.Height, blockChainStatus.HeaderHeight,
+                blockChainStatus.NextBlockProgressIsIndeterminate, blockChainStatus.NextBlockProgressFraction, blockChainStatus.NodeCount);
+
+            this.messagePublisher.Publish(new WalletStatusMessage(walletStatus));
+
+            // Update wallet
+            if (!this.WalletIsOpen) return;
+
+            lock (this.walletUpdateLock)
+            {
+                this.UpdateAccountBalances();
+
+                this.UpdateFirstClassAssetBalances();
+
+                this.UpdateNEP5TokenBalances(blockChainStatus.TimeSinceLastBlock);
+            }
+        }
 
         private void SetCurrentWallet(UserWallet wallet)
         {
@@ -595,20 +615,20 @@ namespace Neo.Controllers
                 var contract = this.GetContract(walletAddress);
                 if (contract == null)
                 {
-                    this.AddAddress(walletAddress);
+                    this.AddAccountItemFromAddress(walletAddress);
                 }
                 else
                 {
-                    this.AddContract(contract);
+                    this.AddAccountItemFromContract(contract);
                 }
             }
         }
 
-        private void AddAddress(UInt160 scriptHash)
+        private void AddAccountItemFromAddress(UInt160 scriptHash)
         {
             var address = Wallet.ToAddress(scriptHash);
 
-            // Check if account already exists
+            // Check if account item already exists
             var accountItemForAddress = this.accounts.GetAccountItemForAddress(address);
 
             if (accountItemForAddress != null) return;
@@ -625,9 +645,9 @@ namespace Neo.Controllers
             this.AddAccountItem(newAccountItem);
         }
 
-        private void AddContract(VerificationContract contract)
+        private void AddAccountItemFromContract(VerificationContract contract)
         {
-            // Check if account already exists
+            // Check if account item already exists
             var accountItemForAddress = this.accounts.GetAccountItemForAddress(contract.Address);
 
             if (accountItemForAddress != null)
@@ -823,11 +843,11 @@ namespace Neo.Controllers
             }
         }
 
-        private void UpdateNEP5TokenBalances(TimeSpan persistenceSpan)
+        private void UpdateNEP5TokenBalances(TimeSpan timeSinceLastBlock)
         {
             if (!checkNep5Balance) return;
 
-            if (persistenceSpan <= TimeSpan.FromSeconds(2)) return;
+            if (timeSinceLastBlock <= TimeSpan.FromSeconds(2)) return;
 
             // Update balances
             var addresses = this.GetAddresses();
@@ -882,28 +902,31 @@ namespace Neo.Controllers
             checkNep5Balance = false;
         }
 
-        private void UpdateTransactions(IEnumerable<TransactionInfo> transactionInfos)
+        private void UpdateTransactions(IEnumerable<TransactionInfo> transactionInfos = null)
         {
-            // Update transaction list
-            foreach (var transactionInfo in transactionInfos)
+            if (transactionInfos != null)
             {
-                var transactionItem = new TransactionItem
+                // Update transaction list
+                foreach (var transactionInfo in transactionInfos)
                 {
-                    Info = transactionInfo
-                };
+                    var transactionItem = new TransactionItem
+                    {
+                        Info = transactionInfo
+                    };
 
-                var transactionIndex = this.GetTransactionIndex(transactionItem.Id);
+                    var transactionIndex = this.GetTransactionIndex(transactionItem.Id);
 
-                // Check transaction exists in list
-                if (transactionIndex >= 0)
-                {
-                    // Update transaction info
-                    this.transactions[transactionIndex] = transactionItem;
-                }
-                else
-                {
-                    // Add transaction to list
-                    this.transactions.Insert(0, transactionItem);
+                    // Check transaction exists in list
+                    if (transactionIndex >= 0)
+                    {
+                        // Update transaction info
+                        this.transactions[transactionIndex] = transactionItem;
+                    }
+                    else
+                    {
+                        // Add transaction to list
+                        this.transactions.Insert(0, transactionItem);
+                    }
                 }
             }
 

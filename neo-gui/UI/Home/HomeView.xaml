@@ -96,17 +96,17 @@
 
         <TabControl Grid.Row="1">
             <!-- Account Tab -->
-            <TabItem Header="{x:Static properties:Strings.Account}">
+            <TabItem Header="{x:Static properties:Strings.Accounts}">
                 <local:AccountsView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
             </TabItem>
 
             <!-- Asset Tab -->
-            <TabItem Header="{x:Static properties:Strings.Asset}">
+            <TabItem Header="{x:Static properties:Strings.Assets}">
                 <local:AssetsView  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
             </TabItem>
 
             <!-- Transaction Tab -->
-            <TabItem Header="{x:Static properties:Strings.TransactionHistory}">
+            <TabItem Header="{x:Static properties:Strings.Transactions}">
                 <local:TransactionsView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
             </TabItem>
         </TabControl>
@@ -118,7 +118,7 @@
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{x:Static properties:Strings.HeightHeading}" Margin="0 0 8 0" />
 
-                        <TextBlock Text="{Binding BlockHeight}" />
+                        <TextBlock Text="{Binding HeightStatus}" />
                     </StackPanel>
                 </StatusBarItem.Content>
             </StatusBarItem>
@@ -147,7 +147,7 @@
                 <StatusBarItem.Content>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding BlockStatus}" Margin="0 0 8 0" />
-                        <ProgressBar Minimum="0" Maximum="15" SmallChange="1" Value="{Binding BlockProgress}" IsIndeterminate="{Binding BlockProgressIndeterminate}" Height="14" Width="100" />
+                        <ProgressBar Minimum="0" Maximum="100" SmallChange="1" Value="{Binding NextBlockProgressPercentage, Mode=OneWay}" IsIndeterminate="{Binding NextBlockProgressIsIndeterminate}" Height="14" Width="100" />
                     </StackPanel>
                 </StatusBarItem.Content>
             </StatusBarItem>

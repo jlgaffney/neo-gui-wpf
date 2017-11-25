@@ -135,6 +135,9 @@
   <data name="Accept" xml:space="preserve">
     <value>Aceptar</value>
   </data>
+  <data name="Accounts" xml:space="preserve">
+    <value>Cuentas</value>
+  </data>
   <data name="Account" xml:space="preserve">
     <value>Cuenta</value>
   </data>
@@ -161,6 +164,9 @@
   </data>
   <data name="Apply" xml:space="preserve">
     <value>Aplicar</value>
+  </data>
+  <data name="Assets" xml:space="preserve">
+    <value>Activos</value>
   </data>
   <data name="Asset" xml:space="preserve">
     <value>Activo</value>
@@ -625,7 +631,7 @@ Aviso: los ficheros actualizados no podran ser abiertos por clientes de versione
   <data name="TradeSuccessMessage" xml:space="preserve">
     <value>Transacción enviada, este es el TXID:</value>
   </data>
-  <data name="TransactionHistory" xml:space="preserve">
+  <data name="Transactions" xml:space="preserve">
     <value>Transacciónes</value>
   </data>
   <data name="TransactionId" xml:space="preserve">

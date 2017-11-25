@@ -133,6 +133,15 @@ namespace Neo.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Accounts.
+        /// </summary>
+        public static string Accounts {
+            get {
+                return ResourceManager.GetString("Accounts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add.
         /// </summary>
         public static string Add {
@@ -264,6 +273,15 @@ namespace Neo.Properties {
         public static string AssetRegistrationTitle {
             get {
                 return ResourceManager.GetString("AssetRegistrationTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Assets.
+        /// </summary>
+        public static string Assets {
+            get {
+                return ResourceManager.GetString("Assets", resourceCulture);
             }
         }
         
@@ -1925,15 +1943,6 @@ namespace Neo.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Transactions.
-        /// </summary>
-        public static string TransactionHistory {
-            get {
-                return ResourceManager.GetString("TransactionHistory", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Transaction ID.
         /// </summary>
         public static string TransactionId {
@@ -1957,6 +1966,15 @@ namespace Neo.Properties {
         public static string TransactionRemark {
             get {
                 return ResourceManager.GetString("TransactionRemark", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Transactions.
+        /// </summary>
+        public static string Transactions {
+            get {
+                return ResourceManager.GetString("Transactions", resourceCulture);
             }
         }
         

@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Input;
@@ -27,7 +28,7 @@ namespace Neo.UI.Home
         IMessageHandler<UpdateApplicationMessage>,
         IMessageHandler<CurrentWalletHasChangedMessage>,
         IMessageHandler<InvokeContractMessage>,
-        IMessageHandler<BlockProgressMessage>
+        IMessageHandler<WalletStatusMessage>
     {
         #region Private Fields 
         private readonly IWalletController walletController;
@@ -37,14 +38,14 @@ namespace Neo.UI.Home
         private readonly IMessageSubscriber messageSubscriber;
         private readonly IDispatcher dispatcher;
 
-        private bool blockProgressIndeterminate;
-        private int blockProgress;
+        private bool nextBlockProgressIsIndeterminate;
+        private double nextBlockProgressFraction;
 
         private string newVersionLabel;
         private bool newVersionVisible;
 
-        private string blockHeight;
-        private int nodeCount;
+        private string heightStatus;
+        private uint nodeCount;
         private string blockStatus;
         #endregion
 
@@ -69,57 +70,62 @@ namespace Neo.UI.Home
         #region Public Properties
         public bool WalletIsOpen => this.walletController.WalletIsOpen;
 
-        public string BlockHeight
+        public string HeightStatus
         {
-            get
-            {
-                return this.blockHeight;
-            }
+            get => this.heightStatus;
             set
             {
-                this.blockHeight = value;
-                this.NotifyPropertyChanged(nameof(this.BlockHeight));
+                if (this.heightStatus == value) return;
+
+                this.heightStatus = value;
+
+                NotifyPropertyChanged();
             }
         }
 
-        public int NodeCount
+        public uint NodeCount
         {
-            get
-            {
-                return this.nodeCount;
-            }
+            get => this.nodeCount;
             set
             {
+                if (this.nodeCount == value) return;
+
                 this.nodeCount = value;
-                this.NotifyPropertyChanged(nameof(this.NodeCount));
-            }
-        }
-
-        public bool BlockProgressIndeterminate
-        {
-            get => this.blockProgressIndeterminate;
-            set
-            {
-                if (this.blockProgressIndeterminate == value) return;
-
-                this.blockProgressIndeterminate = value;
 
                 NotifyPropertyChanged();
             }
         }
 
-        public int BlockProgress
+        public bool NextBlockProgressIsIndeterminate
         {
-            get => this.blockProgress;
+            get => this.nextBlockProgressIsIndeterminate;
             set
             {
-                if (this.blockProgress == value) return;
+                if (this.nextBlockProgressIsIndeterminate == value) return;
 
-                this.blockProgress = value;
+                this.nextBlockProgressIsIndeterminate = value;
 
                 NotifyPropertyChanged();
             }
         }
+
+        public double NextBlockProgressFraction
+        {
+            get => this.nextBlockProgressFraction;
+            set
+            {
+                if (this.nextBlockProgressFraction.Equals(value)) return;
+
+                this.nextBlockProgressFraction = value;
+
+                NotifyPropertyChanged();
+
+                // Update dependent property
+                NotifyPropertyChanged(nameof(this.NextBlockProgressPercentage));
+            }
+        }
+
+        public int NextBlockProgressPercentage => (int) Math.Round(this.NextBlockProgressFraction * 100.0);
 
         #endregion Public Properies
 
@@ -200,13 +206,9 @@ namespace Neo.UI.Home
             }
         }
 
-        // TODO Update property to return actual status
         public string BlockStatus
         {
-            get
-            {
-                return this.blockStatus;
-            }
+            get => this.blockStatus;
             set
             {
                 this.blockStatus = value;
@@ -409,13 +411,17 @@ namespace Neo.UI.Home
             invokeContractView.ShowDialog();
         }
 
-        public void HandleMessage(BlockProgressMessage message)
+        public void HandleMessage(WalletStatusMessage message)
         {
-            this.BlockProgressIndeterminate = message.BlockProgressIndeterminate;
-            this.BlockProgress = message.BlockProgress;
-            this.BlockHeight = message.BlockHeight;
-            this.NodeCount = message.NodeCount;
-            this.BlockStatus = message.BlockStatus;
+            var status = message.Status;
+
+            // TODO
+            this.HeightStatus = status.WalletHeight + "/" + status.BlockChainHeight + "/" + status.BlockChainHeaderHeight;
+            this.NextBlockProgressIsIndeterminate = status.NextBlockProgressIsIndeterminate;
+            this.NextBlockProgressFraction = status.NextBlockProgressFraction;
+
+            this.NodeCount = status.NodeCount;
+            this.BlockStatus = $"{Strings.WaitingForNextBlock}:"; // TODO Update property to return actual status
         }
         #endregion
     }

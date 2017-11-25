@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Neo.Properties;
 
 namespace Neo.Controllers
 {
@@ -6,8 +7,12 @@ namespace Neo.Controllers
     {
         protected override void Load(ContainerBuilder builder)
         {
+            var blockChainControllerType = Settings.Default.RemoteNodeMode
+                ? typeof(RemoteBlockChainController)
+                : typeof(LocalBlockChainController);
+
             builder
-                .RegisterType<BlockChainController>()
+                .RegisterType(blockChainControllerType)
                 .As<IBlockChainController>()
                 .SingleInstance();
 

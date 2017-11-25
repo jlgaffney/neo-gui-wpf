@@ -8,10 +8,12 @@ namespace Neo.Controllers
     {
         uint BlockHeight { get; }
 
-        void Setup(bool setupLocalNode = true);
+        void Initialize();
 
         void Relay(Transaction transaction);
 
         void Relay(IInventory inventory);
+
+        BlockChainStatus GetStatus();
     }
 }

@@ -11,9 +11,9 @@
     MouseDoubleClick="AssetList_DoubleClick">
     <ListView.View>
         <GridView>
-            <GridViewColumn Header="{x:Static properties:Strings.Asset}" Width="120" DisplayMemberBinding="{Binding Name}" />
-            <GridViewColumn Header="{x:Static properties:Strings.Type}" Width="72" DisplayMemberBinding="{Binding Type}" />
-            <GridViewColumn Header="{x:Static properties:Strings.Balance}" Width="120" DisplayMemberBinding="{Binding Value}" />
+            <GridViewColumn Header="{x:Static properties:Strings.Asset}" Width="80" DisplayMemberBinding="{Binding Name}" />
+            <GridViewColumn Header="{x:Static properties:Strings.Type}" Width="120" DisplayMemberBinding="{Binding Type}" />
+            <GridViewColumn Header="{x:Static properties:Strings.Balance}" Width="160" DisplayMemberBinding="{Binding Value}" />
             <GridViewColumn Header="{x:Static properties:Strings.Issuer}" Width="260" DisplayMemberBinding="{Binding Issuer}" />
         </GridView>
     </ListView.View>

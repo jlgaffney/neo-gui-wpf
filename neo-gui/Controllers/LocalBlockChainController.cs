@@ -2,7 +2,6 @@
 using System.IO;
 using System.IO.Compression;
 using System.Threading.Tasks;
-using System.Timers;
 using Neo.Core;
 using Neo.Implementations.Blockchains.LevelDB;
 using Neo.IO;
@@ -13,7 +12,7 @@ using Neo.UI.Messages;
 
 namespace Neo.Controllers
 {
-    public class BlockChainController : IBlockChainController
+    public class LocalBlockChainController : IBlockChainController
     {
         #region Private Fields
         private readonly IMessagePublisher messagePublisher;
@@ -24,12 +23,11 @@ namespace Neo.Controllers
 
         private LocalNode localNode;
 
-        private DateTime persistenceTime = DateTime.MinValue;
-        private Timer updateTimer;
-        #endregion
+        private DateTime timeOfLastBlock = DateTime.MinValue;
+       #endregion
 
         #region Constructor 
-        public BlockChainController(
+        public LocalBlockChainController(
             IMessagePublisher messagePublisher)
         {
             this.messagePublisher = messagePublisher;
@@ -40,25 +38,9 @@ namespace Neo.Controllers
 
         public uint BlockHeight => Blockchain.Default.Height;
 
-        public void Setup(bool setupLocalNode = true)
+        public void Initialize()
         {
-            if (setupLocalNode)
-            {
-                this.SetupLocalNode();
-            }
-            else
-            {
-                this.SetupRemoteNode();
-            }
-
-            this.updateTimer = new Timer
-            {
-                Interval = 500,
-                Enabled = true,
-                AutoReset = true
-            };
-
-            this.updateTimer.Elapsed += this.Refresh;
+            this.InitializeLocalNode();
         }
 
         public void Relay(Transaction transaction)
@@ -71,11 +53,48 @@ namespace Neo.Controllers
             this.localNode.Relay(inventory);
         }
 
+        public BlockChainStatus GetStatus()
+        {
+            var timeSinceLastBlock = DateTime.UtcNow - this.timeOfLastBlock;
+
+            if (timeSinceLastBlock < TimeSpan.Zero)
+            {
+                timeSinceLastBlock = TimeSpan.Zero;
+            }
+
+            bool nextBlockProgressIsIndeterminate;
+            double nextBlockProgressFraction;
+            if (timeSinceLastBlock > Blockchain.TimePerBlock)
+            {
+                nextBlockProgressIsIndeterminate = true;
+                nextBlockProgressFraction = 1.0;
+            }
+            else
+            {
+                nextBlockProgressIsIndeterminate = false;
+                nextBlockProgressFraction = (double)timeSinceLastBlock.Seconds / Blockchain.TimePerBlock.Seconds;
+            }
+
+            if (nextBlockProgressFraction < 0.0)
+            {
+                nextBlockProgressFraction = 0.0;
+            }
+            else if (nextBlockProgressFraction > 1.0)
+            {
+                nextBlockProgressFraction = 1.0;
+            }
+
+            var nodeCount = (uint) this.localNode.RemoteNodeCount;
+
+            return new BlockChainStatus(Blockchain.Default.Height, Blockchain.Default.HeaderHeight,
+                nextBlockProgressIsIndeterminate, nextBlockProgressFraction, timeSinceLastBlock, nodeCount);
+        }
+
         #endregion
 
         #region Private Methods 
 
-        private void SetupLocalNode()
+        private void InitializeLocalNode()
         {
             if (!RootCertificate.InstallRootCertificate()) return;
 
@@ -87,12 +106,6 @@ namespace Neo.Controllers
             this.StartLocalNode();
         }
 
-        private void SetupRemoteNode()
-        {
-            // Remote node is not supported yet
-            throw new NotImplementedException();
-        }
-
         private void StartLocalNode()
         {
             this.localNode = new LocalNode
@@ -102,8 +115,6 @@ namespace Neo.Controllers
 
             Task.Run(() =>
             {
-                CheckForNewerVersion();
-
                 ImportBlocksIfRequired();
 
                 Blockchain.PersistCompleted += this.BlockchainPersistCompleted;
@@ -113,63 +124,7 @@ namespace Neo.Controllers
             });
         }
 
-        private void Refresh(object sender, ElapsedEventArgs e)
-        {
-            var persistenceSpan = DateTime.UtcNow - this.persistenceTime;
-
-            this.UpdateBlockProgress(persistenceSpan);
-            this.UpdateWallet(persistenceSpan);
-        }
-
-        private void UpdateWallet(TimeSpan persistenceSpan)
-        {
-            this.messagePublisher.Publish(new UpdateWalletMessage(persistenceSpan));
-        }
-
-        private void UpdateBlockProgress(TimeSpan persistenceSpan)
-        {
-            var blockProgressIndeterminate = false;
-            var blockProgress = 0;
-
-            if (persistenceSpan < TimeSpan.Zero)
-            {
-                persistenceSpan = TimeSpan.Zero;
-            }
-
-            if (persistenceSpan > Blockchain.TimePerBlock)
-            {
-                blockProgressIndeterminate = true;
-            }
-            else
-            {
-                blockProgressIndeterminate = true;
-                blockProgress = persistenceSpan.Seconds;
-            }
-
-            var blockHeight = $"{Blockchain.Default.Height}/{Blockchain.Default.HeaderHeight}";
-            var nodeCount = this.localNode.RemoteNodeCount;
-            var blockStatus = $"{Strings.WaitingForNextBlock}:";
-
-            var blockProgressMessage = new BlockProgressMessage(
-                blockProgressIndeterminate, 
-                blockProgress, 
-                blockHeight, 
-                nodeCount, 
-                blockStatus);
-            this.messagePublisher.Publish(blockProgressMessage);
-        }
-
-        private void CheckForNewerVersion()
-        {
-            var latestVersion = VersionHelper.LatestVersion;
-            var currentVersion = VersionHelper.CurrentVersion;
-
-            if (latestVersion == null || latestVersion <= currentVersion) return;
-
-            this.messagePublisher.Publish(new NewVersionAvailableMessage($"{Strings.DownloadNewVersion}: {latestVersion}"));
-        }
-
-        private void ImportBlocksIfRequired()
+        private static void ImportBlocksIfRequired()
         {
             const string acc_path = "chain.acc";
             const string acc_zip_path = acc_path + ".zip";
@@ -196,7 +151,7 @@ namespace Neo.Controllers
             }
         }
 
-        private void ImportBlocks(Stream stream)
+        private static void ImportBlocks(Stream stream)
         {
             var blockchain = (LevelDBBlockchain)Blockchain.Default;
             blockchain.VerifyBlocks = false;
@@ -218,6 +173,7 @@ namespace Neo.Controllers
 
         private void BlockchainPersistCompleted(object sender, Block block)
         {
+            this.timeOfLastBlock = DateTime.UtcNow;
             this.messagePublisher.Publish(new BlockchainPersistCompletMessage());
         }
         #endregion
@@ -246,7 +202,7 @@ namespace Neo.Controllers
             }
         }
 
-        ~BlockChainController()
+        ~LocalBlockChainController()
         {
             Dispose(false);
         }
