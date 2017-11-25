@@ -1,4 +1,4 @@
-﻿namespace Neo.Controllers
+﻿namespace Neo.Gui.Base.Controllers
 {
     public class WalletStatus
     {

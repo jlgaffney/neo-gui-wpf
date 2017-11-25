@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
-using Neo.UI.Base.Converters;
-using Neo.UI.Base.Localization;
+using Neo.Gui.Base.Converters;
+using Neo.Gui.Base.Localization;
 
 namespace Neo.Gui.Base.Theming
 {

@@ -1,4 +1,4 @@
-﻿namespace Neo.UI.Base.Messages
+﻿namespace Neo.Gui.Base.Messaging
 {
     public interface IMessageSubscriber
     {

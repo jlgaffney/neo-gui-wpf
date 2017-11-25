@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using Neo.Core;
 using Neo.Cryptography.ECC;
+using Neo.Gui.Base.Data;
 using Neo.SmartContract;
-using Neo.UI;
 using Neo.Wallets;
 
-namespace Neo.Controllers
+namespace Neo.Gui.Base.Controllers.Interfaces
 {
     public interface IWalletController
     {

@@ -1,6 +1,6 @@
-﻿namespace Neo.Cryptography
+﻿namespace Neo.Gui.Wpf.Cryptography
 {
-    internal enum CertificateQueryResultType
+    public enum CertificateQueryResultType
     {
         Querying,
         QueryFailed,

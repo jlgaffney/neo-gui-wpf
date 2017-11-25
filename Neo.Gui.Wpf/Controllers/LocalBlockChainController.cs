@@ -3,14 +3,16 @@ using System.IO;
 using System.IO.Compression;
 using System.Threading.Tasks;
 using Neo.Core;
+using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Controllers.Interfaces;
+using Neo.Gui.Base.Messaging;
+using Neo.Gui.Wpf.Messages;
+using Neo.Gui.Wpf.Properties;
 using Neo.Implementations.Blockchains.LevelDB;
 using Neo.IO;
 using Neo.Network;
-using Neo.Gui.Wpf.Properties;
-using Neo.UI.Base.Messages;
-using Neo.UI.Messages;
 
-namespace Neo.Controllers
+namespace Neo.Gui.Wpf.Controllers
 {
     public class LocalBlockChainController : IBlockChainController
     {

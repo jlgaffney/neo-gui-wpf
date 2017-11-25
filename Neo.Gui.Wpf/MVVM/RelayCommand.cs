@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace Neo.UI.Base.MVVM
+namespace Neo.Gui.Wpf.MVVM
 {
     public class RelayCommand : ICommand
     {

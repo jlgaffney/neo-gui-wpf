@@ -1,7 +1,7 @@
 ﻿using Neo.Gui.Base.MVVM;
 using Neo.Wallets;
 
-namespace Neo.UI
+namespace Neo.Gui.Base.Data
 {
     public class AccountItem : BindableClass
     {

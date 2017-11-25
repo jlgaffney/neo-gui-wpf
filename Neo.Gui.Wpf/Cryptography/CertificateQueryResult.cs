@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Security.Cryptography.X509Certificates;
 
-namespace Neo.Cryptography
+namespace Neo.Gui.Wpf.Cryptography
 {
-    internal class CertificateQueryResult : IDisposable
+    public class CertificateQueryResult : IDisposable
     {
-        public CertificateQueryResultType Type;
-        public X509Certificate2 Certificate;
+        public CertificateQueryResultType Type { get; set; }
+
+        public X509Certificate2 Certificate { get; set; }
 
         public void Dispose()
         {
-            if (Certificate != null)
-            {
-                Certificate.Dispose();
-            }
+            this.Certificate?.Dispose();
         }
     }
 }

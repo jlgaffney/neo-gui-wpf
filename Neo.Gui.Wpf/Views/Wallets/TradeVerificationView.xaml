@@ -1,0 +1,26 @@
+﻿<controls:NeoWindow x:Class="Neo.Gui.Wpf.Views.Wallets.TradeVerificationView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:globalization="clr-namespace:Neo.Gui.Wpf.Globalization"
+        xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
+        xmlns:wallets="clr-namespace:Neo.Gui.Wpf.Views.Wallets"
+        xmlns:controls="clr-namespace:Neo.Gui.Wpf.Controls"
+        DataContext="{markupExtensions:DataContextBinding ViewModel=wallets:TradeVerificationViewModel}"
+        Title="{x:Static globalization:Strings.TransactionVerificationTitle}"
+        Width="600" Height="500" ResizeMode="NoResize">
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <GroupBox Grid.Row="0" Header="{x:Static globalization:Strings.AssetsYouWillAcquire}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <controls:TxOutListBox Items="{Binding Items}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        </GroupBox>
+
+        <DockPanel Grid.Row="1" Margin="0 8 0 0" HorizontalAlignment="Right" VerticalAlignment="Stretch">
+            <Button Content="{x:Static globalization:Strings.Accept}" Width="70" Margin="0 0 8 0" Command="{Binding AcceptCommand}" />
+            <Button Content="{x:Static globalization:Strings.Refuse}" Width="70" Command="{Binding RefuseCommand}" />
+        </DockPanel>
+    </Grid>
+</controls:NeoWindow>

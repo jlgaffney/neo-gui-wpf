@@ -1,7 +1,8 @@
 ﻿using Autofac;
+using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Wpf.Properties;
 
-namespace Neo.Controllers
+namespace Neo.Gui.Wpf.Controllers
 {
     public class ControllersRegistrationModule : Module
     {

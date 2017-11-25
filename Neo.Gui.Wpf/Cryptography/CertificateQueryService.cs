@@ -1,21 +1,21 @@
-﻿using Neo.Core;
-using Neo.Gui.Wpf.Properties;
-using Neo.SmartContract;
-using Neo.Wallets;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using Neo.Core;
+using Neo.Gui.Wpf.Properties;
+using Neo.SmartContract;
+using Neo.Wallets;
 using ECCurve = Neo.Cryptography.ECC.ECCurve;
 using ECPoint = Neo.Cryptography.ECC.ECPoint;
 
-namespace Neo.Cryptography
+namespace Neo.Gui.Wpf.Cryptography
 {
-    internal static class CertificateQueryService
+    public static class CertificateQueryService
     {
-        private static Dictionary<UInt160, CertificateQueryResult> results = new Dictionary<UInt160, CertificateQueryResult>();
+        private static readonly Dictionary<UInt160, CertificateQueryResult> results = new Dictionary<UInt160, CertificateQueryResult>();
 
         static CertificateQueryService()
         {
@@ -24,9 +24,9 @@ namespace Neo.Cryptography
 
         private static void Web_DownloadDataCompleted(object sender, DownloadDataCompletedEventArgs e)
         {
-            using ((WebClient)sender)
+            using ((WebClient) sender)
             {
-                UInt160 hash = (UInt160)e.UserState;
+                var hash = (UInt160) e.UserState;
                 if (e.Cancelled || e.Error != null)
                 {
                     lock (results)
@@ -36,8 +36,8 @@ namespace Neo.Cryptography
                 }
                 else
                 {
-                    string address = Wallet.ToAddress(hash);
-                    string path = Path.Combine(Settings.Default.CertCachePath, $"{address}.cer");
+                    var address = Wallet.ToAddress(hash);
+                    var path = Path.Combine(Settings.Default.CertCachePath, $"{address}.cer");
                     File.WriteAllBytes(path, e.Result);
                     lock (results)
                     {
@@ -59,8 +59,8 @@ namespace Neo.Cryptography
                 if (results.ContainsKey(hash)) return results[hash];
                 results[hash] = new CertificateQueryResult { Type = CertificateQueryResultType.Querying };
             }
-            string address = Wallet.ToAddress(hash);
-            string path = Path.Combine(Settings.Default.CertCachePath, $"{address}.cer");
+            var address = Wallet.ToAddress(hash);
+            var path = Path.Combine(Settings.Default.CertCachePath, $"{address}.cer");
             if (File.Exists(path))
             {
                 lock (results)
@@ -70,8 +70,8 @@ namespace Neo.Cryptography
             }
             else
             {
-                string url = $"http://cert.onchain.com/antshares/{address}.cer";
-                WebClient web = new WebClient();
+                var url = $"http://cert.onchain.com/antshares/{address}.cer";
+                var web = new WebClient();
                 web.DownloadDataCompleted += Web_DownloadDataCompleted;
                 web.DownloadDataAsync(new Uri(url), hash);
             }
@@ -80,7 +80,7 @@ namespace Neo.Cryptography
 
         private static void UpdateResultFromFile(UInt160 hash)
         {
-            string address = Wallet.ToAddress(hash);
+            var address = Wallet.ToAddress(hash);
             X509Certificate2 cert;
             try
             {
@@ -101,7 +101,7 @@ namespace Neo.Cryptography
                 results[hash].Type = CertificateQueryResultType.Missing;
                 return;
             }
-            using (X509Chain chain = new X509Chain())
+            using (var chain = new X509Chain())
             {
                 results[hash].Certificate = cert;
                 if (chain.Build(cert))

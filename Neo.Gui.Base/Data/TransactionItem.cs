@@ -3,9 +3,8 @@ using Neo.Core;
 using Neo.Gui.Base.MVVM;
 using Neo.Implementations.Wallets.EntityFramework;
 //using Neo.Gui.Wpf.Properties;
-using Neo.UI.Base.MVVM;
 
-namespace Neo.UI
+namespace Neo.Gui.Base.Data
 {
     public class TransactionItem : BindableClass
     {

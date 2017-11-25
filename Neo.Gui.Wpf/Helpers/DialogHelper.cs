@@ -1,8 +1,8 @@
 ﻿using Autofac;
-using Neo.Gui.Base.Interfaces;
-using Neo.Gui.Base.Interfaces.Helpers;
+using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Helpers.Interfaces;
 
-namespace Neo.Helpers
+namespace Neo.Gui.Wpf.Helpers
 {
     public class DialogHelper : IDialogHelper
     {

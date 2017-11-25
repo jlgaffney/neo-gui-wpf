@@ -6,19 +6,23 @@ using System.Numerics;
 using System.Security.Cryptography;
 using System.Timers;
 using Neo.Core;
-using Neo.Cryptography;
-using Neo.Gui.Base.Interfaces.Helpers;
-using Neo.Implementations.Wallets.EntityFramework;
+using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Controllers.Interfaces;
+using Neo.Gui.Base.Data;
+using Neo.Gui.Base.Extensions;
+using Neo.Gui.Base.Helpers.Interfaces;
+using Neo.Gui.Base.Messaging;
+using Neo.Gui.Wpf.Cryptography;
+using Neo.Gui.Wpf.Globalization;
+using Neo.Gui.Wpf.Messages;
 using Neo.Gui.Wpf.Properties;
+using Neo.Implementations.Wallets.EntityFramework;
 using Neo.SmartContract;
-using Neo.UI;
-using Neo.UI.Base.Messages;
-using Neo.UI.Messages;
 using Neo.VM;
 using Neo.Wallets;
 using ECPoint = Neo.Cryptography.ECC.ECPoint;
 
-namespace Neo.Controllers
+namespace Neo.Gui.Wpf.Controllers
 {
     public class WalletController :
         IWalletController,

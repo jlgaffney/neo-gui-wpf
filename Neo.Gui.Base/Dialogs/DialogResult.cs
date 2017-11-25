@@ -1,4 +1,4 @@
-﻿namespace Neo.Gui.Base
+﻿namespace Neo.Gui.Base.Dialogs
 {
     public class DialogResult<T>
     {

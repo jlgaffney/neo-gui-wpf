@@ -1,4 +1,4 @@
-﻿namespace Neo.UI.Base.MVVM
+﻿namespace Neo.Gui.Base.MVVM
 {
     public interface IUnloadable
     {

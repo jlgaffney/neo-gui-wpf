@@ -1,7 +1,7 @@
 ﻿using Neo.Gui.Base.MVVM;
-using Neo.UI.Base.Controls;
+using Neo.Gui.Wpf.Controls;
 
-namespace Neo.UI.Base.MVVM
+namespace Neo.Gui.Wpf.MVVM
 {
     public abstract class ViewModelBase : BindableClass
     {

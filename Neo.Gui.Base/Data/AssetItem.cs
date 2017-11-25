@@ -1,7 +1,7 @@
 ﻿using Neo.Core;
 using Neo.Gui.Base.MVVM;
 
-namespace Neo.UI
+namespace Neo.Gui.Base.Data
 {
     public class AssetItem : BindableClass
     {

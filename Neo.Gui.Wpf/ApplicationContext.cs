@@ -1,6 +1,6 @@
 ﻿using Autofac;
 
-namespace Neo
+namespace Neo.Gui.Wpf
 {
     public class ApplicationContext : IApplicationContext
     {

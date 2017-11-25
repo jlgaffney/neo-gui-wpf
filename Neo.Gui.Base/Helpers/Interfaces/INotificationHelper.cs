@@ -1,4 +1,4 @@
-﻿namespace Neo.Gui.Base.Interfaces.Helpers
+﻿namespace Neo.Gui.Base.Helpers.Interfaces
 {
     public interface INotificationHelper
     {

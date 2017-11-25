@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
-using Neo.Gui.Base.Interfaces.Helpers;
+using Neo.Gui.Base.Helpers.Interfaces;
 
-namespace Neo.UI.Base.Dispatching
+namespace Neo.Gui.Wpf.Helpers
 {
     public class DispatchHelper : IDispatchHelper
     {

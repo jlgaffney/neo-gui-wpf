@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Windows;
-using Neo.Gui.Base.Interfaces.Helpers;
+using Neo.Gui.Base.Helpers.Interfaces;
 using ToastNotifications;
 using ToastNotifications.Lifetime;
 using ToastNotifications.Messages;
 using ToastNotifications.Position;
 
-namespace Neo.Helpers
+namespace Neo.Gui.Wpf.Helpers
 {
     public class NotificationHelper : INotificationHelper
     {
         #region Private Fields 
-        private Notifier notifier;
+        private readonly Notifier notifier;
         #endregion
 
         #region Constructor 

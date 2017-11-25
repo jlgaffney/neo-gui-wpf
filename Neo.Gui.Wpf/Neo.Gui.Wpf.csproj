@@ -32,7 +32,7 @@
     </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>Neo.App</StartupObject>
+    <StartupObject>Neo.Gui.Wpf.App</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Resources\logo.ico</ApplicationIcon>
@@ -267,7 +267,6 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationContext.cs" />
-    <Compile Include="Controllers\AccountItemExtensionMethods.cs" />
     <Compile Include="Controllers\LocalBlockChainController.cs" />
     <Compile Include="Controllers\ControllersRegistrationModule.cs" />
     <Compile Include="Controllers\RemoteBlockChainController.cs" />
@@ -280,7 +279,7 @@
     <Compile Include="Helpers\NotificationHelper.cs" />
     <Compile Include="IApplicationContext.cs" />
     <Compile Include="NeoGuiRegistrationModule.cs" />
-    <Compile Include="UI\Base\BaseRegistrationModule.cs" />
+    <Compile Include="Messaging\MessagingRegistrationModule.cs" />
     <Compile Include="Helpers\DispatchHelper.cs" />
     <Compile Include="RootCertificate.cs" />
     <Compile Include="Cryptography\CertificateQueryResult.cs" />
@@ -291,7 +290,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Properties\Strings.Designer.cs">
+    <Compile Include="Globalization\Strings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
@@ -299,181 +298,181 @@
     <Compile Include="Properties\Settings.cs">
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="UI\Accounts\CreateMultiSigContractView.xaml.cs">
+    <Compile Include="Views\Accounts\CreateMultiSigContractView.xaml.cs">
       <DependentUpon>CreateMultiSigContractView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Accounts\CreateMultiSigContractViewModel.cs" />
-    <Compile Include="UI\Accounts\ImportCertificateView.xaml.cs">
+    <Compile Include="Views\Accounts\CreateMultiSigContractViewModel.cs" />
+    <Compile Include="Views\Accounts\ImportCertificateView.xaml.cs">
       <DependentUpon>ImportCertificateView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Accounts\CreateLockAccountViewModel.cs" />
-    <Compile Include="UI\Accounts\ImportCustomContractView.xaml.cs">
+    <Compile Include="Views\Accounts\CreateLockAccountViewModel.cs" />
+    <Compile Include="Views\Accounts\ImportCustomContractView.xaml.cs">
       <DependentUpon>ImportCustomContractView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Accounts\ImportCustomContractViewModel.cs" />
-    <Compile Include="UI\Accounts\CreateLockAccountView.xaml.cs">
+    <Compile Include="Views\Accounts\ImportCustomContractViewModel.cs" />
+    <Compile Include="Views\Accounts\CreateLockAccountView.xaml.cs">
       <DependentUpon>CreateLockAccountView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Accounts\ImportCertificateViewModel.cs" />
-    <Compile Include="UI\Assets\AssetDistributionView.xaml.cs">
+    <Compile Include="Views\Accounts\ImportCertificateViewModel.cs" />
+    <Compile Include="Views\Assets\AssetDistributionView.xaml.cs">
       <DependentUpon>AssetDistributionView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Assets\AssetDistributionViewModel.cs" />
-    <Compile Include="UI\Base\Controls\Development\TransactionPropertyGrid.xaml.cs">
+    <Compile Include="Views\Assets\AssetDistributionViewModel.cs" />
+    <Compile Include="Controls\Development\TransactionPropertyGrid.xaml.cs">
       <DependentUpon>TransactionPropertyGrid.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Messages\IInternalMessageAggregator.cs" />
-    <Compile Include="Messages\InternalMessageAggregator.cs" />
-    <Compile Include="Messages\MessagePublisher.cs" />
-    <Compile Include="Messages\MessageSubscriber.cs" />
-    <Compile Include="UI\Base\Resources\EnumStrings.Designer.cs">
+    <Compile Include="Messaging\IInternalMessageAggregator.cs" />
+    <Compile Include="Messaging\InternalMessageAggregator.cs" />
+    <Compile Include="Messaging\MessagePublisher.cs" />
+    <Compile Include="Messaging\MessageSubscriber.cs" />
+    <Compile Include="Globalization\EnumStrings.Designer.cs">
       <DependentUpon>EnumStrings.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="Helpers\ThemeHelper.cs" />
-    <Compile Include="UI\DialogsRegistrationModule.cs" />
-    <Compile Include="UI\Home\TransactionsView.xaml.cs">
+    <Compile Include="Views\DialogsRegistrationModule.cs" />
+    <Compile Include="Views\Home\TransactionsView.xaml.cs">
       <DependentUpon>TransactionsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Home\AssetsView.xaml.cs">
+    <Compile Include="Views\Home\AssetsView.xaml.cs">
       <DependentUpon>AssetsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Home\AccountsViewModel.cs" />
-    <Compile Include="UI\Home\AccountsView.xaml.cs">
+    <Compile Include="Views\Home\AccountsViewModel.cs" />
+    <Compile Include="Views\Home\AccountsView.xaml.cs">
       <DependentUpon>AccountsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Home\AssetsViewModel.cs" />
-    <Compile Include="UI\Home\HomeView.xaml.cs">
+    <Compile Include="Views\Home\AssetsViewModel.cs" />
+    <Compile Include="Views\Home\HomeView.xaml.cs">
       <DependentUpon>HomeView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Home\HomeViewModel.cs" />
-    <Compile Include="UI\Home\TransactionsViewModel.cs" />
-    <Compile Include="UI\MarkupExtensions\DataContextBindingExtension.cs" />
-    <Compile Include="UI\Messages\TransactionsHaveChangedMessage.cs" />
-    <Compile Include="UI\Messages\AccountAddedMessage.cs" />
-    <Compile Include="UI\Messages\AssetAddedMessage.cs" />
-    <Compile Include="UI\Messages\BlockchainPersistCompletMessage.cs" />
-    <Compile Include="UI\Messages\WalletStatusMessage.cs" />
-    <Compile Include="UI\Messages\ClearAccountsMessage.cs" />
-    <Compile Include="UI\Messages\AddContractMessage.cs" />
-    <Compile Include="UI\Messages\ClearAssetsMessage.cs" />
-    <Compile Include="UI\Messages\ClearTransactionsMessage.cs" />
-    <Compile Include="UI\Messages\CurrentWalletHasChangedMessage.cs" />
-    <Compile Include="UI\Messages\ImportCertificateMessage.cs" />
-    <Compile Include="UI\Messages\ImportPrivateKeyMessage.cs" />
-    <Compile Include="UI\Messages\InvokeContractMessage.cs" />
-    <Compile Include="UI\Messages\LoadWalletAddressesMessage.cs" />
-    <Compile Include="UI\Messages\NewVersionAvailableMessage.cs" />
-    <Compile Include="UI\Messages\AddContractsMessage.cs" />
-    <Compile Include="UI\Messages\SignTransactionAndShowInformationMessage.cs" />
-    <Compile Include="UI\Messages\UpdateWalletMessage.cs" />
-    <Compile Include="UI\NeoSplashScreen.xaml.cs">
+    <Compile Include="Views\Home\HomeViewModel.cs" />
+    <Compile Include="Views\Home\TransactionsViewModel.cs" />
+    <Compile Include="MarkupExtensions\DataContextBindingExtension.cs" />
+    <Compile Include="Messages\TransactionsHaveChangedMessage.cs" />
+    <Compile Include="Messages\AccountAddedMessage.cs" />
+    <Compile Include="Messages\AssetAddedMessage.cs" />
+    <Compile Include="Messages\BlockchainPersistCompletMessage.cs" />
+    <Compile Include="Messages\WalletStatusMessage.cs" />
+    <Compile Include="Messages\ClearAccountsMessage.cs" />
+    <Compile Include="Messages\AddContractMessage.cs" />
+    <Compile Include="Messages\ClearAssetsMessage.cs" />
+    <Compile Include="Messages\ClearTransactionsMessage.cs" />
+    <Compile Include="Messages\CurrentWalletHasChangedMessage.cs" />
+    <Compile Include="Messages\ImportCertificateMessage.cs" />
+    <Compile Include="Messages\ImportPrivateKeyMessage.cs" />
+    <Compile Include="Messages\InvokeContractMessage.cs" />
+    <Compile Include="Messages\LoadWalletAddressesMessage.cs" />
+    <Compile Include="Messages\NewVersionAvailableMessage.cs" />
+    <Compile Include="Messages\AddContractsMessage.cs" />
+    <Compile Include="Messages\SignTransactionAndShowInformationMessage.cs" />
+    <Compile Include="Messages\UpdateWalletMessage.cs" />
+    <Compile Include="Views\NeoSplashScreen.xaml.cs">
       <DependentUpon>NeoSplashScreen.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Base\Controls\TxOutListBox.xaml.cs">
+    <Compile Include="Controls\TxOutListBox.xaml.cs">
       <DependentUpon>TxOutListBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Base\Dialogs\InformationBox.xaml.cs">
+    <Compile Include="Dialogs\InformationBox.xaml.cs">
       <DependentUpon>InformationBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Base\Dialogs\InputBox.xaml.cs">
+    <Compile Include="Dialogs\InputBox.xaml.cs">
       <DependentUpon>InputBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Contracts\DisplayContractParameter.cs" />
-    <Compile Include="UI\Contracts\ParametersEditorView.xaml.cs">
+    <Compile Include="Views\Contracts\DisplayContractParameter.cs" />
+    <Compile Include="Views\Contracts\ParametersEditorView.xaml.cs">
       <DependentUpon>ParametersEditorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Contracts\DeployContractView.xaml.cs">
+    <Compile Include="Views\Contracts\DeployContractView.xaml.cs">
       <DependentUpon>DeployContractView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Contracts\DeployContractViewModel.cs" />
-    <Compile Include="UI\Contracts\ParametersEditorViewModel.cs" />
-    <Compile Include="UI\Messages\UpdateApplicationMessage.cs" />
-    <Compile Include="UI\Base\Controls\NeoWindow.cs" />
+    <Compile Include="Views\Contracts\DeployContractViewModel.cs" />
+    <Compile Include="Views\Contracts\ParametersEditorViewModel.cs" />
+    <Compile Include="Messages\UpdateApplicationMessage.cs" />
+    <Compile Include="Controls\NeoWindow.cs" />
     <Compile Include="MVVM\RelayCommand.cs" />
     <Compile Include="MVVM\ViewModelBase.cs" />
-    <Compile Include="UI\Accounts\ImportPrivateKeyViewModel.cs" />
-    <Compile Include="UI\Accounts\ViewContractViewModel.cs" />
-    <Compile Include="UI\Assets\AssetRegistrationViewModel.cs" />
-    <Compile Include="UI\Contracts\InvokeContractViewModel.cs" />
-    <Compile Include="UI\Development\ContractParametersViewModel.cs" />
-    <Compile Include="UI\Development\TransactionBuilderViewModel.cs" />
-    <Compile Include="UI\Transactions\SigningView.xaml.cs">
+    <Compile Include="Views\Accounts\ImportPrivateKeyViewModel.cs" />
+    <Compile Include="Views\Accounts\ViewContractViewModel.cs" />
+    <Compile Include="Views\Assets\AssetRegistrationViewModel.cs" />
+    <Compile Include="Views\Contracts\InvokeContractViewModel.cs" />
+    <Compile Include="Views\Development\ContractParametersViewModel.cs" />
+    <Compile Include="Views\Development\TransactionBuilderViewModel.cs" />
+    <Compile Include="Views\Transactions\SigningView.xaml.cs">
       <DependentUpon>SigningView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Transactions\BulkPayView.xaml.cs">
+    <Compile Include="Views\Transactions\BulkPayView.xaml.cs">
       <DependentUpon>BulkPayView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Transactions\BulkPayViewModel.cs" />
-    <Compile Include="UI\Transactions\PayToView.xaml.cs">
+    <Compile Include="Views\Transactions\BulkPayViewModel.cs" />
+    <Compile Include="Views\Transactions\PayToView.xaml.cs">
       <DependentUpon>PayToView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Transactions\PayToViewModel.cs" />
-    <Compile Include="UI\Transactions\SigningViewModel.cs" />
-    <Compile Include="UI\ViewModelsRegistrationModule.cs" />
-    <Compile Include="UI\Voting\ElectionViewModel.cs" />
-    <Compile Include="UI\Voting\VotingViewModel.cs" />
-    <Compile Include="UI\Wallets\TradeView.xaml.cs">
+    <Compile Include="Views\Transactions\PayToViewModel.cs" />
+    <Compile Include="Views\Transactions\SigningViewModel.cs" />
+    <Compile Include="Views\ViewModelsRegistrationModule.cs" />
+    <Compile Include="Views\Voting\ElectionViewModel.cs" />
+    <Compile Include="Views\Voting\VotingViewModel.cs" />
+    <Compile Include="Views\Wallets\TradeView.xaml.cs">
       <DependentUpon>TradeView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Wallets\TradeVerificationView.xaml.cs">
+    <Compile Include="Views\Wallets\TradeVerificationView.xaml.cs">
       <DependentUpon>TradeVerificationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Wallets\CertificateApplicationViewModel.cs" />
-    <Compile Include="UI\Wallets\ClaimViewModel.cs" />
-    <Compile Include="UI\Wallets\ChangePasswordViewModel.cs" />
-    <Compile Include="UI\Accounts\ViewPrivateKeyViewModel.cs" />
-    <Compile Include="UI\Options\SettingsViewModel.cs" />
-    <Compile Include="UI\Accounts\ViewContractView.xaml.cs">
+    <Compile Include="Views\Wallets\CertificateApplicationViewModel.cs" />
+    <Compile Include="Views\Wallets\ClaimViewModel.cs" />
+    <Compile Include="Views\Wallets\ChangePasswordViewModel.cs" />
+    <Compile Include="Views\Accounts\ViewPrivateKeyViewModel.cs" />
+    <Compile Include="Views\Settings\SettingsViewModel.cs" />
+    <Compile Include="Views\Accounts\ViewContractView.xaml.cs">
       <DependentUpon>ViewContractView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Accounts\ImportPrivateKeyView.xaml.cs">
+    <Compile Include="Views\Accounts\ImportPrivateKeyView.xaml.cs">
       <DependentUpon>ImportPrivateKeyView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Accounts\ViewPrivateKeyView.xaml.cs">
+    <Compile Include="Views\Accounts\ViewPrivateKeyView.xaml.cs">
       <DependentUpon>ViewPrivateKeyView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Assets\AssetRegistrationView.xaml.cs">
+    <Compile Include="Views\Assets\AssetRegistrationView.xaml.cs">
       <DependentUpon>AssetRegistrationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Contracts\InvokeContractView.xaml.cs">
+    <Compile Include="Views\Contracts\InvokeContractView.xaml.cs">
       <DependentUpon>InvokeContractView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Development\TransactionBuilderView.xaml.cs">
+    <Compile Include="Views\Development\TransactionBuilderView.xaml.cs">
       <DependentUpon>TransactionBuilderView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Development\ContractParametersView.xaml.cs">
+    <Compile Include="Views\Development\ContractParametersView.xaml.cs">
       <DependentUpon>ContractParametersView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Development\DeveloperToolsView.xaml.cs">
+    <Compile Include="Views\Development\DeveloperToolsView.xaml.cs">
       <DependentUpon>DeveloperToolsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Voting\VotingView.xaml.cs">
+    <Compile Include="Views\Voting\VotingView.xaml.cs">
       <DependentUpon>VotingView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Voting\ElectionView.xaml.cs">
+    <Compile Include="Views\Voting\ElectionView.xaml.cs">
       <DependentUpon>ElectionView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Wallets\CertificateApplicationView.xaml.cs">
+    <Compile Include="Views\Wallets\CertificateApplicationView.xaml.cs">
       <DependentUpon>CertificateApplicationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Wallets\ChangePasswordView.xaml.cs">
+    <Compile Include="Views\Wallets\ChangePasswordView.xaml.cs">
       <DependentUpon>ChangePasswordView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Options\SettingsView.xaml.cs">
+    <Compile Include="Views\Settings\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Wallets\ClaimView.xaml.cs">
+    <Compile Include="Views\Wallets\ClaimView.xaml.cs">
       <DependentUpon>ClaimView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Wallets\CreateWalletViewModel.cs" />
-    <Compile Include="UI\Wallets\OpenWalletViewModel.cs" />
-    <Compile Include="UI\Updater\UpdateViewModel.cs" />
-    <Compile Include="UI\Wallets\CreateWalletView.xaml.cs">
+    <Compile Include="Views\Wallets\CreateWalletViewModel.cs" />
+    <Compile Include="Views\Wallets\OpenWalletViewModel.cs" />
+    <Compile Include="Views\Updater\UpdateViewModel.cs" />
+    <Compile Include="Views\Wallets\CreateWalletView.xaml.cs">
       <DependentUpon>CreateWalletView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Wallets\OpenWalletView.xaml.cs">
+    <Compile Include="Views\Wallets\OpenWalletView.xaml.cs">
       <DependentUpon>OpenWalletView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
@@ -482,56 +481,56 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UI\Base\Controls\TxOutListBoxItem.cs" />
-    <Compile Include="UI\Updater\UpdateView.xaml.cs">
+    <Compile Include="Controls\TxOutListBoxItem.cs" />
+    <Compile Include="Views\Updater\UpdateView.xaml.cs">
       <DependentUpon>UpdateView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Base\Wrappers\ClaimTransactionWrapper.cs" />
-    <Compile Include="UI\Base\Wrappers\CoinReferenceWrapper.cs" />
-    <Compile Include="UI\Base\Wrappers\ContractTransactionWrapper.cs" />
-    <Compile Include="UI\Base\Wrappers\InvocationTransactionWrapper.cs" />
-    <Compile Include="UI\Base\Wrappers\IssueTransactionWrapper.cs" />
-    <Compile Include="UI\Base\Wrappers\ScriptEditor.cs" />
-    <Compile Include="UI\Base\Wrappers\TransactionAttributeWrapper.cs" />
-    <Compile Include="UI\Base\Wrappers\TransactionOutputWrapper.cs" />
-    <Compile Include="UI\Base\Wrappers\TransactionWrapper.cs" />
-    <Compile Include="UI\Base\Wrappers\WitnessWrapper.cs" />
-    <Compile Include="UI\Wallets\TradeVerificationViewModel.cs" />
-    <Compile Include="UI\Wallets\TradeViewModel.cs" />
-    <Compile Include="UI\Wallets\TransferView.xaml.cs">
+    <Compile Include="Wrappers\ClaimTransactionWrapper.cs" />
+    <Compile Include="Wrappers\CoinReferenceWrapper.cs" />
+    <Compile Include="Wrappers\ContractTransactionWrapper.cs" />
+    <Compile Include="Wrappers\InvocationTransactionWrapper.cs" />
+    <Compile Include="Wrappers\IssueTransactionWrapper.cs" />
+    <Compile Include="Wrappers\ScriptEditor.cs" />
+    <Compile Include="Wrappers\TransactionAttributeWrapper.cs" />
+    <Compile Include="Wrappers\TransactionOutputWrapper.cs" />
+    <Compile Include="Wrappers\TransactionWrapper.cs" />
+    <Compile Include="Wrappers\WitnessWrapper.cs" />
+    <Compile Include="Views\Wallets\TradeVerificationViewModel.cs" />
+    <Compile Include="Views\Wallets\TradeViewModel.cs" />
+    <Compile Include="Views\Wallets\TransferView.xaml.cs">
       <DependentUpon>TransferView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Wallets\RestoreAccountsView.xaml.cs">
+    <Compile Include="Views\Wallets\RestoreAccountsView.xaml.cs">
       <DependentUpon>RestoreAccountsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Wallets\RestoreAccountsViewModel.cs" />
-    <Compile Include="UI\Wallets\TransferViewModel.cs" />
+    <Compile Include="Views\Wallets\RestoreAccountsViewModel.cs" />
+    <Compile Include="Views\Wallets\TransferViewModel.cs" />
     <Compile Include="Helpers\VersionHelper.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Strings.es-Es.resx">
+    <EmbeddedResource Include="Globalization\Strings.es-Es.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Strings.resx">
+    <EmbeddedResource Include="Globalization\Strings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Strings.zh-Hans.resx">
+    <EmbeddedResource Include="Globalization\Strings.zh-Hans.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Base\Resources\EnumStrings.es-Es.resx">
+    <EmbeddedResource Include="Globalization\EnumStrings.es-Es.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Base\Resources\EnumStrings.resx">
+    <EmbeddedResource Include="Globalization\EnumStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>EnumStrings.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Base\Resources\EnumStrings.zh-Hans.resx">
+    <EmbeddedResource Include="Globalization\EnumStrings.zh-Hans.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="config.testnet.json">
@@ -611,173 +610,173 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="UI\Accounts\CreateMultiSigContractView.xaml">
+    <Page Include="Views\Accounts\CreateMultiSigContractView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Assets\AssetDistributionView.xaml">
+    <Page Include="Views\Assets\AssetDistributionView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Home\TransactionsView.xaml">
+    <Page Include="Views\Home\TransactionsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Home\AssetsView.xaml">
+    <Page Include="Views\Home\AssetsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Home\AccountsView.xaml">
+    <Page Include="Views\Home\AccountsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Home\HomeView.xaml">
+    <Page Include="Views\Home\HomeView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Base\Resources\ConverterResources.xaml">
+    <Page Include="Resources\ConverterResources.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Base\Resources\CustomAccentThemeResources.xaml">
+    <Page Include="Resources\CustomAccentThemeResources.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\NeoSplashScreen.xaml">
+    <Page Include="Views\NeoSplashScreen.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Base\Controls\TxOutListBox.xaml">
+    <Page Include="Controls\TxOutListBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Contracts\ParametersEditorView.xaml">
+    <Page Include="Views\Contracts\ParametersEditorView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Contracts\DeployContractView.xaml">
+    <Page Include="Views\Contracts\DeployContractView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Wallets\TradeView.xaml">
+    <Page Include="Views\Wallets\TradeView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Wallets\TradeVerificationView.xaml">
+    <Page Include="Views\Wallets\TradeVerificationView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Wallets\TransferView.xaml">
+    <Page Include="Views\Wallets\TransferView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Wallets\RestoreAccountsView.xaml">
+    <Page Include="Views\Wallets\RestoreAccountsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="UI\Accounts\ImportCertificateView.xaml">
+    <Page Include="Views\Accounts\ImportCertificateView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Accounts\ImportCustomContractView.xaml">
+    <Page Include="Views\Accounts\ImportCustomContractView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Accounts\CreateLockAccountView.xaml">
+    <Page Include="Views\Accounts\CreateLockAccountView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Base\Controls\Development\TransactionPropertyGrid.xaml">
+    <Page Include="Controls\Development\TransactionPropertyGrid.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\Base\Dialogs\InformationBox.xaml">
+    <Page Include="Dialogs\InformationBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Base\Dialogs\InputBox.xaml">
+    <Page Include="Dialogs\InputBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Accounts\ViewContractView.xaml">
+    <Page Include="Views\Accounts\ViewContractView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Accounts\ImportPrivateKeyView.xaml">
+    <Page Include="Views\Accounts\ImportPrivateKeyView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Accounts\ViewPrivateKeyView.xaml">
+    <Page Include="Views\Accounts\ViewPrivateKeyView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Assets\AssetRegistrationView.xaml">
+    <Page Include="Views\Assets\AssetRegistrationView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Contracts\InvokeContractView.xaml">
+    <Page Include="Views\Contracts\InvokeContractView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Development\TransactionBuilderView.xaml">
+    <Page Include="Views\Development\TransactionBuilderView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Development\ContractParametersView.xaml">
+    <Page Include="Views\Development\ContractParametersView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Development\DeveloperToolsView.xaml">
+    <Page Include="Views\Development\DeveloperToolsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\Transactions\SigningView.xaml">
+    <Page Include="Views\Transactions\SigningView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Transactions\BulkPayView.xaml">
+    <Page Include="Views\Transactions\BulkPayView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Transactions\PayToView.xaml">
+    <Page Include="Views\Transactions\PayToView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Voting\VotingView.xaml">
+    <Page Include="Views\Voting\VotingView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Voting\ElectionView.xaml">
+    <Page Include="Views\Voting\ElectionView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Wallets\CertificateApplicationView.xaml">
+    <Page Include="Views\Wallets\CertificateApplicationView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Wallets\ChangePasswordView.xaml">
+    <Page Include="Views\Wallets\ChangePasswordView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Options\SettingsView.xaml">
+    <Page Include="Views\Settings\SettingsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Wallets\ClaimView.xaml">
+    <Page Include="Views\Wallets\ClaimView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\Wallets\CreateWalletView.xaml">
+    <Page Include="Views\Wallets\CreateWalletView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Wallets\OpenWalletView.xaml">
+    <Page Include="Views\Wallets\OpenWalletView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\Updater\UpdateView.xaml">
+    <Page Include="Views\Updater\UpdateView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

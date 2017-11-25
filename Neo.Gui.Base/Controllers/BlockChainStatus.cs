@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Neo.Controllers
+namespace Neo.Gui.Base.Controllers
 {
     public class BlockChainStatus
     {

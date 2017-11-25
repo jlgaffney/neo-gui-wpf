@@ -1,9 +1,7 @@
 ﻿using Autofac;
-using Neo.Gui.Base.Interfaces.Helpers;
-using Neo.UI.Base.Dispatching;
-using Neo.UI.Base.Themes;
+using Neo.Gui.Base.Helpers.Interfaces;
 
-namespace Neo.Helpers
+namespace Neo.Gui.Wpf.Helpers
 {
     public class HelpersRegistrationModule : Module
     {

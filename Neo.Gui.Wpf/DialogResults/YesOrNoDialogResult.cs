@@ -1,4 +1,4 @@
-﻿namespace Neo.DialogResults
+﻿namespace Neo.Gui.Wpf.DialogResults
 {
     public class YesOrNoDialogResult
     {

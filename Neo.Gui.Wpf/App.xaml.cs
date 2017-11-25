@@ -3,19 +3,20 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using Autofac;
-using Neo.Controllers;
-using Neo.Gui.Base.Interfaces.Helpers;
-using Neo.Gui.Wpf.Properties;
-using Neo.Helpers;
-using Neo.UI;
-using Neo.UI.Base;
-using Neo.UI.Base.Messages;
-using Neo.UI.Home;
+using Neo.Gui.Base.Controllers.Interfaces;
+using Neo.Gui.Base.Helpers.Interfaces;
+using Neo.Gui.Base.Messaging;
+using Neo.Gui.Wpf.Controllers;
+using Neo.Gui.Wpf.Globalization;
+using Neo.Gui.Wpf.Helpers;
+using Neo.Gui.Wpf.Messages;
+using Neo.Gui.Wpf.Messaging;
+using Neo.Gui.Wpf.Views;
+using Neo.Gui.Wpf.Views.Home;
+using Neo.Gui.Wpf.Views.Updater;
 using Neo.UI.MarkupExtensions;
-using Neo.UI.Messages;
-using Neo.UI.Updater;
 
-namespace Neo
+namespace Neo.Gui.Wpf
 {
     /// <summary>
     /// Interaction logic for App.xaml
@@ -110,7 +111,7 @@ namespace Neo
 
             autoFacContainerBuilder.RegisterModule<NeoGuiRegistrationModule>();
             autoFacContainerBuilder.RegisterModule<ViewModelsRegistrationModule>();
-            autoFacContainerBuilder.RegisterModule<BaseRegistrationModule>();
+            autoFacContainerBuilder.RegisterModule<MessagingRegistrationModule>();
             autoFacContainerBuilder.RegisterModule<ControllersRegistrationModule>();
             autoFacContainerBuilder.RegisterModule<HelpersRegistrationModule>();
             autoFacContainerBuilder.RegisterModule<DialogsRegistrationModule>();

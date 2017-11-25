@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
-using Neo.Gui.Base.Interfaces.Helpers;
+using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Updating;
 
-namespace Neo.Helpers
+namespace Neo.Gui.Wpf.Helpers
 {
     public class VersionHelper : IVersionHelper
     {

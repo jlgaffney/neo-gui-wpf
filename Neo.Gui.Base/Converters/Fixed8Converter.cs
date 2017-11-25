@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Globalization;
 
-namespace Neo.UI.Base.Converters
+namespace Neo.Gui.Base.Converters
 {
     public class Fixed8Converter : TypeConverter
     {

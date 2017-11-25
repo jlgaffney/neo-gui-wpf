@@ -1,0 +1,40 @@
+﻿<controls:NeoWindow x:Class="Neo.Gui.Wpf.Views.Transactions.SigningView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:globalization="clr-namespace:Neo.Gui.Wpf.Globalization"
+        xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
+        xmlns:transactions="clr-namespace:Neo.Gui.Wpf.Views.Transactions"
+        xmlns:controls="clr-namespace:Neo.Gui.Wpf.Controls"
+        DataContext="{markupExtensions:DataContextBinding ViewModel=transactions:SigningViewModel}"
+        Title="{x:Static globalization:Strings.Signature}"
+        Width="480" SizeToContent="Height" ResizeMode="NoResize">
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="180" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="230" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <GroupBox Grid.Row="0" Header="{x:Static globalization:Strings.Input}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <TextBox Text="{Binding Input, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" />
+        </GroupBox>
+
+        <Button Grid.Row="1" Content="{x:Static globalization:Strings.Signature}" Width="80" Margin="0 8"
+                HorizontalAlignment="Center" Command="{Binding SignatureCommand}" />
+
+        <GroupBox Grid.Row="2" Header="{x:Static globalization:Strings.Output}">
+            <TextBox Text="{Binding Output, Mode=OneWay}" IsReadOnly="True" HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" />
+        </GroupBox>
+
+        <Button Grid.Row="3" Content="{x:Static globalization:Strings.Broadcast}" Width="60" Margin="0 8 0 0" HorizontalAlignment="Left"
+            Command="{Binding BroadcastCommand}" Visibility="{Binding Path=BroadcastVisible, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Hidden}" />
+        
+        <DockPanel Grid.Row="3" Margin="0 8 0 0" HorizontalAlignment="Right">
+            <Button Content="{x:Static globalization:Strings.Copy}" Width="60" Margin="0 0 8 0" Command="{Binding CopyCommand}" />
+            <Button Content="{x:Static globalization:Strings.Close}" Width="60" Command="{Binding CloseCommand}" />
+        </DockPanel>
+    </Grid>
+</controls:NeoWindow>

@@ -1,4 +1,4 @@
-﻿namespace Neo.Gui.Base.Interfaces
+﻿namespace Neo.Gui.Base.Dialogs.Interfaces
 {
     public interface IDialog<TDialogResult>
     {

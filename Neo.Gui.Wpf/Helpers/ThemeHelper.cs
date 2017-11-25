@@ -3,11 +3,11 @@ using System.Windows;
 using System.Windows.Media;
 using MahApps.Metro;
 using Neo.Gui.Base.Extensions;
-using Neo.Gui.Base.Interfaces.Helpers;
+using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Theming;
 using Neo.Gui.Wpf.Properties;
 
-namespace Neo.UI.Base.Themes
+namespace Neo.Gui.Wpf.Helpers
 {
     public class ThemeHelper : IThemeHelper
     {

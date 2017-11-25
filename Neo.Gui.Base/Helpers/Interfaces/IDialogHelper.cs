@@ -1,4 +1,4 @@
-﻿namespace Neo.Gui.Base.Interfaces.Helpers
+﻿namespace Neo.Gui.Base.Helpers.Interfaces
 {
     /// <summary>
     /// Interface of the DialogHelper that abstracts the usage of Dialog windows in the application.
