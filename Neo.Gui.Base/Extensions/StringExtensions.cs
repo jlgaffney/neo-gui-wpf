@@ -53,7 +53,7 @@ namespace Neo.Gui.Base.Extensions
         {
             if (!defaultColor.HasValue)
             {
-                defaultColor = Color.Black;
+                defaultColor = Color.Transparent;
             }
 
             try

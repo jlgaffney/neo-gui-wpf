@@ -3,9 +3,9 @@ using System.Windows.Input;
 using Neo.Gui.Base.Collections;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Helpers.Interfaces;
-using Neo.Gui.Base.Messaging;
+using Neo.Gui.Base.Messages;
+using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.MVVM;
-using Neo.Gui.Wpf.Messages;
 using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Home

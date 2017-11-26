@@ -5,9 +5,17 @@
              xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
              xmlns:wallets="clr-namespace:Neo.Gui.Wpf.Views.Wallets"
              xmlns:controls="clr-namespace:Neo.Gui.Wpf.Controls"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              DataContext="{markupExtensions:DataContextBinding ViewModel=wallets:ClaimViewModel}"
              Title="{x:Static globalization:Strings.GasClaimTitle}"
              Width="300" SizeToContent="Height" ResizeMode="NoResize">
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closing">
+            <i:InvokeCommandAction Command="{Binding ClosingCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
     <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

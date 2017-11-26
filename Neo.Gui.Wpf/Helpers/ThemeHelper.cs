@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Media;
 using MahApps.Metro;
 using Neo.Gui.Base.Extensions;
 using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Theming;
+using Neo.Gui.Wpf.Extensions;
 using Neo.Gui.Wpf.Properties;
 
 namespace Neo.Gui.Wpf.Helpers
@@ -32,7 +32,7 @@ namespace Neo.Gui.Wpf.Helpers
         public void LoadTheme()
         {
             // Add custom accent resource dictionary to the ThemeManager, contains default color values
-            ThemeManager.AddAccent(CustomAccentKey, new Uri("pack://application:,,,/neo-gui;component/UI/Base/Resources/CustomAccentThemeResources.xaml"));
+            ThemeManager.AddAccent(CustomAccentKey, new Uri("pack://application:,,,/neo-gui;component/Resources/CustomAccentThemeResources.xaml"));
 
 
             // Try load custom theme
@@ -67,7 +67,7 @@ namespace Neo.Gui.Wpf.Helpers
             if (accent.Resources.Contains(AccentBaseColorKey))
             {
                 // Set base accent color
-                accent.Resources[AccentBaseColorKey] = Color.FromArgb(newTheme.AccentBaseColor.A, newTheme.AccentBaseColor.R, newTheme.AccentBaseColor.G, newTheme.AccentBaseColor.B);
+                accent.Resources[AccentBaseColorKey] = newTheme.AccentBaseColor.ToMediaColor();
 
 
                 // Set other accent colors with reduced transparency
@@ -75,46 +75,38 @@ namespace Neo.Gui.Wpf.Helpers
                 // Set 80% transparency accent color
                 if (accent.Resources.Contains(AccentColor1Key))
                 {
-                    var accent1Color = newTheme.AccentBaseColor.SetTransparencyFraction(0.8);
-
-                    accent.Resources[AccentColor1Key] = Color.FromArgb(accent1Color.A, accent1Color.R, accent1Color.G, accent1Color.B);
+                    accent.Resources[AccentColor1Key] = newTheme.AccentBaseColor.SetTransparencyFraction(0.8).ToMediaColor();
                 }
 
                 // Set 60% transparency accent color
                 if (accent.Resources.Contains(AccentColor2Key))
                 {
-                    var accent2Color = newTheme.AccentBaseColor.SetTransparencyFraction(0.6);
-
-                    accent.Resources[AccentColor2Key] = Color.FromArgb(accent2Color.A, accent2Color.R, accent2Color.G, accent2Color.B);
+                    accent.Resources[AccentColor2Key] = newTheme.AccentBaseColor.SetTransparencyFraction(0.6).ToMediaColor();
                 }
 
                 // Set 40% transparency accent color
                 if (accent.Resources.Contains(AccentColor3Key))
                 {
-                    var accent3Color = newTheme.AccentBaseColor.SetTransparencyFraction(0.4);
-
-                    accent.Resources[AccentColor3Key] = Color.FromArgb(accent3Color.A, accent3Color.R, accent3Color.G, accent3Color.B);
+                    accent.Resources[AccentColor3Key] = newTheme.AccentBaseColor.SetTransparencyFraction(0.4).ToMediaColor();
                 }
 
                 // Set 20% transparency accent color
                 if (accent.Resources.Contains(AccentColor4Key))
                 {
-                    var accent4Color = newTheme.AccentBaseColor.SetTransparencyFraction(0.2);
-
-                    accent.Resources[AccentColor4Key] = Color.FromArgb(accent4Color.A, accent4Color.R, accent4Color.G, accent4Color.B);
+                    accent.Resources[AccentColor4Key] = newTheme.AccentBaseColor.SetTransparencyFraction(0.2).ToMediaColor();
                 }
             }
 
             // Set highlight color
             if (accent.Resources.Contains(HighlightColorKey))
             {
-                accent.Resources[HighlightColorKey] = Color.FromArgb(newTheme.HighlightColor.A, newTheme.HighlightColor.R, newTheme.HighlightColor.G, newTheme.HighlightColor.B);
+                accent.Resources[HighlightColorKey] = newTheme.HighlightColor.ToMediaColor();
             }
 
             // Set window border color
             if (accent.Resources.Contains(WindowBorderColorKey))
             {
-                accent.Resources[WindowBorderColorKey] = Color.FromArgb(newTheme.WindowBorderColor.A, newTheme.WindowBorderColor.R, newTheme.WindowBorderColor.G, newTheme.WindowBorderColor.B);
+                accent.Resources[WindowBorderColorKey] = newTheme.WindowBorderColor.ToMediaColor();
             }
 
             ThemeManager.ChangeAppStyle(Application.Current, accent, theme);

@@ -4,9 +4,9 @@ using System.Windows.Input;
 using Neo.Core;
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Helpers.Interfaces;
-using Neo.Gui.Base.Messaging;
+using Neo.Gui.Base.Messages;
+using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Wpf.Controls;
-using Neo.Gui.Wpf.Messages;
 using Neo.Gui.Wpf.MVVM;
 using Neo.Wallets;
 
@@ -14,6 +14,7 @@ namespace Neo.Gui.Wpf.Views.Assets
 {
     public class AssetDistributionViewModel : ViewModelBase
     {
+        private readonly IBlockChainController blockChainController;
         private readonly IWalletController walletController;
         private readonly IMessagePublisher messagePublisher;
         private readonly IDispatchHelper dispatchHelper;
@@ -32,11 +33,13 @@ namespace Neo.Gui.Wpf.Views.Assets
         private bool distributionEnabled;
 
         public AssetDistributionViewModel(
+            IBlockChainController blockChainController,
             IWalletController walletController,
             IMessagePublisher messagePublisher,
             IDispatchHelper dispatchHelper)
         {
             this.walletController = walletController;
+            this.blockChainController = blockChainController;
             this.messagePublisher = messagePublisher;
             this.dispatchHelper = dispatchHelper;
 
@@ -184,19 +187,19 @@ namespace Neo.Gui.Wpf.Views.Assets
 
         private void UpdateAssetDetails()
         {
-            AssetState state;
+            AssetState assetState;
             if (UInt256.TryParse(this.AssetId, out var id))
             {
-                state = Blockchain.Default.GetAssetState(id);
+                assetState = this.blockChainController.GetAssetState(id);
                 this.Asset = new AssetDescriptor(id);
             }
             else
             {
-                state = null;
+                assetState = null;
                 this.Asset = null;
             }
 
-            if (state == null)
+            if (assetState == null)
             {
                 this.Owner = string.Empty;
                 this.Admin = string.Empty;
@@ -206,10 +209,10 @@ namespace Neo.Gui.Wpf.Views.Assets
             }
             else
             {
-                this.Owner = state.Owner.ToString();
-                this.Admin = Wallet.ToAddress(state.Admin);
-                this.Total = state.Amount == -Fixed8.Satoshi ? "+\u221e" : state.Amount.ToString();
-                this.Issued = state.Available.ToString();
+                this.Owner = assetState.Owner.ToString();
+                this.Admin = Wallet.ToAddress(assetState.Admin);
+                this.Total = assetState.Amount == -Fixed8.Satoshi ? "+\u221e" : assetState.Amount.ToString();
+                this.Issued = assetState.Available.ToString();
                 this.DistributionEnabled = true;
             }
 

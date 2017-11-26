@@ -1,9 +1,10 @@
 ﻿using System.Linq;
 using System.Windows.Input;
 using Neo.Core;
+using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Extensions;
-using Neo.Gui.Base.Messaging;
-using Neo.Gui.Wpf.Messages;
+using Neo.Gui.Base.Messages;
+using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Wpf.MVVM;
 using Neo.VM;
 using Neo.Wallets;
@@ -12,6 +13,7 @@ namespace Neo.Gui.Wpf.Views.Voting
 {
     public class VotingViewModel : ViewModelBase
     {
+        private readonly IBlockChainController blockChainController;
         private readonly IMessagePublisher messagePublisher;
 
         private UInt160 scriptHash;
@@ -19,8 +21,10 @@ namespace Neo.Gui.Wpf.Views.Voting
         private string votes;
 
         public VotingViewModel(
+            IBlockChainController blockChainController,
             IMessagePublisher messagePublisher)
         {
+            this.blockChainController = blockChainController;
             this.messagePublisher = messagePublisher;
         }
 
@@ -47,7 +51,7 @@ namespace Neo.Gui.Wpf.Views.Voting
         {
             this.scriptHash = hash;
 
-            var account = Blockchain.Default.GetAccountState(hash);
+            var account = this.blockChainController.GetAccountState(hash);
 
             // Set address
             this.Address = Wallet.ToAddress(hash);

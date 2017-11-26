@@ -5,6 +5,7 @@ using MahApps.Metro.Controls;
 using Neo.Gui.Base.Extensions;
 using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Theming;
+using Neo.Gui.Wpf.Extensions;
 using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Controls
@@ -21,11 +22,9 @@ namespace Neo.Gui.Wpf.Controls
 
             var theme = themeHelper?.CurrentTheme == null ? NeoGuiTheme.Default : themeHelper.CurrentTheme;
 
-            this.BorderBrush = new SolidColorBrush(Color.FromArgb(theme.WindowBorderColor.A, theme.WindowBorderColor.R, theme.WindowBorderColor.G, theme.WindowBorderColor.B));
+            this.BorderBrush = new SolidColorBrush(theme.WindowBorderColor.ToMediaColor());
 
-            var nonActiveWindowTitleDrawingColor = theme.AccentBaseColor.SetTransparencyFraction(0.8);
-
-            this.NonActiveWindowTitleBrush = new SolidColorBrush(Color.FromArgb(nonActiveWindowTitleDrawingColor.A, nonActiveWindowTitleDrawingColor.R, nonActiveWindowTitleDrawingColor.G, nonActiveWindowTitleDrawingColor.B));
+            this.NonActiveWindowTitleBrush = new SolidColorBrush(theme.AccentBaseColor.SetTransparencyFraction(0.8).ToMediaColor());
 
             this.Loaded += (sender, e) =>
             {

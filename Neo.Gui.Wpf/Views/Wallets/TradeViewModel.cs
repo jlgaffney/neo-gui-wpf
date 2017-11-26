@@ -23,8 +23,6 @@ namespace Neo.Gui.Wpf.Views.Wallets
         private readonly IWalletController walletController;
         private readonly IDispatchHelper dispatchHelper;
 
-        private TradeView view;
-
         private string payToAddress;
         private string myRequest;
         private string counterPartyRequest;
@@ -32,6 +30,8 @@ namespace Neo.Gui.Wpf.Views.Wallets
         private bool mergeEnabled;
 
         private UInt160 scriptHash;
+
+        private int selectedTabIndex;
 
         public TradeViewModel(
             IBlockChainController blockChainController, 
@@ -138,17 +138,25 @@ namespace Neo.Gui.Wpf.Views.Wallets
             }
         }
 
+        public int SelectedTabIndex
+        {
+            get => this.selectedTabIndex;
+            set
+            {
+                if (this.selectedTabIndex == value) return;
+
+                this.selectedTabIndex = value;
+
+                NotifyPropertyChanged();
+            }
+        }
+
         public ICommand InitiateCommand => new RelayCommand(this.Initiate);
 
         public ICommand ValidateCommand => new RelayCommand(this.Validate);
 
         public ICommand MergeCommand => new RelayCommand(this.Merge);
-
-        public override void OnWindowAttached(NeoWindow window)
-        {
-            this.view = window as TradeView;
-        }
-
+        
         public void UpdateInitiateButtonEnabled()
         {
             NotifyPropertyChanged(nameof(this.InitiateEnabled));
@@ -167,7 +175,7 @@ namespace Neo.Gui.Wpf.Views.Wallets
 
             InformationBox.Show(this.MyRequest, Strings.TradeRequestCreatedMessage, Strings.TradeRequestCreatedCaption);
 
-            this.view?.SetSelectedTab(1);
+            this.SelectedTabIndex = 1;
         }
 
         private async void Validate()
@@ -202,7 +210,7 @@ namespace Neo.Gui.Wpf.Views.Wallets
 
             try
             {
-                if (inputs.Select(p => Blockchain.Default.GetTransaction(p.PrevHash).Outputs[p.PrevIndex].ScriptHash).Distinct().Any(p => this.walletController.WalletContainsAddress(p)))
+                if (inputs.Select(p => this.blockChainController.GetTransaction(p.PrevHash).Outputs[p.PrevIndex].ScriptHash).Distinct().Any(p => this.walletController.WalletContainsAddress(p)))
                 {
                     await DialogCoordinator.Instance.ShowMessageAsync(this, Strings.Failed, Strings.TradeFailedInvalidDataMessage);
                     return;

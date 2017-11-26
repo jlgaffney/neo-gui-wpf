@@ -1,20 +1,21 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using Autofac;
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Helpers.Interfaces;
-using Neo.Gui.Base.Messaging;
-using Neo.Gui.Wpf.Controllers;
+using Neo.Gui.Base.Messages;
+using Neo.Gui.Base.Messaging.Interfaces;
+using Neo.Gui.Wpf.Controls;
 using Neo.Gui.Wpf.Globalization;
 using Neo.Gui.Wpf.Helpers;
-using Neo.Gui.Wpf.Messages;
-using Neo.Gui.Wpf.Messaging;
-using Neo.Gui.Wpf.Views;
+using Neo.Gui.Wpf.RegistrationModules;
 using Neo.Gui.Wpf.Views.Home;
 using Neo.Gui.Wpf.Views.Updater;
 using Neo.UI.MarkupExtensions;
+using SplashScreen = Neo.Gui.Wpf.Views.SplashScreen;
 
 namespace Neo.Gui.Wpf
 {
@@ -23,7 +24,7 @@ namespace Neo.Gui.Wpf
     /// </summary>
     public partial class App
     {
-        private ILifetimeScope containerLifetimeScope;
+        private IBlockChainController blockChainController;
         private IWalletController walletController;
         
         private App()
@@ -37,20 +38,29 @@ namespace Neo.Gui.Wpf
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-            BuildContainer();
+            var containerLifetimeScope = BuildContainer();
+
+            Debug.Assert(containerLifetimeScope != null);
+
+            // Set static lifetime scopes
+            NeoWindow.SetLifetimeScope(containerLifetimeScope);
+            DialogHelper.SetLifetimeScope(containerLifetimeScope);
+            DataContextBindingExtension.SetLifetimeScope(containerLifetimeScope);
+
+            var dispatchHelper = containerLifetimeScope.Resolve<IDispatchHelper>();
+            var themeHelper = containerLifetimeScope.Resolve<IThemeHelper>();
+            var versionHelper = containerLifetimeScope.Resolve<IVersionHelper>();
+
+            Debug.Assert(dispatchHelper != null);
 
             Task.Run(() =>
             {
-                var dispatchHelper = this.containerLifetimeScope?.Resolve<IDispatchHelper>();
-                var themeHelper = this.containerLifetimeScope?.Resolve<IThemeHelper>();
-                var versionHelper = this.containerLifetimeScope?.Resolve<IVersionHelper>();
-
                 themeHelper?.LoadTheme();
 
-                NeoSplashScreen splashScreen = null;
-                dispatchHelper?.InvokeOnMainUIThread(() =>
+                SplashScreen splashScreen = null;
+                dispatchHelper.InvokeOnMainUIThread(() =>
                 {
-                    splashScreen = new NeoSplashScreen();
+                    splashScreen = new SplashScreen();
                     splashScreen.Show();
                 });
 
@@ -65,14 +75,18 @@ namespace Neo.Gui.Wpf
 
                     if (updateIsRequired) return;
 
-                    // Application is starting normally, initialize wallet controller
-                    this.walletController = this.containerLifetimeScope?.Resolve(typeof(IWalletController)) as IWalletController;
+                    // Application is starting normally, initialize controllers
+                    this.blockChainController = containerLifetimeScope.Resolve<IBlockChainController>();
+                    this.walletController = containerLifetimeScope.Resolve<IWalletController>();
 
-                    this.walletController?.Initialize();
+                    Debug.Assert(this.blockChainController != null && this.walletController != null);
+
+                    this.blockChainController.Initialize();
+                    this.walletController.Initialize();
                 }
                 finally
                 {
-                    dispatchHelper?.InvokeOnMainUIThread(() =>
+                    dispatchHelper.InvokeOnMainUIThread(() =>
                     {
                         this.MainWindow = updateIsRequired ? (Window) new UpdateView() : new HomeView();
 
@@ -80,18 +94,17 @@ namespace Neo.Gui.Wpf
 
                         this.MainWindow?.Show();
 
-                        if (versionHelper != null && !updateIsRequired)
-                        {
-                            // Check if there is a newer version
-                            var latestVersion = versionHelper.LatestVersion;
-                            var currentVersion = versionHelper.CurrentVersion;
+                        if (versionHelper == null || updateIsRequired) return;
 
-                            if (latestVersion == null || latestVersion <= currentVersion) return;
+                        // Check if there is a newer version
+                        var latestVersion = versionHelper.LatestVersion;
+                        var currentVersion = versionHelper.CurrentVersion;
 
-                            var messagePublisher = this.containerLifetimeScope?.Resolve(typeof(IMessagePublisher)) as IMessagePublisher;
+                        if (latestVersion == null || latestVersion <= currentVersion) return;
 
-                            messagePublisher?.Publish(new NewVersionAvailableMessage($"{Strings.DownloadNewVersion}: {latestVersion}"));
-                        }
+                        var messagePublisher = containerLifetimeScope.Resolve(typeof(IMessagePublisher)) as IMessagePublisher;
+
+                        messagePublisher?.Publish(new NewVersionAvailableMessage($"{Strings.DownloadNewVersion}: {latestVersion}"));
                     });
                 }
             });
@@ -99,17 +112,20 @@ namespace Neo.Gui.Wpf
 
         protected override void OnExit(ExitEventArgs e)
         {
-            // Shutdown the wallet controller
-            this.walletController.Shutdown();
+            // Dispose of controller instances
+            this.walletController.Dispose();
+            this.walletController = null;
+            
+            this.blockChainController.Dispose();
+            this.blockChainController = null;
 
             base.OnExit(e);
         }
 
-        private void BuildContainer()
+        private static ILifetimeScope BuildContainer()
         {
             var autoFacContainerBuilder = new ContainerBuilder();
 
-            autoFacContainerBuilder.RegisterModule<NeoGuiRegistrationModule>();
             autoFacContainerBuilder.RegisterModule<ViewModelsRegistrationModule>();
             autoFacContainerBuilder.RegisterModule<MessagingRegistrationModule>();
             autoFacContainerBuilder.RegisterModule<ControllersRegistrationModule>();
@@ -119,15 +135,7 @@ namespace Neo.Gui.Wpf
             var container = autoFacContainerBuilder.Build();
             var lifetimeScope = container.BeginLifetimeScope();
 
-            this.containerLifetimeScope = lifetimeScope;
-
-            SetStaticLifeTimeScopes(lifetimeScope);
-        }
-
-        private static void SetStaticLifeTimeScopes(ILifetimeScope containerLifetimeScope)
-        {
-            DialogHelper.SetLifetimeScope(containerLifetimeScope);
-            DataContextBindingExtension.SetLifetimeScope(containerLifetimeScope);
+            return lifetimeScope;
         }
 
         #region Unhandled exception methods
@@ -141,7 +149,7 @@ namespace Neo.Gui.Wpf
             }
         }
 
-        private static void PrintErrorLogs(StreamWriter writer, Exception ex)
+        private static void PrintErrorLogs(TextWriter writer, Exception ex)
         {
             writer.WriteLine(ex.GetType());
             writer.WriteLine(ex.Message);

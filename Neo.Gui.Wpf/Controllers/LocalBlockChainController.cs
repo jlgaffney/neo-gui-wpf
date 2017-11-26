@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Threading.Tasks;
 using Neo.Core;
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Controllers.Interfaces;
-using Neo.Gui.Base.Messaging;
-using Neo.Gui.Wpf.Messages;
+using Neo.Gui.Base.Messages;
+using Neo.Gui.Base.Messaging.Interfaces;
+using Neo.Gui.Wpf.Certificates;
 using Neo.Gui.Wpf.Properties;
 using Neo.Implementations.Blockchains.LevelDB;
 using Neo.IO;
@@ -40,6 +42,10 @@ namespace Neo.Gui.Wpf.Controllers
 
         #region IBlockChainController implementation 
 
+        public RegisterTransaction GoverningToken => Blockchain.GoverningToken;
+
+        public RegisterTransaction UtilityToken => Blockchain.UtilityToken;
+
         public uint BlockHeight => Blockchain.Default.Height;
 
         public void Initialize()
@@ -47,14 +53,14 @@ namespace Neo.Gui.Wpf.Controllers
             this.InitializeLocalNode();
         }
 
-        public void Relay(Transaction transaction)
+        public void AddPersistCompletedEventHandler(EventHandler<Block> handler)
         {
-            this.localNode.Relay(transaction);
+            Blockchain.PersistCompleted += handler;
         }
 
-        public void Relay(IInventory inventory)
+        public void RemovePersistCompletedEventHandler(EventHandler<Block> handler)
         {
-            this.localNode.Relay(inventory);
+            Blockchain.PersistCompleted -= handler;
         }
 
         public BlockChainStatus GetStatus()
@@ -88,10 +94,55 @@ namespace Neo.Gui.Wpf.Controllers
                 nextBlockProgressFraction = 1.0;
             }
 
-            var nodeCount = (uint) this.localNode.RemoteNodeCount;
+            var nodeCount = (uint)this.localNode.RemoteNodeCount;
 
             return new BlockChainStatus(Blockchain.Default.Height, Blockchain.Default.HeaderHeight,
                 nextBlockProgressIsIndeterminate, nextBlockProgressFraction, timeSinceLastBlock, nodeCount);
+        }
+
+        public void Relay(Transaction transaction)
+        {
+            this.localNode.Relay(transaction);
+        }
+
+        public void Relay(IInventory inventory)
+        {
+            this.localNode.Relay(inventory);
+        }
+
+        public Transaction GetTransaction(UInt256 hash)
+        {
+            return Blockchain.Default.GetTransaction(hash);
+        }
+
+        public Transaction GetTransaction(UInt256 hash, out int height)
+        {
+            return Blockchain.Default.GetTransaction(hash, out height);
+        }
+
+        public AccountState GetAccountState(UInt160 scriptHash)
+        {
+            return Blockchain.Default.GetAccountState(scriptHash);
+        }
+
+        public ContractState GetContractState(UInt160 scriptHash)
+        {
+            return Blockchain.Default.GetContract(scriptHash);
+        }
+
+        public AssetState GetAssetState(UInt256 assetId)
+        {
+            return Blockchain.Default.GetAssetState(assetId);
+        }
+
+        public Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, bool ignoreClaimed = true)
+        {
+            return Blockchain.CalculateBonus(inputs, ignoreClaimed);
+        }
+
+        public Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, uint heightEnd)
+        {
+            return Blockchain.CalculateBonus(inputs, heightEnd);
         }
 
         #endregion
@@ -100,7 +151,7 @@ namespace Neo.Gui.Wpf.Controllers
 
         private void InitializeLocalNode()
         {
-            if (!RootCertificate.InstallRootCertificate()) return;
+            if (!RootCertificate.Install()) return;
 
             // Initialize blockchain
             this.blockChain = Blockchain.RegisterBlockchain(new LevelDBBlockchain(Settings.Default.DataDirectoryPath));
@@ -131,7 +182,7 @@ namespace Neo.Gui.Wpf.Controllers
         private void BlockchainPersistCompleted(object sender, Block block)
         {
             this.timeOfLastBlock = DateTime.UtcNow;
-            this.messagePublisher.Publish(new BlockchainPersistCompletMessage());
+            this.messagePublisher.Publish(new BlockchainPersistCompletedMessage());
         }
 
         private static void ImportBlocksIfRequired()

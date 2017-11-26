@@ -5,8 +5,8 @@ using System.IO.Compression;
 using System.Net;
 using System.Windows.Input;
 using Neo.Gui.Base.Helpers.Interfaces;
-using Neo.Gui.Base.Messaging;
-using Neo.Gui.Wpf.Messages;
+using Neo.Gui.Base.Messages;
+using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Wpf.MVVM;
 using Neo.Gui.Wpf.Properties;
 

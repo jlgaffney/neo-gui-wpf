@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Neo.Core;
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Controllers.Interfaces;
@@ -8,11 +9,30 @@ namespace Neo.Gui.Wpf.Controllers
 {
     public class RemoteBlockChainController : IBlockChainController
     {
-        public uint BlockHeight => 0;
+        public RegisterTransaction GoverningToken => throw new NotImplementedException();
+
+        public RegisterTransaction UtilityToken => throw new NotImplementedException();
+
+        public uint BlockHeight => throw new NotImplementedException();
 
         public void Initialize()
         {
             // Remote nodes are not supported yet
+            throw new NotImplementedException();
+        }
+
+        public void AddPersistCompletedEventHandler(EventHandler<Block> handler)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemovePersistCompletedEventHandler(EventHandler<Block> handler)
+        {
+            throw new NotImplementedException();
+        }
+
+        public BlockChainStatus GetStatus()
+        {
             throw new NotImplementedException();
         }
 
@@ -26,7 +46,37 @@ namespace Neo.Gui.Wpf.Controllers
             throw new NotImplementedException();
         }
 
-        public BlockChainStatus GetStatus()
+        public Transaction GetTransaction(UInt256 hash)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Transaction GetTransaction(UInt256 hash, out int height)
+        {
+            throw new NotImplementedException();
+        }
+
+        public AccountState GetAccountState(UInt160 scriptHash)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ContractState GetContractState(UInt160 scriptHash)
+        {
+            throw new NotImplementedException();
+        }
+
+        public AssetState GetAssetState(UInt256 assetId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, bool ignoreClaimed = true)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, uint heightEnd)
         {
             throw new NotImplementedException();
         }

@@ -1,5 +1,4 @@
 ﻿using Neo.Gui.Wpf.Controls;
-using Neo.UI;
 using Neo.Wallets;
 
 namespace Neo.Gui.Wpf.Views.Transactions

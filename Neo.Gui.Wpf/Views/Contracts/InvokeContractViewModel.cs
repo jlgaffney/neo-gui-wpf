@@ -6,9 +6,9 @@ using System.Windows.Input;
 using Microsoft.Win32;
 using Neo.Core;
 using Neo.Gui.Base.Controllers.Interfaces;
-using Neo.Gui.Base.Messaging;
+using Neo.Gui.Base.Messages;
+using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Wpf.Globalization;
-using Neo.Gui.Wpf.Messages;
 using Neo.Gui.Wpf.MVVM;
 using Neo.IO.Json;
 using Neo.SmartContract;
@@ -20,6 +20,7 @@ namespace Neo.Gui.Wpf.Views.Contracts
     {
         private static readonly Fixed8 NetworkFee = Fixed8.FromDecimal(0.001m);
 
+        private readonly IBlockChainController blockChainController;
         private readonly IWalletController walletController;
         private readonly IMessagePublisher messagePublisher;
 
@@ -41,9 +42,11 @@ namespace Neo.Gui.Wpf.Views.Contracts
         private bool invokeEnabled;
 
         public InvokeContractViewModel(
+            IBlockChainController blockChainController,
             IWalletController walletController,
             IMessagePublisher messagePublisher)
         {
+            this.blockChainController = blockChainController;
             this.walletController = walletController;
             this.messagePublisher = messagePublisher;
         }
@@ -197,19 +200,19 @@ namespace Neo.Gui.Wpf.Views.Contracts
         {
             this.scriptHash = UInt160.Parse(this.ScriptHash);
 
-            var contract = Blockchain.Default.GetContract(this.scriptHash);
+            var contractState = this.blockChainController.GetContractState(this.scriptHash);
 
-            if (contract == null)
+            if (contractState == null)
             {
                 MessageBox.Show("Cannot find contract.");
                 return;
             }
 
-            this.parameters = contract.ParameterList.Select(p => new ContractParameter(p)).ToArray();
-            this.ContractName = contract.Name;
-            this.ContractVersion = contract.CodeVersion;
-            this.ContractAuthor = contract.Author;
-            this.ContractParameters = string.Join(", ", contract.ParameterList);
+            this.parameters = contractState.ParameterList.Select(p => new ContractParameter(p)).ToArray();
+            this.ContractName = contractState.Name;
+            this.ContractVersion = contractState.CodeVersion;
+            this.ContractAuthor = contractState.Author;
+            this.ContractParameters = string.Join(", ", contractState.ParameterList);
 
             // Update bindable properties
             NotifyPropertyChanged(nameof(this.ContractName));
@@ -224,7 +227,7 @@ namespace Neo.Gui.Wpf.Views.Contracts
 
         private void EditParameters()
         {
-            var view = new Gui.Wpf.Views.Contracts.ParametersEditorView(this.parameters);
+            var view = new ParametersEditorView(this.parameters);
             view.ShowDialog();
 
             UpdateCustomScript();

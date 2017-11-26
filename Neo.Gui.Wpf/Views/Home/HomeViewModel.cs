@@ -4,12 +4,12 @@ using System.Reflection;
 using System.Windows.Input;
 using MahApps.Metro.Controls.Dialogs;
 using Neo.Gui.Base.Controllers.Interfaces;
+using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Helpers.Interfaces;
-using Neo.Gui.Base.Messaging;
+using Neo.Gui.Base.Messages;
+using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.MVVM;
-using Neo.Gui.Wpf.DialogResults;
 using Neo.Gui.Wpf.Globalization;
-using Neo.Gui.Wpf.Messages;
 using Neo.Gui.Wpf.MVVM;
 using Neo.Gui.Wpf.Views.Assets;
 using Neo.Gui.Wpf.Views.Contracts;
@@ -129,7 +129,8 @@ namespace Neo.Gui.Wpf.Views.Home
 
         #endregion Public Properies
 
-        #region Tool Strip Menu Commands
+        #region Commands
+
         public ICommand CreateWalletCommand => new RelayCommand(this.CreateWallet);
 
         public ICommand OpenWalletCommand => new RelayCommand(this.OpenWallet);
@@ -176,7 +177,7 @@ namespace Neo.Gui.Wpf.Views.Home
 
         public ICommand ShowUpdateDialogCommand => new RelayCommand(ShowUpdateDialog);
 
-        #endregion Tool Strip Menu Commands
+        #endregion Commands
 
         #region New Version Properties
 
@@ -377,7 +378,7 @@ namespace Neo.Gui.Wpf.Views.Home
             var dialog = new UpdateView();
             dialog.ShowDialog();
         }
-
+        
         #region ILoadable Implementation 
         public void OnLoad()
         {

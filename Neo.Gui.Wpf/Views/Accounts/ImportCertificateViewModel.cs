@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Windows.Input;
-using Neo.Gui.Base.Messaging;
-using Neo.Gui.Wpf.Messages;
+using Neo.Gui.Base.Messages;
+using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Accounts

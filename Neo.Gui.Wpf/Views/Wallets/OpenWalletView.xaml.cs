@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Wpf.DialogResults;
+using Neo.Gui.Base.Dialogs.Results;
 using NeoSettings = Neo.Gui.Wpf.Properties.Settings;
 
 namespace Neo.Gui.Wpf.Views.Wallets

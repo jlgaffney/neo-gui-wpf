@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Neo.Core;
+using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Wpf.Controls;
 using Neo.Gui.Wpf.MVVM;
@@ -10,10 +11,14 @@ namespace Neo.Gui.Wpf.Views.Wallets
 {
     public class TradeVerificationViewModel : ViewModelBase
     {
+        private readonly IBlockChainController blockChainController;
         private readonly IDispatchHelper dispatchHelper;
 
-        public TradeVerificationViewModel(IDispatchHelper dispatchHelper)
+        public TradeVerificationViewModel(
+            IBlockChainController blockChainController,
+            IDispatchHelper dispatchHelper)
         {
+            this.blockChainController = blockChainController;
             this.dispatchHelper = dispatchHelper;
 
             this.Items = new ObservableCollection<TxOutListBoxItem>();
@@ -41,7 +46,7 @@ namespace Neo.Gui.Wpf.Views.Wallets
             {
                 foreach (var output in outputs)
                 {
-                    var asset = Blockchain.Default.GetAssetState(output.AssetId);
+                    var asset = this.blockChainController.GetAssetState(output.AssetId);
 
                     this.Items.Add(new TxOutListBoxItem
                     {

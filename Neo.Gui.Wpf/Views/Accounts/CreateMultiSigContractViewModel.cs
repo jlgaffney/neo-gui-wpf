@@ -7,9 +7,9 @@ using Neo.Core;
 using Neo.Cryptography.ECC;
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Helpers.Interfaces;
-using Neo.Gui.Base.Messaging;
+using Neo.Gui.Base.Messages;
+using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Wpf.Globalization;
-using Neo.Gui.Wpf.Messages;
 using Neo.Gui.Wpf.MVVM;
 using Neo.Wallets;
 

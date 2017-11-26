@@ -11,10 +11,10 @@ using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Extensions;
 using Neo.Gui.Base.Helpers.Interfaces;
-using Neo.Gui.Base.Messaging;
-using Neo.Gui.Wpf.Cryptography;
+using Neo.Gui.Base.Messages;
+using Neo.Gui.Base.Messaging.Interfaces;
+using Neo.Gui.Wpf.Certificates;
 using Neo.Gui.Wpf.Globalization;
-using Neo.Gui.Wpf.Messages;
 using Neo.Gui.Wpf.Properties;
 using Neo.Implementations.Wallets.EntityFramework;
 using Neo.SmartContract;
@@ -31,7 +31,7 @@ namespace Neo.Gui.Wpf.Controllers
         IMessageHandler<ImportPrivateKeyMessage>,
         IMessageHandler<ImportCertificateMessage>,
         IMessageHandler<SignTransactionAndShowInformationMessage>,
-        IMessageHandler<BlockchainPersistCompletMessage>
+        IMessageHandler<BlockchainPersistCompletedMessage>
     {
         private const string MinimumMigratedWalletVersion = "1.3.5";
 
@@ -48,6 +48,8 @@ namespace Neo.Gui.Wpf.Controllers
         private readonly IList<TransactionItem> transactions;
 
         private readonly object walletRefreshLock = new object();
+
+        private bool disposed;
 
         private Timer refreshTimer;
 
@@ -85,9 +87,6 @@ namespace Neo.Gui.Wpf.Controllers
 
         public void Initialize()
         {
-            // Initialize IBlockChainController instance
-            this.blockChainController.Initialize();
-
             // Setup automatic refresh timer
             this.refreshTimer = new Timer
             {
@@ -97,16 +96,6 @@ namespace Neo.Gui.Wpf.Controllers
             };
 
             this.refreshTimer.Elapsed += this.Refresh;
-        }
-
-        public void Shutdown()
-        {
-            // Stop automatic refresh timer
-            this.refreshTimer.Stop();
-            this.refreshTimer = null;
-            
-            // Dispose of IBlockChainController instance
-            this.blockChainController.Dispose();
         }
 
         public bool WalletIsOpen => this.currentWallet != null;
@@ -285,6 +274,21 @@ namespace Neo.Gui.Wpf.Controllers
         public UInt160 GetChangeAddress()
         {
             return this.currentWallet?.GetChangeAddress();
+        }
+
+        public Fixed8 CalculateBonus()
+        {
+            return this.CalculateBonus(this.GetUnclaimedCoins().Select(p => p.Reference));
+        }
+
+        public Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, bool ignoreClaimed = true)
+        {
+            return this.blockChainController.CalculateBonus(inputs, ignoreClaimed);
+        }
+
+        public Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, uint heightEnd)
+        {
+            return this.blockChainController.CalculateBonus(inputs, heightEnd);
         }
 
         public bool WalletContainsAddress(UInt160 scriptHash)
@@ -515,17 +519,15 @@ namespace Neo.Gui.Wpf.Controllers
                 this.SaveTransaction(transaction);
                 this.blockChainController.Relay(transaction);
 
-                this.notificationHelper.ShowSuccessNotification(
-                    $"{Strings.SendTxSucceedMessage} {transaction.Hash.ToString()}");
+                this.notificationHelper.ShowSuccessNotification($"{Strings.SendTxSucceedMessage} {transaction.Hash}");
             }
             else
             {
-                this.notificationHelper.ShowSuccessNotification(
-                    $"{Strings.IncompletedSignatureMessage} {context.ToString()}");
+                this.notificationHelper.ShowSuccessNotification($"{Strings.IncompletedSignatureMessage} {context}");
             }
         }
 
-        public void HandleMessage(BlockchainPersistCompletMessage message)
+        public void HandleMessage(BlockchainPersistCompletedMessage message)
         {
             if (this.WalletIsOpen)
             {
@@ -1026,6 +1028,31 @@ namespace Neo.Gui.Wpf.Controllers
 
             return result;
         }
+        #endregion
+
+        #region IDisposable implementation
+        
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!this.disposed)
+            {
+                if (disposing)
+                {
+                    // Stop automatic refresh timer
+                    this.refreshTimer.Stop();
+                    this.refreshTimer = null;
+
+                    this.disposed = true;
+                }
+            }
+        }
+
         #endregion
     }
 }

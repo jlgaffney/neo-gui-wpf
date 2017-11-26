@@ -8,12 +8,15 @@ using MahApps.Metro.Controls.Dialogs;
 using Neo.Gui.Base.Extensions;
 using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Theming;
+using Neo.Gui.Wpf.Extensions;
 using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Settings
 {
     public class SettingsViewModel : ViewModelBase
     {
+        private static readonly SolidColorBrush TransparentBrush = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
+
         private readonly IThemeHelper themeHelper;
 
         private string currentNEP5ContractsList;
@@ -155,15 +158,11 @@ namespace Neo.Gui.Wpf.Views.Settings
         {
             get
             {
-                var transparentBrush = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
-
-                if (string.IsNullOrEmpty(this.ThemeAccentBaseColorHex)) return transparentBrush;
+                if (string.IsNullOrEmpty(this.ThemeAccentBaseColorHex)) return TransparentBrush;
 
                 var accentBaseColor = this.ThemeAccentBaseColorHex.HexToColor();
 
-                accentBaseColor = accentBaseColor.SetTransparencyFraction(1.0);
-
-                return new SolidColorBrush(Color.FromArgb(accentBaseColor.A, accentBaseColor.R, accentBaseColor.G, accentBaseColor.B));
+                return new SolidColorBrush(accentBaseColor.SetTransparencyFraction(1.0).ToMediaColor());
             }
         }
 
@@ -191,15 +190,11 @@ namespace Neo.Gui.Wpf.Views.Settings
         {
             get
             {
-                var transparentBrush = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
-
-                if (string.IsNullOrEmpty(this.ThemeHighlightColorHex)) return transparentBrush;
+                if (string.IsNullOrEmpty(this.ThemeHighlightColorHex)) return TransparentBrush;
 
                 var highlightColor = this.ThemeHighlightColorHex.HexToColor();
 
-                highlightColor = highlightColor.SetTransparencyFraction(1.0);
-
-                return new SolidColorBrush(Color.FromArgb(highlightColor.A, highlightColor.R, highlightColor.G, highlightColor.B));
+                return new SolidColorBrush(highlightColor.SetTransparencyFraction(1.0).ToMediaColor());
             }
         }
 
@@ -227,15 +222,11 @@ namespace Neo.Gui.Wpf.Views.Settings
         {
             get
             {
-                var transparentBrush = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
-
-                if (string.IsNullOrEmpty(this.ThemeWindowBorderColorHex)) return transparentBrush;
+                if (string.IsNullOrEmpty(this.ThemeWindowBorderColorHex)) return TransparentBrush;
 
                 var windowBorderColor = this.ThemeWindowBorderColorHex.HexToColor();
 
-                windowBorderColor = windowBorderColor.SetTransparencyFraction(1.0);
-
-                return new SolidColorBrush(Color.FromArgb(windowBorderColor.A, windowBorderColor.R, windowBorderColor.G, windowBorderColor.B));
+                return new SolidColorBrush(windowBorderColor.SetTransparencyFraction(1.0).ToMediaColor());
             }
         }
 

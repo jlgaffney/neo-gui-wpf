@@ -3,15 +3,18 @@ using System.Linq;
 using System.Windows.Input;
 using Neo.Core;
 using Neo.Gui.Base.Controllers.Interfaces;
-using Neo.Gui.Base.Messaging;
-using Neo.Gui.Wpf.Controls;
-using Neo.Gui.Wpf.Messages;
+using Neo.Gui.Base.Messages;
+using Neo.Gui.Base.Messaging.Interfaces;
+using Neo.Gui.Base.MVVM;
 using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Wallets
 {
-    public class ClaimViewModel : ViewModelBase
+    public class ClaimViewModel :
+        ViewModelBase,
+        ILoadable
     {
+        private readonly IBlockChainController blockChainController;
         private readonly IWalletController walletController;
         private readonly IMessagePublisher messagePublisher;
 
@@ -21,9 +24,11 @@ namespace Neo.Gui.Wpf.Views.Wallets
         private bool claimEnabled;
 
         public ClaimViewModel(
+            IBlockChainController blockChainController,
             IWalletController walletController,
             IMessagePublisher messagePublisher)
         {
+            this.blockChainController = blockChainController;
             this.walletController = walletController;
             this.messagePublisher = messagePublisher;
         }
@@ -73,29 +78,35 @@ namespace Neo.Gui.Wpf.Views.Wallets
 
         public ICommand ClaimCommand => new RelayCommand(this.Claim);
 
-        public override void OnWindowAttached(NeoWindow window)
-        {
-            base.OnWindowAttached(window);
+        public ICommand ClosingCommand => new RelayCommand(this.OnClosing);
 
+        #region ILoadable implementation
+
+        public void OnLoad()
+        {
             // Calculate bonus GAS
             this.CalculateBonusAvailable();
             
-            this.CalculateBonusUnavailable(Blockchain.Default.Height + 1);
+            this.CalculateBonusUnavailable(this.blockChainController.BlockHeight + 1);
 
-            Blockchain.PersistCompleted += Blockchain_PersistCompleted;
-
-            window.Closing += (sender, e) =>
-            { Blockchain.PersistCompleted -= Blockchain_PersistCompleted; };
+            this.blockChainController.AddPersistCompletedEventHandler(this.BlockchainPersistCompleted);
         }
 
-        private void Blockchain_PersistCompleted(object sender, Block block)
+        #endregion
+
+        private void OnClosing()
+        {
+            this.blockChainController.RemovePersistCompletedEventHandler(this.BlockchainPersistCompleted);
+        }
+
+        private void BlockchainPersistCompleted(object sender, Block block)
         {
             CalculateBonusUnavailable(block.Index + 1);
         }
 
         private void CalculateBonusAvailable()
         {
-            var bonusAvailable = Blockchain.CalculateBonus(this.walletController.GetUnclaimedCoins().Select(p => p.Reference));
+            var bonusAvailable = this.walletController.CalculateBonus();
             this.AvailableGas = bonusAvailable;
 
             if (bonusAvailable == Fixed8.Zero)
@@ -107,7 +118,7 @@ namespace Neo.Gui.Wpf.Views.Wallets
         private void CalculateBonusUnavailable(uint height)
         {
             var unspent = this.walletController.FindUnspentCoins()
-                .Where(p => p.Output.AssetId.Equals(Blockchain.GoverningToken.Hash))
+                .Where(p => p.Output.AssetId.Equals(this.blockChainController.GoverningToken.Hash))
                 .Select(p => p.Reference);
 
             var references = new HashSet<CoinReference>();
@@ -115,7 +126,7 @@ namespace Neo.Gui.Wpf.Views.Wallets
             foreach (var group in unspent.GroupBy(p => p.PrevHash))
             {
                 int heightStart;
-                var transaction = Blockchain.Default.GetTransaction(group.Key, out heightStart);
+                var transaction = this.blockChainController.GetTransaction(group.Key, out heightStart);
 
                 if (transaction == null) continue; // not enough of the chain available
 
@@ -125,7 +136,7 @@ namespace Neo.Gui.Wpf.Views.Wallets
                 }
             }
 
-            this.UnavailableGas = Blockchain.CalculateBonus(references, height);
+            this.UnavailableGas = this.walletController.CalculateBonus(references, height);
         }        
 
         private void Claim()
@@ -143,8 +154,8 @@ namespace Neo.Gui.Wpf.Views.Wallets
                 {
                     new TransactionOutput
                     {
-                        AssetId = Blockchain.UtilityToken.Hash,
-                        Value = Blockchain.CalculateBonus(claims),
+                        AssetId = this.blockChainController.UtilityToken.Hash,
+                        Value = this.walletController.CalculateBonus(claims),
                         ScriptHash = this.walletController.GetChangeAddress()
                     }
                 }

@@ -17,12 +17,5 @@ namespace Neo.Gui.Wpf.Views.Wallets
         {
             this.viewModel?.UpdateInitiateButtonEnabled();
         }
-
-        public void SetSelectedTab(int tabIndex)
-        {
-            if (tabIndex < 0 || tabIndex >= this.TabControl.Items.Count) throw new IndexOutOfRangeException();
-
-            this.TabControl.SelectedIndex = tabIndex;
-        }
     }
 }

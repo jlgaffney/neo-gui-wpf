@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Neo.Core;
 using Neo.Cryptography.ECC;
 using Neo.Gui.Base.Data;
@@ -7,11 +8,9 @@ using Neo.Wallets;
 
 namespace Neo.Gui.Base.Controllers.Interfaces
 {
-    public interface IWalletController
+    public interface IWalletController : IDisposable
     {
         void Initialize();
-
-        void Shutdown();
 
         bool WalletIsOpen { get; }
 
@@ -62,6 +61,12 @@ namespace Neo.Gui.Base.Controllers.Interfaces
         IEnumerable<Coin> FindUnspentCoins();
         
         UInt160 GetChangeAddress();
+
+        Fixed8 CalculateBonus();
+
+        Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, bool ignoreClaimed = true);
+
+        Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, uint heightEnd);
 
         bool WalletContainsAddress(UInt160 scriptHash);
 

@@ -11,7 +11,7 @@
         Title="{x:Static globalization:Strings.TradeTitle}"
         Width="520" Height="580" ResizeMode="NoResize">
     <Grid>
-        <TabControl x:Name="TabControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <TabControl x:Name="TabControl" SelectedIndex="{Binding SelectedTabIndex}"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <!-- Initiate Tab -->
             <TabItem Header="{x:Static globalization:Strings.InitiateTxRequest}">
                 <Grid Margin="8">
