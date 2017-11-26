@@ -6,8 +6,8 @@ using System.Windows.Input;
 using MahApps.Metro.Controls.Dialogs;
 using Neo.Core;
 using Neo.Gui.Base.Controllers.Interfaces;
+using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Helpers.Interfaces;
-using Neo.Gui.Wpf.Controls;
 using Neo.Gui.Wpf.Globalization;
 using Neo.Gui.Wpf.MVVM;
 using Neo.IO.Json;
@@ -42,10 +42,10 @@ namespace Neo.Gui.Wpf.Views.Wallets
             this.walletController = walletController;
             this.dispatchHelper = dispatchHelper;
 
-            this.Items = new ObservableCollection<TxOutListBoxItem>();
+            this.Items = new ObservableCollection<TransactionOutputItem>();
         }
 
-        public ObservableCollection<TxOutListBoxItem> Items { get; }
+        public ObservableCollection<TransactionOutputItem> Items { get; }
 
         public string PayToAddress
         {

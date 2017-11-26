@@ -48,19 +48,15 @@ namespace Neo.Gui.Wpf.Controllers
 
         public uint BlockHeight => Blockchain.Default.Height;
 
+        public event EventHandler<Block> PersistCompleted
+        {
+            add => Blockchain.PersistCompleted += value;
+            remove => Blockchain.PersistCompleted -= value;
+        }
+
         public void Initialize()
         {
             this.InitializeLocalNode();
-        }
-
-        public void AddPersistCompletedEventHandler(EventHandler<Block> handler)
-        {
-            Blockchain.PersistCompleted += handler;
-        }
-
-        public void RemovePersistCompletedEventHandler(EventHandler<Block> handler)
-        {
-            Blockchain.PersistCompleted -= handler;
         }
 
         public BlockChainStatus GetStatus()

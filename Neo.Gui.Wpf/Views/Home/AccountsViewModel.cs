@@ -27,7 +27,7 @@ namespace Neo.Gui.Wpf.Views.Home
         #region Private Fields 
         private readonly IWalletController walletController;
         private readonly IMessageSubscriber messageSubscriber;
-        private readonly IExternalProcessHelper externalProcessHelper;
+        private readonly IProcessHelper processHelper;
 
         private AccountItem selectedAccount;
         #endregion
@@ -105,11 +105,11 @@ namespace Neo.Gui.Wpf.Views.Home
         public AccountsViewModel(
             IWalletController walletController,
             IMessageSubscriber messageSubscriber, 
-            IExternalProcessHelper externalProcessHelper)
+            IProcessHelper processHelper)
         {
             this.walletController = walletController;
             this.messageSubscriber = messageSubscriber;
-            this.externalProcessHelper = externalProcessHelper;
+            this.processHelper = processHelper;
 
             this.Accounts = new ObservableCollection<AccountItem>();
         }
@@ -243,7 +243,7 @@ namespace Neo.Gui.Wpf.Views.Home
             
             var url = string.Format(Properties.Settings.Default.Urls.AddressUrl, this.SelectedAccount.Address);
             
-            this.externalProcessHelper.OpenInExternalBrowser(url);
+            this.processHelper.OpenInExternalBrowser(url);
         }
         #endregion Account Menu Command Methods
     }

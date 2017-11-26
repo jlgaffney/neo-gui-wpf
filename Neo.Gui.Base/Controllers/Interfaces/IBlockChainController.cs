@@ -13,9 +13,7 @@ namespace Neo.Gui.Base.Controllers.Interfaces
         
         uint BlockHeight { get; }
 
-        void AddPersistCompletedEventHandler(EventHandler<Block> handler);
-
-        void RemovePersistCompletedEventHandler(EventHandler<Block> handler);
+        event EventHandler<Block> PersistCompleted;
 
         void Initialize();
 

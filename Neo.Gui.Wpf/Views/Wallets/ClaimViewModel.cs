@@ -89,14 +89,14 @@ namespace Neo.Gui.Wpf.Views.Wallets
             
             this.CalculateBonusUnavailable(this.blockChainController.BlockHeight + 1);
 
-            this.blockChainController.AddPersistCompletedEventHandler(this.BlockchainPersistCompleted);
+            this.blockChainController.PersistCompleted += this.BlockchainPersistCompleted;
         }
 
         #endregion
 
         private void OnClosing()
         {
-            this.blockChainController.RemovePersistCompletedEventHandler(this.BlockchainPersistCompleted);
+            this.blockChainController.PersistCompleted -= this.BlockchainPersistCompleted;
         }
 
         private void BlockchainPersistCompleted(object sender, Block block)

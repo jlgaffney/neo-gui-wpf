@@ -15,19 +15,15 @@ namespace Neo.Gui.Wpf.Controllers
 
         public uint BlockHeight => throw new NotImplementedException();
 
+        public event EventHandler<Block> PersistCompleted
+        {
+            add => throw new NotImplementedException();
+            remove => throw new NotImplementedException();
+        }
+
         public void Initialize()
         {
             // Remote nodes are not supported yet
-            throw new NotImplementedException();
-        }
-
-        public void AddPersistCompletedEventHandler(EventHandler<Block> handler)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void RemovePersistCompletedEventHandler(EventHandler<Block> handler)
-        {
             throw new NotImplementedException();
         }
 

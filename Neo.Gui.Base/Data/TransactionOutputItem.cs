@@ -1,8 +1,8 @@
 ﻿using Neo.Wallets;
 
-namespace Neo.Gui.Wpf.Controls
+namespace Neo.Gui.Base.Data
 {
-    public class TxOutListBoxItem : TransferOutput
+    public class TransactionOutputItem : TransferOutput
     {
         public string AssetName;
 

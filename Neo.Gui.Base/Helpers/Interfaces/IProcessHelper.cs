@@ -1,7 +1,9 @@
 ﻿namespace Neo.Gui.Base.Helpers.Interfaces
 {
-    public interface IExternalProcessHelper
+    public interface IProcessHelper
     {
         void OpenInExternalBrowser(string url);
+
+        void Restart();
     }
 }

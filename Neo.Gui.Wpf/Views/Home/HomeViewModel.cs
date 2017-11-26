@@ -33,7 +33,7 @@ namespace Neo.Gui.Wpf.Views.Home
         #region Private Fields 
         private readonly IWalletController walletController;
         private readonly IDialogHelper dialogHelper;
-        private readonly IExternalProcessHelper extertenalProcessHelper;
+        private readonly IProcessHelper extertenalProcessHelper;
         private readonly IMessagePublisher messagePublisher;
         private readonly IMessageSubscriber messageSubscriber;
         private readonly IDispatchHelper dispatchHelper;
@@ -53,7 +53,7 @@ namespace Neo.Gui.Wpf.Views.Home
         public HomeViewModel(
             IWalletController walletController,
             IDialogHelper dialogHelper, 
-            IExternalProcessHelper extertenalProcessHelper,
+            IProcessHelper extertenalProcessHelper,
             IMessagePublisher messagePublisher,
             IMessageSubscriber messageSubscriber, 
             IDispatchHelper dispatchHelper)

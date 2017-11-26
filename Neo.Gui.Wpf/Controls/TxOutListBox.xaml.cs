@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
+using Neo.Gui.Base.Data;
 using Neo.Gui.Wpf.Views.Transactions;
 using Neo.Wallets;
 
@@ -29,7 +30,7 @@ namespace Neo.Gui.Wpf.Controls
         // Dependency Property
         public static readonly DependencyProperty ItemsProperty =
             DependencyProperty.Register("Items",
-                typeof(ObservableCollection<TxOutListBoxItem>), typeof(TxOutListBox),
+                typeof(ObservableCollection<TransactionOutputItem>), typeof(TxOutListBox),
                 new FrameworkPropertyMetadata(null));
 
         // Dependency Property
@@ -47,9 +48,9 @@ namespace Neo.Gui.Wpf.Controls
                 new FrameworkPropertyMetadata(null));
 
         // .NET Property wrapper
-        public ObservableCollection<TxOutListBoxItem> Items
+        public ObservableCollection<TransactionOutputItem> Items
         {
-            get => (ObservableCollection<TxOutListBoxItem>)GetValue(ItemsProperty);
+            get => (ObservableCollection<TransactionOutputItem>)GetValue(ItemsProperty);
             set => SetValue(ItemsProperty, value);
         }
 
@@ -127,7 +128,7 @@ namespace Neo.Gui.Wpf.Controls
             // Execute on main UI thread
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
             {
-                var itemsToRemove = this.ListBox.SelectedItems.Cast<TxOutListBoxItem>();
+                var itemsToRemove = this.ListBox.SelectedItems.Cast<TransactionOutputItem>();
 
                 foreach (var item in itemsToRemove)
                 {

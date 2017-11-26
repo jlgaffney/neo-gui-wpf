@@ -6,14 +6,15 @@ using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Theming;
 using Neo.Gui.Wpf.Extensions;
 using Neo.Gui.Wpf.Properties;
+using Style = Neo.Gui.Base.Theming.Style;
 
 namespace Neo.Gui.Wpf.Helpers
 {
     public class ThemeHelper : IThemeHelper
     {
-        private const string CustomAccentKey = "CustomAccent";
-
         #region Resource Key Constants
+
+        private const string CustomAccentKey = "CustomAccent";
 
         private const string HighlightColorKey = "ThemeHighlightColor";
         private const string AccentBaseColorKey = "ThemeAccentBaseColor";
@@ -22,12 +23,13 @@ namespace Neo.Gui.Wpf.Helpers
         private const string AccentColor3Key = "ThemeAccentColor3";
         private const string AccentColor4Key = "ThemeAccentColor4";
         private const string WindowBorderColorKey = "ThemeWindowBorderColor";
+        private const string WindowBorderColor2Key = "ThemeWindowBorderColor2";
 
         #endregion Resource Key Constants
 
         #region IThemeHelper implementation
 
-        public NeoGuiTheme CurrentTheme { get; private set; }
+        public Theme CurrentTheme { get; private set; }
 
         public void LoadTheme()
         {
@@ -45,21 +47,21 @@ namespace Neo.Gui.Wpf.Helpers
                 return;
             }
 
-            var theme = NeoGuiTheme.ImportFromJson(themeJson);
+            var theme = Theme.ImportFromJson(themeJson);
 
             if (theme == null)
             {
-                theme = NeoGuiTheme.Default;
+                theme = Theme.Default;
             }
 
             this.SetTheme(theme);
         }
 
-        public void SetTheme(NeoGuiTheme newTheme)
+        public void SetTheme(Theme newTheme)
         {
             // Change app style to the custom accent and current theme
             var accent = ThemeManager.GetAccent(CustomAccentKey);
-            var theme = ThemeManager.GetAppTheme(newTheme.Style == ThemeStyle.Light ? "BaseLight" : "BaseDark");
+            var theme = ThemeManager.GetAppTheme(newTheme.Style == Style.Light ? "BaseLight" : "BaseDark");
 
             // Modify resource values to new theme values
 
@@ -107,6 +109,12 @@ namespace Neo.Gui.Wpf.Helpers
             if (accent.Resources.Contains(WindowBorderColorKey))
             {
                 accent.Resources[WindowBorderColorKey] = newTheme.WindowBorderColor.ToMediaColor();
+
+                // Set 80% transparency window border color
+                if (accent.Resources.Contains(WindowBorderColor2Key))
+                {
+                    accent.Resources[WindowBorderColor2Key] = newTheme.WindowBorderColor.SetTransparencyFraction(0.8).ToMediaColor();
+                }
             }
 
             ThemeManager.ChangeAppStyle(Application.Current, accent, theme);
@@ -120,7 +128,7 @@ namespace Neo.Gui.Wpf.Helpers
 
         private void SetThemeToDefault()
         {
-            this.SetTheme(NeoGuiTheme.Default);
+            this.SetTheme(Theme.Default);
         }
 
         #endregion

@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Neo.Gui.Wpf.Controls.Development
+namespace Neo.Gui.Wpf.Controls
 {
     /// <summary>
     /// Interaction logic for TransactionPropertyGrid.xaml

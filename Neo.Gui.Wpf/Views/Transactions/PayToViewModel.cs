@@ -3,8 +3,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using Neo.Gui.Base.Controllers.Interfaces;
+using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Helpers.Interfaces;
-using Neo.Gui.Wpf.Controls;
 using Neo.Gui.Wpf.MVVM;
 using Neo.Wallets;
 using NeoSettings = Neo.Gui.Wpf.Properties.Settings;
@@ -24,7 +24,7 @@ namespace Neo.Gui.Wpf.Views.Transactions
 
         private string amount;
 
-        private TxOutListBoxItem output;
+        private TransactionOutputItem output;
 
         public PayToViewModel(
             IWalletController walletController,
@@ -215,18 +215,18 @@ namespace Neo.Gui.Wpf.Views.Transactions
             this.TryClose();
         }
 
-        public TxOutListBoxItem GetOutput()
+        public TransactionOutputItem GetOutput()
         {
             return this.output;
         }
 
-        private TxOutListBoxItem GenerateOutput()
+        private TransactionOutputItem GenerateOutput()
         {
             var asset = this.SelectedAsset;
 
             if (asset == null) return null;
 
-            return new TxOutListBoxItem
+            return new TransactionOutputItem
             {
                 AssetName = asset.AssetName,
                 AssetId = asset.AssetId,

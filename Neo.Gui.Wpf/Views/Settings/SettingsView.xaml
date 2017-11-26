@@ -58,7 +58,7 @@
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Row="0" Grid.Column="0" Content="{x:Static globalization:Strings.BaseStyle}" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                        <ComboBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" ItemsSource="{Binding ThemeStyles}" SelectedItem="{Binding SelectedThemeStyle}" Margin="0 4" HorizontalAlignment="Stretch" />
+                        <ComboBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" ItemsSource="{Binding Styles}" SelectedItem="{Binding SelectedStyle}" Margin="0 4" HorizontalAlignment="Stretch" />
 
                         <Label Grid.Row="1" Grid.Column="0" Content="{x:Static globalization:Strings.Accent}" HorizontalAlignment="Right" VerticalAlignment="Center" />
                         <Rectangle Grid.Row="1" Grid.Column="1" Width="20" Height="20" Fill="{Binding ThemeAccentBaseColor}" Margin="0 4 6 4" HorizontalAlignment="Center" VerticalAlignment="Center" />

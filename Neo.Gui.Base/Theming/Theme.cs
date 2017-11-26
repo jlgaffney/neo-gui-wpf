@@ -4,17 +4,17 @@ using Newtonsoft.Json;
 
 namespace Neo.Gui.Base.Theming
 {
-    public class NeoGuiTheme
+    public class Theme
     {
-        public static readonly NeoGuiTheme Default = new NeoGuiTheme
+        public static readonly Theme Default = new Theme
         {
-            Style = ThemeStyle.Light,
+            Style = Style.Light,
             HighlightColor = "#76B466".HexToColor(),
             AccentBaseColor = "#3DA43C".HexToColor(),
             WindowBorderColor = "#9EAF99".HexToColor()
         };
         
-        public ThemeStyle Style { get; set; }
+        public Style Style { get; set; }
 
         public Color AccentBaseColor { get; set; }
 
@@ -22,14 +22,14 @@ namespace Neo.Gui.Base.Theming
 
         public Color WindowBorderColor { get; set; }
         
-        public static NeoGuiTheme ImportFromJson(string themeJson)
+        public static Theme ImportFromJson(string themeJson)
         {
             if (string.IsNullOrEmpty(themeJson)) return null;
 
-            NeoGuiTheme theme;
+            Theme theme;
             try
             {
-                theme = JsonConvert.DeserializeObject<NeoGuiTheme>(themeJson);
+                theme = JsonConvert.DeserializeObject<Theme>(themeJson);
             }
             catch
             {
@@ -40,7 +40,7 @@ namespace Neo.Gui.Base.Theming
             return theme;
         }
 
-        public static string ExportToJson(NeoGuiTheme theme)
+        public static string ExportToJson(Theme theme)
         {
             return JsonConvert.SerializeObject(theme, Formatting.Indented);
         }

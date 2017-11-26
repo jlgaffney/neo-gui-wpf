@@ -272,7 +272,7 @@
     <Compile Include="Controllers\WalletController.cs" />
     <Compile Include="Extensions\ColorExtensions.cs" />
     <Compile Include="Helpers\DialogHelper.cs" />
-    <Compile Include="Helpers\ExternalProcessHelper.cs" />
+    <Compile Include="Helpers\ProcessHelper.cs" />
     <Compile Include="RegistrationModules\HelpersRegistrationModule.cs" />
     <Compile Include="Helpers\NotificationHelper.cs" />
     <Compile Include="Helpers\DispatchHelper.cs" />
@@ -314,7 +314,7 @@
       <DependentUpon>AssetDistributionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Assets\AssetDistributionViewModel.cs" />
-    <Compile Include="Controls\Development\TransactionPropertyGrid.xaml.cs">
+    <Compile Include="Controls\TransactionPropertyGrid.xaml.cs">
       <DependentUpon>TransactionPropertyGrid.xaml</DependentUpon>
     </Compile>
     <Compile Include="Globalization\EnumStrings.Designer.cs">
@@ -454,7 +454,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Controls\TxOutListBoxItem.cs" />
     <Compile Include="Views\Updater\UpdateView.xaml.cs">
       <DependentUpon>UpdateView.xaml</DependentUpon>
     </Compile>
@@ -661,7 +660,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\Development\TransactionPropertyGrid.xaml">
+    <Page Include="Controls\TransactionPropertyGrid.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

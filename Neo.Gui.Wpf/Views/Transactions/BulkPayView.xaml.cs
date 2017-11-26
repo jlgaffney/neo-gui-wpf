@@ -1,4 +1,4 @@
-﻿using Neo.Gui.Wpf.Controls;
+﻿using Neo.Gui.Base.Data;
 using Neo.Wallets;
 
 namespace Neo.Gui.Wpf.Views.Transactions
@@ -7,7 +7,7 @@ namespace Neo.Gui.Wpf.Views.Transactions
     {
         private readonly BulkPayViewModel viewModel;
 
-        internal BulkPayView(AssetDescriptor asset = null)
+        public BulkPayView(AssetDescriptor asset = null)
         {
             InitializeComponent();
 
@@ -16,7 +16,7 @@ namespace Neo.Gui.Wpf.Views.Transactions
             this.viewModel?.Load(asset);
         }
 
-        internal TxOutListBoxItem[] GetOutputs()
+        public TransactionOutputItem[] GetOutputs()
         {
             return this.viewModel?.GetOutputs();
         }

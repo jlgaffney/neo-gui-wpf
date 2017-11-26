@@ -18,8 +18,8 @@ namespace Neo.Gui.Wpf.RegistrationModules
                 .SingleInstance();
 
             builder
-                .RegisterType<ExternalProcessHelper>()
-                .As<IExternalProcessHelper>();
+                .RegisterType<ProcessHelper>()
+                .As<IProcessHelper>();
 
             builder
                 .RegisterType<NotificationHelper>()

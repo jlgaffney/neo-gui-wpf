@@ -15,6 +15,7 @@
 
     <!-- Window Border Color -->
     <Color x:Key="ThemeWindowBorderColor">#FF9EAF99</Color>
+    <Color x:Key="ThemeWindowBorderColor2">#CC9EAF99</Color>
 
 
 
@@ -29,6 +30,7 @@
     <SolidColorBrush x:Key="WindowTitleColorBrush" Color="{DynamicResource ThemeAccentColor}" options:Freeze="True" />
 
     <SolidColorBrush x:Key="WindowBorderColorBrush" Color="{DynamicResource ThemeWindowBorderColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="WindowBorderColor2Brush" Color="{DynamicResource ThemeWindowBorderColor2}" options:Freeze="True" />
 
     <LinearGradientBrush x:Key="ProgressBrush" StartPoint="1.002,0.5" EndPoint="0.001,0.5" options:Freeze="True">
         <GradientStop Offset="0" Color="{DynamicResource ThemeHighlightColor}" />

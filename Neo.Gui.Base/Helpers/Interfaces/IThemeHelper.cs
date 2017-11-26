@@ -4,10 +4,10 @@ namespace Neo.Gui.Base.Helpers.Interfaces
 {
     public interface IThemeHelper
     {
-        NeoGuiTheme CurrentTheme { get; }
+        Theme CurrentTheme { get; }
 
         void LoadTheme();
 
-        void SetTheme(NeoGuiTheme newTheme);
+        void SetTheme(Theme newTheme);
     }
 }

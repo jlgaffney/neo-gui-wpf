@@ -26,7 +26,7 @@ namespace Neo.Gui.Wpf.Views.Home
         #region Private Fields 
         private static readonly UInt160 RecycleScriptHash = new[] { (byte)OpCode.PUSHT }.ToScriptHash();
 
-        private readonly IExternalProcessHelper externalProcessHelper;
+        private readonly IProcessHelper processHelper;
         private readonly IWalletController walletController;
         private readonly IMessageSubscriber messageSubscriber;
         private readonly IMessagePublisher messagePublisher;
@@ -81,12 +81,12 @@ namespace Neo.Gui.Wpf.Views.Home
         #region Constructor 
         public AssetsViewModel(
             IWalletController walletController,
-            IExternalProcessHelper externalProcessHelper,
+            IProcessHelper processHelper,
             IMessageSubscriber messageSubscriber,
             IMessagePublisher messagePublisher)
         {
             this.walletController = walletController;
-            this.externalProcessHelper = externalProcessHelper;
+            this.processHelper = processHelper;
             this.messageSubscriber = messageSubscriber;
             this.messagePublisher = messagePublisher;
 
@@ -103,7 +103,7 @@ namespace Neo.Gui.Wpf.Views.Home
             var address = Wallet.ToAddress(hash);
             var path = Path.Combine(Properties.Settings.Default.CertCachePath, $"{address}.cer");
 
-            this.externalProcessHelper.OpenInExternalBrowser(path);
+            this.processHelper.OpenInExternalBrowser(path);
         }
 
         private void DeleteAsset()
@@ -139,7 +139,7 @@ namespace Neo.Gui.Wpf.Views.Home
 
             var url = string.Format(Properties.Settings.Default.Urls.AssetUrl, this.SelectedAsset.Name.Substring(2));
 
-            this.externalProcessHelper.OpenInExternalBrowser(url);
+            this.processHelper.OpenInExternalBrowser(url);
         }
         #endregion
 

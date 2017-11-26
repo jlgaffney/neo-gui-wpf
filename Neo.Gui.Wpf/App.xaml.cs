@@ -43,7 +43,6 @@ namespace Neo.Gui.Wpf
             Debug.Assert(containerLifetimeScope != null);
 
             // Set static lifetime scopes
-            NeoWindow.SetLifetimeScope(containerLifetimeScope);
             DialogHelper.SetLifetimeScope(containerLifetimeScope);
             DataContextBindingExtension.SetLifetimeScope(containerLifetimeScope);
 

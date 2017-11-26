@@ -19,7 +19,7 @@ namespace Neo.Gui.Wpf.Views.Updater
 
         private readonly WebClient web = new WebClient();
 
-        private readonly IExternalProcessHelper externalProcessHelper;
+        private readonly IProcessHelper processHelper;
         private readonly IMessagePublisher messagePublisher;
 
         private readonly Version latestVersion;
@@ -30,11 +30,11 @@ namespace Neo.Gui.Wpf.Views.Updater
         private bool buttonsEnabled;
 
         public UpdateViewModel(
-            IExternalProcessHelper externalProcessHelper,
+            IProcessHelper processHelper,
             IVersionHelper versionHelper,
             IMessagePublisher messagePublisher)
         {
-            this.externalProcessHelper = externalProcessHelper;
+            this.processHelper = processHelper;
             this.messagePublisher = messagePublisher;
 
             // Setup update information
@@ -93,12 +93,12 @@ namespace Neo.Gui.Wpf.Views.Updater
 
         private void GoToOfficialWebsite()
         {
-            this.externalProcessHelper.OpenInExternalBrowser("https://neo.org/");
+            this.processHelper.OpenInExternalBrowser("https://neo.org/");
         }
 
         private void GoToDownloadPage()
         {
-            this.externalProcessHelper.OpenInExternalBrowser(this.downloadUrl);
+            this.processHelper.OpenInExternalBrowser(this.downloadUrl);
         }
 
         #region Update Downloader Methods

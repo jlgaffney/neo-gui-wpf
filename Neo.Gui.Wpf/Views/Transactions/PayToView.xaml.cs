@@ -1,4 +1,4 @@
-﻿using Neo.Gui.Wpf.Controls;
+﻿using Neo.Gui.Base.Data;
 using Neo.Wallets;
 
 namespace Neo.Gui.Wpf.Views.Transactions
@@ -7,7 +7,7 @@ namespace Neo.Gui.Wpf.Views.Transactions
     {
         private readonly PayToViewModel viewModel;
 
-        internal PayToView(AssetDescriptor asset = null, UInt160 scriptHash = null)
+        public PayToView(AssetDescriptor asset = null, UInt160 scriptHash = null)
         {
             InitializeComponent();
 
@@ -16,7 +16,7 @@ namespace Neo.Gui.Wpf.Views.Transactions
             this.viewModel?.Load(asset, scriptHash);
         }
 
-        internal TxOutListBoxItem GetOutput()
+        public TransactionOutputItem GetOutput()
         {
             return this.viewModel?.GetOutput();
         }

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
-using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using MahApps.Metro.Controls.Dialogs;
@@ -17,13 +15,14 @@ namespace Neo.Gui.Wpf.Views.Settings
     {
         private static readonly SolidColorBrush TransparentBrush = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
 
+        private readonly IProcessHelper processHelper;
         private readonly IThemeHelper themeHelper;
 
         private string currentNEP5ContractsList;
         private string nep5ContractsList;
 
-        private ThemeStyle currentThemeStyle;
-        private ThemeStyle selectedThemeStyle;
+        private Style currentStyle;
+        private Style selectedStyle;
 
         private string currentThemeAccentBaseColorHex;
         private string themeAccentBaseColorHex;
@@ -36,8 +35,10 @@ namespace Neo.Gui.Wpf.Views.Settings
 
 
         public SettingsViewModel(
+            IProcessHelper processHelper,
             IThemeHelper themeHelper)
         {
+            this.processHelper = processHelper;
             this.themeHelper = themeHelper;
 
             this.LoadSettings();
@@ -73,8 +74,8 @@ namespace Neo.Gui.Wpf.Views.Settings
             var currentTheme = this.themeHelper.CurrentTheme;
 
             // Set theme style
-            this.currentThemeStyle = currentTheme.Style;
-            this.SelectedThemeStyle = currentTheme.Style;
+            this.currentStyle = currentTheme.Style;
+            this.SelectedStyle = currentTheme.Style;
 
             // Set color values, without transparency as these colors do not require transparency
             var accentBaseColorHex = currentTheme.AccentBaseColor.ToHex();
@@ -116,16 +117,16 @@ namespace Neo.Gui.Wpf.Views.Settings
 
         #region Appearance Properties
 
-        public ThemeStyle[] ThemeStyles => Enum.GetValues(typeof(ThemeStyle)).Cast<ThemeStyle>().ToArray();
+        public Style[] Styles => Enum.GetValues(typeof(Style)).Cast<Style>().ToArray();
 
-        public ThemeStyle SelectedThemeStyle
+        public Style SelectedStyle
         {
-            get => this.selectedThemeStyle;
+            get => this.selectedStyle;
             set
             {
-                if (this.selectedThemeStyle == value) return;
+                if (this.selectedStyle == value) return;
 
-                this.selectedThemeStyle = value;
+                this.selectedStyle = value;
 
                 NotifyPropertyChanged();
 
@@ -231,7 +232,7 @@ namespace Neo.Gui.Wpf.Views.Settings
         }
 
         public bool AppearanceSettingsChanged =>
-            this.currentThemeStyle != this.SelectedThemeStyle ||
+            this.currentStyle != this.SelectedStyle ||
             this.currentThemeAccentBaseColorHex != this.ThemeAccentBaseColorHex ||
             this.currentThemeHighlightColorHex != this.ThemeHighlightColorHex ||
             this.currentThemeWindowBorderColorHex != this.ThemeWindowBorderColorHex;
@@ -295,15 +296,14 @@ namespace Neo.Gui.Wpf.Views.Settings
             this.SaveAppearanceSettings();
 
             // Restart application
-            Process.Start(Application.ResourceAssembly.Location);
-            Application.Current.Shutdown();
+            this.processHelper.Restart();
         }
 
         private void ResetAppearanceSettingsToDefault()
         {
-            var defaultTheme = NeoGuiTheme.Default;
+            var defaultTheme = Theme.Default;
 
-            this.SelectedThemeStyle = defaultTheme.Style;
+            this.SelectedStyle = defaultTheme.Style;
 
             // Convert default theme colors to hex values
             this.ThemeAccentBaseColorHex = defaultTheme.AccentBaseColor.ToHex();
@@ -323,10 +323,10 @@ namespace Neo.Gui.Wpf.Views.Settings
             highlightColor = highlightColor.SetTransparencyFraction(1.0);
             windowBorderColor = windowBorderColor.SetTransparencyFraction(1.0);
 
-            var themeStyle = this.SelectedThemeStyle;
+            var themeStyle = this.SelectedStyle;
 
             // Build new theme instance
-            var newTheme = new NeoGuiTheme
+            var newTheme = new Theme
             {
                 Style = themeStyle,
                 AccentBaseColor = accentBaseColor,
@@ -335,12 +335,12 @@ namespace Neo.Gui.Wpf.Views.Settings
             };
 
             // Export and save as JSON in settings
-            var newThemeJson = NeoGuiTheme.ExportToJson(newTheme);
+            var newThemeJson = Theme.ExportToJson(newTheme);
             Properties.Settings.Default.AppTheme = newThemeJson;
             Properties.Settings.Default.Save();
 
             // Update settings' current values
-            this.currentThemeStyle = this.SelectedThemeStyle;
+            this.currentStyle = this.SelectedStyle;
             this.currentThemeAccentBaseColorHex = this.ThemeAccentBaseColorHex;
             this.currentThemeHighlightColorHex = this.ThemeHighlightColorHex;
             this.currentThemeWindowBorderColorHex = this.ThemeWindowBorderColorHex;

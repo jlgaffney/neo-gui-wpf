@@ -18,7 +18,7 @@ namespace Neo.Gui.Wpf.Views.Home
     {
         #region Private Fields 
         private readonly IMessageSubscriber messageSubscriber;
-        private readonly IExternalProcessHelper externalProcessHelper;
+        private readonly IProcessHelper processHelper;
 
         private TransactionItem selectedTransaction;
         #endregion
@@ -52,10 +52,10 @@ namespace Neo.Gui.Wpf.Views.Home
         #region Constructor 
         public TransactionsViewModel(
             IMessageSubscriber messageSubscriber,
-            IExternalProcessHelper externalProcessHelper)
+            IProcessHelper processHelper)
         {
             this.messageSubscriber = messageSubscriber;
-            this.externalProcessHelper = externalProcessHelper;
+            this.processHelper = processHelper;
 
             this.Transactions = new ConcurrentObservableCollection<TransactionItem>();
         }
@@ -85,7 +85,7 @@ namespace Neo.Gui.Wpf.Views.Home
 
             var url = string.Format(Properties.Settings.Default.Urls.TransactionUrl, this.SelectedTransaction.Id.Substring(2));
 
-            this.externalProcessHelper.OpenInExternalBrowser(url);
+            this.processHelper.OpenInExternalBrowser(url);
         }
         #endregion
 

@@ -4,7 +4,7 @@
             xmlns:globalization="clr-namespace:Neo.Gui.Wpf.Globalization"
             xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
             xmlns:development="clr-namespace:Neo.Gui.Wpf.Views.Development"
-            xmlns:development1="clr-namespace:Neo.Gui.Wpf.Controls.Development"
+            xmlns:controls="clr-namespace:Neo.Gui.Wpf.Controls"
             DataContext="{markupExtensions:DataContextBinding ViewModel=development:TransactionBuilderViewModel}">
     <Grid.RowDefinitions>
         <RowDefinition Height="Auto" />
@@ -18,7 +18,7 @@
 
     <ComboBox Grid.Row="0" Grid.Column="0" ItemsSource="{Binding TransactionTypes}" SelectedItem="{Binding SelectedTransactionType}" Margin="0 0 0 8" />
 
-    <development1:TransactionPropertyGrid Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TransactionWrapper="{Binding TransactionWrapper}" />
+    <controls:TransactionPropertyGrid Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TransactionWrapper="{Binding TransactionWrapper}" />
 
     <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Orientation="Vertical" IsEnabled="{Binding SidePanelEnabled}" Margin="10 0 0 0" VerticalAlignment="Bottom">
         <Button Content="{x:Static globalization:Strings.TransactionRemark}" Margin="0 0 0 8" Padding="12 2" Command="{Binding TransactionRemarkCommand}" />

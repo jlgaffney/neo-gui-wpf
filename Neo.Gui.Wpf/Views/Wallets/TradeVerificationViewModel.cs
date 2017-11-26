@@ -3,8 +3,8 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Neo.Core;
 using Neo.Gui.Base.Controllers.Interfaces;
+using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Helpers.Interfaces;
-using Neo.Gui.Wpf.Controls;
 using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Wallets
@@ -21,10 +21,10 @@ namespace Neo.Gui.Wpf.Views.Wallets
             this.blockChainController = blockChainController;
             this.dispatchHelper = dispatchHelper;
 
-            this.Items = new ObservableCollection<TxOutListBoxItem>();
+            this.Items = new ObservableCollection<TransactionOutputItem>();
         }
 
-        public ObservableCollection<TxOutListBoxItem> Items { get; }
+        public ObservableCollection<TransactionOutputItem> Items { get; }
 
         public ICommand AcceptCommand => new RelayCommand(this.Accept);
 
@@ -48,7 +48,7 @@ namespace Neo.Gui.Wpf.Views.Wallets
                 {
                     var asset = this.blockChainController.GetAssetState(output.AssetId);
 
-                    this.Items.Add(new TxOutListBoxItem
+                    this.Items.Add(new TransactionOutputItem
                     {
                         AssetName = $"{asset.GetName()} ({asset.Owner})",
                         AssetId = output.AssetId,

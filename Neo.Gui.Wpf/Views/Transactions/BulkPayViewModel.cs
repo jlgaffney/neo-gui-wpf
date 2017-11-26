@@ -3,9 +3,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using Neo.Gui.Base.Controllers.Interfaces;
+using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Extensions;
 using Neo.Gui.Base.Helpers.Interfaces;
-using Neo.Gui.Wpf.Controls;
 using Neo.Gui.Wpf.MVVM;
 using Neo.Wallets;
 using NeoSettings = Neo.Gui.Wpf.Properties.Settings;
@@ -23,7 +23,7 @@ namespace Neo.Gui.Wpf.Views.Transactions
 
         private string addressesAndAmounts;
 
-        private TxOutListBoxItem[] outputs;
+        private TransactionOutputItem[] outputs;
 
         public BulkPayViewModel(
             IWalletController walletController,
@@ -147,12 +147,12 @@ namespace Neo.Gui.Wpf.Views.Transactions
             this.TryClose();
         }
 
-        internal TxOutListBoxItem[] GetOutputs()
+        internal TransactionOutputItem[] GetOutputs()
         {
             return this.outputs;
         }
 
-        private TxOutListBoxItem[] GenerateOutputs()
+        private TransactionOutputItem[] GenerateOutputs()
         {
             if (this.SelectedAsset == null || string.IsNullOrEmpty(this.AddressesAndAmounts)) return null;
 
@@ -164,7 +164,7 @@ namespace Neo.Gui.Wpf.Views.Transactions
             {
                 var lineElements = line.Split(new[] { ' ', '\t', ',' }, StringSplitOptions.RemoveEmptyEntries);
 
-                return new TxOutListBoxItem
+                return new TransactionOutputItem
                 {
                     AssetName = this.SelectedAsset.AssetName,
                     AssetId = this.SelectedAsset.AssetId,

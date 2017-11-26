@@ -5,7 +5,7 @@ using Neo.Gui.Base.Localization;
 namespace Neo.Gui.Base.Theming
 {
     [TypeConverter(typeof(EnumDescriptionTypeConverter))]
-    public enum ThemeStyle
+    public enum Style
     {
         //[LocalizedDescription(nameof(EnumStrings.Light), typeof(EnumStrings))]
         Light,
