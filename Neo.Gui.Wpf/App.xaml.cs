@@ -8,13 +8,12 @@ using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
-using Neo.Gui.Wpf.Controls;
-using Neo.Gui.Wpf.Globalization;
+using Neo.Gui.Base.Globalization;
 using Neo.Gui.Wpf.Helpers;
+using Neo.Gui.Wpf.MarkupExtensions;
 using Neo.Gui.Wpf.RegistrationModules;
 using Neo.Gui.Wpf.Views.Home;
 using Neo.Gui.Wpf.Views.Updater;
-using Neo.UI.MarkupExtensions;
 using SplashScreen = Neo.Gui.Wpf.Views.SplashScreen;
 
 namespace Neo.Gui.Wpf

@@ -9,7 +9,7 @@ using Neo.Cryptography.ECC;
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
-using Neo.Gui.Wpf.Globalization;
+using Neo.Gui.Base.Globalization;
 using Neo.Gui.Wpf.MVVM;
 using Neo.SmartContract;
 using Neo.VM;

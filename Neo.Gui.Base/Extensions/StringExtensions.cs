@@ -10,7 +10,7 @@ namespace Neo.Gui.Base.Extensions
             if (string.IsNullOrEmpty(source)) return new string[0];
 
             var lines = source.Split('\n');
-
+            
             // Remove \r character from end of line if present
             for (int i = 0; i < lines.Length; i++)
             {

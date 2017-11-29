@@ -1,20 +1,20 @@
 ﻿using System.ComponentModel;
 using Neo.Gui.Base.Converters;
+using Neo.Gui.Base.Globalization;
 using Neo.Gui.Base.Localization;
-//using Neo.Gui.Wpf.UI.Base.Resources;
 
 namespace Neo.Gui.Base.Data
 {
     [TypeConverter(typeof(EnumDescriptionTypeConverter))]
     public enum AccountType
     {
-        //[LocalizedDescription(nameof(EnumStrings.Standard), typeof(EnumStrings))]
+        [LocalizedDescription(nameof(Strings.Standard), typeof(Strings))]
         Standard,
 
-        //[LocalizedDescription(nameof(EnumStrings.NonStandard), typeof(EnumStrings))]
+        [LocalizedDescription(nameof(Strings.NonStandard), typeof(Strings))]
         NonStandard,
 
-        //[LocalizedDescription(nameof(EnumStrings.WatchOnly), typeof(EnumStrings))]
+        [LocalizedDescription(nameof(Strings.WatchOnly), typeof(Strings))]
         WatchOnly
     }
 }

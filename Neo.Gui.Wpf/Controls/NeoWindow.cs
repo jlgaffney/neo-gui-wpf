@@ -15,12 +15,14 @@ namespace Neo.Gui.Wpf.Controls
             this.SetResourceReference(NonActiveWindowTitleBrushProperty, "AccentColorBrush2");
             this.SetResourceReference(NonActiveBorderBrushProperty, "WindowBorderColor2Brush");
 
-            this.Loaded += (sender, e) =>
-            {
-                var viewModel = this.DataContext as ViewModelBase;
+            this.Loaded += this.WindowLoaded;
+        }
 
-                viewModel?.OnWindowAttached(this);
-            };            
+        private void WindowLoaded(object sender, RoutedEventArgs e)
+        {
+            var viewModel = this.DataContext as ViewModelBase;
+
+            viewModel?.OnWindowAttached(this);
         }
     }
 }

@@ -1,10 +1,10 @@
 ﻿<controls:NeoWindow x:Class="Neo.Gui.Wpf.Views.Transactions.SigningView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:globalization="clr-namespace:Neo.Gui.Wpf.Globalization"
-        xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
+        xmlns:globalization="clr-namespace:Neo.Gui.Base.Globalization;assembly=Neo.Gui.Base"
         xmlns:transactions="clr-namespace:Neo.Gui.Wpf.Views.Transactions"
         xmlns:controls="clr-namespace:Neo.Gui.Wpf.Controls"
+        xmlns:markupExtensions="clr-namespace:Neo.Gui.Wpf.MarkupExtensions"
         DataContext="{markupExtensions:DataContextBinding ViewModel=transactions:SigningViewModel}"
         Title="{x:Static globalization:Strings.Signature}"
         Width="480" SizeToContent="Height" ResizeMode="NoResize">

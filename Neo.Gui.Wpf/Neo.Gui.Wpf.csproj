@@ -267,6 +267,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controllers\LocalBlockChainController.cs" />
+    <Compile Include="Converters\ColorToSolidColorBrushConverter.cs" />
     <Compile Include="RegistrationModules\ControllersRegistrationModule.cs" />
     <Compile Include="Controllers\RemoteBlockChainController.cs" />
     <Compile Include="Controllers\WalletController.cs" />
@@ -353,7 +354,6 @@
     <Compile Include="Dialogs\InputBox.xaml.cs">
       <DependentUpon>InputBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Contracts\DisplayContractParameter.cs" />
     <Compile Include="Views\Contracts\ParametersEditorView.xaml.cs">
       <DependentUpon>ParametersEditorView.xaml</DependentUpon>
     </Compile>

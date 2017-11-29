@@ -6,7 +6,7 @@ using MahApps.Metro.Controls.Dialogs;
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Extensions;
 using Neo.Gui.Base.Helpers.Interfaces;
-using Neo.Gui.Wpf.Globalization;
+using Neo.Gui.Base.Globalization;
 using Neo.Gui.Wpf.MVVM;
 using Neo.Network;
 using Neo.SmartContract;

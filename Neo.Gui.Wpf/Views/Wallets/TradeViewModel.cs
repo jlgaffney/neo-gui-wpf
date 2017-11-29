@@ -8,7 +8,7 @@ using Neo.Core;
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Helpers.Interfaces;
-using Neo.Gui.Wpf.Globalization;
+using Neo.Gui.Base.Globalization;
 using Neo.Gui.Wpf.MVVM;
 using Neo.IO.Json;
 using Neo.SmartContract;

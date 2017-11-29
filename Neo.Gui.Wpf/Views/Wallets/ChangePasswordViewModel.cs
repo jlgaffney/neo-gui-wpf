@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 using Neo.Gui.Base.Controllers.Interfaces;
-using Neo.Gui.Wpf.Globalization;
+using Neo.Gui.Base.Globalization;
 using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Wallets

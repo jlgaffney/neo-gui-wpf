@@ -1,6 +1,6 @@
 ﻿using Neo.SmartContract;
 
-namespace Neo.Gui.Wpf.Views.Contracts
+namespace Neo.Gui.Base.Data
 {
     public class DisplayContractParameter
     {

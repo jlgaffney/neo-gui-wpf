@@ -9,7 +9,7 @@ using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
-using Neo.Gui.Wpf.Globalization;
+using Neo.Gui.Base.Globalization;
 using Neo.Gui.Wpf.MVVM;
 using Neo.Wallets;
 
@@ -27,8 +27,7 @@ namespace Neo.Gui.Wpf.Views.Accounts
         private string selectedPublicKey;
 
         private string newPublicKey;
-
-
+        
         public CreateMultiSigContractViewModel(
             IWalletController walletController,
             IMessagePublisher messagePublisher,

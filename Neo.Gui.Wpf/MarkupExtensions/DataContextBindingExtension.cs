@@ -6,7 +6,7 @@ using System.Windows.Markup;
 using Autofac;
 using Neo.Gui.Base.MVVM;
 
-namespace Neo.UI.MarkupExtensions
+namespace Neo.Gui.Wpf.MarkupExtensions
 {
     public class DataContextBindingExtension : MarkupExtension
     {

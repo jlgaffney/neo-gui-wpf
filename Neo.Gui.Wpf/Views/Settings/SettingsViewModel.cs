@@ -1,20 +1,17 @@
 ﻿using System;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Input;
-using System.Windows.Media;
 using MahApps.Metro.Controls.Dialogs;
 using Neo.Gui.Base.Extensions;
 using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Theming;
-using Neo.Gui.Wpf.Extensions;
 using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Settings
 {
     public class SettingsViewModel : ViewModelBase
     {
-        private static readonly SolidColorBrush TransparentBrush = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
-
         private readonly IProcessHelper processHelper;
         private readonly IThemeHelper themeHelper;
 
@@ -153,17 +150,20 @@ namespace Neo.Gui.Wpf.Views.Settings
             }
         }
 
-        // TODO Make this property a System.Drawing.Color
-        // and use a type converter to convert it to a SolidColorBrush
-        public SolidColorBrush ThemeAccentBaseColor
+        public Color ThemeAccentBaseColor
         {
             get
             {
-                if (string.IsNullOrEmpty(this.ThemeAccentBaseColorHex)) return TransparentBrush;
+                if (string.IsNullOrEmpty(this.ThemeAccentBaseColorHex)) return Color.Transparent;
 
                 var accentBaseColor = this.ThemeAccentBaseColorHex.HexToColor();
 
-                return new SolidColorBrush(accentBaseColor.SetTransparencyFraction(1.0).ToMediaColor());
+                if (accentBaseColor != Color.Transparent)
+                {
+                    accentBaseColor = accentBaseColor.SetTransparencyFraction(1.0);
+                }
+
+                return accentBaseColor;
             }
         }
 
@@ -185,17 +185,20 @@ namespace Neo.Gui.Wpf.Views.Settings
             }
         }
 
-        // TODO Make this property a System.Drawing.Color
-        // and use a type converter to convert it to a SolidColorBrush
-        public SolidColorBrush ThemeHighlightColor
+        public Color ThemeHighlightColor
         {
             get
             {
-                if (string.IsNullOrEmpty(this.ThemeHighlightColorHex)) return TransparentBrush;
+                if (string.IsNullOrEmpty(this.ThemeHighlightColorHex)) return Color.Transparent;
 
                 var highlightColor = this.ThemeHighlightColorHex.HexToColor();
 
-                return new SolidColorBrush(highlightColor.SetTransparencyFraction(1.0).ToMediaColor());
+                if (highlightColor != Color.Transparent)
+                {
+                    highlightColor = highlightColor.SetTransparencyFraction(1.0);
+                }
+
+                return highlightColor;
             }
         }
 
@@ -217,17 +220,20 @@ namespace Neo.Gui.Wpf.Views.Settings
             }
         }
 
-        // TODO Make this property a System.Drawing.Color
-        // and use a type converter to convert it to a SolidColorBrush
-        public SolidColorBrush ThemeWindowBorderColor
+        public Color ThemeWindowBorderColor
         {
             get
             {
-                if (string.IsNullOrEmpty(this.ThemeWindowBorderColorHex)) return TransparentBrush;
+                if (string.IsNullOrEmpty(this.ThemeWindowBorderColorHex)) return Color.Transparent;
 
                 var windowBorderColor = this.ThemeWindowBorderColorHex.HexToColor();
 
-                return new SolidColorBrush(windowBorderColor.SetTransparencyFraction(1.0).ToMediaColor());
+                if (windowBorderColor != Color.Transparent)
+                {
+                    windowBorderColor = windowBorderColor.SetTransparencyFraction(1.0);
+                }
+
+                return windowBorderColor;
             }
         }
 
@@ -313,6 +319,8 @@ namespace Neo.Gui.Wpf.Views.Settings
 
         private void SaveAppearanceSettings()
         {
+            // TODO Validate color values
+
             // Convert hex values to colors
             var accentBaseColor = this.ThemeAccentBaseColorHex.HexToColor();
             var highlightColor = this.ThemeHighlightColorHex.HexToColor();

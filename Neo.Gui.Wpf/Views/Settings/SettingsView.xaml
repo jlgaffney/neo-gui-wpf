@@ -2,10 +2,10 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
              xmlns:dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
-             xmlns:globalization="clr-namespace:Neo.Gui.Wpf.Globalization"
-             xmlns:markupExtensions="clr-namespace:Neo.UI.MarkupExtensions"
+             xmlns:globalization="clr-namespace:Neo.Gui.Base.Globalization;assembly=Neo.Gui.Base"
              xmlns:settings="clr-namespace:Neo.Gui.Wpf.Views.Settings"
              xmlns:controls="clr-namespace:Neo.Gui.Wpf.Controls"
+             xmlns:markupExtensions="clr-namespace:Neo.Gui.Wpf.MarkupExtensions"
              dialog:DialogParticipation.Register="{Binding}"
              DataContext="{markupExtensions:DataContextBinding ViewModel=settings:SettingsViewModel}"
              Title="{x:Static globalization:Strings.SettingsTitle}"
@@ -61,15 +61,15 @@
                         <ComboBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" ItemsSource="{Binding Styles}" SelectedItem="{Binding SelectedStyle}" Margin="0 4" HorizontalAlignment="Stretch" />
 
                         <Label Grid.Row="1" Grid.Column="0" Content="{x:Static globalization:Strings.Accent}" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                        <Rectangle Grid.Row="1" Grid.Column="1" Width="20" Height="20" Fill="{Binding ThemeAccentBaseColor}" Margin="0 4 6 4" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Rectangle Grid.Row="1" Grid.Column="1" Width="20" Height="20" Fill="{Binding ThemeAccentBaseColor, Converter={StaticResource ColorToSolidColorBrushValueConverter}}" Margin="0 4 6 4" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding ThemeAccentBaseColorHex, UpdateSourceTrigger=PropertyChanged}" Margin="0 4" Padding="2" HorizontalAlignment="Stretch" />
 
                         <Label Grid.Row="2" Grid.Column="0" Content="{x:Static globalization:Strings.Highlight}" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                        <Rectangle Grid.Row="2" Grid.Column="1" Width="20" Height="20" Fill="{Binding ThemeHighlightColor}" Margin="0 4 6 4" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Rectangle Grid.Row="2" Grid.Column="1" Width="20" Height="20" Fill="{Binding ThemeHighlightColor, Converter={StaticResource ColorToSolidColorBrushValueConverter}}" Margin="0 4 6 4" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding ThemeHighlightColorHex, UpdateSourceTrigger=PropertyChanged}" Margin="0 4" Padding="2" HorizontalAlignment="Stretch" />
 
                         <Label Grid.Row="3" Grid.Column="0" Content="{x:Static globalization:Strings.WindowBorder}" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                        <Rectangle Grid.Row="3" Grid.Column="1" Width="20" Height="20" Fill="{Binding ThemeWindowBorderColor}" Margin="0 4 6 4" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Rectangle Grid.Row="3" Grid.Column="1" Width="20" Height="20" Fill="{Binding ThemeWindowBorderColor, Converter={StaticResource ColorToSolidColorBrushValueConverter}}" Margin="0 4 6 4" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         <TextBox Grid.Row="3" Grid.Column="2" Text="{Binding ThemeWindowBorderColorHex, UpdateSourceTrigger=PropertyChanged}" Margin="0 4" Padding="2" HorizontalAlignment="Stretch" />
                     </Grid>
 
