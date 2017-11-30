@@ -1,4 +1,4 @@
-﻿namespace Neo.Gui.Wpf.Certificates
+﻿namespace Neo.Gui.Base.Certificates
 {
     public enum CertificateQueryResultType
     {

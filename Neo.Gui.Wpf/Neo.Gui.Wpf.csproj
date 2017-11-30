@@ -279,9 +279,6 @@
     <Compile Include="Helpers\DispatchHelper.cs" />
     <Compile Include="RegistrationModules\MessagingRegistrationModule.cs" />
     <Compile Include="Certificates\RootCertificate.cs" />
-    <Compile Include="Certificates\CertificateQueryResult.cs" />
-    <Compile Include="Certificates\CertificateQueryResultType.cs" />
-    <Compile Include="Certificates\CertificateQueryService.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

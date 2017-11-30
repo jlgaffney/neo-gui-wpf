@@ -6,6 +6,7 @@ using System.Numerics;
 using System.Security.Cryptography;
 using System.Timers;
 using Neo.Core;
+using Neo.Gui.Base.Certificates;
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Data;
@@ -38,6 +39,7 @@ namespace Neo.Gui.Wpf.Controllers
         #region Private Fields 
 
         private readonly IBlockChainController blockChainController;
+        private readonly ICertificateQueryService certificateQueryService;
         private readonly INotificationHelper notificationHelper;
         private readonly IMessagePublisher messagePublisher;
 
@@ -64,11 +66,13 @@ namespace Neo.Gui.Wpf.Controllers
 
         public WalletController(
             IBlockChainController blockChainController,
+            ICertificateQueryService certificateQueryService,
             INotificationHelper notificationHelper,
             IMessagePublisher messagePublisher,
             IMessageSubscriber messageSubscriber)
         {
             this.blockChainController = blockChainController;
+            this.certificateQueryService = certificateQueryService;
             this.notificationHelper = notificationHelper;
             this.messagePublisher = messagePublisher;
 
@@ -87,6 +91,8 @@ namespace Neo.Gui.Wpf.Controllers
 
         public void Initialize()
         {
+            this.certificateQueryService.Initialize(Settings.Default.CertCachePath);
+
             // Setup automatic refresh timer
             this.refreshTimer = new Timer
             {
@@ -1015,7 +1021,7 @@ namespace Neo.Gui.Wpf.Controllers
             {
                 if (!this.certificateQueryResultCache.ContainsKey(asset.Owner))
                 {
-                    result = CertificateQueryService.Query(asset.Owner);
+                    result = this.certificateQueryService.Query(asset.Owner);
 
                     if (result == null) return null;
 

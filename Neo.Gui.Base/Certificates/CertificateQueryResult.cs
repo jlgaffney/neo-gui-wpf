@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography.X509Certificates;
 
-namespace Neo.Gui.Wpf.Certificates
+namespace Neo.Gui.Base.Certificates
 {
     public class CertificateQueryResult : IDisposable
     {

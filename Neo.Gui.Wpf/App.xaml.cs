@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using Autofac;
+using Neo.Gui.Base;
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Messages;
@@ -124,6 +125,7 @@ namespace Neo.Gui.Wpf
         {
             var autoFacContainerBuilder = new ContainerBuilder();
 
+            autoFacContainerBuilder.RegisterModule<BaseRegistrationModule>();
             autoFacContainerBuilder.RegisterModule<ViewModelsRegistrationModule>();
             autoFacContainerBuilder.RegisterModule<MessagingRegistrationModule>();
             autoFacContainerBuilder.RegisterModule<ControllersRegistrationModule>();
