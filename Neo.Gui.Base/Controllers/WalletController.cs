@@ -14,10 +14,9 @@ using Neo.Gui.Base.Extensions;
 using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
-using Neo.Gui.Wpf.Certificates;
 using Neo.Gui.Base.Globalization;
-using Neo.Gui.Wpf.Properties;
 using Neo.Implementations.Wallets.EntityFramework;
+using Neo.Network;
 using Neo.SmartContract;
 using Neo.VM;
 using Neo.Wallets;
@@ -60,6 +59,8 @@ namespace Neo.Gui.Wpf.Controllers
         private bool balanceChanged;
         private bool checkNep5Balance;
 
+        private UInt160[] nep5WatchScriptHashes;
+
         #endregion
 
         #region Constructor 
@@ -89,9 +90,11 @@ namespace Neo.Gui.Wpf.Controllers
 
         #region IWalletController implementation 
 
-        public void Initialize()
+        public void Initialize(string certificateCachePath)
         {
-            this.certificateQueryService.Initialize(Settings.Default.CertCachePath);
+            this.blockChainController.Initialize();
+
+            this.certificateQueryService.Initialize(certificateCachePath);
 
             // Setup automatic refresh timer
             this.refreshTimer = new Timer
@@ -140,9 +143,6 @@ namespace Neo.Gui.Wpf.Controllers
             var newWallet = UserWallet.Create(walletPath, password);
 
             this.SetCurrentWallet(newWallet);
-
-            Settings.Default.LastWalletPath = walletPath;
-            Settings.Default.Save();
         }
 
         public void OpenWallet(string walletPath, string password, bool repairMode)
@@ -158,9 +158,6 @@ namespace Neo.Gui.Wpf.Controllers
                 userWallet.Rebuild();
             }
             this.SetCurrentWallet(userWallet);
-
-            Settings.Default.LastWalletPath = walletPath;
-            Settings.Default.Save();
         }
 
         public void CloseWallet()
@@ -180,14 +177,54 @@ namespace Neo.Gui.Wpf.Controllers
             this.currentWallet.Rebuild();
         }
 
-        public void SaveTransaction(Transaction transaction)
+        public void CreateNewKey()
         {
-            this.currentWallet.SaveTransaction(transaction);
+            var newKey = this.currentWallet.CreateKey();
+
+            var contractsForKey = this.currentWallet.GetContracts(newKey.PublicKeyHash);
+            foreach (var contract in contractsForKey)
+            {
+                this.AddAccountItemFromContract(contract);
+            }
         }
 
         public bool Sign(ContractParametersContext context)
         {
             return this.currentWallet.Sign(context);
+        }
+
+        public void Relay(Transaction transaction, bool saveTransaction = true)
+        {
+            this.blockChainController.Relay(transaction);
+
+            if (saveTransaction)
+            {
+                this.currentWallet.SaveTransaction(transaction);
+            }
+        }
+
+        public void Relay(IInventory inventory)
+        {
+            this.blockChainController.Relay(inventory);
+        }
+
+        public void SetNEP5WatchScriptHashes(IEnumerable<string> nep5WatchScriptHashesHex)
+        {
+            var scriptHashes = new List<UInt160>();
+
+            foreach (var scriptHashHex in nep5WatchScriptHashesHex)
+            {
+                if (!UInt160.TryParse(scriptHashHex, out var scriptHash)) continue;
+
+                scriptHashes.Add(scriptHash);
+            }
+
+            this.nep5WatchScriptHashes = scriptHashes.ToArray();
+        }
+
+        public IEnumerable<UInt160> GetNEP5WatchScriptHashes()
+        {
+            return this.nep5WatchScriptHashes ?? Enumerable.Empty<UInt160>();
         }
 
         public KeyPair GetKeyByScriptHash(UInt160 scriptHash)
@@ -282,6 +319,31 @@ namespace Neo.Gui.Wpf.Controllers
             return this.currentWallet?.GetChangeAddress();
         }
 
+        public Transaction GetTransaction(UInt256 hash)
+        {
+            return this.blockChainController.GetTransaction(hash);
+        }
+
+        public Transaction GetTransaction(UInt256 hash, out int height)
+        {
+            return this.blockChainController.GetTransaction(hash, out height);
+        }
+
+        public AccountState GetAccountState(UInt160 scriptHash)
+        {
+            return this.blockChainController.GetAccountState(scriptHash);
+        }
+
+        public ContractState GetContractState(UInt160 scriptHash)
+        {
+            return this.blockChainController.GetContractState(scriptHash);
+        }
+
+        public AssetState GetAssetState(UInt256 assetId)
+        {
+            return this.blockChainController.GetAssetState(assetId);
+        }
+
         public Fixed8 CalculateBonus()
         {
             return this.CalculateBonus(this.GetUnclaimedCoins().Select(p => p.Reference));
@@ -327,17 +389,6 @@ namespace Neo.Gui.Wpf.Controllers
             // TODO - ISSUE #37 [AboimPinto]: at this point the return should not be a object from the NEO assemblies but a DTO only know by the application with only the necessary fields.
 
             return this.currentWallet?.GetContract(scriptHash);
-        }
-
-        public void CreateNewKey()
-        {
-            var newKey = this.currentWallet.CreateKey();
-
-            var contractsForKey = this.currentWallet.GetContracts(newKey.PublicKeyHash);
-            foreach (var contract in contractsForKey)
-            {
-                this.AddAccountItemFromContract(contract);
-            }
         }
 
         public void ImportWatchOnlyAddress(string addressToImport)
@@ -522,8 +573,7 @@ namespace Neo.Gui.Wpf.Controllers
             {
                 context.Verifiable.Scripts = context.GetScripts();
 
-                this.SaveTransaction(transaction);
-                this.blockChainController.Relay(transaction);
+                this.Relay(transaction);
 
                 this.notificationHelper.ShowSuccessNotification($"{Strings.SendTxSucceedMessage} {transaction.Hash}");
             }
@@ -882,11 +932,10 @@ namespace Neo.Gui.Wpf.Controllers
             if (timeSinceLastBlock <= TimeSpan.FromSeconds(2)) return;
 
             // Update balances
-            var addresses = this.GetAddresses();
+            var addresses = this.GetAddresses().ToList();
 
-            foreach (var s in Settings.Default.NEP5Watched)
+            foreach (var scriptHash in this.nep5WatchScriptHashes)
             {
-                var scriptHash = UInt160.Parse(s);
                 byte[] script;
                 using (var builder = new ScriptBuilder())
                 {
@@ -1053,6 +1102,9 @@ namespace Neo.Gui.Wpf.Controllers
                     // Stop automatic refresh timer
                     this.refreshTimer.Stop();
                     this.refreshTimer = null;
+
+                    // Dispose of blockchain controller
+                    this.blockChainController.Dispose();
 
                     this.disposed = true;
                 }

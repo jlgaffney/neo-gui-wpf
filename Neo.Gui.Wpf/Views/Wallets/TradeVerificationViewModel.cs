@@ -11,14 +11,14 @@ namespace Neo.Gui.Wpf.Views.Wallets
 {
     public class TradeVerificationViewModel : ViewModelBase
     {
-        private readonly IBlockChainController blockChainController;
+        private readonly IWalletController walletController;
         private readonly IDispatchHelper dispatchHelper;
 
         public TradeVerificationViewModel(
-            IBlockChainController blockChainController,
+            IWalletController walletController,
             IDispatchHelper dispatchHelper)
         {
-            this.blockChainController = blockChainController;
+            this.walletController = walletController;
             this.dispatchHelper = dispatchHelper;
 
             this.Items = new ObservableCollection<TransactionOutputItem>();
@@ -46,7 +46,7 @@ namespace Neo.Gui.Wpf.Views.Wallets
             {
                 foreach (var output in outputs)
                 {
-                    var asset = this.blockChainController.GetAssetState(output.AssetId);
+                    var asset = this.walletController.GetAssetState(output.AssetId);
 
                     this.Items.Add(new TransactionOutputItem
                     {

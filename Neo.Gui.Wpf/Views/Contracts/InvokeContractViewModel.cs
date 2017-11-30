@@ -20,7 +20,6 @@ namespace Neo.Gui.Wpf.Views.Contracts
     {
         private static readonly Fixed8 NetworkFee = Fixed8.FromDecimal(0.001m);
 
-        private readonly IBlockChainController blockChainController;
         private readonly IWalletController walletController;
         private readonly IMessagePublisher messagePublisher;
 
@@ -42,11 +41,9 @@ namespace Neo.Gui.Wpf.Views.Contracts
         private bool invokeEnabled;
 
         public InvokeContractViewModel(
-            IBlockChainController blockChainController,
             IWalletController walletController,
             IMessagePublisher messagePublisher)
         {
-            this.blockChainController = blockChainController;
             this.walletController = walletController;
             this.messagePublisher = messagePublisher;
         }
@@ -200,7 +197,7 @@ namespace Neo.Gui.Wpf.Views.Contracts
         {
             this.scriptHash = UInt160.Parse(this.ScriptHash);
 
-            var contractState = this.blockChainController.GetContractState(this.scriptHash);
+            var contractState = this.walletController.GetContractState(this.scriptHash);
 
             if (contractState == null)
             {

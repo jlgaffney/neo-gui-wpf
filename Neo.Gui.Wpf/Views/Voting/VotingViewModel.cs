@@ -13,7 +13,7 @@ namespace Neo.Gui.Wpf.Views.Voting
 {
     public class VotingViewModel : ViewModelBase
     {
-        private readonly IBlockChainController blockChainController;
+        private readonly IWalletController walletController;
         private readonly IMessagePublisher messagePublisher;
 
         private UInt160 scriptHash;
@@ -21,10 +21,10 @@ namespace Neo.Gui.Wpf.Views.Voting
         private string votes;
 
         public VotingViewModel(
-            IBlockChainController blockChainController,
+            IWalletController walletController,
             IMessagePublisher messagePublisher)
         {
-            this.blockChainController = blockChainController;
+            this.walletController = walletController;
             this.messagePublisher = messagePublisher;
         }
 
@@ -51,7 +51,7 @@ namespace Neo.Gui.Wpf.Views.Voting
         {
             this.scriptHash = hash;
 
-            var account = this.blockChainController.GetAccountState(hash);
+            var account = this.walletController.GetAccountState(hash);
 
             // Set address
             this.Address = Wallet.ToAddress(hash);

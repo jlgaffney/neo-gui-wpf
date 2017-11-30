@@ -19,6 +19,7 @@ using Neo.Gui.Wpf.Views.Transactions;
 using Neo.Gui.Wpf.Views.Updater;
 using Neo.Gui.Wpf.Views.Voting;
 using Neo.Gui.Wpf.Views.Wallets;
+using GuiSettings = Neo.Gui.Wpf.Properties.Settings;
 
 namespace Neo.Gui.Wpf.Views.Home
 {
@@ -231,29 +232,30 @@ namespace Neo.Gui.Wpf.Views.Home
             if (string.IsNullOrEmpty(walletPath) || string.IsNullOrEmpty(password)) return;
 
             this.walletController.CreateWallet(walletPath, password);
+
+            GuiSettings.Default.LastWalletPath = walletPath;
+            GuiSettings.Default.Save();
         }
 
         private void OpenWallet()
         {
             var openWalletDialogResult = this.dialogHelper.ShowDialog<OpenWalletDialogResult>();
 
-            if (openWalletDialogResult == null)
-            {
-                return;
-            }
+            if (openWalletDialogResult == null) return;
 
             if (this.walletController.WalletNeedUpgrade(openWalletDialogResult.WalletPath))
             {
                 var migrationApproved = this.dialogHelper.ShowDialog<YesOrNoDialogResult>("ApproveWalletMigrationDialog");
-                if (!migrationApproved.Yes)
-                {
-                    return;
-                }
+
+                if (!migrationApproved.Yes) return;
 
                 this.walletController.UpgradeWallet(openWalletDialogResult.WalletPath);
             }
             
             this.walletController.OpenWallet(openWalletDialogResult.WalletPath, openWalletDialogResult.Password, openWalletDialogResult.OpenInRepairMode);
+            
+            GuiSettings.Default.LastWalletPath = openWalletDialogResult.WalletPath;
+            GuiSettings.Default.Save();
         }
 
         public void CloseWallet()

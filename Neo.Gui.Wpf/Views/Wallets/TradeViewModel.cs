@@ -19,7 +19,6 @@ namespace Neo.Gui.Wpf.Views.Wallets
 {
     public class TradeViewModel : ViewModelBase
     {
-        private readonly IBlockChainController blockChainController;
         private readonly IWalletController walletController;
         private readonly IDispatchHelper dispatchHelper;
 
@@ -34,11 +33,9 @@ namespace Neo.Gui.Wpf.Views.Wallets
         private int selectedTabIndex;
 
         public TradeViewModel(
-            IBlockChainController blockChainController, 
             IWalletController walletController,
             IDispatchHelper dispatchHelper)
         {
-            this.blockChainController = blockChainController;
             this.walletController = walletController;
             this.dispatchHelper = dispatchHelper;
 
@@ -210,7 +207,7 @@ namespace Neo.Gui.Wpf.Views.Wallets
 
             try
             {
-                if (inputs.Select(p => this.blockChainController.GetTransaction(p.PrevHash).Outputs[p.PrevIndex].ScriptHash).Distinct().Any(p => this.walletController.WalletContainsAddress(p)))
+                if (inputs.Select(p => this.walletController.GetTransaction(p.PrevHash).Outputs[p.PrevIndex].ScriptHash).Distinct().Any(p => this.walletController.WalletContainsAddress(p)))
                 {
                     await DialogCoordinator.Instance.ShowMessageAsync(this, Strings.Failed, Strings.TradeFailedInvalidDataMessage);
                     return;
@@ -256,8 +253,7 @@ namespace Neo.Gui.Wpf.Views.Wallets
             {
                 context.Verifiable.Scripts = context.GetScripts();
                 var tx = (ContractTransaction)context.Verifiable;
-                this.walletController.SaveTransaction(tx);
-                this.blockChainController.Relay(tx);
+                this.walletController.Relay(tx);
                 InformationBox.Show(tx.Hash.ToString(), Strings.TradeSuccessMessage, Strings.TradeSuccessCaption);
             }
             else

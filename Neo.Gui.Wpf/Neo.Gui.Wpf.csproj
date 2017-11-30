@@ -268,9 +268,9 @@
     </Compile>
     <Compile Include="Controllers\LocalBlockChainController.cs" />
     <Compile Include="Converters\ColorToSolidColorBrushConverter.cs" />
+    <Compile Include="Extensions\CollectionExtensions.cs" />
     <Compile Include="RegistrationModules\ControllersRegistrationModule.cs" />
     <Compile Include="Controllers\RemoteBlockChainController.cs" />
-    <Compile Include="Controllers\WalletController.cs" />
     <Compile Include="Extensions\ColorExtensions.cs" />
     <Compile Include="Helpers\DialogHelper.cs" />
     <Compile Include="Helpers\ProcessHelper.cs" />

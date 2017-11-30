@@ -110,18 +110,10 @@ namespace Neo.Gui.Wpf.Views.Transactions
                     }
 
                     // Add NEP-5 assets to list
-                    foreach (var s in NeoSettings.Default.NEP5Watched)
-                    {
-                        UInt160 assetId;
-                        try
-                        {
-                            assetId = UInt160.Parse(s);
-                        }
-                        catch
-                        {
-                            continue;
-                        }
+                    var nep5WatchScriptHashes = this.walletController.GetNEP5WatchScriptHashes();
 
+                    foreach (var assetId in nep5WatchScriptHashes)
+                    {
                         AssetDescriptor nep5Asset;
                         try
                         {

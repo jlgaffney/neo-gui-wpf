@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Neo.Core;
 using Neo.Cryptography.ECC;
 using Neo.Gui.Base.Data;
+using Neo.Network;
 using Neo.SmartContract;
 using Neo.Wallets;
 
@@ -10,7 +11,7 @@ namespace Neo.Gui.Base.Controllers.Interfaces
 {
     public interface IWalletController : IDisposable
     {
-        void Initialize();
+        void Initialize(string certificateCachePath);
 
         bool WalletIsOpen { get; }
 
@@ -32,11 +33,17 @@ namespace Neo.Gui.Base.Controllers.Interfaces
 
         void RebuildWalletIndexes();
 
-        void SaveTransaction(Transaction transaction);
+        void CreateNewKey();
 
         bool Sign(ContractParametersContext context);
 
-        void CreateNewKey();
+        void Relay(Transaction transaction, bool saveTransaction = true);
+
+        void Relay(IInventory inventory);
+
+        void SetNEP5WatchScriptHashes(IEnumerable<string> nep5WatchScriptHashesHex);
+
+        IEnumerable<UInt160> GetNEP5WatchScriptHashes();
 
         KeyPair GetKeyByScriptHash(UInt160 scriptHash);
 
@@ -61,6 +68,16 @@ namespace Neo.Gui.Base.Controllers.Interfaces
         IEnumerable<Coin> FindUnspentCoins();
         
         UInt160 GetChangeAddress();
+
+        Transaction GetTransaction(UInt256 hash);
+
+        Transaction GetTransaction(UInt256 hash, out int height);
+
+        AccountState GetAccountState(UInt160 scriptHash);
+
+        ContractState GetContractState(UInt160 scriptHash);
+
+        AssetState GetAssetState(UInt256 assetId);
 
         Fixed8 CalculateBonus();
 

@@ -14,7 +14,6 @@ namespace Neo.Gui.Wpf.Views.Assets
 {
     public class AssetDistributionViewModel : ViewModelBase
     {
-        private readonly IBlockChainController blockChainController;
         private readonly IWalletController walletController;
         private readonly IMessagePublisher messagePublisher;
         private readonly IDispatchHelper dispatchHelper;
@@ -33,13 +32,11 @@ namespace Neo.Gui.Wpf.Views.Assets
         private bool distributionEnabled;
 
         public AssetDistributionViewModel(
-            IBlockChainController blockChainController,
             IWalletController walletController,
             IMessagePublisher messagePublisher,
             IDispatchHelper dispatchHelper)
         {
             this.walletController = walletController;
-            this.blockChainController = blockChainController;
             this.messagePublisher = messagePublisher;
             this.dispatchHelper = dispatchHelper;
 
@@ -190,7 +187,7 @@ namespace Neo.Gui.Wpf.Views.Assets
             AssetState assetState;
             if (UInt256.TryParse(this.AssetId, out var id))
             {
-                assetState = this.blockChainController.GetAssetState(id);
+                assetState = this.walletController.GetAssetState(id);
                 this.Asset = new AssetDescriptor(id);
             }
             else

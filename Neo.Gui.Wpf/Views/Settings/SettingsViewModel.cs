@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Input;
 using MahApps.Metro.Controls.Dialogs;
+using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Extensions;
 using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Theming;
@@ -12,6 +14,7 @@ namespace Neo.Gui.Wpf.Views.Settings
 {
     public class SettingsViewModel : ViewModelBase
     {
+        private readonly IWalletController walletController;
         private readonly IProcessHelper processHelper;
         private readonly IThemeHelper themeHelper;
 
@@ -32,9 +35,11 @@ namespace Neo.Gui.Wpf.Views.Settings
 
 
         public SettingsViewModel(
+            IWalletController walletController,
             IProcessHelper processHelper,
             IThemeHelper themeHelper)
         {
+            this.walletController = walletController;
             this.processHelper = processHelper;
             this.themeHelper = themeHelper;
 
@@ -52,7 +57,9 @@ namespace Neo.Gui.Wpf.Views.Settings
 
         private void LoadNEP5Settings()
         {
-            var nep5ContractsLines = Properties.Settings.Default.NEP5Watched.OfType<string>().ToArray();
+            var nep5WatchScriptHashes = this.walletController.GetNEP5WatchScriptHashes();
+
+            var nep5ContractsLines = nep5WatchScriptHashes.Select(scriptHash => scriptHash.ToString()).ToArray();
 
             // Concatenate lines
             var contractsList = string.Empty;
@@ -273,15 +280,25 @@ namespace Neo.Gui.Wpf.Views.Settings
 
         private void SaveNEP5Settings()
         {
-            var nep5ContractsLines =  string.IsNullOrEmpty(this.NEP5ContractsList)
+            var nep5WatchScriptHashesHexLines =  string.IsNullOrEmpty(this.NEP5ContractsList)
                 ? new string[0] : this.NEP5ContractsList.ToLines();
 
-            Properties.Settings.Default.NEP5Watched.Clear();
-            Properties.Settings.Default.NEP5Watched.AddRange(nep5ContractsLines.Where(p =>
-                !string.IsNullOrWhiteSpace(p) && UInt160.TryParse(p, out _)).ToArray());
+            var validNEP5WatchScriptHashesHex = new List<string>();
 
+            foreach (var nep5WatchScriptHashHex in nep5WatchScriptHashesHexLines)
+            {
+                if (string.IsNullOrWhiteSpace(nep5WatchScriptHashHex)) continue;
+                
+                if (!UInt160.TryParse(nep5WatchScriptHashHex, out var _)) continue;
+
+                validNEP5WatchScriptHashesHex.Add(nep5WatchScriptHashHex);
+            }
+
+            Properties.Settings.Default.NEP5Watched.Clear();
+            Properties.Settings.Default.NEP5Watched.AddRange(validNEP5WatchScriptHashesHex.ToArray());
             Properties.Settings.Default.Save();
 
+            this.walletController.SetNEP5WatchScriptHashes(validNEP5WatchScriptHashesHex);
             
             // Update settings' current values
             this.currentNEP5ContractsList = this.NEP5ContractsList;

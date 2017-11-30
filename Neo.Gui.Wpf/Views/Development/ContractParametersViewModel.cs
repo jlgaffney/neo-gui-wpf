@@ -17,7 +17,6 @@ namespace Neo.Gui.Wpf.Views.Development
 {
     public class ContractParametersViewModel : ViewModelBase
     {
-        private readonly IBlockChainController blockChainController;
         private readonly IWalletController walletController;
         private readonly IDispatchHelper dispatchHelper;
 
@@ -33,11 +32,9 @@ namespace Neo.Gui.Wpf.Views.Development
         private bool broadcastVisible;
 
         public ContractParametersViewModel(
-            IBlockChainController blockChainController,
             IWalletController walletController,
             IDispatchHelper dispatchHelper)
         {
-            this.blockChainController = blockChainController;
             this.walletController = walletController;
             this.dispatchHelper = dispatchHelper;
 
@@ -206,7 +203,7 @@ namespace Neo.Gui.Wpf.Views.Development
 
             var inventory = (IInventory) context.Verifiable;
 
-            this.blockChainController.Relay(inventory);
+            this.walletController.Relay(inventory);
 
             InformationBox.Show(inventory.Hash.ToString(), Strings.RelaySuccessText, Strings.RelaySuccessTitle);
         }

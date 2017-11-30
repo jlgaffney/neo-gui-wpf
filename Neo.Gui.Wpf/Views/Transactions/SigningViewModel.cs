@@ -11,7 +11,6 @@ namespace Neo.Gui.Wpf.Views.Transactions
 {
     public class SigningViewModel : ViewModelBase
     {
-        private readonly IBlockChainController blockChainController;
         private readonly IWalletController walletController;
 
         private string input;
@@ -19,10 +18,8 @@ namespace Neo.Gui.Wpf.Views.Transactions
         private bool broadcastVisible;
 
         public SigningViewModel(
-            IBlockChainController blockChainController,
             IWalletController walletController)
         {
-            this.blockChainController = blockChainController;
             this.walletController = walletController;
         }
 
@@ -110,7 +107,7 @@ namespace Neo.Gui.Wpf.Views.Transactions
 
             var inventory = (IInventory) this.output.Verifiable;
 
-            this.blockChainController.Relay(inventory);
+            this.walletController.Relay(inventory);
 
             InformationBox.Show(inventory.Hash.ToString(), Strings.RelaySuccessText, Strings.RelaySuccessTitle);
 

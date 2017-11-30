@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -10,11 +11,13 @@ using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.Globalization;
+using Neo.Gui.Wpf.Extensions;
 using Neo.Gui.Wpf.Helpers;
 using Neo.Gui.Wpf.MarkupExtensions;
 using Neo.Gui.Wpf.RegistrationModules;
 using Neo.Gui.Wpf.Views.Home;
 using Neo.Gui.Wpf.Views.Updater;
+using Settings = Neo.Gui.Wpf.Properties.Settings;
 using SplashScreen = Neo.Gui.Wpf.Views.SplashScreen;
 
 namespace Neo.Gui.Wpf
@@ -24,7 +27,6 @@ namespace Neo.Gui.Wpf
     /// </summary>
     public partial class App
     {
-        private IBlockChainController blockChainController;
         private IWalletController walletController;
         
         private App()
@@ -75,13 +77,13 @@ namespace Neo.Gui.Wpf
                     if (updateIsRequired) return;
 
                     // Application is starting normally, initialize controllers
-                    this.blockChainController = containerLifetimeScope.Resolve<IBlockChainController>();
                     this.walletController = containerLifetimeScope.Resolve<IWalletController>();
 
-                    Debug.Assert(this.blockChainController != null && this.walletController != null);
+                    Debug.Assert(this.walletController != null);
+                    
+                    this.walletController.Initialize(Settings.Default.CertCachePath);
 
-                    this.blockChainController.Initialize();
-                    this.walletController.Initialize();
+                    this.walletController.SetNEP5WatchScriptHashes(Settings.Default.NEP5Watched.ToArray());
                 }
                 finally
                 {
@@ -114,9 +116,6 @@ namespace Neo.Gui.Wpf
             // Dispose of controller instances
             this.walletController.Dispose();
             this.walletController = null;
-            
-            this.blockChainController.Dispose();
-            this.blockChainController = null;
 
             base.OnExit(e);
         }
