@@ -1,6 +1,7 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using GalaSoft.MvvmLight.Command;
 using Neo.Core;
 using Neo.Gui.Base.Collections;
 using Neo.Gui.Base.Controllers.Interfaces;

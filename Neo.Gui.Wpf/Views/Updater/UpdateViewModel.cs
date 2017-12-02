@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Windows.Input;
+using GalaSoft.MvvmLight.Command;
 using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;

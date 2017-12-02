@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Input;
+using GalaSoft.MvvmLight.Command;
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Globalization;
 using Neo.Gui.Wpf.MVVM;

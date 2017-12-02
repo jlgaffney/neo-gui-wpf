@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Windows.Input;
+using GalaSoft.MvvmLight.Command;
 using Microsoft.Win32;
 using Neo.Core;
 using Neo.Gui.Base.Messages;

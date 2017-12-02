@@ -1,4 +1,5 @@
 ﻿using System.Windows.Input;
+using GalaSoft.MvvmLight.Command;
 using Neo.Gui.Wpf.MVVM;
 using Neo.Wallets;
 

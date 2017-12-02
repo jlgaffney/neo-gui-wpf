@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Input;
+using GalaSoft.MvvmLight.Command;
 using MahApps.Metro.Controls.Dialogs;
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Windows.Input;
+using GalaSoft.MvvmLight.Command;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Wpf.MVVM;

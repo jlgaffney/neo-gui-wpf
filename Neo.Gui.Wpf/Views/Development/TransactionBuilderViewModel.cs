@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
+using GalaSoft.MvvmLight.Command;
 using Neo.Core;
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Globalization;
