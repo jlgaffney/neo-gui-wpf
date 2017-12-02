@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Neo.Core;
-using Neo.Gui.Base.Controllers;
 using Neo.Network;
 
-namespace Neo.Gui.Wpf.Controllers
+namespace Neo.Gui.Base.Controllers
 {
     public class RemoteBlockChainController : IBlockChainController
     {

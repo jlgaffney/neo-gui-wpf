@@ -7,7 +7,6 @@ using Neo.Core;
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
-using Neo.Gui.Wpf.Certificates;
 using Neo.Gui.Wpf.Properties;
 using Neo.Implementations.Blockchains.LevelDB;
 using Neo.IO;
@@ -146,8 +145,6 @@ namespace Neo.Gui.Wpf.Controllers
 
         private void InitializeLocalNode()
         {
-            if (!RootCertificate.Install()) return;
-
             // Initialize blockchain
             this.blockChain = Blockchain.RegisterBlockchain(new LevelDBBlockchain(Settings.Default.DataDirectoryPath));
 

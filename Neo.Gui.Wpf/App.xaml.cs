@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -11,6 +10,7 @@ using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.Globalization;
+using Neo.Gui.Wpf.Certificates;
 using Neo.Gui.Wpf.Extensions;
 using Neo.Gui.Wpf.Helpers;
 using Neo.Gui.Wpf.MarkupExtensions;
@@ -80,7 +80,13 @@ namespace Neo.Gui.Wpf
                     this.walletController = containerLifetimeScope.Resolve<IWalletController>();
 
                     Debug.Assert(this.walletController != null);
-                    
+
+                    if (!Settings.Default.RemoteNodeMode)
+                    {
+                        // Local node is being used, install root certificate
+                        if (!RootCertificate.Install()) return;
+                    }
+
                     this.walletController.Initialize(Settings.Default.CertCachePath);
 
                     this.walletController.SetNEP5WatchScriptHashes(Settings.Default.NEP5Watched.ToArray());
