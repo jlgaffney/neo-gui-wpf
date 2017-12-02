@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Autofac;
 using Neo.Gui.Base;
-using Neo.Gui.Base.Controllers.Interfaces;
+using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;

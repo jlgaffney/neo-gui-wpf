@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Windows.Input;
 using Neo.Core;
-using Neo.Gui.Base.Controllers.Interfaces;
+using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Extensions;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;

@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Input;
 using MahApps.Metro.Controls.Dialogs;
-using Neo.Gui.Base.Controllers.Interfaces;
+using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Messages;
@@ -26,6 +26,7 @@ namespace Neo.Gui.Wpf.Views.Home
     public class HomeViewModel :
         ViewModelBase,
         ILoadable,
+        IUnloadable,
         IMessageHandler<UpdateApplicationMessage>,
         IMessageHandler<CurrentWalletHasChangedMessage>,
         IMessageHandler<InvokeContractMessage>,
@@ -385,6 +386,13 @@ namespace Neo.Gui.Wpf.Views.Home
         public void OnLoad()
         {
             this.messageSubscriber.Subscribe(this);
+        }
+        #endregion
+
+        #region IUnloadable Implementation 
+        public void OnUnload()
+        {
+            this.messageSubscriber.Unsubscribe(this);
         }
         #endregion
 

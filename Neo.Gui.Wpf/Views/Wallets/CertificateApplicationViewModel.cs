@@ -5,7 +5,7 @@ using System.Windows.Input;
 using CERTENROLLLib;
 using Microsoft.Win32;
 using Neo.Cryptography.ECC;
-using Neo.Gui.Base.Controllers.Interfaces;
+using Neo.Gui.Base.Controllers;
 using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Wallets

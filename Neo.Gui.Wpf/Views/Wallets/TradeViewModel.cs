@@ -5,7 +5,7 @@ using System.Linq;
 using System.Windows.Input;
 using MahApps.Metro.Controls.Dialogs;
 using Neo.Core;
-using Neo.Gui.Base.Controllers.Interfaces;
+using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Globalization;

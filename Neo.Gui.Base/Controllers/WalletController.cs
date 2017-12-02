@@ -7,14 +7,12 @@ using System.Security.Cryptography;
 using System.Timers;
 using Neo.Core;
 using Neo.Gui.Base.Certificates;
-using Neo.Gui.Base.Controllers;
-using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Extensions;
+using Neo.Gui.Base.Globalization;
 using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
-using Neo.Gui.Base.Globalization;
 using Neo.Implementations.Wallets.EntityFramework;
 using Neo.Network;
 using Neo.SmartContract;
@@ -22,7 +20,7 @@ using Neo.VM;
 using Neo.Wallets;
 using ECPoint = Neo.Cryptography.ECC.ECPoint;
 
-namespace Neo.Gui.Wpf.Controllers
+namespace Neo.Gui.Base.Controllers
 {
     public class WalletController :
         IWalletController,
@@ -41,6 +39,7 @@ namespace Neo.Gui.Wpf.Controllers
         private readonly ICertificateQueryService certificateQueryService;
         private readonly INotificationHelper notificationHelper;
         private readonly IMessagePublisher messagePublisher;
+        private readonly IMessageSubscriber messageSubscriber;
 
         private readonly Dictionary<ECPoint, CertificateQueryResult> certificateQueryResultCache;
 
@@ -76,8 +75,9 @@ namespace Neo.Gui.Wpf.Controllers
             this.certificateQueryService = certificateQueryService;
             this.notificationHelper = notificationHelper;
             this.messagePublisher = messagePublisher;
+            this.messageSubscriber = messageSubscriber;
 
-            messageSubscriber.Subscribe(this);
+            this.messageSubscriber.Subscribe(this);
 
             this.accounts = new List<AccountItem>();
             this.assets = new List<AssetItem>();
@@ -344,6 +344,19 @@ namespace Neo.Gui.Wpf.Controllers
             return this.blockChainController.GetAssetState(assetId);
         }
 
+        public bool CanViewCertificate(AssetItem item)
+        {
+            if (item.State == null) return false;
+
+            var queryResult = GetCertificateQueryResult(item.State);
+
+            if (queryResult == null) return false;
+
+            return queryResult.Type == CertificateQueryResultType.Good ||
+                   queryResult.Type == CertificateQueryResultType.Expired ||
+                   queryResult.Type == CertificateQueryResultType.Invalid;
+        }
+
         public Fixed8 CalculateBonus()
         {
             return this.CalculateBonus(this.GetUnclaimedCoins().Select(p => p.Reference));
@@ -357,6 +370,29 @@ namespace Neo.Gui.Wpf.Controllers
         public Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, uint heightEnd)
         {
             return this.blockChainController.CalculateBonus(inputs, heightEnd);
+        }
+
+        public Fixed8 CalculateUnavailableBonusGas(uint height)
+        {
+            if (!this.WalletIsOpen) return Fixed8.Zero;
+
+            var unspent = this.FindUnspentCoins().Where(p =>p.Output.AssetId.Equals(this.blockChainController.GoverningToken.Hash)).Select(p => p.Reference);
+            
+            var references = new HashSet<CoinReference>();
+
+            foreach (var group in unspent.GroupBy(p => p.PrevHash))
+            {
+                var transaction = this.GetTransaction(group.Key);
+
+                if (transaction == null) continue; // not enough of the chain available
+
+                foreach (var reference in group)
+                {
+                    references.Add(reference);
+                }
+            }
+
+            return this.CalculateBonus(references, height);
         }
 
         public bool WalletContainsAddress(UInt160 scriptHash)
@@ -458,17 +494,23 @@ namespace Neo.Gui.Wpf.Controllers
             return this.currentWallet?.MakeTransaction(transaction, changeAddress, fee);
         }
 
-        public bool CanViewCertificate(AssetItem item)
+        public Transaction MakeClaimTransaction(CoinReference[] claims)
         {
-            if (item.State == null) return false;
-
-            var queryResult = GetCertificateQueryResult(item.State);
-
-            if (queryResult == null) return false;
-
-            return queryResult.Type == CertificateQueryResultType.Good ||
-                   queryResult.Type == CertificateQueryResultType.Expired ||
-                   queryResult.Type == CertificateQueryResultType.Invalid;
+            return new ClaimTransaction
+            {
+                Claims = claims,
+                Attributes = new TransactionAttribute[0],
+                Inputs = new CoinReference[0],
+                Outputs = new[]
+                {
+                    new TransactionOutput
+                    {
+                        AssetId = this.blockChainController.UtilityToken.Hash,
+                        Value = this.CalculateBonus(claims),
+                        ScriptHash = this.GetChangeAddress()
+                    }
+                }
+            };
         }
 
         #endregion
@@ -1099,6 +1141,8 @@ namespace Neo.Gui.Wpf.Controllers
             {
                 if (disposing)
                 {
+                    this.messageSubscriber.Unsubscribe(this);
+
                     // Stop automatic refresh timer
                     this.refreshTimer.Stop();
                     this.refreshTimer = null;

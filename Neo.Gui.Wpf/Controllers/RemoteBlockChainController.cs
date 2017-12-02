@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Neo.Core;
 using Neo.Gui.Base.Controllers;
-using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Network;
 
 namespace Neo.Gui.Wpf.Controllers

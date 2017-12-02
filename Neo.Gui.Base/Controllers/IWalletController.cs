@@ -7,7 +7,7 @@ using Neo.Network;
 using Neo.SmartContract;
 using Neo.Wallets;
 
-namespace Neo.Gui.Base.Controllers.Interfaces
+namespace Neo.Gui.Base.Controllers
 {
     public interface IWalletController : IDisposable
     {
@@ -66,7 +66,7 @@ namespace Neo.Gui.Base.Controllers.Interfaces
         IEnumerable<Coin> GetUnclaimedCoins();
 
         IEnumerable<Coin> FindUnspentCoins();
-        
+
         UInt160 GetChangeAddress();
 
         Transaction GetTransaction(UInt256 hash);
@@ -79,11 +79,15 @@ namespace Neo.Gui.Base.Controllers.Interfaces
 
         AssetState GetAssetState(UInt256 assetId);
 
+        bool CanViewCertificate(AssetItem item);
+
         Fixed8 CalculateBonus();
 
         Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, bool ignoreClaimed = true);
 
         Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, uint heightEnd);
+        
+        Fixed8 CalculateUnavailableBonusGas(uint height);
 
         bool WalletContainsAddress(UInt160 scriptHash);
 
@@ -103,6 +107,6 @@ namespace Neo.Gui.Base.Controllers.Interfaces
 
         IssueTransaction MakeTransaction(IssueTransaction transaction, UInt160 changeAddress = null, Fixed8 fee = default(Fixed8));
 
-        bool CanViewCertificate(AssetItem item);
+        Transaction MakeClaimTransaction(CoinReference[] claims);
     }
 }

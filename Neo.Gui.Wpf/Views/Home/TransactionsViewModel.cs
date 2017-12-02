@@ -13,6 +13,7 @@ namespace Neo.Gui.Wpf.Views.Home
     public class TransactionsViewModel : 
         ViewModelBase,
         ILoadable,
+        IUnloadable,
         IMessageHandler<ClearTransactionsMessage>,
         IMessageHandler<TransactionsHaveChangedMessage>
     {
@@ -62,10 +63,16 @@ namespace Neo.Gui.Wpf.Views.Home
         #endregion
 
         #region ILoadable implementation
-
         public void OnLoad()
         {
             this.messageSubscriber.Subscribe(this);
+        }
+        #endregion
+
+        #region IUnloadable implementation
+        public void OnUnload()
+        {
+            this.messageSubscriber.Unsubscribe(this);
         }
         #endregion
 

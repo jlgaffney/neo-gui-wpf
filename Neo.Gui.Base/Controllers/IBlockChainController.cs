@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Neo.Core;
 using Neo.Network;
 
-namespace Neo.Gui.Base.Controllers.Interfaces
+namespace Neo.Gui.Base.Controllers
 {
     public interface IBlockChainController : IDisposable
     {

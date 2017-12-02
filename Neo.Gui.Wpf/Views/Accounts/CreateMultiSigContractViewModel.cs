@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Input;
 using Neo.Core;
 using Neo.Cryptography.ECC;
-using Neo.Gui.Base.Controllers.Interfaces;
+using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;

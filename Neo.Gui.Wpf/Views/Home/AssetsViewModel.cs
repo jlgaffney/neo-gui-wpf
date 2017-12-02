@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Input;
 using Neo.Core;
 using Neo.Gui.Base.Collections;
-using Neo.Gui.Base.Controllers.Interfaces;
+using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Messages;
@@ -20,6 +20,7 @@ namespace Neo.Gui.Wpf.Views.Home
     public class AssetsViewModel : 
         ViewModelBase,
         ILoadable,
+        IUnloadable,
         IMessageHandler<ClearAssetsMessage>,
         IMessageHandler<AssetAddedMessage>
     {
@@ -144,10 +145,16 @@ namespace Neo.Gui.Wpf.Views.Home
         #endregion
 
         #region ILoadable implementation
-
         public void OnLoad()
         {
             this.messageSubscriber.Subscribe(this);
+        }
+        #endregion
+
+        #region IUnloadable implementation
+        public void OnUnload()
+        {
+            this.messageSubscriber.Unsubscribe(this);
         }
         #endregion
 

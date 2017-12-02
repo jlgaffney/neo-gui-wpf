@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
-using Neo.Gui.Base.Controllers.Interfaces;
+using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Messages;
@@ -20,6 +20,7 @@ namespace Neo.Gui.Wpf.Views.Home
     public class AccountsViewModel : 
         ViewModelBase, 
         ILoadable,
+        IUnloadable,
         IMessageHandler<CurrentWalletHasChangedMessage>,
         IMessageHandler<ClearAccountsMessage>,
         IMessageHandler<AccountAddedMessage>
@@ -136,6 +137,13 @@ namespace Neo.Gui.Wpf.Views.Home
         public void OnLoad()
         {
             this.messageSubscriber.Subscribe(this);
+        }
+        #endregion
+
+        #region IUnloadable implementation
+        public void OnUnload()
+        {
+            this.messageSubscriber.Unsubscribe(this);
         }
         #endregion
 

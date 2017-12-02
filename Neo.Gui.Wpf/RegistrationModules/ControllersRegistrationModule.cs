@@ -1,5 +1,5 @@
 ﻿using Autofac;
-using Neo.Gui.Base.Controllers.Interfaces;
+using Neo.Gui.Base.Controllers;
 using Neo.Gui.Wpf.Controllers;
 using Neo.Gui.Wpf.Properties;
 
