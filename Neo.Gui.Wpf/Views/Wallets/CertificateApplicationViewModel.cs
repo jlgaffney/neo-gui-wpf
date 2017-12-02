@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Windows.Input;
 using CERTENROLLLib;
-using GalaSoft.MvvmLight.Command;
 using Microsoft.Win32;
 using Neo.Cryptography.ECC;
 using Neo.Gui.Base.Controllers.Interfaces;

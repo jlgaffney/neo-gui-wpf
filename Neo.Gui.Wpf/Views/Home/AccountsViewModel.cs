@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
-using GalaSoft.MvvmLight.Command;
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Helpers.Interfaces;

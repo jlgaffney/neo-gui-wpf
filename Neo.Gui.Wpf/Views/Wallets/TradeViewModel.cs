@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using GalaSoft.MvvmLight.Command;
 using MahApps.Metro.Controls.Dialogs;
 using Neo.Core;
 using Neo.Gui.Base.Controllers.Interfaces;

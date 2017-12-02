@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Numerics;
 using System.Windows.Input;
-using GalaSoft.MvvmLight.Command;
 using Neo.Cryptography.ECC;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Helpers.Interfaces;
