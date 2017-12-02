@@ -4,6 +4,8 @@ using System.Linq;
 using System.Windows.Input;
 using Microsoft.Win32;
 using Neo.Core;
+using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Wpf.MVVM;
@@ -12,7 +14,7 @@ using Neo.VM;
 
 namespace Neo.Gui.Wpf.Views.Contracts
 {
-    public class DeployContractViewModel : ViewModelBase
+    public class DeployContractViewModel : ViewModelBase, IDialogViewModel<DeployContractDialogResult>
     {
         private readonly IMessagePublisher messagePublisher;
 
@@ -211,6 +213,11 @@ namespace Neo.Gui.Wpf.Views.Contracts
 
         public ICommand CancelCommand => new RelayCommand(this.TryClose);
 
+        #region IDialogViewModel implementation 
+        public event EventHandler<DeployContractDialogResult> SetDialogResult;
+
+        public DeployContractDialogResult DialogResult { get; private set; }
+        #endregion
 
         private void Load()
         {

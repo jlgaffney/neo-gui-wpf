@@ -6,6 +6,8 @@ using System.Windows.Input;
 using Neo.Core;
 using Neo.Cryptography.ECC;
 using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Wpf.MVVM;
@@ -15,7 +17,7 @@ using Neo.Wallets;
 
 namespace Neo.Gui.Wpf.Views.Assets
 {
-    public class AssetRegistrationViewModel : ViewModelBase
+    public class AssetRegistrationViewModel : ViewModelBase, IDialogViewModel<AssetRegistrationDialogResult>
     {
         private static readonly AssetType[] assetTypes = { AssetType.Share, AssetType.Token };
 
@@ -208,6 +210,12 @@ namespace Neo.Gui.Wpf.Views.Assets
             !this.formValid;
 
         public ICommand OkCommand => new RelayCommand(this.Ok);
+        
+        #region IDialogViewModel implementation 
+        public event EventHandler<AssetRegistrationDialogResult> SetDialogResult;
+
+        public AssetRegistrationDialogResult DialogResult { get; private set; }
+        #endregion
 
         private InvocationTransaction GenerateTransaction()
         {

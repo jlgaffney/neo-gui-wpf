@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Wpf.MVVM;
@@ -10,7 +13,7 @@ using Neo.Wallets;
 
 namespace Neo.Gui.Wpf.Views.Wallets
 {
-    public class RestoreAccountsViewModel : ViewModelBase
+    public class RestoreAccountsViewModel : ViewModelBase, IDialogViewModel<RestoreAccountsDialogResult>
     {
         private readonly IMessagePublisher messagePublisher;
 
@@ -30,6 +33,12 @@ namespace Neo.Gui.Wpf.Views.Wallets
         public bool OkEnabled => this.Accounts.Any(account => account.IsSelected);
 
         public ICommand OkCommand => new RelayCommand(this.Ok);
+
+        #region IDialogViewModel implementation 
+        public event EventHandler<RestoreAccountsDialogResult> SetDialogResult;
+
+        public RestoreAccountsDialogResult DialogResult { get; private set; }
+        #endregion
 
         internal void UpdateOkEnabled()
         {

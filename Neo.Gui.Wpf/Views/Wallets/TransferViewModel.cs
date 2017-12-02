@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Numerics;
@@ -7,6 +8,8 @@ using System.Windows.Input;
 using Neo.Core;
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Data;
+using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.Globalization;
@@ -17,7 +20,7 @@ using Neo.VM;
 
 namespace Neo.Gui.Wpf.Views.Wallets
 {
-    public class TransferViewModel : ViewModelBase
+    public class TransferViewModel : ViewModelBase, IDialogViewModel<TransferDialogResult>
     {
         private readonly IWalletController walletController;
         private readonly IMessagePublisher messagePublisher;
@@ -43,7 +46,12 @@ namespace Neo.Gui.Wpf.Views.Wallets
         public ICommand OkCommand => new RelayCommand(this.Ok);
 
         public ICommand CancelCommand => new RelayCommand(this.TryClose);
+        
+        #region IDialogViewModel implementation 
+        public event EventHandler<TransferDialogResult> SetDialogResult;
 
+        public TransferDialogResult DialogResult { get; private set; }
+        #endregion
 
         private void Remark()
         {

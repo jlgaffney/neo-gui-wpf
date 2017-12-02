@@ -5,6 +5,8 @@ using System.Linq;
 using System.Windows.Input;
 using MahApps.Metro.Controls.Dialogs;
 using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Extensions;
 using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Theming;
@@ -12,7 +14,7 @@ using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Settings
 {
-    public class SettingsViewModel : ViewModelBase
+    public class SettingsViewModel : ViewModelBase, IDialogViewModel<SettingsDialogResult>
     {
         private readonly IWalletController walletController;
         private readonly IProcessHelper processHelper;
@@ -261,6 +263,12 @@ namespace Neo.Gui.Wpf.Views.Settings
         public ICommand OkCommand => new RelayCommand(this.Ok);
 
         public ICommand CancelCommand => new RelayCommand(this.Cancel);
+
+        #region IDialogViewModel implementation 
+        public event EventHandler<SettingsDialogResult> SetDialogResult;
+
+        public SettingsDialogResult DialogResult { get; private set; }
+        #endregion
 
         private void Ok()
         {

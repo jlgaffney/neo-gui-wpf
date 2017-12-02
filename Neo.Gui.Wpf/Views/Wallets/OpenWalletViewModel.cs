@@ -13,8 +13,6 @@ namespace Neo.Gui.Wpf.Views.Wallets
         private string walletPath;
         private string password;
         private bool repairMode;
-
-        private bool confirmed;
         #endregion
 
         #region Public Properties 
@@ -79,21 +77,6 @@ namespace Neo.Gui.Wpf.Views.Wallets
             // Update dependent property
             NotifyPropertyChanged(nameof(this.ConfirmEnabled));
         }
-
-        public bool GetWalletOpenInfo(out string path, out string walletPassword, out bool openInRepairMode)
-        {
-            path = null;
-            walletPassword = null;
-            openInRepairMode = false;
-
-            if (!this.confirmed) return false;
-
-            path = this.walletPath;
-            walletPassword = this.password;
-            openInRepairMode = this.repairMode;
-
-            return true;
-        }
         #endregion
 
         #region Private Methods 
@@ -114,8 +97,6 @@ namespace Neo.Gui.Wpf.Views.Wallets
         private void Confirm()
         {
             if (!this.ConfirmEnabled) return;
-
-            this.confirmed = true;
 
             if (this.SetDialogResult != null)
             {

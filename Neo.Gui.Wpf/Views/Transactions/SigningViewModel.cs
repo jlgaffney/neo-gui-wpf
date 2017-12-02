@@ -1,6 +1,9 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Input;
 using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Globalization;
 using Neo.Gui.Wpf.MVVM;
 using Neo.Network;
@@ -9,7 +12,7 @@ using Neo.UI.Base.Dialogs;
 
 namespace Neo.Gui.Wpf.Views.Transactions
 {
-    public class SigningViewModel : ViewModelBase
+    public class SigningViewModel : ViewModelBase, IDialogViewModel<SigningDialogResult>
     {
         private readonly IWalletController walletController;
 
@@ -58,6 +61,12 @@ namespace Neo.Gui.Wpf.Views.Transactions
         public ICommand CopyCommand => new RelayCommand(this.Copy);
 
         public ICommand CloseCommand => new RelayCommand(this.TryClose);
+        
+        #region IDialogViewModel implementation 
+        public event EventHandler<SigningDialogResult> SetDialogResult;
+
+        public SigningDialogResult DialogResult { get; private set; }
+        #endregion
 
         private void Sign()
         {

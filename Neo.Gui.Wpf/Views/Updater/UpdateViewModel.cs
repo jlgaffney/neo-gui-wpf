@@ -14,6 +14,8 @@ namespace Neo.Gui.Wpf.Views.Updater
 {
     public class UpdateViewModel : ViewModelBase
     {
+        private const string OfficialWebsiteUrl = "https://neo.org/";
+
         private const string UpdateFileName = "update.bat";
         private const string DownloadPath = "update.zip";
 
@@ -93,7 +95,7 @@ namespace Neo.Gui.Wpf.Views.Updater
 
         private void GoToOfficialWebsite()
         {
-            this.processHelper.OpenInExternalBrowser("https://neo.org/");
+            this.processHelper.OpenInExternalBrowser(OfficialWebsiteUrl);
         }
 
         private void GoToDownloadPage()

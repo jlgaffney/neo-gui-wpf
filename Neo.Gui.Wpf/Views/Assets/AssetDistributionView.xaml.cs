@@ -1,9 +1,11 @@
 ﻿using System;
 using Neo.Core;
+using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.Results;
 
 namespace Neo.Gui.Wpf.Views.Assets
 {
-    public partial class AssetDistributionView
+    public partial class AssetDistributionView : IDialog<AssetDistributionDialogResult>
     {
         private readonly AssetDistributionViewModel viewModel;
 

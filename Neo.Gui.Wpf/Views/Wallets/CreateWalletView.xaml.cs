@@ -1,9 +1,11 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.Results;
 
 namespace Neo.Gui.Wpf.Views.Wallets
 {
-    public partial class CreateWalletView
+    public partial class CreateWalletView : IDialog<CreateWalletDialogResult>
     {
         private readonly CreateWalletViewModel viewModel;
 
@@ -30,16 +32,6 @@ namespace Neo.Gui.Wpf.Views.Wallets
             if (reEnteredPasswordBox == null) return;
 
             this.viewModel?.UpdateReEnteredPassword(reEnteredPasswordBox.Password);
-        }
-
-        public bool GetWalletOpenInfo(out string walletPath, out string password)
-        {
-            walletPath = null;
-            password = null;
-
-            if (this.viewModel == null) return false;
-
-            return this.viewModel.GetWalletOpenInfo(out walletPath, out password);
         }
     }
 }

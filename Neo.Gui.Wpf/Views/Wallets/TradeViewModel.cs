@@ -7,6 +7,8 @@ using MahApps.Metro.Controls.Dialogs;
 using Neo.Core;
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Data;
+using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Globalization;
 using Neo.Gui.Wpf.MVVM;
@@ -17,7 +19,7 @@ using Neo.Wallets;
 
 namespace Neo.Gui.Wpf.Views.Wallets
 {
-    public class TradeViewModel : ViewModelBase
+    public class TradeViewModel : ViewModelBase, IDialogViewModel<TradeDialogResult>
     {
         private readonly IWalletController walletController;
         private readonly IDispatchHelper dispatchHelper;
@@ -154,6 +156,12 @@ namespace Neo.Gui.Wpf.Views.Wallets
 
         public ICommand MergeCommand => new RelayCommand(this.Merge);
         
+        #region IDialogViewModel implementation 
+        public event EventHandler<TradeDialogResult> SetDialogResult;
+
+        public TradeDialogResult DialogResult { get; private set; }
+        #endregion
+
         public void UpdateInitiateButtonEnabled()
         {
             NotifyPropertyChanged(nameof(this.InitiateEnabled));

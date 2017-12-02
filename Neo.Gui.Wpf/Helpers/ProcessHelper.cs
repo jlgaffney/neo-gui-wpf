@@ -7,6 +7,11 @@ namespace Neo.Gui.Wpf.Helpers
     public class ProcessHelper : IProcessHelper
     {
         #region IProcessHelper implementation 
+        public void Run(string path)
+        {
+            Process.Start(path);
+        }
+
         public void OpenInExternalBrowser(string url)
         {
             Process.Start(url);

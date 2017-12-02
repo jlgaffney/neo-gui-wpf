@@ -172,7 +172,7 @@ namespace Neo.Gui.Base.Controllers
             return this.currentWallet.ChangePassword(oldPassword, newPassword);
         }
 
-        public void RebuildWalletIndexes()
+        public void RebuildCurrentWallet()
         {
             this.currentWallet.Rebuild();
         }

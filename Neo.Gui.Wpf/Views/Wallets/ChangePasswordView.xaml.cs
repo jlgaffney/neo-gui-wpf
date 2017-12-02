@@ -1,9 +1,11 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.Results;
 
 namespace Neo.Gui.Wpf.Views.Wallets
 {
-    public partial class ChangePasswordView
+    public partial class ChangePasswordView : IDialog<ChangePasswordDialogResult>
     {
         private readonly ChangePasswordViewModel viewModel;
 

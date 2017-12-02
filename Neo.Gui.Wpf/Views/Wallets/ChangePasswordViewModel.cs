@@ -1,18 +1,27 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Input;
 using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Globalization;
 using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Wallets
 {
-    public class ChangePasswordViewModel : ViewModelBase
+    public class ChangePasswordViewModel : ViewModelBase, IDialogViewModel<ChangePasswordDialogResult>
     {
         private readonly IWalletController walletController;
 
         private string oldPassword;
         private string newPassword;
         private string reEnteredNewPassword;
+
+        public ChangePasswordViewModel(
+            IWalletController walletController)
+        {
+            this.walletController = walletController;
+        }
 
         public bool ChangePasswordEnabled =>
             !string.IsNullOrEmpty(this.oldPassword) &&
@@ -23,11 +32,11 @@ namespace Neo.Gui.Wpf.Views.Wallets
 
         public ICommand CancelCommand => new RelayCommand(this.Cancel);
 
-        public ChangePasswordViewModel(
-            IWalletController walletController)
-        {
-            this.walletController = walletController;
-        }
+        #region IDialogViewModel implementation 
+        public event EventHandler<ChangePasswordDialogResult> SetDialogResult;
+
+        public ChangePasswordDialogResult DialogResult { get; private set; }
+        #endregion
 
         public void UpdateOldPassword(string updatedPassword)
         {

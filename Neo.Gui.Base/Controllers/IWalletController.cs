@@ -31,7 +31,7 @@ namespace Neo.Gui.Base.Controllers
 
         bool ChangePassword(string oldPassword, string newPassword);
 
-        void RebuildWalletIndexes();
+        void RebuildCurrentWallet();
 
         void CreateNewKey();
 

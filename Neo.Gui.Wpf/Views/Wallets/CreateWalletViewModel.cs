@@ -1,17 +1,18 @@
-﻿using System.Windows.Input;
+﻿using System;
+using System.Windows.Input;
 using Microsoft.Win32;
+using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Wallets
 {
-    public class CreateWalletViewModel : ViewModelBase
+    public class CreateWalletViewModel : ViewModelBase, IDialogViewModel<CreateWalletDialogResult>
     {
         private string walletPath;
         private string password;
         private string reEnteredPassword;
-
-        private bool confirmed;
-
+        
         public string WalletPath
         {
             get => this.walletPath;
@@ -51,6 +52,12 @@ namespace Neo.Gui.Wpf.Views.Wallets
 
         public ICommand ConfirmCommand => new RelayCommand(this.Confirm);
 
+        #region IDialogViewModel implementation 
+        public event EventHandler<CreateWalletDialogResult> SetDialogResult;
+
+        public CreateWalletDialogResult DialogResult { get; private set; }
+        #endregion
+
         public void UpdatePassword(string updatedPassword)
         {
             this.password = updatedPassword;
@@ -65,19 +72,6 @@ namespace Neo.Gui.Wpf.Views.Wallets
 
             // Update dependent property
             NotifyPropertyChanged(nameof(this.ConfirmEnabled));
-        }
-
-        public bool GetWalletOpenInfo(out string path, out string walletPassword)
-        {
-            path = null;
-            walletPassword = null;
-
-            if (!this.confirmed) return false;
-
-            path = this.walletPath;
-            walletPassword = this.password;
-
-            return true;
         }
 
         private void GetWalletPath()
@@ -96,7 +90,15 @@ namespace Neo.Gui.Wpf.Views.Wallets
 
         private void Confirm()
         {
-            this.confirmed = true;
+            if (!this.ConfirmEnabled) return;
+
+            if (this.SetDialogResult != null)
+            {
+                var dialogResult = new CreateWalletDialogResult(
+                    this.WalletPath,
+                    this.password);
+                this.SetDialogResult(this, dialogResult);
+            }
 
             this.TryClose();
         }

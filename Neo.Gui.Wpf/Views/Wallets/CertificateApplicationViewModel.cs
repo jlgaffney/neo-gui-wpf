@@ -6,11 +6,13 @@ using CERTENROLLLib;
 using Microsoft.Win32;
 using Neo.Cryptography.ECC;
 using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Wallets
 {
-    public class CertificateApplicationViewModel : ViewModelBase
+    public class CertificateApplicationViewModel : ViewModelBase, IDialogViewModel<CertificateApplicationDialogResult>
     {
         private readonly IWalletController walletController;
 
@@ -121,6 +123,12 @@ namespace Neo.Gui.Wpf.Views.Wallets
         public ICommand RequestCertificateCommand => new RelayCommand(this.RequestCertificate);
 
         public ICommand CancelCommand => new RelayCommand(this.TryClose);
+
+        #region IDialogViewModel implementation 
+        public event EventHandler<CertificateApplicationDialogResult> SetDialogResult;
+
+        public CertificateApplicationDialogResult DialogResult { get; private set; }
+        #endregion
 
         private void RequestCertificate()
         {

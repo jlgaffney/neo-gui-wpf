@@ -104,7 +104,7 @@ namespace Neo.Gui.Wpf.Views.Home
             var address = Wallet.ToAddress(hash);
             var path = Path.Combine(Properties.Settings.Default.CertCachePath, $"{address}.cer");
 
-            this.processHelper.OpenInExternalBrowser(path);
+            this.processHelper.Run(path);
         }
 
         private void DeleteAsset()

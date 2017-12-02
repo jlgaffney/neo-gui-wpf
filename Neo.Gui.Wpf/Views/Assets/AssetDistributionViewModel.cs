@@ -1,9 +1,12 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using Neo.Core;
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Data;
+using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
@@ -12,7 +15,7 @@ using Neo.Wallets;
 
 namespace Neo.Gui.Wpf.Views.Assets
 {
-    public class AssetDistributionViewModel : ViewModelBase
+    public class AssetDistributionViewModel : ViewModelBase, IDialogViewModel<AssetDistributionDialogResult>
     {
         private readonly IWalletController walletController;
         private readonly IMessagePublisher messagePublisher;
@@ -157,8 +160,13 @@ namespace Neo.Gui.Wpf.Views.Assets
         public ICommand ConfirmCommand => new RelayCommand(this.Confirm);
 
         public ICommand CancelCommand => new RelayCommand(this.TryClose);
-
         
+        #region IDialogViewModel implementation 
+        public event EventHandler<AssetDistributionDialogResult> SetDialogResult;
+
+        public AssetDistributionDialogResult DialogResult { get; private set; }
+        #endregion
+
         private void Confirm()
         {
             var transaction = this.GenerateTransaction();
