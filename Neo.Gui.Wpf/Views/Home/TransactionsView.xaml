@@ -1,0 +1,26 @@
+<ListView 
+    x:Class="Neo.Gui.Wpf.Views.Home.TransactionsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:globalization="clr-namespace:Neo.Gui.Base.Globalization;assembly=Neo.Gui.Base"
+    xmlns:home="clr-namespace:Neo.Gui.Wpf.Views.Home"
+    xmlns:markupExtensions="clr-namespace:Neo.Gui.Wpf.MarkupExtensions"
+    DataContext="{markupExtensions:DataContextBinding ViewModel=home:TransactionsViewModel}"
+    ItemsSource="{Binding Transactions}" 
+    SelectedItem="{Binding SelectedTransaction}"
+    MouseDoubleClick="TransactionList_DoubleClick">
+    <ListView.View>
+        <GridView>
+            <GridViewColumn Header="{x:Static globalization:Strings.Time}" Width="140" DisplayMemberBinding="{Binding Time}" />
+            <GridViewColumn Header="{x:Static globalization:Strings.TransactionId}" Width="300" DisplayMemberBinding="{Binding Id}" />
+            <GridViewColumn Header="{x:Static globalization:Strings.Confirm}" Width="Auto" DisplayMemberBinding="{Binding Confirmations}" />
+            <GridViewColumn Header="{x:Static globalization:Strings.TransactionType}" Width="Auto" DisplayMemberBinding="{Binding Type}" />
+        </GridView>
+    </ListView.View>
+
+    <ListView.ContextMenu>
+        <ContextMenu>
+            <MenuItem Header="{x:Static globalization:Strings.CopyTxIdMenuHeader}" Command="{Binding CopyTransactionIdCommand}" IsEnabled="{Binding CopyTransactionIdEnabled}" />
+        </ContextMenu>
+    </ListView.ContextMenu>
+</ListView>

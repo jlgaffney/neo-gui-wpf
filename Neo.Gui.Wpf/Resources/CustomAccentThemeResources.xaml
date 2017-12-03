@@ -1,0 +1,59 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:options="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
+                    mc:Ignorable="options">
+    <!-- Accent Colors -->
+    <Color x:Key="ThemeAccentBaseColor">#FF3DA43C</Color>
+    <Color x:Key="ThemeAccentColor">#CC3DA43C</Color> <!--  80%  -->
+    <Color x:Key="ThemeAccentColor2">#993DA43C</Color> <!--  60%  -->
+    <Color x:Key="ThemeAccentColor3">#663DA43C</Color> <!--  40%  -->
+    <Color x:Key="ThemeAccentColor4">#333DA43C</Color> <!--  20%  -->
+    
+    <!-- Highlight Color -->
+    <Color x:Key="ThemeHighlightColor">#FF76B466</Color>
+
+    <!-- Window Border Color -->
+    <Color x:Key="ThemeWindowBorderColor">#FF9EAF99</Color>
+    <Color x:Key="ThemeWindowBorderColor2">#CC9EAF99</Color>
+
+
+
+    <!--  re-set brushes too  -->
+    <SolidColorBrush x:Key="HighlightBrush" Color="{DynamicResource ThemeHighlightColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="AccentBaseColorBrush" Color="{DynamicResource ThemeAccentBaseColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="AccentColorBrush" Color="{DynamicResource ThemeAccentColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="AccentColorBrush2" Color="{DynamicResource ThemeAccentColor2}" options:Freeze="True" />
+    <SolidColorBrush x:Key="AccentColorBrush3" Color="{DynamicResource ThemeAccentColor3}" options:Freeze="True" />
+    <SolidColorBrush x:Key="AccentColorBrush4" Color="{DynamicResource ThemeAccentColor4}" options:Freeze="True" />
+
+    <SolidColorBrush x:Key="WindowTitleColorBrush" Color="{DynamicResource ThemeAccentColor}" options:Freeze="True" />
+
+    <SolidColorBrush x:Key="WindowBorderColorBrush" Color="{DynamicResource ThemeWindowBorderColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="WindowBorderColor2Brush" Color="{DynamicResource ThemeWindowBorderColor2}" options:Freeze="True" />
+
+    <LinearGradientBrush x:Key="ProgressBrush" StartPoint="1.002,0.5" EndPoint="0.001,0.5" options:Freeze="True">
+        <GradientStop Offset="0" Color="{DynamicResource ThemeHighlightColor}" />
+        <GradientStop Offset="1" Color="{DynamicResource ThemeAccentColor3}" />
+    </LinearGradientBrush>
+
+    <SolidColorBrush x:Key="CheckmarkFill" Color="{DynamicResource ThemeAccentColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="RightArrowFill" Color="{DynamicResource ThemeAccentColor}" options:Freeze="True" />
+
+    <Color x:Key="IdealForegroundColor">White</Color>
+    <SolidColorBrush x:Key="IdealForegroundColorBrush" Color="{StaticResource IdealForegroundColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="IdealForegroundDisabledBrush" Opacity="0.4" Color="{StaticResource IdealForegroundColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="AccentSelectedColorBrush" Color="{StaticResource IdealForegroundColor}" options:Freeze="True" />
+
+    <!--  DataGrid brushes  -->
+    <SolidColorBrush x:Key="MetroDataGrid.HighlightBrush" Color="{DynamicResource ThemeAccentColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="MetroDataGrid.HighlightTextBrush" Color="{StaticResource IdealForegroundColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="MetroDataGrid.MouseOverHighlightBrush" Color="{DynamicResource ThemeAccentColor3}" options:Freeze="True" />
+    <SolidColorBrush x:Key="MetroDataGrid.FocusBorderBrush" Color="{DynamicResource ThemeAccentColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="MetroDataGrid.InactiveSelectionHighlightBrush" Color="{DynamicResource ThemeAccentColor2}" options:Freeze="True" />
+    <SolidColorBrush x:Key="MetroDataGrid.InactiveSelectionHighlightTextBrush" Color="{StaticResource IdealForegroundColor}" options:Freeze="True" />
+
+    <SolidColorBrush x:Key="MahApps.Metro.Brushes.ToggleSwitchButton.OnSwitchBrush.Win10" Color="{DynamicResource ThemeAccentColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="MahApps.Metro.Brushes.ToggleSwitchButton.OnSwitchMouseOverBrush.Win10" Color="{DynamicResource ThemeAccentColor2}" options:Freeze="True" />
+    <SolidColorBrush x:Key="MahApps.Metro.Brushes.ToggleSwitchButton.ThumbIndicatorCheckedBrush.Win10" Color="{StaticResource IdealForegroundColor}" options:Freeze="True" />
+</ResourceDictionary>

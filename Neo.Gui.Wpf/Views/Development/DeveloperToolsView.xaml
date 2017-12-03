@@ -1,0 +1,22 @@
+﻿<controls:NeoWindow x:Class="Neo.Gui.Wpf.Views.Development.DeveloperToolsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:globalization="clr-namespace:Neo.Gui.Base.Globalization;assembly=Neo.Gui.Base"
+             xmlns:development="clr-namespace:Neo.Gui.Wpf.Views.Development"
+             xmlns:controls="clr-namespace:Neo.Gui.Wpf.Controls"
+             Title="{x:Static globalization:Strings.DeveloperToolsTitle}"
+             Width="660" Height="480" ResizeMode="NoResize">
+    <Grid>
+        <TabControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <!-- Transaction Builder Tab -->
+            <TabItem Header="{x:Static globalization:Strings.TxBuilder}">
+                <development:TransactionBuilderView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            </TabItem>
+
+            <!-- Contract Parameters Tab -->
+            <TabItem Header="{x:Static globalization:Strings.ContractParameters}">
+                <development:ContractParametersView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            </TabItem>
+        </TabControl>
+    </Grid>
+</controls:NeoWindow>
