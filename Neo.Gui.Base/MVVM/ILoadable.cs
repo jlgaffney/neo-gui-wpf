@@ -2,6 +2,6 @@
 {
     public interface ILoadable
     {
-        void OnLoad();
+        void OnLoad(params object[] parameters);
     }
 }

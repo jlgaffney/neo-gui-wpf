@@ -202,7 +202,7 @@ namespace Neo.Gui.Wpf.Views.Transactions
         {
             this.output = this.GenerateOutput();
 
-            this.TryClose();
+            //this.TryClose();
         }
 
         public TransactionOutputItem GetOutput()

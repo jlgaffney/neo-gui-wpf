@@ -13,10 +13,14 @@ using Neo.Gui.Wpf.MVVM;
 using Neo.IO.Json;
 using Neo.SmartContract;
 using Neo.VM;
+using Neo.Gui.Base.Dialogs.Results.Contracts;
+using Neo.Gui.Base.Dialogs.Interfaces;
+using System;
+using Neo.Gui.Base.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Contracts
 {
-    public class InvokeContractViewModel : ViewModelBase
+    public class InvokeContractViewModel : ViewModelBase, IDialogViewModel<InvokeContractDialogResult>, ILoadable
     {
         private static readonly Fixed8 NetworkFee = Fixed8.FromDecimal(0.001m);
 
@@ -151,7 +155,6 @@ namespace Neo.Gui.Wpf.Views.Contracts
         #endregion Public Properties
 
         #region Commands
-
         public ICommand GetContractCommand => new RelayCommand(this.GetContract);
 
         public ICommand EditParametersCommand => new RelayCommand(this.EditParameters);
@@ -163,10 +166,31 @@ namespace Neo.Gui.Wpf.Views.Contracts
         public ICommand InvokeCommand => new RelayCommand(this.Invoke);
 
         public ICommand CancelCommand => new RelayCommand(this.Cancel);
-
         #endregion Commands
 
-        public void SetBaseTransaction(InvocationTransaction baseTransaction)
+        #region IDialogViewModel implementation 
+        public event EventHandler Close;
+
+        public event EventHandler<InvokeContractDialogResult> SetDialogResultAndClose;
+
+        public InvokeContractDialogResult DialogResult { get; private set; }
+        #endregion
+
+        #region ILoadable implementation 
+        public void OnLoad(params object[] parameters)
+        {
+            if (!parameters.Any())
+            {
+                return;
+            }
+
+            var invokeContractLoadParameters = parameters[0] as InvokeContractLoadParameters;
+
+            this.SetBaseTransaction(invokeContractLoadParameters.Transaction);
+        }
+        #endregion
+
+        private  void SetBaseTransaction(InvocationTransaction baseTransaction)
         {
             if (baseTransaction == null) return;
 
@@ -315,14 +339,15 @@ namespace Neo.Gui.Wpf.Views.Contracts
             if (tx == null) return;
 
             this.messagePublisher.Publish(new SignTransactionAndShowInformationMessage(tx));
-            this.TryClose();
+
+            this.Close(this, EventArgs.Empty);
         }
 
         private void Cancel()
         {
             this.transaction = null;
 
-            this.TryClose();
+            this.Close(this, EventArgs.Empty);
         }
     }
 }

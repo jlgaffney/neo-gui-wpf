@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows.Input;
 using MahApps.Metro.Controls.Dialogs;
 using Neo.Core;
 using Neo.Gui.Base.Controllers;
@@ -16,11 +15,14 @@ using Neo.IO.Json;
 using Neo.SmartContract;
 using Neo.UI.Base.Dialogs;
 using Neo.Wallets;
+using Neo.Gui.Base.MVVM;
+using Neo.Gui.Base.Dialogs.Results.Wallets;
 
 namespace Neo.Gui.Wpf.Views.Wallets
 {
     public class TradeViewModel : ViewModelBase, IDialogViewModel<TradeDialogResult>
     {
+        private readonly IDialogHelper dialogHelper;
         private readonly IWalletController walletController;
         private readonly IDispatchHelper dispatchHelper;
 
@@ -35,9 +37,11 @@ namespace Neo.Gui.Wpf.Views.Wallets
         private int selectedTabIndex;
 
         public TradeViewModel(
+            IDialogHelper dialogHelper,
             IWalletController walletController,
             IDispatchHelper dispatchHelper)
         {
+            this.dialogHelper = dialogHelper;
             this.walletController = walletController;
             this.dispatchHelper = dispatchHelper;
 
@@ -150,14 +154,16 @@ namespace Neo.Gui.Wpf.Views.Wallets
             }
         }
 
-        public ICommand InitiateCommand => new RelayCommand(this.Initiate);
+        public RelayCommand InitiateCommand => new RelayCommand(this.Initiate);
 
-        public ICommand ValidateCommand => new RelayCommand(this.Validate);
+        public RelayCommand ValidateCommand => new RelayCommand(this.Validate);
 
-        public ICommand MergeCommand => new RelayCommand(this.Merge);
-        
+        public RelayCommand MergeCommand => new RelayCommand(this.Merge);
+
         #region IDialogViewModel implementation 
-        public event EventHandler<TradeDialogResult> SetDialogResult;
+        public event EventHandler Close;
+
+        public event EventHandler<TradeDialogResult> SetDialogResultAndClose;
 
         public TradeDialogResult DialogResult { get; private set; }
         #endregion
@@ -229,10 +235,10 @@ namespace Neo.Gui.Wpf.Views.Wallets
 
             outputs = outputs.Where(p => this.walletController.WalletContainsAddress(p.ScriptHash));
 
-            var verificationView = new TradeVerificationView(outputs);
-            verificationView.ShowDialog();
+            var dialogResult = this.dialogHelper.ShowDialog<TradeVerificationDialogResult, TradeVerificationLoadParameters>(
+                new LoadParameters<TradeVerificationLoadParameters>(new TradeVerificationLoadParameters(outputs)));
 
-            this.MergeEnabled = verificationView.TradeAccepted;
+            this.MergeEnabled = dialogResult.TradeAccepted;
         }
 
         private void Merge()

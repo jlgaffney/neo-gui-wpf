@@ -1,16 +1,13 @@
-﻿using Neo.Wallets;
+﻿using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.Results.Wallets;
 
 namespace Neo.Gui.Wpf.Views.Accounts
 {
-    public partial class ViewContractView
+    public partial class ViewContractView : IDialog<ViewContractDialogResult>
     {
-        public ViewContractView(VerificationContract contract)
+        public ViewContractView()
         {
             InitializeComponent();
-
-            var viewModel = this.DataContext as ViewContractViewModel;
-
-            viewModel?.SetContract(contract);
         }
     }
 }

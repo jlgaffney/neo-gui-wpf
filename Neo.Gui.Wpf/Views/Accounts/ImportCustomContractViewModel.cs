@@ -1,9 +1,11 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows.Input;
 using Neo.Core;
 using Neo.Cryptography.ECC;
 using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Wpf.MVVM;
@@ -12,7 +14,7 @@ using Neo.Wallets;
 
 namespace Neo.Gui.Wpf.Views.Accounts
 {
-    public class ImportCustomContractViewModel : ViewModelBase
+    public class ImportCustomContractViewModel : ViewModelBase, IDialogViewModel<ImportCustomContractDialogResult>
     {
         private readonly IMessagePublisher messagePublisher;
 
@@ -86,9 +88,17 @@ namespace Neo.Gui.Wpf.Views.Accounts
             !string.IsNullOrEmpty(this.ParameterList) &&
             !string.IsNullOrEmpty(this.Script);
 
-        public ICommand ConfirmCommand => new RelayCommand(this.Confirm);
+        public RelayCommand ConfirmCommand => new RelayCommand(this.Confirm);
 
-        public ICommand CancelCommand => new RelayCommand(this.TryClose);
+        public RelayCommand CancelCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
+
+        #region IDialogViewModel implementation 
+        public event EventHandler Close;
+
+        public event EventHandler<ImportCustomContractDialogResult> SetDialogResultAndClose;
+
+        public ImportCustomContractDialogResult DialogResult { get; private set; }
+        #endregion
 
         private void Confirm()
         {
@@ -97,7 +107,8 @@ namespace Neo.Gui.Wpf.Views.Accounts
             if (contract == null) return;
 
             this.messagePublisher.Publish(new AddContractMessage(contract));
-            this.TryClose();
+
+            this.Close(this, EventArgs.Empty);
         }
 
         private VerificationContract GenerateContract()

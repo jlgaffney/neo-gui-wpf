@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Input;
 using MahApps.Metro.Controls.Dialogs;
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
@@ -117,7 +116,7 @@ namespace Neo.Gui.Wpf.Views.Settings
 
         public bool NEP5SettingsChanged => this.currentNEP5ContractsList != this.NEP5ContractsList;
 
-        public ICommand SaveNEP5SettingsCommand => new RelayCommand(this.SaveNEP5Settings);
+        public RelayCommand SaveNEP5SettingsCommand => new RelayCommand(this.SaveNEP5Settings);
 
         #endregion NEP-5 Properties & Commands
 
@@ -252,20 +251,22 @@ namespace Neo.Gui.Wpf.Views.Settings
             this.currentThemeHighlightColorHex != this.ThemeHighlightColorHex ||
             this.currentThemeWindowBorderColorHex != this.ThemeWindowBorderColorHex;
 
-        public ICommand ResetAppearanceSettingsToDefaultCommand => new RelayCommand(this.ResetAppearanceSettingsToDefault);
+        public RelayCommand ResetAppearanceSettingsToDefaultCommand => new RelayCommand(this.ResetAppearanceSettingsToDefault);
 
-        public ICommand SaveAppearanceSettingsCommand => new RelayCommand(this.SaveAppearanceSettings);
+        public RelayCommand SaveAppearanceSettingsCommand => new RelayCommand(this.SaveAppearanceSettings);
 
-        public ICommand ApplyAppearanceSettingsCommand => new RelayCommand(this.ApplyAppearanceSettings);
+        public RelayCommand ApplyAppearanceSettingsCommand => new RelayCommand(this.ApplyAppearanceSettings);
 
         #endregion Appearance Properties
 
-        public ICommand OkCommand => new RelayCommand(this.Ok);
+        public RelayCommand OkCommand => new RelayCommand(this.Ok);
 
-        public ICommand CancelCommand => new RelayCommand(this.Cancel);
+        public RelayCommand CancelCommand => new RelayCommand(this.Cancel);
 
         #region IDialogViewModel implementation 
-        public event EventHandler<SettingsDialogResult> SetDialogResult;
+        public event EventHandler Close;
+
+        public event EventHandler<SettingsDialogResult> SetDialogResultAndClose;
 
         public SettingsDialogResult DialogResult { get; private set; }
         #endregion
@@ -278,12 +279,12 @@ namespace Neo.Gui.Wpf.Views.Settings
                 // changes will be discarded if they continue
             }
 
-            this.TryClose();
+            this.Close(this, EventArgs.Empty);
         }
 
         private void Cancel()
         {
-            this.TryClose();
+            this.Close(this, EventArgs.Empty);
         }
 
         private void SaveNEP5Settings()

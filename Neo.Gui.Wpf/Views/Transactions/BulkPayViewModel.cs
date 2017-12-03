@@ -136,7 +136,7 @@ namespace Neo.Gui.Wpf.Views.Transactions
         {
             this.outputs = this.GenerateOutputs();
 
-            this.TryClose();
+            //this.TryClose();
         }
 
         internal TransactionOutputItem[] GetOutputs()

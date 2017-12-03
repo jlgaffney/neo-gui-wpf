@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Input;
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Globalization;
+using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Wpf.MVVM;
 using Neo.Network;
 using Neo.SmartContract;
@@ -15,15 +15,17 @@ namespace Neo.Gui.Wpf.Views.Transactions
     public class SigningViewModel : ViewModelBase, IDialogViewModel<SigningDialogResult>
     {
         private readonly IWalletController walletController;
-
+        private readonly INotificationHelper notificationHelper;
         private string input;
         private ContractParametersContext output;
         private bool broadcastVisible;
 
         public SigningViewModel(
-            IWalletController walletController)
+            IWalletController walletController, 
+            INotificationHelper notificationHelper)
         {
             this.walletController = walletController;
+            this.notificationHelper = notificationHelper;
         }
 
         public string Input
@@ -54,16 +56,18 @@ namespace Neo.Gui.Wpf.Views.Transactions
             }
         }
 
-        public ICommand SignatureCommand => new RelayCommand(this.Sign);
+        public RelayCommand SignatureCommand => new RelayCommand(this.Sign);
 
-        public ICommand BroadcastCommand => new RelayCommand(this.Broadcast);
+        public RelayCommand BroadcastCommand => new RelayCommand(this.Broadcast);
 
-        public ICommand CopyCommand => new RelayCommand(this.Copy);
+        public RelayCommand CopyCommand => new RelayCommand(this.Copy);
 
-        public ICommand CloseCommand => new RelayCommand(this.TryClose);
-        
+        public RelayCommand CloseCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
+
         #region IDialogViewModel implementation 
-        public event EventHandler<SigningDialogResult> SetDialogResult;
+        public event EventHandler Close;
+
+        public event EventHandler<SigningDialogResult> SetDialogResultAndClose;
 
         public SigningDialogResult DialogResult { get; private set; }
         #endregion
@@ -72,7 +76,7 @@ namespace Neo.Gui.Wpf.Views.Transactions
         {
             if (string.IsNullOrEmpty(this.Input))
             {
-                MessageBox.Show(Strings.SigningFailedNoDataMessage);
+                this.notificationHelper.ShowErrorNotification(Strings.SigningFailedNoDataMessage);
                 return;
             }
 
@@ -83,13 +87,13 @@ namespace Neo.Gui.Wpf.Views.Transactions
             }
             catch
             {
-                MessageBox.Show(Strings.SigningFailedNoDataMessage);
+                this.notificationHelper.ShowErrorNotification(Strings.SigningFailedNoDataMessage);
                 return;
             }
 
             if (!this.walletController.Sign(context))
             {
-                MessageBox.Show(Strings.SigningFailedKeyNotFoundMessage);
+                this.notificationHelper.ShowErrorNotification(Strings.SigningFailedNoDataMessage);
                 return;
             }
 
@@ -104,7 +108,7 @@ namespace Neo.Gui.Wpf.Views.Transactions
             if (this.output == null) return;
 
             // TODO Highlight output textbox text
-
+            // TODO Issue #77 [AboimPinto]: Clipboard access should be abstracted from ViewModels
             Clipboard.SetText(this.output.ToString());
         }
 

@@ -14,6 +14,8 @@ using Neo.Gui.Wpf.MVVM;
 using Neo.Gui.Wpf.Views.Accounts;
 using Neo.Gui.Wpf.Views.Voting;
 using Neo.UI.Base.Dialogs;
+using Neo.Gui.Base.Dialogs.Results.Wallets;
+using Neo.Gui.Base.Dialogs.Results.Voting;
 
 namespace Neo.Gui.Wpf.Views.Home
 {
@@ -29,7 +31,7 @@ namespace Neo.Gui.Wpf.Views.Home
         private readonly IWalletController walletController;
         private readonly IMessageSubscriber messageSubscriber;
         private readonly IProcessHelper processHelper;
-
+        private readonly IDialogHelper dialogHelper;
         private AccountItem selectedAccount;
         #endregion
 
@@ -106,11 +108,13 @@ namespace Neo.Gui.Wpf.Views.Home
         public AccountsViewModel(
             IWalletController walletController,
             IMessageSubscriber messageSubscriber, 
-            IProcessHelper processHelper)
+            IProcessHelper processHelper,
+            IDialogHelper dialogHelper)
         {
             this.walletController = walletController;
             this.messageSubscriber = messageSubscriber;
             this.processHelper = processHelper;
+            this.dialogHelper = dialogHelper;
 
             this.Accounts = new ObservableCollection<AccountItem>();
         }
@@ -134,7 +138,7 @@ namespace Neo.Gui.Wpf.Views.Home
         #endregion
 
         #region ILoadable implementation 
-        public void OnLoad()
+        public void OnLoad(params object[] parameters)
         {
             this.messageSubscriber.Subscribe(this);
         }
@@ -155,14 +159,12 @@ namespace Neo.Gui.Wpf.Views.Home
 
         private void ImportWifPrivateKey()
         {
-            var view = new ImportPrivateKeyView();
-            view.ShowDialog();
+            this.dialogHelper.ShowDialog<ImportPrivateKeyDialogResult>();
         }
 
         private void ImportCertificate()
         {
-            var view = new ImportCertificateView();
-            view.ShowDialog();
+            this.dialogHelper.ShowDialog<ImportCertificateDialogResult>();
         }
 
         private void ImportWatchOnlyAddress()
@@ -176,20 +178,17 @@ namespace Neo.Gui.Wpf.Views.Home
 
         private void CreateMultiSignatureContract()
         {
-            var view = new CreateMultiSigContractView();
-            view.ShowDialog();
+            this.dialogHelper.ShowDialog<CreateMultiSigContractDialogResult>();
         }
 
         private void CreateLockAddress()
         {
-            var view = new CreateLockAccountView();
-            view.ShowDialog();
+            this.dialogHelper.ShowDialog<CreateLockAccountDialogResult>();
         }
 
         private void ImportCustomContract()
         {
-            var view = new ImportCustomContractView();
-            view.ShowDialog();
+            this.dialogHelper.ShowDialog<ImportCustomContractDialogResult>();
         }
 
         private void ViewPrivateKey()
@@ -199,8 +198,8 @@ namespace Neo.Gui.Wpf.Views.Home
             var contract = this.SelectedAccount.Contract;
             var key = this.walletController.GetKeyByScriptHash(contract.ScriptHash);
 
-            var view = new ViewPrivateKeyView(key, contract.ScriptHash);
-            view.ShowDialog();
+            this.dialogHelper.ShowDialog<ViewPrivateKeyDialogResult, ViewPrivateKeyLoadParameters>(
+                new LoadParameters<ViewPrivateKeyLoadParameters>(new ViewPrivateKeyLoadParameters(key, contract.ScriptHash)));
         }
 
         private void ViewContract()
@@ -209,16 +208,16 @@ namespace Neo.Gui.Wpf.Views.Home
 
             var contract = this.SelectedAccount.Contract;
 
-            var view = new ViewContractView(contract);
-            view.ShowDialog();
+            this.dialogHelper.ShowDialog<ViewContractDialogResult, ViewContractLoadParameters>(
+                new LoadParameters<ViewContractLoadParameters>(new ViewContractLoadParameters(contract)));
         }
 
         private void ShowVotingDialog()
         {
             if (this.SelectedAccount?.Contract == null) return;
 
-            var view = new VotingView(this.SelectedAccount.Contract.ScriptHash);
-            view.ShowDialog();
+            this.dialogHelper.ShowDialog<VotingDialogResult, VotingLoadParameters>(
+                new LoadParameters<VotingLoadParameters>(new VotingLoadParameters(this.SelectedAccount.Contract.ScriptHash)));
         }
 
         private void CopyAddressToClipboard()

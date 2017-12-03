@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Input;
 using Neo.Core;
 using Neo.Cryptography.ECC;
 using Neo.Gui.Base.Controllers;
@@ -14,10 +13,12 @@ using Neo.Gui.Wpf.MVVM;
 using Neo.SmartContract;
 using Neo.VM;
 using Neo.Wallets;
+using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.Results.Wallets;
 
 namespace Neo.Gui.Wpf.Views.Accounts
 {
-    public class CreateLockAccountViewModel : ViewModelBase
+    public class CreateLockAccountViewModel : ViewModelBase, IDialogViewModel<CreateLockAccountDialogResult>
     {
         private const int HoursInDay = 24;
         private const int MinutesInHour = 60;
@@ -120,10 +121,17 @@ namespace Neo.Gui.Wpf.Views.Accounts
 
         public bool CreateEnabled => this.SelectedAccount != null;
 
-        public ICommand CreateCommand => new RelayCommand(this.Create);
+        public RelayCommand CreateCommand => new RelayCommand(this.Create);
 
-        public ICommand CancelCommand => new RelayCommand(this.TryClose);
+        public RelayCommand CancelCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
 
+        #region IDialogViewModel implementation 
+        public event EventHandler Close;
+
+        public event EventHandler<CreateLockAccountDialogResult> SetDialogResultAndClose;
+
+        public CreateLockAccountDialogResult DialogResult { get; private set; }
+        #endregion
 
         private void Create()
         {
@@ -132,7 +140,8 @@ namespace Neo.Gui.Wpf.Views.Accounts
             if (contract == null) return;
 
             this.messagePublisher.Publish(new AddContractMessage(contract));
-            this.TryClose();
+
+            this.Close(this, EventArgs.Empty);
         }
 
         private VerificationContract GenerateContract()

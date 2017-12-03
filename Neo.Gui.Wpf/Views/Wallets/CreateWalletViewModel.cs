@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows.Input;
 using Microsoft.Win32;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
@@ -48,12 +47,14 @@ namespace Neo.Gui.Wpf.Views.Wallets
             }
         }
 
-        public ICommand GetWalletPathCommand => new RelayCommand(this.GetWalletPath);
+        public RelayCommand GetWalletPathCommand => new RelayCommand(this.GetWalletPath);
 
-        public ICommand ConfirmCommand => new RelayCommand(this.Confirm);
+        public RelayCommand ConfirmCommand => new RelayCommand(this.Confirm);
 
         #region IDialogViewModel implementation 
-        public event EventHandler<CreateWalletDialogResult> SetDialogResult;
+        public event EventHandler Close;
+
+        public event EventHandler<CreateWalletDialogResult> SetDialogResultAndClose;
 
         public CreateWalletDialogResult DialogResult { get; private set; }
         #endregion
@@ -76,6 +77,7 @@ namespace Neo.Gui.Wpf.Views.Wallets
 
         private void GetWalletPath()
         {
+            // TODO Issue #76 [AboimPinto]: SaveDialog need to be abstracted
             var saveFileDialog = new SaveFileDialog
             {
                 DefaultExt = "db3",
@@ -92,15 +94,15 @@ namespace Neo.Gui.Wpf.Views.Wallets
         {
             if (!this.ConfirmEnabled) return;
 
-            if (this.SetDialogResult != null)
+            if (this.SetDialogResultAndClose != null)
             {
                 var dialogResult = new CreateWalletDialogResult(
                     this.WalletPath,
                     this.password);
-                this.SetDialogResult(this, dialogResult);
+                this.SetDialogResultAndClose(this, dialogResult);
             }
 
-            this.TryClose();
+            this.Close(this, EventArgs.Empty);
         }
     }
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows.Input;
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
@@ -32,10 +31,12 @@ namespace Neo.Gui.Wpf.Views.Wallets
         
         public bool OkEnabled => this.Accounts.Any(account => account.IsSelected);
 
-        public ICommand OkCommand => new RelayCommand(this.Ok);
+        public RelayCommand OkCommand => new RelayCommand(this.Ok);
 
         #region IDialogViewModel implementation 
-        public event EventHandler<RestoreAccountsDialogResult> SetDialogResult;
+        public event EventHandler Close;
+
+        public event EventHandler<RestoreAccountsDialogResult> SetDialogResultAndClose;
 
         public RestoreAccountsDialogResult DialogResult { get; private set; }
         #endregion
@@ -53,7 +54,8 @@ namespace Neo.Gui.Wpf.Views.Wallets
             if (contracts == null) return;
 
             this.messagePublisher.Publish(new AddContractsMessage(contracts));
-            this.TryClose();
+
+            this.Close(this, EventArgs.Empty);
         }
 
         private List<VerificationContract> GenerateContracts()

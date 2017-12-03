@@ -4,6 +4,8 @@ using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Windows.Input;
+using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.Results.Settings;
 using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
@@ -12,7 +14,7 @@ using Neo.Gui.Wpf.Properties;
 
 namespace Neo.Gui.Wpf.Views.Updater
 {
-    public class UpdateViewModel : ViewModelBase
+    public class UpdateViewModel : ViewModelBase, IDialogViewModel<UpdateDialogResult>
     {
         private const string OfficialWebsiteUrl = "https://neo.org/";
 
@@ -91,7 +93,15 @@ namespace Neo.Gui.Wpf.Views.Updater
 
         public ICommand UpdateCommand => new RelayCommand(this.Update);
 
-        public ICommand CloseCommand => new RelayCommand(this.TryClose);
+        public ICommand CloseCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
+
+        #region IDialogViewModel implementation 
+        public event EventHandler Close;
+
+        public event EventHandler<UpdateDialogResult> SetDialogResultAndClose;
+
+        public UpdateDialogResult DialogResult { get; set; }
+        #endregion
 
         private void GoToOfficialWebsite()
         {
@@ -144,12 +154,11 @@ namespace Neo.Gui.Wpf.Views.Updater
 
             File.WriteAllBytes(UpdateFileName, Resources.UpdateBat);
 
-            this.TryClose();
-
             // Update application
             this.messagePublisher.Publish(new UpdateApplicationMessage(UpdateFileName));
-        }
 
+            this.Close(this, EventArgs.Empty);
+        }
         #endregion Update Downloader Methods
     }
 }

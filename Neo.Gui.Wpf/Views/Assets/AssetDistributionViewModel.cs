@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows.Input;
 using Neo.Core;
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Data;
@@ -157,12 +156,14 @@ namespace Neo.Gui.Wpf.Views.Assets
 
         public bool ConfirmEnabled => this.Items.Count > 0;
 
-        public ICommand ConfirmCommand => new RelayCommand(this.Confirm);
+        public RelayCommand ConfirmCommand => new RelayCommand(this.Confirm);
 
-        public ICommand CancelCommand => new RelayCommand(this.TryClose);
-        
+        public RelayCommand CancelCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
+
         #region IDialogViewModel implementation 
-        public event EventHandler<AssetDistributionDialogResult> SetDialogResult;
+        public event EventHandler Close;
+
+        public event EventHandler<AssetDistributionDialogResult> SetDialogResultAndClose;
 
         public AssetDistributionDialogResult DialogResult { get; private set; }
         #endregion
@@ -174,7 +175,7 @@ namespace Neo.Gui.Wpf.Views.Assets
             if (transaction == null) return;
 
             this.messagePublisher.Publish(new SignTransactionAndShowInformationMessage(transaction));
-            this.TryClose();
+            this.Close(this, EventArgs.Empty);
         }
 
         public void UpdateConfirmButtonEnabled()

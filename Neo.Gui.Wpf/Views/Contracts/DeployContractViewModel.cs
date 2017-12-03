@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Windows.Input;
 using Microsoft.Win32;
 using Neo.Core;
 using Neo.Gui.Base.Dialogs.Interfaces;
@@ -207,14 +206,16 @@ namespace Neo.Gui.Wpf.Views.Contracts
             !string.IsNullOrEmpty(this.Description) &&
             !string.IsNullOrEmpty(this.Code);
 
-        public ICommand LoadCommand => new RelayCommand(this.Load);
+        public RelayCommand LoadCommand => new RelayCommand(this.Load);
 
-        public ICommand DeployCommand => new RelayCommand(this.Deploy);
+        public RelayCommand DeployCommand => new RelayCommand(this.Deploy);
 
-        public ICommand CancelCommand => new RelayCommand(this.TryClose);
+        public RelayCommand CancelCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
 
         #region IDialogViewModel implementation 
-        public event EventHandler<DeployContractDialogResult> SetDialogResult;
+        public event EventHandler Close;
+
+        public event EventHandler<DeployContractDialogResult> SetDialogResultAndClose;
 
         public DeployContractDialogResult DialogResult { get; private set; }
         #endregion
@@ -250,7 +251,7 @@ namespace Neo.Gui.Wpf.Views.Contracts
             if (transaction == null) return;
 
             this.messagePublisher.Publish(new InvokeContractMessage(transaction));
-            this.TryClose();
+            this.Close(this, EventArgs.Empty);
         }
 
         private InvocationTransaction GenerateTransaction()

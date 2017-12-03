@@ -1,17 +1,20 @@
-﻿using System.Linq;
-using System.Windows.Input;
+﻿using System;
+using System.Linq;
 using Neo.Core;
 using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.Results.Voting;
 using Neo.Gui.Base.Extensions;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
+using Neo.Gui.Base.MVVM;
 using Neo.Gui.Wpf.MVVM;
 using Neo.VM;
 using Neo.Wallets;
 
 namespace Neo.Gui.Wpf.Views.Voting
 {
-    public class VotingViewModel : ViewModelBase
+    public class VotingViewModel : ViewModelBase, IDialogViewModel<VotingDialogResult>, ILoadable
     {
         private readonly IWalletController walletController;
         private readonly IMessagePublisher messagePublisher;
@@ -43,11 +46,32 @@ namespace Neo.Gui.Wpf.Views.Voting
             }
         }
 
-        public ICommand OkCommand => new RelayCommand(this.Ok);
+        public RelayCommand OkCommand => new RelayCommand(this.Ok);
 
-        public ICommand CancelCommand => new RelayCommand(this.Cancel);
+        public RelayCommand CancelCommand => new RelayCommand(this.Cancel);
 
-        public void SetScriptHash(UInt160 hash)
+        #region IDialogViewModel implementation 
+        public event EventHandler Close;
+
+        public event EventHandler<VotingDialogResult> SetDialogResultAndClose;
+
+        public VotingDialogResult DialogResult { get; set; }
+        #endregion
+
+        #region ILoadable Implementation 
+        public void OnLoad(params object[] parameters)
+        {
+            if (!parameters.Any())
+            {
+                return;
+            }
+
+            var votingLoadParameters = parameters[0] as VotingLoadParameters;
+            this.SetScriptHash(votingLoadParameters.ScriptHash);
+        }
+        #endregion
+
+        private void SetScriptHash(UInt160 hash)
         {
             this.scriptHash = hash;
 
@@ -113,12 +137,13 @@ namespace Neo.Gui.Wpf.Views.Voting
             if (transaction == null) return;
 
             this.messagePublisher.Publish(new InvokeContractMessage(transaction));
-            this.TryClose();
+
+            this.Close(this, EventArgs.Empty);
         }
 
         private void Cancel()
         {
-            this.TryClose();
+            this.Close(this, EventArgs.Empty);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Neo.Gui.Wpf
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App
+    public partial class App : IMessageHandler<ExitAppMessage>
     {
         private IWalletController walletController;
         
@@ -51,6 +51,9 @@ namespace Neo.Gui.Wpf
             var dispatchHelper = containerLifetimeScope.Resolve<IDispatchHelper>();
             var themeHelper = containerLifetimeScope.Resolve<IThemeHelper>();
             var versionHelper = containerLifetimeScope.Resolve<IVersionHelper>();
+            var messageSubscriber = containerLifetimeScope.Resolve<IMessageSubscriber>();
+
+            messageSubscriber.Subscribe(this);
 
             Debug.Assert(dispatchHelper != null);
 
@@ -175,7 +178,13 @@ namespace Neo.Gui.Wpf
                 PrintErrorLogs(writer, ex.InnerException);
             }
         }
+        #endregion
 
+        #region MessageHandler implementation 
+        public void HandleMessage(ExitAppMessage message)
+        {
+            Current.Shutdown();
+        }
         #endregion
     }
 }

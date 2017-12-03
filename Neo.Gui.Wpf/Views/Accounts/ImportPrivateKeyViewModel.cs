@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Input;
+using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Extensions;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
@@ -8,17 +10,16 @@ using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Accounts
 {
-    public class ImportPrivateKeyViewModel : ViewModelBase
+    public class ImportPrivateKeyViewModel : ViewModelBase, IDialogViewModel<ImportPrivateKeyDialogResult>
     {
+        #region Private Fields 
         private readonly IMessagePublisher messagePublisher;
 
-        public ImportPrivateKeyViewModel(
-            IMessagePublisher messagePublisher)
-        {
-            this.messagePublisher = messagePublisher;
-        }
-
         private string privateKeyWif;
+        #endregion
+
+        #region Public Properties 
+        public bool OkEnabled => !string.IsNullOrEmpty(this.PrivateKeyWif);
 
         public string PrivateKeyWif
         {
@@ -45,18 +46,36 @@ namespace Neo.Gui.Wpf.Views.Accounts
             }
         }
 
-        public bool OkEnabled => !string.IsNullOrEmpty(this.PrivateKeyWif);
+        public RelayCommand OkCommand => new RelayCommand(this.Ok);
 
-        public ICommand OkCommand => new RelayCommand(this.Ok);
+        public RelayCommand CancelCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
+        #endregion
 
-        public ICommand CancelCommand => new RelayCommand(this.TryClose);
+        #region Constructor 
+        public ImportPrivateKeyViewModel(
+            IMessagePublisher messagePublisher)
+        {
+            this.messagePublisher = messagePublisher;
+        }
+        #endregion
 
+        #region IDialogViewModel implementation 
+        public event EventHandler Close;
+
+        public event EventHandler<ImportPrivateKeyDialogResult> SetDialogResultAndClose;
+
+        public ImportPrivateKeyDialogResult DialogResult { get; private set; }
+        #endregion
+
+        #region Private Methods 
         private void Ok()
         {
             if (!this.OkEnabled) return;
 
             this.messagePublisher.Publish(new ImportPrivateKeyMessage(this.WifStrings.ToList()));
-            this.TryClose();
+
+            this.Close(this, EventArgs.Empty);
         }
+        #endregion
     }
 }

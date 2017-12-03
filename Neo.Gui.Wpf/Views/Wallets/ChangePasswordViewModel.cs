@@ -1,16 +1,16 @@
 ﻿using System;
-using System.Windows;
-using System.Windows.Input;
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Globalization;
+using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Wallets
 {
     public class ChangePasswordViewModel : ViewModelBase, IDialogViewModel<ChangePasswordDialogResult>
     {
+        private readonly INotificationHelper notificationHelper;
         private readonly IWalletController walletController;
 
         private string oldPassword;
@@ -18,22 +18,26 @@ namespace Neo.Gui.Wpf.Views.Wallets
         private string reEnteredNewPassword;
 
         public ChangePasswordViewModel(
+            INotificationHelper notificationHelper,
             IWalletController walletController)
         {
+            this.notificationHelper = notificationHelper;
             this.walletController = walletController;
         }
 
         public bool ChangePasswordEnabled =>
             !string.IsNullOrEmpty(this.oldPassword) &&
             !string.IsNullOrEmpty(this.newPassword) &&
-                this.newPassword == this.reEnteredNewPassword;
+            this.newPassword == this.reEnteredNewPassword;
 
-        public ICommand ChangePasswordCommand => new RelayCommand(this.ChangePassword);
+        public RelayCommand ChangePasswordCommand => new RelayCommand(this.ChangePassword);
 
-        public ICommand CancelCommand => new RelayCommand(this.Cancel);
+        public RelayCommand CancelCommand => new RelayCommand(this.Cancel);
 
         #region IDialogViewModel implementation 
-        public event EventHandler<ChangePasswordDialogResult> SetDialogResult;
+        public event EventHandler Close;
+
+        public event EventHandler<ChangePasswordDialogResult> SetDialogResultAndClose;
 
         public ChangePasswordDialogResult DialogResult { get; private set; }
         #endregion
@@ -67,7 +71,7 @@ namespace Neo.Gui.Wpf.Views.Wallets
             // Check new password is not the same as old password
             if (this.oldPassword == this.newPassword)
             {
-                MessageBox.Show("New password must be different to old password!");
+                this.notificationHelper.ShowWarningNotification("New password must be different to old password!");
                 return;
             }
 
@@ -75,19 +79,19 @@ namespace Neo.Gui.Wpf.Views.Wallets
 
             if (changedSuccessfully)
             {
-                MessageBox.Show(Strings.ChangePasswordSuccessful);
+                this.notificationHelper.ShowSuccessNotification(Strings.ChangePasswordSuccessful);
 
-                this.TryClose();
+                this.Close(this, EventArgs.Empty);
             }
             else
             {
-                MessageBox.Show(Strings.PasswordIncorrect);
+                this.notificationHelper.ShowErrorNotification(Strings.PasswordIncorrect);
             }
         }
 
         private void Cancel()
         {
-            this.TryClose();
+            this.Close(this, EventArgs.Empty);
         }
     }
 }

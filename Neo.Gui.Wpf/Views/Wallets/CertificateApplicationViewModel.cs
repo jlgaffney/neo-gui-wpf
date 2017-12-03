@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Windows.Input;
 using CERTENROLLLib;
 using Microsoft.Win32;
 using Neo.Cryptography.ECC;
@@ -120,12 +119,14 @@ namespace Neo.Gui.Wpf.Views.Wallets
             !string.IsNullOrEmpty(this.S) &&
             !string.IsNullOrEmpty(this.SerialNumber);
 
-        public ICommand RequestCertificateCommand => new RelayCommand(this.RequestCertificate);
+        public RelayCommand RequestCertificateCommand => new RelayCommand(this.RequestCertificate);
 
-        public ICommand CancelCommand => new RelayCommand(this.TryClose);
+        public RelayCommand CancelCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
 
         #region IDialogViewModel implementation 
-        public event EventHandler<CertificateApplicationDialogResult> SetDialogResult;
+        public event EventHandler Close;
+
+        public event EventHandler<CertificateApplicationDialogResult> SetDialogResultAndClose;
 
         public CertificateApplicationDialogResult DialogResult { get; private set; }
         #endregion
@@ -176,9 +177,10 @@ namespace Neo.Gui.Wpf.Views.Wallets
             request.Subject.Encode($"CN={this.CN},C={this.C},S={this.S},SERIALNUMBER={this.SerialNumber}");
             request.Encode();
 
+            // TODO Issue #78 [AboimPinto]: ViewModels should not access IO functions.
             File.WriteAllText(saveFileDialog.FileName, $"-----BEGIN NEW CERTIFICATE REQUEST-----\r\n{request.RawData}-----END NEW CERTIFICATE REQUEST-----\r\n");
 
-            this.TryClose();
+            this.Close(this, EventArgs.Empty);
         }
     }
 }

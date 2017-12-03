@@ -1,6 +1,8 @@
-﻿using System.Linq;
-using System.Windows.Input;
+﻿using System;
+using System.Linq;
 using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.MVVM;
@@ -12,7 +14,8 @@ namespace Neo.Gui.Wpf.Views.Wallets
         ViewModelBase,
         ILoadable,
         IUnloadable,
-        IMessageHandler<WalletStatusMessage>
+        IMessageHandler<WalletStatusMessage>,
+        IDialogViewModel<ClaimDialogResult>
     {
         private readonly IWalletController walletController;
         private readonly IMessagePublisher messagePublisher;
@@ -22,6 +25,8 @@ namespace Neo.Gui.Wpf.Views.Wallets
         private Fixed8 unavailableGas = Fixed8.Zero;
 
         private bool claimEnabled;
+
+
 
         public ClaimViewModel(
             IWalletController walletController,
@@ -76,10 +81,18 @@ namespace Neo.Gui.Wpf.Views.Wallets
 
         #endregion Public Properties
 
-        public ICommand ClaimCommand => new RelayCommand(this.Claim);
+        public RelayCommand ClaimCommand => new RelayCommand(this.Claim);
+
+        #region IDialogViewModel Implementation 
+        public event EventHandler Close;
+
+        public event EventHandler<ClaimDialogResult> SetDialogResultAndClose;
+
+        public ClaimDialogResult DialogResult { get; set; }
+        #endregion
 
         #region ILoadable implementation
-        public void OnLoad()
+        public void OnLoad(params object[] parameters)
         {
             this.messageSubscriber.Subscribe(this);
 
@@ -119,7 +132,8 @@ namespace Neo.Gui.Wpf.Views.Wallets
             var transaction = this.walletController.MakeClaimTransaction(claims);
 
             this.messagePublisher.Publish(new SignTransactionAndShowInformationMessage(transaction));
-            this.TryClose();
+
+            this.Close(this, EventArgs.Empty);
         }
 
         #region IMessageHandler implementation

@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Input;
 using Neo.Core;
 using Neo.Cryptography.ECC;
 using Neo.Gui.Base.Controllers;
@@ -12,10 +11,12 @@ using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.Globalization;
 using Neo.Gui.Wpf.MVVM;
 using Neo.Wallets;
+using Neo.Gui.Base.Dialogs.Results.Wallets;
+using Neo.Gui.Base.Dialogs.Interfaces;
 
 namespace Neo.Gui.Wpf.Views.Accounts
 {
-    public class CreateMultiSigContractViewModel : ViewModelBase
+    public class CreateMultiSigContractViewModel : ViewModelBase, IDialogViewModel<CreateMultiSigContractDialogResult>
     {
         private readonly IWalletController walletController;
         private readonly IMessagePublisher messagePublisher;
@@ -27,7 +28,7 @@ namespace Neo.Gui.Wpf.Views.Accounts
         private string selectedPublicKey;
 
         private string newPublicKey;
-        
+
         public CreateMultiSigContractViewModel(
             IWalletController walletController,
             IMessagePublisher messagePublisher,
@@ -39,6 +40,14 @@ namespace Neo.Gui.Wpf.Views.Accounts
 
             this.PublicKeys = new ObservableCollection<string>();
         }
+
+        #region DialogViewModel implementation 
+        public event EventHandler Close;
+
+        public event EventHandler<CreateMultiSigContractDialogResult> SetDialogResultAndClose;
+
+        public CreateMultiSigContractDialogResult DialogResult { get; private set; }
+        #endregion
 
         public int MinimumSignatureNumber
         {
@@ -110,14 +119,13 @@ namespace Neo.Gui.Wpf.Views.Accounts
 
         public bool ConfirmEnabled => this.MinimumSignatureNumber > 0;
 
-        public ICommand AddPublicKeyCommand => new RelayCommand(this.AddPublicKey);
+        public RelayCommand AddPublicKeyCommand => new RelayCommand(this.AddPublicKey);
 
-        public ICommand RemovePublicKeyCommand => new RelayCommand(this.RemovePublicKey);
+        public RelayCommand RemovePublicKeyCommand => new RelayCommand(this.RemovePublicKey);
 
-        public ICommand ConfirmCommand => new RelayCommand(this.Confirm);
+        public RelayCommand ConfirmCommand => new RelayCommand(this.Confirm);
 
-        public ICommand CancelCommand => new RelayCommand(this.TryClose);
-
+        public RelayCommand CancelCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
 
         private void Confirm()
         {
@@ -130,7 +138,8 @@ namespace Neo.Gui.Wpf.Views.Accounts
             }
 
             this.messagePublisher.Publish(new AddContractMessage(contract));
-            this.TryClose();
+
+            this.Close(this, EventArgs.Empty);
         }
 
         private async void AddPublicKey()

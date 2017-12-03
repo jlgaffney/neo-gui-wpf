@@ -1,6 +1,9 @@
-﻿namespace Neo.Gui.Wpf.Views.Accounts
+﻿using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.Results.Wallets;
+
+namespace Neo.Gui.Wpf.Views.Accounts
 {
-    public partial class ImportCustomContractView
+    public partial class ImportCustomContractView : IDialog<ImportCustomContractDialogResult>
     {
         public ImportCustomContractView()
         {
