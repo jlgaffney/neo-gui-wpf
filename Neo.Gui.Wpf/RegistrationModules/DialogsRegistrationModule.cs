@@ -1,10 +1,16 @@
 ﻿using Autofac;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
+using Neo.Gui.Base.Dialogs.Results.Contracts;
+using Neo.Gui.Base.Dialogs.Results.Settings;
+using Neo.Gui.Base.Dialogs.Results.Voting;
+using Neo.Gui.Base.Dialogs.Results.Wallets;
+using Neo.Gui.Wpf.Views.Accounts;
 using Neo.Gui.Wpf.Views.Assets;
 using Neo.Gui.Wpf.Views.Contracts;
 using Neo.Gui.Wpf.Views.Settings;
 using Neo.Gui.Wpf.Views.Transactions;
+using Neo.Gui.Wpf.Views.Updater;
 using Neo.Gui.Wpf.Views.Voting;
 using Neo.Gui.Wpf.Views.Wallets;
 
@@ -39,6 +45,9 @@ namespace Neo.Gui.Wpf.RegistrationModules
             builder
                 .RegisterType<DeployContractView>()
                 .As<IDialog<DeployContractDialogResult>>();
+            builder
+                .RegisterType<InvokeContractView>()
+                .As<IDialog<InvokeContractDialogResult>>();
         }
 
         private static void RegisterSettingsDialogs(ContainerBuilder builder)
@@ -46,6 +55,9 @@ namespace Neo.Gui.Wpf.RegistrationModules
             builder
                 .RegisterType<SettingsView>()
                 .As<IDialog<SettingsDialogResult>>();
+            builder
+                .RegisterType<UpdateView>()
+                .As<IDialog<UpdateDialogResult>>();
         }
 
         private static void RegisterTransactionDialogs(ContainerBuilder builder)
@@ -60,6 +72,9 @@ namespace Neo.Gui.Wpf.RegistrationModules
             builder
                 .RegisterType<ElectionView>()
                 .As<IDialog<ElectionDialogResult>>();
+            builder
+                .RegisterType<VotingView>()
+                .As<IDialog<VotingDialogResult>>();
         }
 
         private static void RegisterWalletDialogs(ContainerBuilder builder)
@@ -71,8 +86,26 @@ namespace Neo.Gui.Wpf.RegistrationModules
                 .RegisterType<ChangePasswordView>()
                 .As<IDialog<ChangePasswordDialogResult>>();
             builder
+                .RegisterType<ClaimView>()
+                .As<IDialog<ClaimDialogResult>>();
+            builder
+                .RegisterType<CreateLockAccountView>()
+                .As<IDialog<CreateLockAccountDialogResult>>();
+            builder
+                .RegisterType<CreateMultiSigContractView>()
+                .As<IDialog<CreateMultiSigContractDialogResult>>();
+            builder
                 .RegisterType<CreateWalletView>()
                 .As<IDialog<CreateWalletDialogResult>>();
+            builder
+                .RegisterType<ImportCertificateView>()
+                .As<IDialog<ImportCertificateDialogResult>>();
+            builder
+                .RegisterType<ImportCustomContractView>()
+                .As<IDialog<ImportCustomContractDialogResult>>();
+            builder
+                .RegisterType<ImportPrivateKeyView>()
+                .As<IDialog<ImportPrivateKeyDialogResult>>();
             builder
                 .RegisterType<OpenWalletView>()
                 .As<IDialog<OpenWalletDialogResult>>();
@@ -83,8 +116,17 @@ namespace Neo.Gui.Wpf.RegistrationModules
                 .RegisterType<TransferView>()
                 .As<IDialog<TransferDialogResult>>();
             builder
+                .RegisterType<TradeVerificationView>()
+                .As<IDialog<TradeVerificationDialogResult>>();
+            builder
                 .RegisterType<TradeView>()
                 .As<IDialog<TradeDialogResult>>();
+            builder
+                .RegisterType<ViewContractView>()
+                .As<IDialog<ViewContractDialogResult>>();
+            builder
+                .RegisterType<ViewPrivateKeyView>()
+                .As<IDialog<ViewPrivateKeyDialogResult>>();
         }
     }
 }

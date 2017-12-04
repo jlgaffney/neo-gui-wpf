@@ -145,7 +145,7 @@ namespace Neo.Gui.Wpf.Views.Home
         #endregion
 
         #region ILoadable implementation
-        public void OnLoad()
+        public void OnLoad(params object[] parameters)
         {
             this.messageSubscriber.Subscribe(this);
         }

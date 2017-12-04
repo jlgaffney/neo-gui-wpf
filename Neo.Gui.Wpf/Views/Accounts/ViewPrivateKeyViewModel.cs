@@ -1,20 +1,52 @@
-﻿using System.Windows.Input;
+﻿using System;
+using System.Linq;
+using System.Windows.Input;
+using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.Results.Wallets;
+using Neo.Gui.Base.MVVM;
 using Neo.Gui.Wpf.MVVM;
 using Neo.Wallets;
 
 namespace Neo.Gui.Wpf.Views.Accounts
 {
-    public class ViewPrivateKeyViewModel : ViewModelBase
+    public class ViewPrivateKeyViewModel : ViewModelBase, IDialogViewModel<ViewPrivateKeyDialogResult>, ILoadable
     {
+        #region Public Properties 
         public string Address { get; private set; }
+
         public string PublicKeyHex { get; private set; }
 
         public string PrivateKeyHex { get; private set; }
+
         public string PrivateKeyWif { get; private set; }
 
-        public ICommand CloseCommand => new RelayCommand(this.TryClose);
+        public RelayCommand CloseCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
+        #endregion
 
-        public void SetKeyInfo(KeyPair key, UInt160 scriptHash)
+        #region IDialogViewModel implementation 
+        public event EventHandler Close;
+
+        public event EventHandler<ViewPrivateKeyDialogResult> SetDialogResultAndClose;
+
+        public ViewPrivateKeyDialogResult DialogResult { get; private set; }
+        #endregion
+
+        #region ILoadable Methods 
+        public void OnLoad(params object[] parameters)
+        {
+            if (!parameters.Any())
+            {
+                return;
+            }
+
+            var viewPrivateKeyLoadParameters = (parameters[0] as LoadParameters<ViewPrivateKeyLoadParameters>).Parameters;
+
+            this.SetKeyInfo(viewPrivateKeyLoadParameters.Key, viewPrivateKeyLoadParameters.ScriptHash);
+        }
+        #endregion
+
+        #region Private Methods 
+        private void SetKeyInfo(KeyPair key, UInt160 scriptHash)
         {
             this.Address = Wallet.ToAddress(scriptHash);
             this.PublicKeyHex = key.PublicKey.EncodePoint(true).ToHexString();
@@ -30,5 +62,8 @@ namespace Neo.Gui.Wpf.Views.Accounts
             NotifyPropertyChanged(nameof(this.PrivateKeyHex));
             NotifyPropertyChanged(nameof(this.PrivateKeyWif));
         }
+
+        
+        #endregion
     }
 }

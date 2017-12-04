@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Numerics;
 using System.Text;
-using System.Windows.Input;
 using Neo.Core;
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Data;
@@ -41,14 +40,16 @@ namespace Neo.Gui.Wpf.Views.Wallets
 
         public bool OkEnabled => this.Items.Count > 0;
 
-        public ICommand RemarkCommand => new RelayCommand(this.Remark);
+        public RelayCommand RemarkCommand => new RelayCommand(this.Remark);
 
-        public ICommand OkCommand => new RelayCommand(this.Ok);
+        public RelayCommand OkCommand => new RelayCommand(this.Ok);
 
-        public ICommand CancelCommand => new RelayCommand(this.TryClose);
-        
+        public RelayCommand CancelCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
+
         #region IDialogViewModel implementation 
-        public event EventHandler<TransferDialogResult> SetDialogResult;
+        public event EventHandler Close;
+
+        public event EventHandler<TransferDialogResult> SetDialogResultAndClose;
 
         public TransferDialogResult DialogResult { get; private set; }
         #endregion
@@ -78,7 +79,7 @@ namespace Neo.Gui.Wpf.Views.Wallets
                 this.messagePublisher.Publish(new SignTransactionAndShowInformationMessage(transaction));
             }
 
-            this.TryClose();
+            this.Close(this, EventArgs.Empty);
         }
 
         public void UpdateOkButtonEnabled()

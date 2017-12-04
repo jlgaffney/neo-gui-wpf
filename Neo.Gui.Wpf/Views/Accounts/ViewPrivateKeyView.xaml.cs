@@ -1,16 +1,13 @@
-﻿using Neo.Wallets;
+﻿using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.Results.Wallets;
 
 namespace Neo.Gui.Wpf.Views.Accounts
 {
-    public partial class ViewPrivateKeyView
+    public partial class ViewPrivateKeyView : IDialog<ViewPrivateKeyDialogResult>
     {
-        public ViewPrivateKeyView(KeyPair key, UInt160 scriptHash)
+        public ViewPrivateKeyView()
         {
             InitializeComponent();
-
-            var viewModel = this.DataContext as ViewPrivateKeyViewModel;
-
-            viewModel?.SetKeyInfo(key, scriptHash);
         }
     }
 }

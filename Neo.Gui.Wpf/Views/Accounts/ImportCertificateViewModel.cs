@@ -1,14 +1,16 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
-using System.Windows.Input;
+using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Accounts
 {
-    public class ImportCertificateViewModel : ViewModelBase
+    public class ImportCertificateViewModel : ViewModelBase, IDialogViewModel<ImportCertificateDialogResult>
     {
         private readonly IMessagePublisher messagePublisher;
 
@@ -49,15 +51,23 @@ namespace Neo.Gui.Wpf.Views.Accounts
         
         public bool OkEnabled => this.SelectedCertificate != null;
 
-        public ICommand OkCommand => new RelayCommand(this.Ok);
+        public RelayCommand OkCommand => new RelayCommand(this.Ok);
 
+        #region IDialogViewModel implementation 
+        public event EventHandler Close;
+
+        public event EventHandler<ImportCertificateDialogResult> SetDialogResultAndClose;
+
+        public ImportCertificateDialogResult DialogResult { get; private set; }
+        #endregion
 
         private void Ok()
         {
             if (this.SelectedCertificate == null) return;
 
             this.messagePublisher.Publish(new ImportCertificateMessage(this.SelectedCertificate));
-            this.TryClose();
+
+            this.Close(this, EventArgs.Empty);
         }
     }
 }

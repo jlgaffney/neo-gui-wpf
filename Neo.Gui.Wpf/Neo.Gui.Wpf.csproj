@@ -302,6 +302,8 @@
       <DependentUpon>CreateLockAccountView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Accounts\ImportCertificateViewModel.cs" />
+    <Compile Include="Views\Accounts\ViewContractLoadParameters.cs" />
+    <Compile Include="Views\Accounts\ViewPrivateKeyLoadParameters.cs" />
     <Compile Include="Views\Assets\AssetDistributionView.xaml.cs">
       <DependentUpon>AssetDistributionView.xaml</DependentUpon>
     </Compile>
@@ -311,6 +313,7 @@
     </Compile>
     <Compile Include="Helpers\ThemeHelper.cs" />
     <Compile Include="RegistrationModules\DialogsRegistrationModule.cs" />
+    <Compile Include="Views\Contracts\InvokeContractLoadParameters.cs" />
     <Compile Include="Views\Home\TransactionsView.xaml.cs">
       <DependentUpon>TransactionsView.xaml</DependentUpon>
     </Compile>
@@ -371,7 +374,9 @@
     <Compile Include="Views\Transactions\SigningViewModel.cs" />
     <Compile Include="RegistrationModules\ViewModelsRegistrationModule.cs" />
     <Compile Include="Views\Voting\ElectionViewModel.cs" />
+    <Compile Include="Views\Voting\VotingLoadParameters.cs" />
     <Compile Include="Views\Voting\VotingViewModel.cs" />
+    <Compile Include="Views\Wallets\TradeVerificationLoadParameters.cs" />
     <Compile Include="Views\Wallets\TradeView.xaml.cs">
       <DependentUpon>TradeView.xaml</DependentUpon>
     </Compile>

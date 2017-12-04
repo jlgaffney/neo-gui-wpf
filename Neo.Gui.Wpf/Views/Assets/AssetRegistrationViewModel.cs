@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
-using System.Windows.Input;
 using Neo.Core;
 using Neo.Cryptography.ECC;
 using Neo.Gui.Base.Controllers;
@@ -209,10 +208,12 @@ namespace Neo.Gui.Wpf.Views.Assets
             // Check if form is valid
             !this.formValid;
 
-        public ICommand OkCommand => new RelayCommand(this.Ok);
-        
+        public RelayCommand OkCommand => new RelayCommand(this.Ok);
+
         #region IDialogViewModel implementation 
-        public event EventHandler<AssetRegistrationDialogResult> SetDialogResult;
+        public event EventHandler Close;
+
+        public event EventHandler<AssetRegistrationDialogResult> SetDialogResultAndClose;
 
         public AssetRegistrationDialogResult DialogResult { get; private set; }
         #endregion
@@ -274,7 +275,7 @@ namespace Neo.Gui.Wpf.Views.Assets
             if (transaction == null) return;
 
             this.messagePublisher.Publish(new InvokeContractMessage(transaction));
-            this.TryClose();
+            this.Close(this, EventArgs.Empty);
         }
     }
 }

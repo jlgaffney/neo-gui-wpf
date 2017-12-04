@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows.Input;
 using Neo.Core;
 using Neo.Cryptography.ECC;
 using Neo.Gui.Base.Controllers;
@@ -56,10 +55,12 @@ namespace Neo.Gui.Wpf.Views.Voting
 
         public bool OkEnabled => this.SelectedBookKeeper != null;
         
-        public ICommand OkCommand => new RelayCommand(this.Ok);
+        public RelayCommand OkCommand => new RelayCommand(this.Ok);
         
         #region IDialogViewModel implementation 
-        public event EventHandler<ElectionDialogResult> SetDialogResult;
+        public event EventHandler Close;
+
+        public event EventHandler<ElectionDialogResult> SetDialogResultAndClose;
 
         public ElectionDialogResult DialogResult { get; private set; }
         #endregion
@@ -73,7 +74,7 @@ namespace Neo.Gui.Wpf.Views.Voting
             if (transaction == null) return;
 
             this.messagePublisher.Publish(new InvokeContractMessage(transaction));
-            this.TryClose();
+            this.Close(this, EventArgs.Empty);
         }
 
         private InvocationTransaction GenerateTransaction()

@@ -1,22 +1,17 @@
 ﻿using System;
-using Neo.Core;
+using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.Results.Contracts;
 
 namespace Neo.Gui.Wpf.Views.Contracts
 {
     /// <summary>
     /// Interaction logic for InvokeContractView.xaml
     /// </summary>
-    public partial class InvokeContractView
+    public partial class InvokeContractView : IDialog<InvokeContractDialogResult>
     {
-        public InvokeContractView(InvocationTransaction baseTransaction)
+        public InvokeContractView()
         {
             InitializeComponent();
-
-            var viewModel = this.DataContext as InvokeContractViewModel;
-
-            if (viewModel == null) return;
-
-            viewModel.SetBaseTransaction(baseTransaction);
 
             this.SetSelectedTab(1);
         }

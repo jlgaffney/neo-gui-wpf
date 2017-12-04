@@ -15,6 +15,9 @@ using Neo.Gui.Wpf.Views.Development;
 using Neo.Gui.Wpf.Views.Updater;
 using Neo.Gui.Wpf.Views.Wallets;
 using GuiSettings = Neo.Gui.Wpf.Properties.Settings;
+using Neo.Gui.Base.Dialogs.Results.Contracts;
+using Neo.Gui.Base.Dialogs.Results.Settings;
+using Neo.Gui.Base.Dialogs.Results.Wallets;
 
 namespace Neo.Gui.Wpf.Views.Home
 {
@@ -244,11 +247,11 @@ namespace Neo.Gui.Wpf.Views.Home
 
             if (this.walletController.WalletNeedUpgrade(result.WalletPath))
             {
-                var migrationApproved = this.dialogHelper.ShowDialog<YesOrNoDialogResult>("ApproveWalletMigrationDialog");
+                //var migrationApproved = this.dialogHelper.ShowDialog<YesOrNoDialogResult>("ApproveWalletMigrationDialog");
 
-                if (!migrationApproved.Yes) return;
+                //if (!migrationApproved.Yes) return;
 
-                this.walletController.UpgradeWallet(result.WalletPath);
+                //this.walletController.UpgradeWallet(result.WalletPath);
             }
             
             this.walletController.OpenWallet(result.WalletPath, result.Password, result.OpenInRepairMode);
@@ -285,7 +288,7 @@ namespace Neo.Gui.Wpf.Views.Home
 
         private void Exit()
         {
-            this.TryClose();
+            this.messagePublisher.Publish(new ExitAppMessage());
         }
 
         private void Transfer()
@@ -303,10 +306,9 @@ namespace Neo.Gui.Wpf.Views.Home
             this.dialogHelper.ShowDialog<SigningDialogResult>();
         }
 
-        private static void Claim()
+        private void Claim()
         {
-            var view = new ClaimView();
-            view.Show();
+            this.dialogHelper.ShowDialog<ClaimDialogResult>();
         }
 
         private void RequestCertificate()
@@ -362,14 +364,13 @@ namespace Neo.Gui.Wpf.Views.Home
 
         #endregion Main Menu Command Methods
         
-        private static void ShowUpdateDialog()
+        private void ShowUpdateDialog()
         {
-            var dialog = new UpdateView();
-            dialog.ShowDialog();
+            this.dialogHelper.ShowDialog<UpdateDialogResult>();
         }
         
         #region ILoadable Implementation 
-        public void OnLoad()
+        public void OnLoad(params object[] parameters)
         {
             this.messageSubscriber.Subscribe(this);
         }
@@ -390,11 +391,10 @@ namespace Neo.Gui.Wpf.Views.Home
         #region IMessageHandler implementation 
         public void HandleMessage(UpdateApplicationMessage message)
         {
-            // Close window
-            this.TryClose();
-
             // Start update
             this.processHelper.Run(message.UpdateScriptPath);
+
+            this.messagePublisher.Publish(new ExitAppMessage());
         }
 
         public void HandleMessage(CurrentWalletHasChangedMessage message)
@@ -404,8 +404,8 @@ namespace Neo.Gui.Wpf.Views.Home
 
         public void HandleMessage(InvokeContractMessage message)
         {
-            var invokeContractView = new InvokeContractView(message.Transaction);
-            invokeContractView.ShowDialog();
+            this.dialogHelper.ShowDialog<InvokeContractDialogResult, InvokeContractLoadParameters>(
+                new LoadParameters<InvokeContractLoadParameters>(new InvokeContractLoadParameters(message.Transaction)));
         }
 
         public void HandleMessage(WalletStatusMessage message)
