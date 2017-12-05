@@ -36,6 +36,11 @@ namespace Neo.Gui.Wpf.RegistrationModules
                 .As<IVersionHelper>()
                 .SingleInstance();
 
+            builder
+                .RegisterType<SettingsHelper>()
+                .As<ISettingsHelper>()
+                .SingleInstance();
+
             base.Load(builder);
         }
     }
