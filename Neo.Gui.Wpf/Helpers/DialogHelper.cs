@@ -24,24 +24,22 @@ namespace Neo.Gui.Wpf.Helpers
             if (view == null) return dialogResult;
 
             var viewModel = view.DataContext as IDialogViewModel<TDialogResult>;
-
-            // TODO [AboimPinto]: Don't agree with this return. Is there is no IDialog<T> exported, in developement this should be catched. This should never happen in prodution or there was enough tests.
-            // Should throw an exception
-            if (viewModel == null) return dialogResult;
-
-            viewModel.Close += (sender, e) =>
+            if (viewModel != null)
             {
-                var viewWindow = view as Window;
-                viewWindow.Close();
-            };
+                viewModel.Close += (sender, e) =>
+                {
+                    var viewWindow = view as Window;
+                    viewWindow.Close();
+                };
 
-            viewModel.SetDialogResultAndClose += (sender, e) =>
-            {
-                dialogResult = e;
+                viewModel.SetDialogResultAndClose += (sender, e) =>
+                {
+                    dialogResult = e;
 
-                var viewWindow = view as Window;
-                viewWindow.Close();
-            };
+                    var viewWindow = view as Window;
+                    viewWindow.Close();
+                };
+            }
 
             view.ShowDialog();
 
@@ -64,24 +62,23 @@ namespace Neo.Gui.Wpf.Helpers
             }
 
             var viewModel = view.DataContext as IDialogViewModel<TDialogResult>;
-
-            // TODO [AboimPinto]: Don't agree with this return. Is there is no IDialog<T> exported, in developement this should be catched. This should never happen in prodution or there was enough tests.
-            // Should throw an exception
-            if (viewModel == null) return dialogResult;
-
-            viewModel.Close += (sender, e) =>
+            if (viewModel != null)
             {
-                var viewWindow = view as Window;
-                viewWindow.Close();
-            };
 
-            viewModel.SetDialogResultAndClose += (sender, e) =>
-            {
-                dialogResult = e;
+                viewModel.Close += (sender, e) =>
+                {
+                    var viewWindow = view as Window;
+                    viewWindow.Close();
+                };
 
-                var viewWindow = view as Window;
-                viewWindow.Close();
-            };
+                viewModel.SetDialogResultAndClose += (sender, e) =>
+                {
+                    dialogResult = e;
+
+                    var viewWindow = view as Window;
+                    viewWindow.Close();
+                };
+            }
 
             view.ShowDialog();
 
