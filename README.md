@@ -14,7 +14,7 @@
 ## What?
 
 - Full node wallet for interacting with the [NEO](http://neo.org/) blockchain.
-- Port of official [NEO GUI](https://github.com/neo-project/neo-gui) to WPF (Windows Presentation Framework) using MVVM pattern (Model-View-ViewModel).
+- Port of official [NEO GUI](https://github.com/neo-project/neo-gui) to WPF (Windows Presentation Foundation) using MVVM pattern (Model-View-ViewModel).
 - **Note** - Application is still being tested, please only use on testnet or private chains
 
 ## Project Setup
