@@ -140,6 +140,8 @@ namespace Neo.Gui.Wpf
             autoFacContainerBuilder.RegisterModule<MessagingRegistrationModule>();
             autoFacContainerBuilder.RegisterModule<ControllersRegistrationModule>();
             autoFacContainerBuilder.RegisterModule<HelpersRegistrationModule>();
+            autoFacContainerBuilder.RegisterModule<ManagersRegistrationModule>();
+            autoFacContainerBuilder.RegisterModule<ServicesRegistrationModule>();
             autoFacContainerBuilder.RegisterModule<DialogsRegistrationModule>();
 
             var container = autoFacContainerBuilder.Build();

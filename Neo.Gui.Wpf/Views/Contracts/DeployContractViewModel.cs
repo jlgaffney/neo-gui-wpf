@@ -5,6 +5,7 @@ using Microsoft.Win32;
 using Neo.Core;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
+using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Wpf.MVVM;
@@ -15,6 +16,7 @@ namespace Neo.Gui.Wpf.Views.Contracts
 {
     public class DeployContractViewModel : ViewModelBase, IDialogViewModel<DeployContractDialogResult>
     {
+        private readonly IFileManager fileManager;
         private readonly IMessagePublisher messagePublisher;
 
         private string name;
@@ -29,8 +31,10 @@ namespace Neo.Gui.Wpf.Views.Contracts
         private bool needsStorage;
 
         public DeployContractViewModel(
+            IFileManager fileManager,
             IMessagePublisher messagePublisher)
         {
+            this.fileManager = fileManager;
             this.messagePublisher = messagePublisher;
         }
 
@@ -233,7 +237,7 @@ namespace Neo.Gui.Wpf.Views.Contracts
             byte[] loadedBytes;
             try
             {
-                loadedBytes = File.ReadAllBytes(openFileDialog.FileName);
+                loadedBytes = this.fileManager.ReadAllBytes(openFileDialog.FileName);
             }
             catch
             {
@@ -241,7 +245,14 @@ namespace Neo.Gui.Wpf.Views.Contracts
                 return;
             }
 
-            this.Code = loadedBytes.ToHexString();
+            var hexCode = string.Empty;
+
+            if (loadedBytes != null)
+            {
+                hexCode = loadedBytes.ToHexString();
+            }
+
+            this.Code = hexCode;
         }
 
         private void Deploy()

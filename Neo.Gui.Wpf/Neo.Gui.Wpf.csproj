@@ -274,6 +274,8 @@
     <Compile Include="Extensions\ColorExtensions.cs" />
     <Compile Include="Implementations\Managers\DialogManager.cs" />
     <Compile Include="Implementations\Helpers\ProcessHelper.cs" />
+    <Compile Include="RegistrationModules\ServicesRegistrationModule.cs" />
+    <Compile Include="RegistrationModules\ManagersRegistrationModule.cs" />
     <Compile Include="RegistrationModules\HelpersRegistrationModule.cs" />
     <Compile Include="Implementations\Services\NotificationService.cs" />
     <Compile Include="Implementations\Services\DispatchService.cs" />

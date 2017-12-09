@@ -20,9 +20,10 @@ namespace Neo.Gui.Wpf.Views.Wallets
         #region Constructor
 
         public OpenWalletViewModel(
+            IFileManager fileManager,
             ISettingsManager settingsManager)
         {
-            if (File.Exists(settingsManager.LastWalletPath))
+            if (fileManager.FileExists(settingsManager.LastWalletPath))
             {
                 this.WalletPath = settingsManager.LastWalletPath;
             }

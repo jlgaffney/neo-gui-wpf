@@ -1,18 +1,21 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using CERTENROLLLib;
 using Microsoft.Win32;
 using Neo.Cryptography.ECC;
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
+using Neo.Gui.Base.Managers;
 using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Wallets
 {
     public class CertificateApplicationViewModel : ViewModelBase, IDialogViewModel<CertificateApplicationDialogResult>
     {
+        private readonly IFileManager fileManager;
         private readonly IWalletController walletController;
 
         private ECPoint selectedPublicKey;
@@ -22,8 +25,10 @@ namespace Neo.Gui.Wpf.Views.Wallets
         private string serialNumber;
 
         public CertificateApplicationViewModel(
+            IFileManager fileManager,
             IWalletController walletController)
         {
+            this.fileManager = fileManager;
             this.walletController = walletController;
 
             this.PublicKeys = this.walletController.GetContracts().Where(p => p.IsStandard).Select(p =>
@@ -177,8 +182,10 @@ namespace Neo.Gui.Wpf.Views.Wallets
             request.Subject.Encode($"CN={this.CN},C={this.C},S={this.S},SERIALNUMBER={this.SerialNumber}");
             request.Encode();
 
-            // TODO Issue #78 [AboimPinto]: ViewModels should not access IO functions.
-            File.WriteAllText(saveFileDialog.FileName, $"-----BEGIN NEW CERTIFICATE REQUEST-----\r\n{request.RawData}-----END NEW CERTIFICATE REQUEST-----\r\n");
+            var certificateText = "-----BEGIN NEW CERTIFICATE REQUEST-----\r\n" + request.RawData + "-----END NEW CERTIFICATE REQUEST-----\r\n";
+            var certificateBytes = Encoding.UTF8.GetBytes(certificateText);
+
+            this.fileManager.WriteAllBytes(saveFileDialog.FileName, certificateBytes);
 
             this.Close(this, EventArgs.Empty);
         }

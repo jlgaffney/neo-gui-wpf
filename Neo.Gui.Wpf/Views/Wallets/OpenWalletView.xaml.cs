@@ -14,11 +14,12 @@ namespace Neo.Gui.Wpf.Views.Wallets
         private readonly OpenWalletViewModel viewModel;
 
         public OpenWalletView(
+            IFileManager fileManager,
             ISettingsManager settingsManager)
         {
             InitializeComponent();
 
-            if (File.Exists(settingsManager.LastWalletPath))
+            if (fileManager.FileExists(settingsManager.LastWalletPath))
             {
                 // Focus in password input if wallet path has been set
                 this.Password.Focus();

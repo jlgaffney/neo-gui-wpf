@@ -16,6 +16,7 @@ using Neo.VM;
 using Neo.Gui.Base.Dialogs.Results.Contracts;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using System;
+using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Contracts
@@ -24,6 +25,7 @@ namespace Neo.Gui.Wpf.Views.Contracts
     {
         private static readonly Fixed8 NetworkFee = Fixed8.FromDecimal(0.001m);
 
+        private readonly IFileManager fileManager;
         private readonly IWalletController walletController;
         private readonly IMessagePublisher messagePublisher;
 
@@ -45,9 +47,11 @@ namespace Neo.Gui.Wpf.Views.Contracts
         private bool invokeEnabled;
 
         public InvokeContractViewModel(
+            IFileManager fileManager,
             IWalletController walletController,
             IMessagePublisher messagePublisher)
         {
+            this.fileManager = fileManager;
             this.walletController = walletController;
             this.messagePublisher = messagePublisher;
         }
@@ -274,9 +278,13 @@ namespace Neo.Gui.Wpf.Views.Contracts
             byte[] script = null;
             try
             {
-                script = File.ReadAllBytes(openFileDialog.FileName);
+                script = this.fileManager.ReadAllBytes(openFileDialog.FileName);
             }
-            catch {  } // Swallow any exceptions
+            catch
+            {
+                // TODO Show error message
+                return;
+            }
         
             var scriptHex = string.Empty;
 
