@@ -1,5 +1,4 @@
-﻿using System.Windows;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using Neo.Gui.Base.Collections;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Helpers.Interfaces;

@@ -6,7 +6,6 @@ using System.Numerics;
 using System.Windows.Input;
 using Neo.Cryptography.ECC;
 using Neo.Gui.Base.Data;
-using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Services;
 using Neo.Gui.Wpf.MVVM;
 using Neo.SmartContract;

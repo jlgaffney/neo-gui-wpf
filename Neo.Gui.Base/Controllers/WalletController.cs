@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Security.Cryptography;
 using System.Timers;
 using Neo.Core;
+using Neo.Cryptography.ECC;
 using Neo.Gui.Base.Certificates;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Extensions;
 using Neo.Gui.Base.Globalization;
-using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.Services;
@@ -19,7 +18,7 @@ using Neo.Network;
 using Neo.SmartContract;
 using Neo.VM;
 using Neo.Wallets;
-using ECPoint = Neo.Cryptography.ECC.ECPoint;
+using CryptographicException = System.Security.Cryptography.CryptographicException;
 
 namespace Neo.Gui.Base.Controllers
 {

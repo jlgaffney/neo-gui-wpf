@@ -14,6 +14,11 @@ namespace Neo.Gui.Wpf.RegistrationModules
                 .SingleInstance();
 
             builder
+                .RegisterType<FileDialogService>()
+                .As<IFileDialogService>()
+                .SingleInstance();
+
+            builder
                 .RegisterType<NotificationService>()
                 .As<INotificationService>()
                 .SingleInstance();

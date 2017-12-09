@@ -12,7 +12,6 @@ using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Wpf.MVVM;
 using Neo.SmartContract;
 using Neo.VM;
-using Neo.Wallets;
 
 namespace Neo.Gui.Wpf.Views.Assets
 {

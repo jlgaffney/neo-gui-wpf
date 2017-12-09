@@ -10,7 +10,6 @@ using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.MVVM;
 using Neo.Gui.Wpf.MVVM;
 using Neo.VM;
-using Neo.Wallets;
 
 namespace Neo.Gui.Wpf.Views.Voting
 {

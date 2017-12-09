@@ -1,13 +1,12 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
-using Microsoft.Win32;
 using Neo.Core;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
+using Neo.Gui.Base.Services;
 using Neo.Gui.Wpf.MVVM;
 using Neo.SmartContract;
 using Neo.VM;
@@ -17,6 +16,7 @@ namespace Neo.Gui.Wpf.Views.Contracts
     public class DeployContractViewModel : ViewModelBase, IDialogViewModel<DeployContractDialogResult>
     {
         private readonly IFileManager fileManager;
+        private readonly IFileDialogService fileDialogService;
         private readonly IMessagePublisher messagePublisher;
 
         private string name;
@@ -32,9 +32,11 @@ namespace Neo.Gui.Wpf.Views.Contracts
 
         public DeployContractViewModel(
             IFileManager fileManager,
+            IFileDialogService fileDialogService,
             IMessagePublisher messagePublisher)
         {
             this.fileManager = fileManager;
+            this.fileDialogService = fileDialogService;
             this.messagePublisher = messagePublisher;
         }
 
@@ -226,18 +228,14 @@ namespace Neo.Gui.Wpf.Views.Contracts
 
         private void Load()
         {
-            var openFileDialog = new OpenFileDialog
-            {
-                DefaultExt = "avm",
-                Filter = "AVM File|*.avm"
-            };
+            var filePath = this.fileDialogService.OpenFileDialog("avm", "AVM File|*.avm");
 
-            if (openFileDialog.ShowDialog() != true) return;
+            if (string.IsNullOrEmpty(filePath)) return;
 
             byte[] loadedBytes;
             try
             {
-                loadedBytes = this.fileManager.ReadAllBytes(openFileDialog.FileName);
+                loadedBytes = this.fileManager.ReadAllBytes(filePath);
             }
             catch
             {
@@ -245,14 +243,14 @@ namespace Neo.Gui.Wpf.Views.Contracts
                 return;
             }
 
-            var hexCode = string.Empty;
+            var hexString = string.Empty;
 
             if (loadedBytes != null)
             {
-                hexCode = loadedBytes.ToHexString();
+                hexString = loadedBytes.ToHexString();
             }
 
-            this.Code = hexCode;
+            this.Code = hexString;
         }
 
         private void Deploy()

@@ -270,6 +270,7 @@
     <Compile Include="Extensions\CollectionExtensions.cs" />
     <Compile Include="Implementations\Managers\ClipboardManager.cs" />
     <Compile Include="Implementations\Managers\SettingsManager.cs" />
+    <Compile Include="Implementations\Services\FileDialogService.cs" />
     <Compile Include="RegistrationModules\ControllersRegistrationModule.cs" />
     <Compile Include="Extensions\ColorExtensions.cs" />
     <Compile Include="Implementations\Managers\DialogManager.cs" />

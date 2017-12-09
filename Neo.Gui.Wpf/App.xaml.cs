@@ -106,7 +106,7 @@ namespace Neo.Gui.Wpf
 
                         this.MainWindow?.Show();
 
-                        if (versionHelper == null || updateIsRequired) return;
+                        if (updateIsRequired) return;
 
                         // Check if there is a newer version
                         var latestVersion = versionHelper.LatestVersion;
