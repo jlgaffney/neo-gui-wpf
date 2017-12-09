@@ -10,5 +10,7 @@ namespace Neo.Gui.Base.Managers
         TDialogResult ShowDialog<TDialogResult>();
 
         TDialogResult ShowDialog<TDialogResult, TLoadParameters>(ILoadParameters<TLoadParameters> parameters);
+
+        MessageDialogResult ShowMessage(string title, string message, MessageDialogType type = MessageDialogType.Ok, MessageDialogResult defaultResult = MessageDialogResult.Ok);
     }
 }

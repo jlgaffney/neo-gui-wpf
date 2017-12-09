@@ -88,8 +88,30 @@ namespace Neo.Gui.Wpf
 
                     if (!Settings.Default.RemoteNodeMode)
                     {
-                        // Local node is being used, install root certificate
-                        if (Settings.Default.InstallCertificate && !RootCertificate.Install()) return;
+                        // Local node is being used
+                        if (Settings.Default.InstallCertificate)
+                        {
+                            // Confirm with user before installing root certificate
+                            if (MessageBox.Show(Strings.InstallCertificateText, Strings.InstallCertificateCaption,
+                                    MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes) !=
+                                MessageBoxResult.Yes)
+                            {
+                                Settings.Default.InstallCertificate = false;
+                                Settings.Default.Save();
+                            }
+                            else
+                            {
+                                // Try install root certificate
+                                var certificateInstalled = RootCertificate.Install();
+
+                                if (!certificateInstalled)
+                                {
+                                    // TODO Modify message to something like "Root certificate could not be installed"
+                                    MessageBox.Show(Strings.InstallCertificateCancel);
+                                    return;
+                                }
+                            }
+                        }
                     }
 
                     this.walletController.Initialize(Settings.Default.CertCachePath);

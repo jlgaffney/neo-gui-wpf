@@ -26,8 +26,6 @@ namespace Neo.Gui.Wpf.Views.Wallets
         public RelayCommand AcceptCommand => new RelayCommand(this.Accept);
 
         public RelayCommand RefuseCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
-
-        public bool TradeAccepted { get; set; }
         #endregion
 
         #region Constructor 
@@ -68,8 +66,11 @@ namespace Neo.Gui.Wpf.Views.Wallets
         #region Private Methods 
         private void Accept()
         {
-            this.TradeAccepted = true;
-            this.SetDialogResultAndClose(this, new TradeVerificationDialogResult(this.TradeAccepted));
+            if (this.SetDialogResultAndClose == null) return;
+
+            var dialogResult = new TradeVerificationDialogResult(true);
+
+            this.SetDialogResultAndClose(this, dialogResult);
         }
 
         private void SetOutputs(IEnumerable<TransactionOutput> outputs)

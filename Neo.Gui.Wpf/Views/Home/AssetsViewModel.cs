@@ -1,5 +1,4 @@
 using System.IO;
-using System.Windows;
 using System.Windows.Input;
 using Neo.Core;
 using Neo.Gui.Base.Collections;
@@ -27,6 +26,7 @@ namespace Neo.Gui.Wpf.Views.Home
         #region Private Fields 
         private static readonly UInt160 RecycleScriptHash = new[] { (byte)OpCode.PUSHT }.ToScriptHash();
 
+        private readonly IDialogManager dialogManager;
         private readonly IProcessHelper processHelper;
         private readonly ISettingsManager settingsManager;
         private readonly IWalletController walletController;
@@ -82,12 +82,14 @@ namespace Neo.Gui.Wpf.Views.Home
 
         #region Constructor 
         public AssetsViewModel(
+            IDialogManager dialogManager,
             IProcessHelper processHelper,
             ISettingsManager settingsManager,
             IWalletController walletController,
             IMessageSubscriber messageSubscriber,
             IMessagePublisher messagePublisher)
         {
+            this.dialogManager = dialogManager;
             this.processHelper = processHelper;
             this.settingsManager = settingsManager;
             this.walletController = walletController;
@@ -116,8 +118,13 @@ namespace Neo.Gui.Wpf.Views.Home
 
             var value = this.walletController.GetAvailable(this.SelectedAsset.State.AssetId);
 
-            if (MessageBox.Show($"{Strings.DeleteAssetConfirmationMessage}\n{string.Join("\n", $"{this.SelectedAsset.State.GetName()}:{value}")}",
-                    Strings.DeleteConfirmation, MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes) return;
+            var result = this.dialogManager.ShowMessage(
+                Strings.DeleteConfirmation,
+                $"{Strings.DeleteAssetConfirmationMessage}\n{string.Join("\n", $"{this.SelectedAsset.State.GetName()}:{value}")}",
+                MessageDialogType.YesNo,
+                MessageDialogResult.No);
+
+            if (result != MessageDialogResult.Yes) return;
 
             var transaction = this.walletController.MakeTransaction(new ContractTransaction
             {

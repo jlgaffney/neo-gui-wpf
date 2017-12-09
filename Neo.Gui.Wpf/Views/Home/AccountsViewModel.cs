@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Windows;
 using System.Windows.Input;
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Data;
@@ -240,8 +239,13 @@ namespace Neo.Gui.Wpf.Views.Home
 
             var accountToDelete = this.SelectedAccount;
 
-            if (MessageBox.Show(Strings.DeleteAddressConfirmationMessage, Strings.DeleteAddressConfirmationCaption,
-                MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes) return;
+            var result = this.dialogManager.ShowMessage(
+                Strings.DeleteAddressConfirmationCaption,
+                Strings.DeleteAddressConfirmationMessage,
+                MessageDialogType.YesNo,
+                MessageDialogResult.No);
+
+            if (result != MessageDialogResult.Yes) return;
 
             this.walletController.DeleteAccount(accountToDelete);
             this.Accounts.Remove(accountToDelete);

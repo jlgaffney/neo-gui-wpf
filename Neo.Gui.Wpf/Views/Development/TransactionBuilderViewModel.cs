@@ -2,11 +2,11 @@
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Windows;
 using System.Windows.Input;
 using Neo.Core;
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Globalization;
+using Neo.Gui.Base.Managers;
 using Neo.Gui.Wpf.MVVM;
 using Neo.Gui.Wpf.Views.Transactions;
 using Neo.SmartContract;
@@ -17,13 +17,17 @@ namespace Neo.Gui.Wpf.Views.Development
 {
     public class TransactionBuilderViewModel : ViewModelBase
     {
+        private readonly IDialogManager dialogManager;
         private readonly IWalletController walletController;
 
         private TransactionType selectedTransactionType;
         private TransactionWrapper transactionWrapper;
 
-        public TransactionBuilderViewModel(IWalletController walletController)
+        public TransactionBuilderViewModel(
+            IDialogManager dialogManager,
+            IWalletController walletController)
         {
+            this.dialogManager = dialogManager;
             this.walletController = walletController;
         }
 
@@ -153,7 +157,7 @@ namespace Neo.Gui.Wpf.Views.Development
             var transaction = this.walletController.MakeTransaction(wrapper.Unwrap());
             if (transaction == null)
             {
-                MessageBox.Show(Strings.InsufficientFunds);
+                this.dialogManager.ShowMessage(string.Empty, Strings.InsufficientFunds);
             }
             else
             {

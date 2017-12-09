@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using MahApps.Metro.Controls.Dialogs;
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
@@ -16,6 +15,7 @@ namespace Neo.Gui.Wpf.Views.Settings
 {
     public class SettingsViewModel : ViewModelBase, IDialogViewModel<SettingsDialogResult>
     {
+        private readonly IDialogManager dialogManager;
         private readonly IWalletController walletController;
         private readonly IProcessHelper processHelper;
         private readonly ISettingsManager settingsManager;
@@ -38,11 +38,13 @@ namespace Neo.Gui.Wpf.Views.Settings
 
 
         public SettingsViewModel(
+            IDialogManager dialogManager,
             IWalletController walletController,
             IProcessHelper processHelper,
             ISettingsManager settingsManager,
             IThemeManager themeManager)
         {
+            this.dialogManager = dialogManager;
             this.walletController = walletController;
             this.processHelper = processHelper;
             this.settingsManager = settingsManager;
@@ -317,13 +319,13 @@ namespace Neo.Gui.Wpf.Views.Settings
             NotifyPropertyChanged(nameof(this.NEP5SettingsChanged));
         }
 
-        private async void ApplyAppearanceSettings()
+        private  void ApplyAppearanceSettings()
         {
-            var restartApprovedResult = await DialogCoordinator.Instance.ShowMessageAsync(this,
-                "App will need to be restarted", "This application needs to be restarted for the new theme settings to be applied",
-                    MessageDialogStyle.AffirmativeAndNegative);
+            var restartApprovedResult = this.dialogManager.ShowMessage("App will need to be restarted",
+                "This application needs to be restarted for the new theme settings to be applied",
+                    MessageDialogType.YesNo, MessageDialogResult.No);
 
-            if (restartApprovedResult != MessageDialogResult.Affirmative) return;
+            if (restartApprovedResult != MessageDialogResult.Yes) return;
 
             // Application restart approved
 

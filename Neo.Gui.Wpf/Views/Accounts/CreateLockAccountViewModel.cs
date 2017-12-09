@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows;
 using Neo.Core;
 using Neo.Cryptography.ECC;
 using Neo.Gui.Base.Controllers;
@@ -15,6 +14,7 @@ using Neo.VM;
 using Neo.Wallets;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
+using Neo.Gui.Base.Managers;
 
 namespace Neo.Gui.Wpf.Views.Accounts
 {
@@ -23,6 +23,7 @@ namespace Neo.Gui.Wpf.Views.Accounts
         private const int HoursInDay = 24;
         private const int MinutesInHour = 60;
 
+        private readonly IDialogManager dialogManager;
         private readonly IMessagePublisher messagePublisher;
 
         private ECPoint selectedAccount;
@@ -31,9 +32,11 @@ namespace Neo.Gui.Wpf.Views.Accounts
         private int unlockMinute;
 
         public CreateLockAccountViewModel(
+            IDialogManager dialogManager,
             IWalletController walletController,
             IMessagePublisher messagePublisher)
         {
+            this.dialogManager = dialogManager;
             this.messagePublisher = messagePublisher;
 
             this.Accounts = new ObservableCollection<ECPoint>(walletController.GetContracts().Where(p => p.IsStandard).Select(p => walletController.GetKey(p.PublicKeyHash).PublicKey).ToArray());
@@ -171,7 +174,7 @@ namespace Neo.Gui.Wpf.Views.Accounts
                 }
                 catch
                 {
-                    MessageBox.Show(Strings.AddContractFailedMessage);
+                    this.dialogManager.ShowMessage(string.Empty, Strings.AddContractFailedMessage);
                     return null;
                 }
             }

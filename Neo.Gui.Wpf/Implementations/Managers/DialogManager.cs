@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
 using Autofac;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Managers;
@@ -20,16 +21,16 @@ namespace Neo.Gui.Wpf.Implementations.Managers
 
             var view = containerLifetimeScope?.Resolve<IDialog<TDialogResult>>();
 
-            // TODO [AboimPinto]: Don't agree with this return. Is there is no IDialog<T> exported, in developement this should be catched. This should never happen in prodution or there was enough tests.
-            // Should throw an exception
-            if (view == null) return dialogResult;
+            Debug.Assert(view != null);
+            Debug.Assert(view is Window);
+
+            var viewWindow = view as Window;
 
             var viewModel = view.DataContext as IDialogViewModel<TDialogResult>;
             if (viewModel != null)
             {
                 viewModel.Close += (sender, e) =>
                 {
-                    var viewWindow = view as Window;
                     viewWindow.Close();
                 };
 
@@ -37,7 +38,6 @@ namespace Neo.Gui.Wpf.Implementations.Managers
                 {
                     dialogResult = e;
 
-                    var viewWindow = view as Window;
                     viewWindow.Close();
                 };
             }
@@ -84,6 +84,51 @@ namespace Neo.Gui.Wpf.Implementations.Managers
             view.ShowDialog();
 
             return dialogResult;
+        }
+
+        public MessageDialogResult ShowMessage(string title, string message, MessageDialogType type = MessageDialogType.Ok, MessageDialogResult defaultResult = MessageDialogResult.Ok)
+        {
+            switch (type)
+            {
+                case MessageDialogType.Ok:
+                    if (string.IsNullOrEmpty(title))
+                    {
+                        MessageBox.Show(message);
+                    }
+                    else
+                    {
+                        MessageBox.Show(message, title);
+                    }
+                    return MessageDialogResult.Ok;
+
+                case MessageDialogType.OkCancel:
+                    var result = MessageBox.Show(message, title, MessageBoxButton.OKCancel);
+
+                    switch (result)
+                    {
+                        case MessageBoxResult.OK:
+                            return MessageDialogResult.Ok;
+
+                        case MessageBoxResult.Cancel:
+                        default:
+                            return MessageDialogResult.Cancel;
+                    }
+
+                case MessageDialogType.YesNo:
+                    result = MessageBox.Show(message, title, MessageBoxButton.YesNo);
+
+                    switch (result)
+                    {
+                        case MessageBoxResult.Yes:
+                            return MessageDialogResult.Yes;
+
+                        case MessageBoxResult.No:
+                        default:
+                            return MessageDialogResult.No;
+                    }
+            }
+
+            return defaultResult;
         }
 
         #endregion

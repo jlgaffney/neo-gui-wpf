@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
-using System.Windows;
 using System.Windows.Input;
 using Neo.Core;
 using Neo.Gui.Base.Controllers;
@@ -24,6 +23,7 @@ namespace Neo.Gui.Wpf.Views.Contracts
     {
         private static readonly Fixed8 NetworkFee = Fixed8.FromDecimal(0.001m);
 
+        private readonly IDialogManager dialogManager;
         private readonly IFileManager fileManager;
         private readonly IFileDialogService fileDialogService;
         private readonly IWalletController walletController;
@@ -47,11 +47,13 @@ namespace Neo.Gui.Wpf.Views.Contracts
         private bool invokeEnabled;
 
         public InvokeContractViewModel(
+            IDialogManager dialogManager,
             IFileManager fileManager,
             IFileDialogService fileDialogService,
             IWalletController walletController,
             IMessagePublisher messagePublisher)
         {
+            this.dialogManager = dialogManager;
             this.fileManager = fileManager;
             this.fileDialogService = fileDialogService;
             this.walletController = walletController;
@@ -231,7 +233,7 @@ namespace Neo.Gui.Wpf.Views.Contracts
 
             if (contractState == null)
             {
-                MessageBox.Show("Cannot find contract.");
+                this.dialogManager.ShowMessage(string.Empty, "Cannot find contract.");
                 return;
             }
 
@@ -336,7 +338,7 @@ namespace Neo.Gui.Wpf.Views.Contracts
             }
             else
             {
-                MessageBox.Show(Strings.ExecutionFailed);
+                this.dialogManager.ShowMessage(string.Empty, Strings.ExecutionFailed);
             }
         }
 
