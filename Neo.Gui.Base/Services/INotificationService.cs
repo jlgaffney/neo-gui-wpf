@@ -1,6 +1,6 @@
-﻿namespace Neo.Gui.Base.Helpers.Interfaces
+﻿namespace Neo.Gui.Base.Services
 {
-    public interface INotificationHelper
+    public interface INotificationService
     {
         void ShowSuccessNotification(string notificationMessage);
 

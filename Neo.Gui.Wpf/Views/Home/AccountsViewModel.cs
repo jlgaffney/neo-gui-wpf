@@ -10,6 +10,7 @@ using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.MVVM;
 using Neo.Gui.Base.Globalization;
+using Neo.Gui.Base.Managers;
 using Neo.Gui.Wpf.MVVM;
 using Neo.Gui.Wpf.Views.Accounts;
 using Neo.Gui.Wpf.Views.Voting;
@@ -30,8 +31,11 @@ namespace Neo.Gui.Wpf.Views.Home
         #region Private Fields 
         private readonly IWalletController walletController;
         private readonly IMessageSubscriber messageSubscriber;
+        private readonly IClipboardManager clipboardManager;
         private readonly IProcessHelper processHelper;
-        private readonly IDialogHelper dialogHelper;
+        private readonly IDialogManager dialogManager;
+        private readonly ISettingsManager settingsManager;
+
         private AccountItem selectedAccount;
         #endregion
 
@@ -108,13 +112,17 @@ namespace Neo.Gui.Wpf.Views.Home
         public AccountsViewModel(
             IWalletController walletController,
             IMessageSubscriber messageSubscriber, 
+            IDialogManager dialogManager,
+            IClipboardManager clipboardManager,
             IProcessHelper processHelper,
-            IDialogHelper dialogHelper)
+            ISettingsManager settingsManager)
         {
             this.walletController = walletController;
             this.messageSubscriber = messageSubscriber;
+            this.dialogManager = dialogManager;
+            this.clipboardManager = clipboardManager;
             this.processHelper = processHelper;
-            this.dialogHelper = dialogHelper;
+            this.settingsManager = settingsManager;
 
             this.Accounts = new ObservableCollection<AccountItem>();
         }
@@ -159,12 +167,12 @@ namespace Neo.Gui.Wpf.Views.Home
 
         private void ImportWifPrivateKey()
         {
-            this.dialogHelper.ShowDialog<ImportPrivateKeyDialogResult>();
+            this.dialogManager.ShowDialog<ImportPrivateKeyDialogResult>();
         }
 
         private void ImportCertificate()
         {
-            this.dialogHelper.ShowDialog<ImportCertificateDialogResult>();
+            this.dialogManager.ShowDialog<ImportCertificateDialogResult>();
         }
 
         private void ImportWatchOnlyAddress()
@@ -178,17 +186,17 @@ namespace Neo.Gui.Wpf.Views.Home
 
         private void CreateMultiSignatureContract()
         {
-            this.dialogHelper.ShowDialog<CreateMultiSigContractDialogResult>();
+            this.dialogManager.ShowDialog<CreateMultiSigContractDialogResult>();
         }
 
         private void CreateLockAddress()
         {
-            this.dialogHelper.ShowDialog<CreateLockAccountDialogResult>();
+            this.dialogManager.ShowDialog<CreateLockAccountDialogResult>();
         }
 
         private void ImportCustomContract()
         {
-            this.dialogHelper.ShowDialog<ImportCustomContractDialogResult>();
+            this.dialogManager.ShowDialog<ImportCustomContractDialogResult>();
         }
 
         private void ViewPrivateKey()
@@ -198,7 +206,7 @@ namespace Neo.Gui.Wpf.Views.Home
             var contract = this.SelectedAccount.Contract;
             var key = this.walletController.GetKeyByScriptHash(contract.ScriptHash);
 
-            this.dialogHelper.ShowDialog<ViewPrivateKeyDialogResult, ViewPrivateKeyLoadParameters>(
+            this.dialogManager.ShowDialog<ViewPrivateKeyDialogResult, ViewPrivateKeyLoadParameters>(
                 new LoadParameters<ViewPrivateKeyLoadParameters>(new ViewPrivateKeyLoadParameters(key, contract.ScriptHash)));
         }
 
@@ -208,7 +216,7 @@ namespace Neo.Gui.Wpf.Views.Home
 
             var contract = this.SelectedAccount.Contract;
 
-            this.dialogHelper.ShowDialog<ViewContractDialogResult, ViewContractLoadParameters>(
+            this.dialogManager.ShowDialog<ViewContractDialogResult, ViewContractLoadParameters>(
                 new LoadParameters<ViewContractLoadParameters>(new ViewContractLoadParameters(contract)));
         }
 
@@ -216,7 +224,7 @@ namespace Neo.Gui.Wpf.Views.Home
         {
             if (this.SelectedAccount?.Contract == null) return;
 
-            this.dialogHelper.ShowDialog<VotingDialogResult, VotingLoadParameters>(
+            this.dialogManager.ShowDialog<VotingDialogResult, VotingLoadParameters>(
                 new LoadParameters<VotingLoadParameters>(new VotingLoadParameters(this.SelectedAccount.Contract.ScriptHash)));
         }
 
@@ -224,11 +232,7 @@ namespace Neo.Gui.Wpf.Views.Home
         {
             if (this.SelectedAccount == null) return;
 
-            try
-            {
-                Clipboard.SetText(this.SelectedAccount.Address);
-            }
-            catch (ExternalException) { }
+            this.clipboardManager.SetText(this.SelectedAccount.Address);
         }
 
         private void DeleteAccount()
@@ -248,7 +252,7 @@ namespace Neo.Gui.Wpf.Views.Home
         {
             if (this.SelectedAccount == null) return;
             
-            var url = string.Format(Properties.Settings.Default.Urls.AddressUrl, this.SelectedAccount.Address);
+            var url = string.Format(this.settingsManager.AddressURLFormat, this.SelectedAccount.Address);
             
             this.processHelper.OpenInExternalBrowser(url);
         }

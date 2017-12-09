@@ -1,7 +1,10 @@
 ﻿using System;
+using System.IO;
+using System.Windows.Input;
 using Microsoft.Win32;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
+using Neo.Gui.Base.Managers;
 using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Wallets
@@ -12,6 +15,18 @@ namespace Neo.Gui.Wpf.Views.Wallets
         private string walletPath;
         private string password;
         private bool repairMode;
+        #endregion
+
+        #region Constructor
+
+        public OpenWalletViewModel(
+            ISettingsManager settingsManager)
+        {
+            if (File.Exists(settingsManager.LastWalletPath))
+            {
+                this.WalletPath = settingsManager.LastWalletPath;
+            }
+        }
         #endregion
 
         #region Public Properties 

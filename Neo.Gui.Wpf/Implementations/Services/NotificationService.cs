@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Windows;
-using Neo.Gui.Base.Helpers.Interfaces;
+using Neo.Gui.Base.Services;
 using ToastNotifications;
 using ToastNotifications.Lifetime;
 using ToastNotifications.Messages;
 using ToastNotifications.Position;
 
-namespace Neo.Gui.Wpf.Helpers
+namespace Neo.Gui.Wpf.Implementations.Services
 {
-    public class NotificationHelper : INotificationHelper
+    public class NotificationService : INotificationService
     {
         #region Private Fields 
         private readonly Notifier notifier;
         #endregion
 
         #region Constructor 
-        public NotificationHelper()
+        public NotificationService()
         {
             this.notifier = new Notifier(cfg =>
             {
@@ -34,7 +34,7 @@ namespace Neo.Gui.Wpf.Helpers
         }
         #endregion
 
-        #region INotificationHelper implementation 
+        #region INotificationService implementation 
         public void ShowErrorNotification(string notificationMessage)
         {
             this.notifier.ShowError(notificationMessage);

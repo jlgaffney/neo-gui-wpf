@@ -3,14 +3,14 @@ using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Globalization;
-using Neo.Gui.Base.Helpers.Interfaces;
+using Neo.Gui.Base.Services;
 using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Wallets
 {
     public class ChangePasswordViewModel : ViewModelBase, IDialogViewModel<ChangePasswordDialogResult>
     {
-        private readonly INotificationHelper notificationHelper;
+        private readonly INotificationService notificationService;
         private readonly IWalletController walletController;
 
         private string oldPassword;
@@ -18,10 +18,10 @@ namespace Neo.Gui.Wpf.Views.Wallets
         private string reEnteredNewPassword;
 
         public ChangePasswordViewModel(
-            INotificationHelper notificationHelper,
+            INotificationService notificationService,
             IWalletController walletController)
         {
-            this.notificationHelper = notificationHelper;
+            this.notificationService = notificationService;
             this.walletController = walletController;
         }
 
@@ -71,7 +71,7 @@ namespace Neo.Gui.Wpf.Views.Wallets
             // Check new password is not the same as old password
             if (this.oldPassword == this.newPassword)
             {
-                this.notificationHelper.ShowWarningNotification("New password must be different to old password!");
+                this.notificationService.ShowWarningNotification("New password must be different to old password!");
                 return;
             }
 
@@ -79,13 +79,13 @@ namespace Neo.Gui.Wpf.Views.Wallets
 
             if (changedSuccessfully)
             {
-                this.notificationHelper.ShowSuccessNotification(Strings.ChangePasswordSuccessful);
+                this.notificationService.ShowSuccessNotification(Strings.ChangePasswordSuccessful);
 
                 this.Close(this, EventArgs.Empty);
             }
             else
             {
-                this.notificationHelper.ShowErrorNotification(Strings.PasswordIncorrect);
+                this.notificationService.ShowErrorNotification(Strings.PasswordIncorrect);
             }
         }
 

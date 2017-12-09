@@ -7,6 +7,7 @@ using System.Windows.Input;
 using Neo.Cryptography.ECC;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Helpers.Interfaces;
+using Neo.Gui.Base.Services;
 using Neo.Gui.Wpf.MVVM;
 using Neo.SmartContract;
 
@@ -14,7 +15,7 @@ namespace Neo.Gui.Wpf.Views.Contracts
 {
     public class ParametersEditorViewModel : ViewModelBase
     {
-        private readonly IDispatchHelper dispatchHelper;
+        private readonly IDispatchService dispatchService;
 
         /// <summary>
         /// NOTE: Make sure this and the ObservableCollection are kept in sync.
@@ -27,9 +28,9 @@ namespace Neo.Gui.Wpf.Views.Contracts
         private string currentValue;
         private string newValue;
 
-        public ParametersEditorViewModel(IDispatchHelper dispatchHelper)
+        public ParametersEditorViewModel(IDispatchService dispatchService)
         {
-            this.dispatchHelper = dispatchHelper;
+            this.dispatchService = dispatchService;
 
             this.Parameters = new ObservableCollection<DisplayContractParameter>();
         }
@@ -115,7 +116,7 @@ namespace Neo.Gui.Wpf.Views.Contracts
         {
             this.parameters = parameterList;
 
-            await this.dispatchHelper.InvokeOnMainUIThread(() =>
+            await this.dispatchService.InvokeOnMainUIThread(() =>
             {
                 this.Parameters.Clear();
 
@@ -139,7 +140,7 @@ namespace Neo.Gui.Wpf.Views.Contracts
 
             var parameter = ParseParameter(this.NewValue);
 
-            this.dispatchHelper.InvokeOnMainUIThread(() =>
+            this.dispatchService.InvokeOnMainUIThread(() =>
             {
                 var newIndex = this.Parameters.Count;
 
@@ -156,7 +157,7 @@ namespace Neo.Gui.Wpf.Views.Contracts
         {
             if (this.SelectedParameter == null) return;
 
-            this.dispatchHelper.InvokeOnMainUIThread(() =>
+            this.dispatchService.InvokeOnMainUIThread(() =>
             {
                 this.parameters.RemoveAt(this.SelectedParameter.Index);
                 this.Parameters.RemoveAt(this.SelectedParameter.Index);

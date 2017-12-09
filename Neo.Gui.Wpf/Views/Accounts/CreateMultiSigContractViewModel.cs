@@ -9,6 +9,7 @@ using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.Globalization;
+using Neo.Gui.Base.Services;
 using Neo.Gui.Wpf.MVVM;
 using Neo.Wallets;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
@@ -20,7 +21,7 @@ namespace Neo.Gui.Wpf.Views.Accounts
     {
         private readonly IWalletController walletController;
         private readonly IMessagePublisher messagePublisher;
-        private readonly IDispatchHelper dispatchHelper;
+        private readonly IDispatchService dispatchService;
 
         private int minimumSignatureNumber;
         private int minimumSignatureNumberMaxValue;
@@ -32,11 +33,11 @@ namespace Neo.Gui.Wpf.Views.Accounts
         public CreateMultiSigContractViewModel(
             IWalletController walletController,
             IMessagePublisher messagePublisher,
-            IDispatchHelper dispatchHelper)
+            IDispatchService dispatchService)
         {
             this.walletController = walletController;
             this.messagePublisher = messagePublisher;
-            this.dispatchHelper = dispatchHelper;
+            this.dispatchService = dispatchService;
 
             this.PublicKeys = new ObservableCollection<string>();
         }
@@ -153,7 +154,7 @@ namespace Neo.Gui.Wpf.Views.Accounts
                 return;
             }
 
-            await this.dispatchHelper.InvokeOnMainUIThread(() => this.PublicKeys.Add(this.NewPublicKey));
+            await this.dispatchService.InvokeOnMainUIThread(() => this.PublicKeys.Add(this.NewPublicKey));
 
             this.NewPublicKey = string.Empty;
             this.MinimumSignatureNumberMaxValue = this.PublicKeys.Count;
@@ -163,7 +164,7 @@ namespace Neo.Gui.Wpf.Views.Accounts
         {
             if (!this.RemovePublicKeyEnabled) return;
 
-            await this.dispatchHelper.InvokeOnMainUIThread(() =>
+            await this.dispatchService.InvokeOnMainUIThread(() =>
             {
                 this.PublicKeys.Remove(this.SelectedPublicKey);
                 this.MinimumSignatureNumberMaxValue = this.PublicKeys.Count;

@@ -14,8 +14,6 @@ namespace Neo.Gui.Wpf.Certificates
     {
         public static bool Install()
         {
-            if (!Settings.Default.InstallCertificate) return true;
-
             using (var store = new X509Store(StoreName.Root, StoreLocation.LocalMachine))
             using (var cert = new X509Certificate2(Resources.OnchainCertificate))
             {

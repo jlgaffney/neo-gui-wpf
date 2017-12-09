@@ -10,14 +10,16 @@ using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.Globalization;
+using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.Services;
 using Neo.Gui.Wpf.Certificates;
 using Neo.Gui.Wpf.Extensions;
-using Neo.Gui.Wpf.Helpers;
+using Neo.Gui.Wpf.Implementations.Managers;
 using Neo.Gui.Wpf.MarkupExtensions;
+using Neo.Gui.Wpf.Properties;
 using Neo.Gui.Wpf.RegistrationModules;
 using Neo.Gui.Wpf.Views.Home;
 using Neo.Gui.Wpf.Views.Updater;
-using Settings = Neo.Gui.Wpf.Properties.Settings;
 using SplashScreen = Neo.Gui.Wpf.Views.SplashScreen;
 
 namespace Neo.Gui.Wpf
@@ -45,24 +47,28 @@ namespace Neo.Gui.Wpf
             Debug.Assert(containerLifetimeScope != null);
 
             // Set static lifetime scopes
-            DialogHelper.SetLifetimeScope(containerLifetimeScope);
+            DialogManager.SetLifetimeScope(containerLifetimeScope);
             DataContextBindingExtension.SetLifetimeScope(containerLifetimeScope);
 
-            var dispatchHelper = containerLifetimeScope.Resolve<IDispatchHelper>();
-            var themeHelper = containerLifetimeScope.Resolve<IThemeHelper>();
+            var dispatchService = containerLifetimeScope.Resolve<IDispatchService>();
+            var themeManager = containerLifetimeScope.Resolve<IThemeManager>();
             var versionHelper = containerLifetimeScope.Resolve<IVersionHelper>();
             var messageSubscriber = containerLifetimeScope.Resolve<IMessageSubscriber>();
 
-            messageSubscriber.Subscribe(this);
+            Debug.Assert(
+                dispatchService != null &&
+                themeManager != null &&
+                versionHelper != null &&
+                messageSubscriber != null);
 
-            Debug.Assert(dispatchHelper != null);
+            messageSubscriber.Subscribe(this);
 
             Task.Run(() =>
             {
-                themeHelper?.LoadTheme();
+                themeManager.LoadTheme();
 
                 SplashScreen splashScreen = null;
-                dispatchHelper.InvokeOnMainUIThread(() =>
+                dispatchService.InvokeOnMainUIThread(() =>
                 {
                     splashScreen = new SplashScreen();
                     splashScreen.Show();
@@ -71,12 +77,8 @@ namespace Neo.Gui.Wpf
                 var updateIsRequired = false;
                 try
                 {
+                    updateIsRequired = versionHelper.UpdateIsRequired;
                     
-                    if (versionHelper != null)
-                    {
-                        updateIsRequired = versionHelper.UpdateIsRequired;
-                    }
-
                     if (updateIsRequired) return;
 
                     // Application is starting normally, initialize controllers
@@ -87,7 +89,7 @@ namespace Neo.Gui.Wpf
                     if (!Settings.Default.RemoteNodeMode)
                     {
                         // Local node is being used, install root certificate
-                        if (!RootCertificate.Install()) return;
+                        if (Settings.Default.InstallCertificate && !RootCertificate.Install()) return;
                     }
 
                     this.walletController.Initialize(Settings.Default.CertCachePath);
@@ -96,7 +98,7 @@ namespace Neo.Gui.Wpf
                 }
                 finally
                 {
-                    dispatchHelper.InvokeOnMainUIThread(() =>
+                    dispatchService.InvokeOnMainUIThread(() =>
                     {
                         this.MainWindow = updateIsRequired ? (Window) new UpdateView() : new HomeView();
 

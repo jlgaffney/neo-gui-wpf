@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Windows;
-using MahApps.Metro;
 using Neo.Gui.Base.Extensions;
-using Neo.Gui.Base.Helpers.Interfaces;
+using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Theming;
 using Neo.Gui.Wpf.Extensions;
-using Neo.Gui.Wpf.Properties;
+using MahAppsThemeManager = MahApps.Metro.ThemeManager;
 using Style = Neo.Gui.Base.Theming.Style;
 
-namespace Neo.Gui.Wpf.Helpers
+namespace Neo.Gui.Wpf.Implementations.Managers
 {
-    public class ThemeHelper : IThemeHelper
+    public class ThemeManager : IThemeManager
     {
         #region Resource Key Constants
 
@@ -27,18 +26,34 @@ namespace Neo.Gui.Wpf.Helpers
 
         #endregion Resource Key Constants
 
-        #region IThemeHelper implementation
+        #region Private Fields
+
+        private readonly ISettingsManager settingsManager;
+
+        #endregion Private Fields
+
+        #region Constructor
+
+        public ThemeManager(
+            ISettingsManager settingsManager)
+        {
+            this.settingsManager = settingsManager;
+        }
+
+        #endregion Constructor
+
+        #region IThemeManager implementation
 
         public Theme CurrentTheme { get; private set; }
 
         public void LoadTheme()
         {
             // Add custom accent resource dictionary to the ThemeManager, contains default color values
-            ThemeManager.AddAccent(CustomAccentKey, new Uri("pack://application:,,,/neo-gui;component/Resources/CustomAccentThemeResources.xaml"));
+            MahAppsThemeManager.AddAccent(CustomAccentKey, new Uri("pack://application:,,,/neo-gui;component/Resources/CustomAccentThemeResources.xaml"));
 
 
             // Try load custom theme
-            var themeJson = Settings.Default.AppTheme;
+            var themeJson = settingsManager.AppTheme;
 
             // Check if theme JSON has been set
             if (string.IsNullOrEmpty(themeJson))
@@ -60,8 +75,8 @@ namespace Neo.Gui.Wpf.Helpers
         public void SetTheme(Theme newTheme)
         {
             // Change app style to the custom accent and current theme
-            var accent = ThemeManager.GetAccent(CustomAccentKey);
-            var theme = ThemeManager.GetAppTheme(newTheme.Style == Style.Light ? "BaseLight" : "BaseDark");
+            var accent = MahAppsThemeManager.GetAccent(CustomAccentKey);
+            var theme = MahAppsThemeManager.GetAppTheme(newTheme.Style == Style.Light ? "BaseLight" : "BaseDark");
 
             // Modify resource values to new theme values
 
@@ -117,7 +132,7 @@ namespace Neo.Gui.Wpf.Helpers
                 }
             }
 
-            ThemeManager.ChangeAppStyle(Application.Current, accent, theme);
+            MahAppsThemeManager.ChangeAppStyle(Application.Current, accent, theme);
 
             this.CurrentTheme = newTheme;
         }

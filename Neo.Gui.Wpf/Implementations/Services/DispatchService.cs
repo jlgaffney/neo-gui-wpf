@@ -2,11 +2,11 @@
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
-using Neo.Gui.Base.Helpers.Interfaces;
+using Neo.Gui.Base.Services;
 
-namespace Neo.Gui.Wpf.Helpers
+namespace Neo.Gui.Wpf.Implementations.Services
 {
-    public class DispatchHelper : IDispatchHelper
+    public class DispatchService : IDispatchService
     {
         public Task InvokeOnMainUIThread(Action action)
         {

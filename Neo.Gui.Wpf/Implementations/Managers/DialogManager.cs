@@ -1,18 +1,19 @@
 ﻿using System.Windows;
 using Autofac;
 using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Helpers.Interfaces;
+using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.MVVM;
 
-namespace Neo.Gui.Wpf.Helpers
+namespace Neo.Gui.Wpf.Implementations.Managers
 {
-    public class DialogHelper : IDialogHelper
+    public class DialogManager : IDialogManager
     {
         #region Private Fields 
         private static ILifetimeScope containerLifetimeScope;
         #endregion
 
-        #region IDialogHelper implementation 
+        #region IDialogManager implementation
+
         public TDialogResult ShowDialog<TDialogResult>()
         {
             var dialogResult = default(TDialogResult);
@@ -84,6 +85,7 @@ namespace Neo.Gui.Wpf.Helpers
 
             return dialogResult;
         }
+
         #endregion
 
         #region Static methods

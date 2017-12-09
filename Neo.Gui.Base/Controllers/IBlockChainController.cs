@@ -5,7 +5,7 @@ using Neo.Network;
 
 namespace Neo.Gui.Base.Controllers
 {
-    public interface IBlockChainController : IDisposable
+    public interface IBlockchainController : IDisposable
     {
         RegisterTransaction GoverningToken { get; }
 
@@ -17,7 +17,7 @@ namespace Neo.Gui.Base.Controllers
 
         void Initialize();
 
-        BlockChainStatus GetStatus();
+        BlockchainStatus GetStatus();
 
         void Relay(Transaction transaction);
 

@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Windows;
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Globalization;
-using Neo.Gui.Base.Helpers.Interfaces;
+using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.Services;
 using Neo.Gui.Wpf.MVVM;
 using Neo.Network;
 using Neo.SmartContract;
@@ -15,17 +15,21 @@ namespace Neo.Gui.Wpf.Views.Transactions
     public class SigningViewModel : ViewModelBase, IDialogViewModel<SigningDialogResult>
     {
         private readonly IWalletController walletController;
-        private readonly INotificationHelper notificationHelper;
+        private readonly INotificationService notificationService;
+        private readonly IClipboardManager clipboardManager;
+
         private string input;
         private ContractParametersContext output;
         private bool broadcastVisible;
 
         public SigningViewModel(
-            IWalletController walletController, 
-            INotificationHelper notificationHelper)
+            IWalletController walletController,
+            IClipboardManager clipboardManager,
+            INotificationService notificationService)
         {
             this.walletController = walletController;
-            this.notificationHelper = notificationHelper;
+            this.notificationService = notificationService;
+            this.clipboardManager = clipboardManager;
         }
 
         public string Input
@@ -76,7 +80,7 @@ namespace Neo.Gui.Wpf.Views.Transactions
         {
             if (string.IsNullOrEmpty(this.Input))
             {
-                this.notificationHelper.ShowErrorNotification(Strings.SigningFailedNoDataMessage);
+                this.notificationService.ShowErrorNotification(Strings.SigningFailedNoDataMessage);
                 return;
             }
 
@@ -87,13 +91,13 @@ namespace Neo.Gui.Wpf.Views.Transactions
             }
             catch
             {
-                this.notificationHelper.ShowErrorNotification(Strings.SigningFailedNoDataMessage);
+                this.notificationService.ShowErrorNotification(Strings.SigningFailedNoDataMessage);
                 return;
             }
 
             if (!this.walletController.Sign(context))
             {
-                this.notificationHelper.ShowErrorNotification(Strings.SigningFailedNoDataMessage);
+                this.notificationService.ShowErrorNotification(Strings.SigningFailedNoDataMessage);
                 return;
             }
 
@@ -108,8 +112,8 @@ namespace Neo.Gui.Wpf.Views.Transactions
             if (this.output == null) return;
 
             // TODO Highlight output textbox text
-            // TODO Issue #77 [AboimPinto]: Clipboard access should be abstracted from ViewModels
-            Clipboard.SetText(this.output.ToString());
+
+            this.clipboardManager.SetText(this.output.ToString());
         }
 
         private void Broadcast()

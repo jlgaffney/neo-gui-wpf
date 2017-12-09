@@ -1,21 +1,21 @@
-﻿using Neo.Gui.Base.Helpers.Interfaces;
-using Neo.Gui.Base.Messaging.Interfaces;
+﻿using Neo.Gui.Base.Messaging.Interfaces;
+using Neo.Gui.Base.Services;
 
 namespace Neo.Gui.Base.Messaging
 {
     public class MessagePublisher : IMessagePublisher
     {
         #region Private Fields 
-        private readonly IDispatchHelper dispatchHelper;
+        private readonly IDispatchService dispatchService;
         private readonly IInternalMessageAggregator internalMessageAggregator;
         #endregion
 
         #region Constructor 
         public MessagePublisher(
-            IDispatchHelper dispatchHelper,
+            IDispatchService dispatchService,
             IInternalMessageAggregator internalMessageAggregator)
         {
-            this.dispatchHelper = dispatchHelper;
+            this.dispatchService = dispatchService;
             this.internalMessageAggregator = internalMessageAggregator;
         }
         #endregion
@@ -23,7 +23,7 @@ namespace Neo.Gui.Base.Messaging
         #region IMessagePublisher implementation
         public void Publish<T>(T message)
         {
-            this.dispatchHelper.InvokeOnMainUIThread(() =>
+            this.dispatchService.InvokeOnMainUIThread(() =>
             {
                 this.internalMessageAggregator.Publish(message);
             });

@@ -4,22 +4,22 @@ using System.IO;
 using System.IO.Compression;
 using System.Threading.Tasks;
 using Neo.Core;
-using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
-using Neo.Gui.Wpf.Properties;
 using Neo.Implementations.Blockchains.LevelDB;
 using Neo.IO;
 using Neo.Network;
 
-namespace Neo.Gui.Wpf.Controllers
+namespace Neo.Gui.Base.Controllers
 {
-    public class LocalBlockChainController : IBlockChainController
+    public class LocalBlockchainController : IBlockchainController
     {
         private const string PeerStatePath = "peers.dat";
 
         #region Private Fields
         private readonly IMessagePublisher messagePublisher;
+        private readonly ISettingsManager settingsManager;
         
         private bool disposed = false;
 
@@ -31,10 +31,12 @@ namespace Neo.Gui.Wpf.Controllers
        #endregion
 
         #region Constructor 
-        public LocalBlockChainController(
-            IMessagePublisher messagePublisher)
+        public LocalBlockchainController(
+            IMessagePublisher messagePublisher,
+            ISettingsManager settingsManager)
         {
             this.messagePublisher = messagePublisher;
+            this.settingsManager = settingsManager;
         }
         #endregion
 
@@ -57,7 +59,7 @@ namespace Neo.Gui.Wpf.Controllers
             this.InitializeLocalNode();
         }
 
-        public BlockChainStatus GetStatus()
+        public BlockchainStatus GetStatus()
         {
             var timeSinceLastBlock = DateTime.UtcNow - this.timeOfLastBlock;
 
@@ -90,7 +92,7 @@ namespace Neo.Gui.Wpf.Controllers
 
             var nodeCount = (uint)this.localNode.RemoteNodeCount;
 
-            return new BlockChainStatus(Blockchain.Default.Height, Blockchain.Default.HeaderHeight,
+            return new BlockchainStatus(Blockchain.Default.Height, Blockchain.Default.HeaderHeight,
                 nextBlockProgressIsIndeterminate, nextBlockProgressFraction, timeSinceLastBlock, nodeCount);
         }
 
@@ -146,7 +148,7 @@ namespace Neo.Gui.Wpf.Controllers
         private void InitializeLocalNode()
         {
             // Initialize blockchain
-            this.blockChain = Blockchain.RegisterBlockchain(new LevelDBBlockchain(Settings.Default.DataDirectoryPath));
+            this.blockChain = Blockchain.RegisterBlockchain(new LevelDBBlockchain(settingsManager.LocalNodeBlockchainDataDirectoryPath));
 
             // Initialize local node
             TryLoadPeerState();
@@ -167,7 +169,7 @@ namespace Neo.Gui.Wpf.Controllers
                 Blockchain.PersistCompleted += this.BlockchainPersistCompleted;
 
                 // Start node
-                this.localNode?.Start(Settings.Default.NodePort, Settings.Default.WsPort);
+                this.localNode?.Start(this.settingsManager.LocalNodePort, this.settingsManager.LocalWSPort);
             });
         }
 
@@ -179,38 +181,38 @@ namespace Neo.Gui.Wpf.Controllers
 
         private static void ImportBlocksIfRequired()
         {
-            const string acc_path = "chain.acc";
-            const string acc_zip_path = acc_path + ".zip";
+            const string accPath = "chain.acc";
+            const string accZipPath = accPath + ".zip";
 
             // Check if blocks need importing
-            if (File.Exists(acc_path))
+            if (File.Exists(accPath))
             {
                 // Import blocks
                 bool importCompleted;
-                using (var fileStream = new FileStream(acc_path, FileMode.Open, FileAccess.Read, FileShare.None))
+                using (var fileStream = new FileStream(accPath, FileMode.Open, FileAccess.Read, FileShare.None))
                 {
                     importCompleted = ImportBlocks(fileStream);
                 }
 
                 if (importCompleted)
                 {
-                    File.Delete(acc_path);
+                    File.Delete(accPath);
                 }
             }
-            else if (File.Exists(acc_zip_path))
+            else if (File.Exists(accZipPath))
             {
                 // Import blocks
                 bool importCompleted;
-                using (var fileStream = new FileStream(acc_zip_path, FileMode.Open, FileAccess.Read, FileShare.None))
+                using (var fileStream = new FileStream(accZipPath, FileMode.Open, FileAccess.Read, FileShare.None))
                 using (var zip = new ZipArchive(fileStream, ZipArchiveMode.Read))
-                using (var zipStream = zip.GetEntry(acc_path).Open())
+                using (var zipStream = zip.GetEntry(accPath).Open())
                 {
                     importCompleted = ImportBlocks(zipStream);
                 }
 
                 if (importCompleted)
                 {
-                    File.Delete(acc_zip_path);
+                    File.Delete(accZipPath);
                 }
             }
         }
@@ -312,7 +314,7 @@ namespace Neo.Gui.Wpf.Controllers
             }
         }
 
-        ~LocalBlockChainController()
+        ~LocalBlockchainController()
         {
             Dispose(false);
         }

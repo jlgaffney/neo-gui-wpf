@@ -20,6 +20,7 @@ namespace Neo.Gui.Wpf.Views.Assets
     {
         private static readonly AssetType[] assetTypes = { AssetType.Share, AssetType.Token };
 
+        private readonly IWalletController walletController;
         private readonly IMessagePublisher messagePublisher;
 
         private AssetType? selectedAssetType;
@@ -40,11 +41,12 @@ namespace Neo.Gui.Wpf.Views.Assets
             IWalletController walletController,
             IMessagePublisher messagePublisher)
         {
+            this.walletController = walletController;
             this.messagePublisher = messagePublisher;
-
+            
             this.AssetTypes = new ObservableCollection<AssetType>(assetTypes);
 
-            var contracts = walletController.GetContracts().ToList();
+            var contracts = this.walletController.GetContracts().ToList();
 
             this.Owners = new ObservableCollection<ECPoint>(contracts.Where(p => p.IsStandard).Select(p => walletController.GetKey(p.PublicKeyHash).PublicKey));
             this.Admins = new ObservableCollection<string>(contracts.Select(p => p.Address));
@@ -227,8 +229,8 @@ namespace Neo.Gui.Wpf.Views.Assets
             var amount = this.TotalIsLimited ? Fixed8.Parse(this.TotalLimit) : -Fixed8.Satoshi;
             var precisionByte = (byte) this.Precision;
             var owner = this.SelectedOwner;
-            var admin = Wallet.ToScriptHash(this.SelectedAdmin);
-            var issuer = Wallet.ToScriptHash(this.SelectedIssuer);
+            var admin = this.walletController.ToScriptHash(this.SelectedAdmin);
+            var issuer = this.walletController.ToScriptHash(this.SelectedIssuer);
             using (var builder = new ScriptBuilder())
             {
                 builder.EmitSysCall("Neo.Asset.Create", assetType, formattedName, amount, precisionByte, owner, admin, issuer);
@@ -253,8 +255,8 @@ namespace Neo.Gui.Wpf.Views.Assets
 
             try
             {
-                Wallet.ToScriptHash(this.SelectedAdmin);
-                Wallet.ToScriptHash(this.SelectedIssuer);
+                this.walletController.ToScriptHash(this.SelectedAdmin);
+                this.walletController.ToScriptHash(this.SelectedIssuer);
 
                 this.formValid = true;
             }

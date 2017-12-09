@@ -108,5 +108,9 @@ namespace Neo.Gui.Base.Controllers
         IssueTransaction MakeTransaction(IssueTransaction transaction, UInt160 changeAddress = null, Fixed8 fee = default(Fixed8));
 
         Transaction MakeClaimTransaction(CoinReference[] claims);
+
+        UInt160 ToScriptHash(string address);
+
+        string ToAddress(UInt160 scriptHash);
     }
 }

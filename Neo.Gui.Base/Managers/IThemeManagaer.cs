@@ -1,8 +1,8 @@
 ﻿using Neo.Gui.Base.Theming;
 
-namespace Neo.Gui.Base.Helpers.Interfaces
+namespace Neo.Gui.Base.Managers
 {
-    public interface IThemeHelper
+    public interface IThemeManager
     {
         Theme CurrentTheme { get; }
 

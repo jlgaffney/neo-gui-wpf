@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Neo.Gui.Base.Helpers.Interfaces
+namespace Neo.Gui.Base.Services
 {
-    public interface IDispatchHelper
+    public interface IDispatchService
     {
         Task InvokeOnMainUIThread(Action action);
     }

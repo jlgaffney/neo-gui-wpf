@@ -1,11 +1,11 @@
 ﻿using Neo.Gui.Base.MVVM;
 
-namespace Neo.Gui.Base.Helpers.Interfaces
+namespace Neo.Gui.Base.Managers
 {
     /// <summary>
-    /// Interface of the DialogHelper that abstracts the usage of Dialog windows in the application.
+    /// Interface of the DialogManager that abstracts the usage of Dialog windows in the application.
     /// </summary>
-    public interface IDialogHelper
+    public interface IDialogManager
     {
         TDialogResult ShowDialog<TDialogResult>();
 

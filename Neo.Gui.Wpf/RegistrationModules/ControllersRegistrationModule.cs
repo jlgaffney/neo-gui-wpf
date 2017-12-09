@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using Neo.Gui.Base.Controllers;
-using Neo.Gui.Wpf.Controllers;
 using Neo.Gui.Wpf.Properties;
 
 namespace Neo.Gui.Wpf.RegistrationModules
@@ -9,13 +8,14 @@ namespace Neo.Gui.Wpf.RegistrationModules
     {
         protected override void Load(ContainerBuilder builder)
         {
+            // TODO Figure out a better way of switching between remote and local node controllers
             var blockChainControllerType = Settings.Default.RemoteNodeMode
-                ? typeof(RemoteBlockChainController)
-                : typeof(LocalBlockChainController);
+                ? typeof(RemoteBlockchainController)
+                : typeof(LocalBlockchainController);
 
             builder
                 .RegisterType(blockChainControllerType)
-                .As<IBlockChainController>()
+                .As<IBlockchainController>()
                 .SingleInstance();
 
             builder

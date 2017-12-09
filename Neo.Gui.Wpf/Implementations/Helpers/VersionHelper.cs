@@ -5,7 +5,7 @@ using System.Xml.Linq;
 using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Updating;
 
-namespace Neo.Gui.Wpf.Helpers
+namespace Neo.Gui.Wpf.Implementations.Helpers
 {
     public class VersionHelper : IVersionHelper
     {

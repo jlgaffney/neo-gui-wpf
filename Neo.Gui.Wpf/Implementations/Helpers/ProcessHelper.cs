@@ -2,7 +2,7 @@ using System.Diagnostics;
 using System.Windows;
 using Neo.Gui.Base.Helpers.Interfaces;
 
-namespace Neo.Gui.Wpf.Helpers
+namespace Neo.Gui.Wpf.Implementations.Helpers
 {
     public class ProcessHelper : IProcessHelper
     {

@@ -6,13 +6,13 @@ using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.MVVM;
 using Neo.Gui.Base.Globalization;
+using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.Services;
 using Neo.Gui.Wpf.MVVM;
 using Neo.Gui.Wpf.Views.Contracts;
-using Neo.Gui.Wpf.Views.Development;
 using Neo.Gui.Base.Dialogs.Results.Contracts;
 using Neo.Gui.Base.Dialogs.Results.Settings;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
-using Neo.Gui.Wpf.Helpers;
 using Neo.Gui.Base.Dialogs.Results.Development;
 
 namespace Neo.Gui.Wpf.Views.Home
@@ -30,12 +30,12 @@ namespace Neo.Gui.Wpf.Views.Home
         private const string OfficialWebsiteUrl = "https://neo.org/";
 
         private readonly IWalletController walletController;
-        private readonly IDialogHelper dialogHelper;
+        private readonly IDialogManager dialogManager;
         private readonly IProcessHelper processHelper;
-        private readonly ISettingsHelper settingsHelper;
+        private readonly ISettingsManager settingsManager;
         private readonly IMessagePublisher messagePublisher;
         private readonly IMessageSubscriber messageSubscriber;
-        private readonly IDispatchHelper dispatchHelper;
+        private readonly IDispatchService dispatchService;
 
         private bool nextBlockProgressIsIndeterminate;
         private double nextBlockProgressFraction;
@@ -47,7 +47,7 @@ namespace Neo.Gui.Wpf.Views.Home
         private uint nodeCount;
         private string blockStatus;
         #endregion
-
+        
         #region Public Properties
         public bool WalletIsOpen => this.walletController.WalletIsOpen;
 
@@ -149,35 +149,35 @@ namespace Neo.Gui.Wpf.Views.Home
 
         public RelayCommand CloseWalletCommand => new RelayCommand(() => this.walletController.CloseWallet());
 
-        public RelayCommand ChangePasswordCommand => new RelayCommand(() => this.dialogHelper.ShowDialog<ChangePasswordDialogResult>());
+        public RelayCommand ChangePasswordCommand => new RelayCommand(() => this.dialogManager.ShowDialog<ChangePasswordDialogResult>());
 
         public RelayCommand RebuildIndexCommand => new RelayCommand(this.RebuildIndex);
 
-        public RelayCommand RestoreAccountsCommand => new RelayCommand(() => this.dialogHelper.ShowDialog<RestoreAccountsDialogResult>());
+        public RelayCommand RestoreAccountsCommand => new RelayCommand(() => this.dialogManager.ShowDialog<RestoreAccountsDialogResult>());
 
         public RelayCommand ExitCommand => new RelayCommand(() => this.messagePublisher.Publish(new ExitAppMessage()));
 
-        public RelayCommand TransferCommand => new RelayCommand(() => this.dialogHelper.ShowDialog<TransferDialogResult>());
+        public RelayCommand TransferCommand => new RelayCommand(() => this.dialogManager.ShowDialog<TransferDialogResult>());
 
-        public RelayCommand ShowTransactionDialogCommand => new RelayCommand(() => this.dialogHelper.ShowDialog<TradeDialogResult>());
+        public RelayCommand ShowTransactionDialogCommand => new RelayCommand(() => this.dialogManager.ShowDialog<TradeDialogResult>());
 
-        public RelayCommand ShowSigningDialogCommand => new RelayCommand(() => this.dialogHelper.ShowDialog<SigningDialogResult>());
+        public RelayCommand ShowSigningDialogCommand => new RelayCommand(() => this.dialogManager.ShowDialog<SigningDialogResult>());
 
-        public RelayCommand ClaimCommand => new RelayCommand(() => this.dialogHelper.ShowDialog<ClaimDialogResult>());
+        public RelayCommand ClaimCommand => new RelayCommand(() => this.dialogManager.ShowDialog<ClaimDialogResult>());
 
-        public RelayCommand RequestCertificateCommand => new RelayCommand(() => this.dialogHelper.ShowDialog<CertificateApplicationDialogResult>());
+        public RelayCommand RequestCertificateCommand => new RelayCommand(() => this.dialogManager.ShowDialog<CertificateApplicationDialogResult>());
 
-        public RelayCommand AssetRegistrationCommand => new RelayCommand(() => this.dialogHelper.ShowDialog<AssetRegistrationDialogResult>());
+        public RelayCommand AssetRegistrationCommand => new RelayCommand(() => this.dialogManager.ShowDialog<AssetRegistrationDialogResult>());
 
-        public RelayCommand DistributeAssetCommand => new RelayCommand(() => this.dialogHelper.ShowDialog<AssetDistributionDialogResult>());
+        public RelayCommand DistributeAssetCommand => new RelayCommand(() => this.dialogManager.ShowDialog<AssetDistributionDialogResult>());
 
-        public RelayCommand DeployContractCommand => new RelayCommand(() => this.dialogHelper.ShowDialog<DeployContractDialogResult>());
+        public RelayCommand DeployContractCommand => new RelayCommand(() => this.dialogManager.ShowDialog<DeployContractDialogResult>());
 
         public RelayCommand InvokeContractCommand => new RelayCommand(InvokeContract);
 
-        public RelayCommand ShowElectionDialogCommand => new RelayCommand(() => this.dialogHelper.ShowDialog<ElectionDialogResult>());
+        public RelayCommand ShowElectionDialogCommand => new RelayCommand(() => this.dialogManager.ShowDialog<ElectionDialogResult>());
 
-        public RelayCommand ShowSettingsCommand => new RelayCommand(() => this.dialogHelper.ShowDialog<SettingsDialogResult>());
+        public RelayCommand ShowSettingsCommand => new RelayCommand(() => this.dialogManager.ShowDialog<SettingsDialogResult>());
 
         public RelayCommand CheckForHelpCommand => new RelayCommand(() => { });
 
@@ -185,28 +185,28 @@ namespace Neo.Gui.Wpf.Views.Home
 
         public RelayCommand ShowDeveloperToolsCommand => new RelayCommand(ShowDeveloperTools);
 
-        public RelayCommand AboutNeoCommand => new RelayCommand(() => this.dialogHelper.ShowDialog<AboutDialogResult>());
+        public RelayCommand AboutNeoCommand => new RelayCommand(() => this.dialogManager.ShowDialog<AboutDialogResult>());
 
-        public RelayCommand ShowUpdateDialogCommand => new RelayCommand(() => this.dialogHelper.ShowDialog<UpdateDialogResult>());
+        public RelayCommand ShowUpdateDialogCommand => new RelayCommand(() => this.dialogManager.ShowDialog<UpdateDialogResult>());
         #endregion Public Properies
 
         #region Constructor
         public HomeViewModel(
             IWalletController walletController,
-            IDialogHelper dialogHelper, 
+            IDialogManager dialogManager, 
             IProcessHelper processHelper,
-            ISettingsHelper settingsHelper,
+            ISettingsManager settingsManager,
             IMessagePublisher messagePublisher,
             IMessageSubscriber messageSubscriber, 
-            IDispatchHelper dispatchHelper)
+            IDispatchService dispatchService)
         {
             this.walletController = walletController;
-            this.dialogHelper = dialogHelper;
+            this.dialogManager = dialogManager;
             this.processHelper = processHelper;
-            this.settingsHelper = settingsHelper;
+            this.settingsManager = settingsManager;
             this.messagePublisher = messagePublisher;
             this.messageSubscriber = messageSubscriber;
-            this.dispatchHelper = dispatchHelper;
+            this.dispatchService = dispatchService;
         }
         #endregion
 
@@ -240,7 +240,7 @@ namespace Neo.Gui.Wpf.Views.Home
 
         public void HandleMessage(InvokeContractMessage message)
         {
-            this.dialogHelper.ShowDialog<InvokeContractDialogResult, InvokeContractLoadParameters>(
+            this.dialogManager.ShowDialog<InvokeContractDialogResult, InvokeContractLoadParameters>(
                 new LoadParameters<InvokeContractLoadParameters>(new InvokeContractLoadParameters(message.Transaction)));
         }
 
@@ -266,7 +266,7 @@ namespace Neo.Gui.Wpf.Views.Home
 
         private void CreateWallet()
         {
-            var result = this.dialogHelper.ShowDialog<CreateWalletDialogResult>();
+            var result = this.dialogManager.ShowDialog<CreateWalletDialogResult>();
 
             if (result == null) return;
 
@@ -274,12 +274,13 @@ namespace Neo.Gui.Wpf.Views.Home
 
             this.walletController.CreateWallet(result.WalletPath, result.Password);
 
-            this.settingsHelper.LastWalletPath = result.WalletPath;
+            this.settingsManager.LastWalletPath = result.WalletPath;
+            this.settingsManager.Save();
         }
 
         private void OpenWallet()
         {
-            var result = this.dialogHelper.ShowDialog<OpenWalletDialogResult>();
+            var result = this.dialogManager.ShowDialog<OpenWalletDialogResult>();
 
             if (result == null) return;
 
@@ -287,7 +288,7 @@ namespace Neo.Gui.Wpf.Views.Home
 
             if (this.walletController.WalletNeedUpgrade(result.WalletPath))
             {
-                //var migrationApproved = this.dialogHelper.ShowDialog<YesOrNoDialogResult>("ApproveWalletMigrationDialog");
+                //var migrationApproved = this.dialogManager.ShowDialog<YesOrNoDialogResult>("ApproveWalletMigrationDialog");
 
                 //if (!migrationApproved.Yes) return;
 
@@ -296,12 +297,13 @@ namespace Neo.Gui.Wpf.Views.Home
 
             this.walletController.OpenWallet(result.WalletPath, result.Password, result.OpenInRepairMode);
 
-            this.settingsHelper.LastWalletPath = result.WalletPath;
+            this.settingsManager.LastWalletPath = result.WalletPath;
+            this.settingsManager.Save();
         }
 
         private async void RebuildIndex()
         {
-            await this.dispatchHelper.InvokeOnMainUIThread(() =>
+            await this.dispatchService.InvokeOnMainUIThread(() =>
             {
                 this.messagePublisher.Publish(new ClearAssetsMessage());
                 this.messagePublisher.Publish(new ClearTransactionsMessage());
@@ -312,7 +314,7 @@ namespace Neo.Gui.Wpf.Views.Home
 
         private void ShowDeveloperTools()
         {
-            this.dialogHelper.ShowDialog<DeveloperToolsDialogResult>();
+            this.dialogManager.ShowDialog<DeveloperToolsDialogResult>();
         }
         #endregion
     }

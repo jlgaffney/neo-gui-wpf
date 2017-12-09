@@ -78,7 +78,7 @@ namespace Neo.Gui.Wpf.Views.Voting
             var account = this.walletController.GetAccountState(hash);
 
             // Set address
-            this.Address = Wallet.ToAddress(hash);
+            this.Address = this.walletController.ToAddress(hash);
 
             // Concatenate votes into multi-line string
             var voteStrings = account.Votes.Select(p => p.ToString()).ToArray();
