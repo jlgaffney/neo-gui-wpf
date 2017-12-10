@@ -4,9 +4,9 @@ namespace Neo.Gui.Wpf.Views.Accounts
 {
     public class ViewPrivateKeyLoadParameters
     {
-        public KeyPair Key { get; private set; }
+        public KeyPair Key { get; }
 
-        public UInt160 ScriptHash { get; private set; }
+        public UInt160 ScriptHash { get; }
 
         public ViewPrivateKeyLoadParameters(KeyPair key, UInt160 scriptHash)
         {

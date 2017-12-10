@@ -2,7 +2,7 @@
 {
     public class LoadParameters<TParametersObject> : ILoadParameters<TParametersObject>
     {
-        public TParametersObject Parameters { get; private set; }
+        public TParametersObject Parameters { get; }
 
         public LoadParameters(TParametersObject parameters)
         {

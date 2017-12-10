@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Helpers.Interfaces;
@@ -9,12 +10,12 @@ using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.MVVM;
 using Neo.Gui.Base.Globalization;
 using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.Dialogs.Results.Wallets;
+using Neo.Gui.Base.Dialogs.Results.Voting;
+
 using Neo.Gui.Wpf.MVVM;
 using Neo.Gui.Wpf.Views.Accounts;
 using Neo.Gui.Wpf.Views.Voting;
-using Neo.UI.Base.Dialogs;
-using Neo.Gui.Base.Dialogs.Results.Wallets;
-using Neo.Gui.Base.Dialogs.Results.Voting;
 
 namespace Neo.Gui.Wpf.Views.Home
 {
@@ -175,11 +176,11 @@ namespace Neo.Gui.Wpf.Views.Home
 
         private void ImportWatchOnlyAddress()
         {
-            if (!InputBox.Show(out var text, Strings.Address, Strings.ImportWatchOnlyAddress)) return;
+            var address = this.dialogManager.ShowInputDialog(Strings.ImportWatchOnlyAddress, Strings.Address);
 
-            if (string.IsNullOrEmpty(text)) return;
+            if (string.IsNullOrEmpty(address)) return;
 
-            this.walletController.ImportWatchOnlyAddress(text);
+            this.walletController.ImportWatchOnlyAddress(address);
         }
 
         private void CreateMultiSignatureContract()
@@ -239,7 +240,7 @@ namespace Neo.Gui.Wpf.Views.Home
 
             var accountToDelete = this.SelectedAccount;
 
-            var result = this.dialogManager.ShowMessage(
+            var result = this.dialogManager.ShowMessageDialog(
                 Strings.DeleteAddressConfirmationCaption,
                 Strings.DeleteAddressConfirmationMessage,
                 MessageDialogType.YesNo,

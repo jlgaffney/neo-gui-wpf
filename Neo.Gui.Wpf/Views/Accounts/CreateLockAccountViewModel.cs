@@ -2,19 +2,22 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+
 using Neo.Core;
 using Neo.Cryptography.ECC;
+using Neo.SmartContract;
+using Neo.VM;
+using Neo.Wallets;
+
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.Globalization;
-using Neo.Gui.Wpf.MVVM;
-using Neo.SmartContract;
-using Neo.VM;
-using Neo.Wallets;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Managers;
+
+using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Accounts
 {
@@ -174,7 +177,7 @@ namespace Neo.Gui.Wpf.Views.Accounts
                 }
                 catch
                 {
-                    this.dialogManager.ShowMessage(string.Empty, Strings.AddContractFailedMessage);
+                    this.dialogManager.ShowMessageDialog(string.Empty, Strings.AddContractFailedMessage);
                     return null;
                 }
             }

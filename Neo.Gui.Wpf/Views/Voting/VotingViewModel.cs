@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Linq;
+
 using Neo.Core;
+using Neo.VM;
+
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results.Voting;
@@ -8,8 +11,8 @@ using Neo.Gui.Base.Extensions;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.MVVM;
+
 using Neo.Gui.Wpf.MVVM;
-using Neo.VM;
 
 namespace Neo.Gui.Wpf.Views.Voting
 {

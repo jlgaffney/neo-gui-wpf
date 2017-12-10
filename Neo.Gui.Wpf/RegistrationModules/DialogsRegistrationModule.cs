@@ -3,6 +3,7 @@ using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Dialogs.Results.Contracts;
 using Neo.Gui.Base.Dialogs.Results.Development;
+using Neo.Gui.Base.Dialogs.Results.Home;
 using Neo.Gui.Base.Dialogs.Results.Settings;
 using Neo.Gui.Base.Dialogs.Results.Voting;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
@@ -11,6 +12,7 @@ using Neo.Gui.Wpf.Views.Accounts;
 using Neo.Gui.Wpf.Views.Assets;
 using Neo.Gui.Wpf.Views.Contracts;
 using Neo.Gui.Wpf.Views.Development;
+using Neo.Gui.Wpf.Views.Home;
 using Neo.Gui.Wpf.Views.Settings;
 using Neo.Gui.Wpf.Views.Transactions;
 using Neo.Gui.Wpf.Views.Updater;
@@ -25,6 +27,7 @@ namespace Neo.Gui.Wpf.RegistrationModules
         {
             RegisterAssetDialogs(builder);
             RegisterContractDialogs(builder);
+            RegisterHomeDialogs(builder);
             RegisterSettingsDialogs(builder);
             RegisterTransactionDialogs(builder);
             RegisterVotingDialogs(builder);
@@ -51,6 +54,13 @@ namespace Neo.Gui.Wpf.RegistrationModules
             builder
                 .RegisterType<InvokeContractView>()
                 .As<IDialog<InvokeContractDialogResult>>();
+        }
+
+        private static void RegisterHomeDialogs(ContainerBuilder builder)
+        {
+            builder
+                .RegisterType<HomeView>()
+                .As<IDialog<HomeDialogResult>>();
         }
 
         private static void RegisterSettingsDialogs(ContainerBuilder builder)

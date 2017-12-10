@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+
 using Neo.Core;
 using Neo.Cryptography.ECC;
+using Neo.SmartContract;
+using Neo.Wallets;
+
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
+
 using Neo.Gui.Wpf.MVVM;
-using Neo.SmartContract;
-using Neo.Wallets;
 
 namespace Neo.Gui.Wpf.Views.Accounts
 {

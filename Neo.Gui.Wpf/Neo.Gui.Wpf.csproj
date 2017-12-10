@@ -281,7 +281,7 @@
     <Compile Include="Implementations\Services\NotificationService.cs" />
     <Compile Include="Implementations\Services\DispatchService.cs" />
     <Compile Include="RegistrationModules\MessagingRegistrationModule.cs" />
-    <Compile Include="Certificates\RootCertificate.cs" />
+    <Compile Include="RootCertificate.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -310,8 +310,6 @@
       <DependentUpon>CreateLockAccountView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Accounts\ImportCertificateViewModel.cs" />
-    <Compile Include="Views\Accounts\ViewContractLoadParameters.cs" />
-    <Compile Include="Views\Accounts\ViewPrivateKeyLoadParameters.cs" />
     <Compile Include="Views\Assets\AssetDistributionView.xaml.cs">
       <DependentUpon>AssetDistributionView.xaml</DependentUpon>
     </Compile>
@@ -321,7 +319,6 @@
     </Compile>
     <Compile Include="Implementations\Managers\ThemeManager.cs" />
     <Compile Include="RegistrationModules\DialogsRegistrationModule.cs" />
-    <Compile Include="Views\Contracts\InvokeContractLoadParameters.cs" />
     <Compile Include="Views\Home\TransactionsView.xaml.cs">
       <DependentUpon>TransactionsView.xaml</DependentUpon>
     </Compile>
@@ -345,10 +342,10 @@
     <Compile Include="Controls\TxOutListBox.xaml.cs">
       <DependentUpon>TxOutListBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\InformationBox.xaml.cs">
+    <Compile Include="Controls\InformationBox.xaml.cs">
       <DependentUpon>InformationBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\InputBox.xaml.cs">
+    <Compile Include="Controls\InputBox.xaml.cs">
       <DependentUpon>InputBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Contracts\ParametersEditorView.xaml.cs">
@@ -382,9 +379,7 @@
     <Compile Include="Views\Transactions\SigningViewModel.cs" />
     <Compile Include="RegistrationModules\ViewModelsRegistrationModule.cs" />
     <Compile Include="Views\Voting\ElectionViewModel.cs" />
-    <Compile Include="Views\Voting\VotingLoadParameters.cs" />
     <Compile Include="Views\Voting\VotingViewModel.cs" />
-    <Compile Include="Views\Wallets\TradeVerificationLoadParameters.cs" />
     <Compile Include="Views\Wallets\TradeView.xaml.cs">
       <DependentUpon>TradeView.xaml</DependentUpon>
     </Compile>
@@ -559,6 +554,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="ResourceDictionaries\StyleResources.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\AboutView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -587,11 +586,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Resources\ConverterResources.xaml">
+    <Page Include="ResourceDictionaries\ConverterResources.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Resources\CustomAccentThemeResources.xaml">
+    <Page Include="ResourceDictionaries\CustomAccentThemeResources.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -645,11 +644,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Dialogs\InformationBox.xaml">
+    <Page Include="Controls\InformationBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Dialogs\InputBox.xaml">
+    <Page Include="Controls\InputBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

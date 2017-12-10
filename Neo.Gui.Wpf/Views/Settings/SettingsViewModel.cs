@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
@@ -9,6 +10,7 @@ using Neo.Gui.Base.Extensions;
 using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Theming;
+
 using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Settings
@@ -321,7 +323,7 @@ namespace Neo.Gui.Wpf.Views.Settings
 
         private  void ApplyAppearanceSettings()
         {
-            var restartApprovedResult = this.dialogManager.ShowMessage("App will need to be restarted",
+            var restartApprovedResult = this.dialogManager.ShowMessageDialog("App will need to be restarted",
                 "This application needs to be restarted for the new theme settings to be applied",
                     MessageDialogType.YesNo, MessageDialogResult.No);
 

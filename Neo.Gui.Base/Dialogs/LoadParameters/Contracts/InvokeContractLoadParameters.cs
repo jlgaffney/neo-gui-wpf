@@ -4,7 +4,7 @@ namespace Neo.Gui.Wpf.Views.Contracts
 {
     public class InvokeContractLoadParameters
     {
-        public InvocationTransaction Transaction { get; private set; }
+        public InvocationTransaction Transaction { get; }
 
         public InvokeContractLoadParameters(InvocationTransaction transaction)
         {

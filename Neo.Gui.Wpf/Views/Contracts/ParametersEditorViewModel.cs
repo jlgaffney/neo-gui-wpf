@@ -4,11 +4,14 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Numerics;
 using System.Windows.Input;
+
 using Neo.Cryptography.ECC;
+using Neo.SmartContract;
+
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Services;
+
 using Neo.Gui.Wpf.MVVM;
-using Neo.SmartContract;
 
 namespace Neo.Gui.Wpf.Views.Contracts
 {

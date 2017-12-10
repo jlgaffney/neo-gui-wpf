@@ -49,6 +49,7 @@ namespace Neo.Gui.Base.Controllers
 
         private readonly object walletRefreshLock = new object();
 
+        private bool initialized;
         private bool disposed;
 
         private Timer refreshTimer;
@@ -92,6 +93,16 @@ namespace Neo.Gui.Base.Controllers
 
         public void Initialize(string certificateCachePath)
         {
+            if (this.disposed)
+            {
+                throw new ObjectDisposedException(nameof(IWalletController));
+            }
+
+            if (this.initialized)
+            {
+                throw new Exception(nameof(IWalletController) + " has already been initialized!");
+            }
+
             this.blockchainController.Initialize();
 
             this.certificateQueryService.Initialize(certificateCachePath);
@@ -105,6 +116,8 @@ namespace Neo.Gui.Base.Controllers
             };
 
             this.refreshTimer.Elapsed += this.Refresh;
+
+            this.initialized = true;
         }
 
         public bool WalletIsOpen => this.currentWallet != null;
@@ -1154,7 +1167,7 @@ namespace Neo.Gui.Base.Controllers
                     this.messageSubscriber.Unsubscribe(this);
 
                     // Stop automatic refresh timer
-                    this.refreshTimer.Stop();
+                    this.refreshTimer?.Stop();
                     this.refreshTimer = null;
 
                     // Dispose of blockchain controller

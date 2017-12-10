@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Linq;
+
 using Neo.Core;
+using Neo.SmartContract;
+using Neo.VM;
+
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.Services;
+
 using Neo.Gui.Wpf.MVVM;
-using Neo.SmartContract;
-using Neo.VM;
 
 namespace Neo.Gui.Wpf.Views.Contracts
 {

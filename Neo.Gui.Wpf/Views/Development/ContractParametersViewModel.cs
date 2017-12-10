@@ -2,20 +2,23 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using MahApps.Metro.Controls.Dialogs;
+
+using Neo.Network;
+using Neo.SmartContract;
+
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Extensions;
 using Neo.Gui.Base.Globalization;
+using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Services;
+
 using Neo.Gui.Wpf.MVVM;
-using Neo.Network;
-using Neo.SmartContract;
-using Neo.UI.Base.Dialogs;
 
 namespace Neo.Gui.Wpf.Views.Development
 {
     public class ContractParametersViewModel : ViewModelBase
     {
+        private readonly IDialogManager dialogManager;
         private readonly IWalletController walletController;
         private readonly IDispatchService dispatchService;
 
@@ -31,9 +34,11 @@ namespace Neo.Gui.Wpf.Views.Development
         private bool broadcastVisible;
 
         public ContractParametersViewModel(
+            IDialogManager dialogManager,
             IWalletController walletController,
             IDispatchService dispatchService)
         {
+            this.dialogManager = dialogManager;
             this.walletController = walletController;
             this.dispatchService = dispatchService;
 
@@ -159,7 +164,7 @@ namespace Neo.Gui.Wpf.Views.Development
 
         private async void Load()
         {
-            if (!InputBox.Show(out var input, "ParametersContext", "ParametersContext")) return;
+            var input = this.dialogManager.ShowInputDialog("ParametersContext", "ParametersContext");
 
             if (string.IsNullOrEmpty(input)) return;
 
@@ -169,7 +174,7 @@ namespace Neo.Gui.Wpf.Views.Development
             }
             catch (FormatException ex)
             {
-                await DialogCoordinator.Instance.ShowMessageAsync(this, string.Empty, ex.Message);
+                this.dialogManager.ShowMessageDialog(string.Empty, ex.Message);
                 return;
             }
 
@@ -193,7 +198,7 @@ namespace Neo.Gui.Wpf.Views.Development
 
         private void Show()
         {
-            InformationBox.Show(context.ToString(), "ParametersContext", "ParametersContext");
+            this.dialogManager.ShowInformationDialog("ParametersContext", "ParametersContext", context.ToString());
         }
 
         private void Broadcast()
@@ -204,7 +209,7 @@ namespace Neo.Gui.Wpf.Views.Development
 
             this.walletController.Relay(inventory);
 
-            InformationBox.Show(inventory.Hash.ToString(), Strings.RelaySuccessText, Strings.RelaySuccessTitle);
+            this.dialogManager.ShowInformationDialog(Strings.RelaySuccessTitle, Strings.RelaySuccessText, inventory.Hash.ToString());
         }
 
         private void Update()

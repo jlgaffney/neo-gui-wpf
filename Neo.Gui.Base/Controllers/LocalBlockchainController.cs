@@ -20,8 +20,9 @@ namespace Neo.Gui.Base.Controllers
         #region Private Fields
         private readonly IMessagePublisher messagePublisher;
         private readonly ISettingsManager settingsManager;
-        
-        private bool disposed = false;
+
+        private bool initialized;
+        private bool disposed;
 
         private Blockchain blockChain;
 
@@ -56,7 +57,24 @@ namespace Neo.Gui.Base.Controllers
 
         public void Initialize()
         {
-            this.InitializeLocalNode();
+            if (this.disposed)
+            {
+                throw new ObjectDisposedException(nameof(IBlockchainController));
+            }
+
+            if (this.initialized)
+            {
+                throw new Exception(nameof(IBlockchainController) + " has already been initialized!");
+            }
+
+            // Initialize blockchain
+            this.blockChain = Blockchain.RegisterBlockchain(new LevelDBBlockchain(settingsManager.LocalNodeBlockchainDataDirectoryPath));
+
+            // Initialize local node
+            TryLoadPeerState();
+            this.StartLocalNode();
+
+            this.initialized = true;
         }
 
         public BlockchainStatus GetStatus()
@@ -143,17 +161,7 @@ namespace Neo.Gui.Base.Controllers
 
         #endregion
 
-        #region Private Methods 
-
-        private void InitializeLocalNode()
-        {
-            // Initialize blockchain
-            this.blockChain = Blockchain.RegisterBlockchain(new LevelDBBlockchain(settingsManager.LocalNodeBlockchainDataDirectoryPath));
-
-            // Initialize local node
-            TryLoadPeerState();
-            this.StartLocalNode();
-        }
+        #region Private Methods
 
         private void StartLocalNode()
         {
@@ -303,12 +311,15 @@ namespace Neo.Gui.Base.Controllers
                 {
                     SavePeerState();
 
-                    this.localNode.Dispose();
-                    this.localNode = null;
+                    if (this.initialized)
+                    {
+                        this.localNode.Dispose();
+                        this.localNode = null;
 
-                    this.blockChain.Dispose();
-                    this.blockChain = null;
-                    
+                        this.blockChain.Dispose();
+                        this.blockChain = null;
+                    }
+
                     this.disposed = true;
                 }
             }

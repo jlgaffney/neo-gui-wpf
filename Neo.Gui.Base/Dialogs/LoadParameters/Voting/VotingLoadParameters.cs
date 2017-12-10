@@ -2,7 +2,7 @@
 {
     public class VotingLoadParameters
     {
-        public UInt160 ScriptHash { get; private set; }
+        public UInt160 ScriptHash { get; }
 
         public VotingLoadParameters(UInt160 scriptHash)
         {

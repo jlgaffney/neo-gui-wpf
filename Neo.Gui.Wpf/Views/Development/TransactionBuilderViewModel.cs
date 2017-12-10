@@ -3,14 +3,16 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Input;
+
 using Neo.Core;
+using Neo.SmartContract;
+
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Globalization;
 using Neo.Gui.Base.Managers;
+
 using Neo.Gui.Wpf.MVVM;
 using Neo.Gui.Wpf.Views.Transactions;
-using Neo.SmartContract;
-using Neo.UI.Base.Dialogs;
 using Neo.UI.Base.Wrappers;
 
 namespace Neo.Gui.Wpf.Views.Development
@@ -121,7 +123,10 @@ namespace Neo.Gui.Wpf.Views.Development
                 };
             }
             var remark = Encoding.UTF8.GetString(attribute.Data);
-            if (InputBox.Show(out var result, Strings.EnterRemarkMessage, Strings.EnterRemarkTitle, remark))
+
+            var result = this.dialogManager.ShowInputDialog(Strings.EnterRemarkTitle, Strings.EnterRemarkMessage, remark);
+
+            if (!string.IsNullOrEmpty(result))
             {
                 remark = result;
             }
@@ -157,7 +162,7 @@ namespace Neo.Gui.Wpf.Views.Development
             var transaction = this.walletController.MakeTransaction(wrapper.Unwrap());
             if (transaction == null)
             {
-                this.dialogManager.ShowMessage(string.Empty, Strings.InsufficientFunds);
+                this.dialogManager.ShowMessageDialog(string.Empty, Strings.InsufficientFunds);
             }
             else
             {
@@ -170,7 +175,8 @@ namespace Neo.Gui.Wpf.Views.Development
         {
             var wrapper = (TransactionWrapper)this.TransactionWrapper;
             var context = new ContractParametersContext(wrapper.Unwrap());
-            InformationBox.Show(context.ToString(), "ParametersContext", "ParametersContext");
+
+            this.dialogManager.ShowInformationDialog("ParametersContext", "ParametersContext", context.ToString());
         }
     }
 }

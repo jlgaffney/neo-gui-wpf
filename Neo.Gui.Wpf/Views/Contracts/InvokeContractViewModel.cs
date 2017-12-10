@@ -2,20 +2,23 @@
 using System.Linq;
 using System.Text;
 using System.Windows.Input;
+
 using Neo.Core;
-using Neo.Gui.Base.Controllers;
-using Neo.Gui.Base.Messages;
-using Neo.Gui.Base.Messaging.Interfaces;
-using Neo.Gui.Base.Globalization;
-using Neo.Gui.Wpf.MVVM;
 using Neo.IO.Json;
 using Neo.SmartContract;
 using Neo.VM;
+
 using Neo.Gui.Base.Dialogs.Results.Contracts;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.MVVM;
 using Neo.Gui.Base.Services;
+using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Messages;
+using Neo.Gui.Base.Messaging.Interfaces;
+using Neo.Gui.Base.Globalization;
+
+using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Contracts
 {
@@ -233,7 +236,7 @@ namespace Neo.Gui.Wpf.Views.Contracts
 
             if (contractState == null)
             {
-                this.dialogManager.ShowMessage(string.Empty, "Cannot find contract.");
+                this.dialogManager.ShowMessageDialog(string.Empty, "Cannot find contract.");
                 return;
             }
 
@@ -338,7 +341,7 @@ namespace Neo.Gui.Wpf.Views.Contracts
             }
             else
             {
-                this.dialogManager.ShowMessage(string.Empty, Strings.ExecutionFailed);
+                this.dialogManager.ShowMessageDialog(string.Empty, Strings.ExecutionFailed);
             }
         }
 

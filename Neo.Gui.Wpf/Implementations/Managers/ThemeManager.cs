@@ -49,7 +49,7 @@ namespace Neo.Gui.Wpf.Implementations.Managers
         public void LoadTheme()
         {
             // Add custom accent resource dictionary to the ThemeManager, contains default color values
-            MahAppsThemeManager.AddAccent(CustomAccentKey, new Uri("pack://application:,,,/neo-gui;component/Resources/CustomAccentThemeResources.xaml"));
+            MahAppsThemeManager.AddAccent(CustomAccentKey, new Uri("pack://application:,,,/neo-gui;component/ResourceDictionaries/CustomAccentThemeResources.xaml"));
 
 
             // Try load custom theme

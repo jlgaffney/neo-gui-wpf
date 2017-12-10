@@ -4,7 +4,11 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Numerics;
 using System.Text;
+
 using Neo.Core;
+using Neo.SmartContract;
+using Neo.VM;
+
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Dialogs.Interfaces;
@@ -12,24 +16,26 @@ using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.Globalization;
+using Neo.Gui.Base.Managers;
+
 using Neo.Gui.Wpf.MVVM;
-using Neo.SmartContract;
-using Neo.UI.Base.Dialogs;
-using Neo.VM;
 
 namespace Neo.Gui.Wpf.Views.Wallets
 {
     public class TransferViewModel : ViewModelBase, IDialogViewModel<TransferDialogResult>
     {
+        private readonly IDialogManager dialogManager;
         private readonly IWalletController walletController;
         private readonly IMessagePublisher messagePublisher;
 
         private string remark = string.Empty;
 
         public TransferViewModel(
+            IDialogManager dialogManager,
             IWalletController walletController,
             IMessagePublisher messagePublisher)
         {
+            this.dialogManager = dialogManager;
             this.walletController = walletController;
             this.messagePublisher = messagePublisher;
 
@@ -56,10 +62,11 @@ namespace Neo.Gui.Wpf.Views.Wallets
 
         private void Remark()
         {
-            if (InputBox.Show(out var result, Strings.EnterRemarkMessage, Strings.EnterRemarkTitle, remark))
-            {
-                this.remark = result;
-            }
+            var result = this.dialogManager.ShowInputDialog(Strings.EnterRemarkTitle, Strings.EnterRemarkMessage, remark);
+
+            if (string.IsNullOrEmpty(result)) return;
+
+            this.remark = result;
         }
 
         private void Ok()

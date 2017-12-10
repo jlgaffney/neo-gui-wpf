@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+
 using Neo.Core;
 
 namespace Neo.Gui.Wpf.Views.Wallets
 {
     public class TradeVerificationLoadParameters
     {
-        public IEnumerable<TransactionOutput> TransactionOutputs { get; private set; }
+        public IEnumerable<TransactionOutput> TransactionOutputs { get; }
 
         public TradeVerificationLoadParameters(IEnumerable<TransactionOutput> outputs)
         {

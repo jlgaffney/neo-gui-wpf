@@ -1,12 +1,10 @@
 ﻿<controls:NeoWindow x:Class="Neo.Gui.Wpf.Views.Wallets.TradeView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
         xmlns:globalization="clr-namespace:Neo.Gui.Base.Globalization;assembly=Neo.Gui.Base"
         xmlns:wallets="clr-namespace:Neo.Gui.Wpf.Views.Wallets"
         xmlns:controls="clr-namespace:Neo.Gui.Wpf.Controls"
         xmlns:markupExtensions="clr-namespace:Neo.Gui.Wpf.MarkupExtensions"
-        dialog:DialogParticipation.Register="{Binding}"
         DataContext="{markupExtensions:DataContextBinding ViewModel=wallets:TradeViewModel}"
         Title="{x:Static globalization:Strings.TradeTitle}"
         Width="520" Height="580" ResizeMode="NoResize">

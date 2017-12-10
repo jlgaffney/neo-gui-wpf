@@ -1,6 +1,13 @@
 using System;
+
 using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
+using Neo.Gui.Base.Dialogs.Results.Contracts;
+using Neo.Gui.Base.Dialogs.Results.Settings;
+using Neo.Gui.Base.Dialogs.Results.Wallets;
+using Neo.Gui.Base.Dialogs.Results.Development;
+using Neo.Gui.Base.Dialogs.Results.Home;
 using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
@@ -8,12 +15,9 @@ using Neo.Gui.Base.MVVM;
 using Neo.Gui.Base.Globalization;
 using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Services;
+
 using Neo.Gui.Wpf.MVVM;
 using Neo.Gui.Wpf.Views.Contracts;
-using Neo.Gui.Base.Dialogs.Results.Contracts;
-using Neo.Gui.Base.Dialogs.Results.Settings;
-using Neo.Gui.Base.Dialogs.Results.Wallets;
-using Neo.Gui.Base.Dialogs.Results.Development;
 
 namespace Neo.Gui.Wpf.Views.Home
 {
@@ -21,9 +25,11 @@ namespace Neo.Gui.Wpf.Views.Home
         ViewModelBase,
         ILoadable,
         IUnloadable,
-        IMessageHandler<UpdateApplicationMessage>,
+        IDialogViewModel<HomeDialogResult>,
         IMessageHandler<CurrentWalletHasChangedMessage>,
         IMessageHandler<InvokeContractMessage>,
+        IMessageHandler<NewVersionAvailableMessage>,
+        IMessageHandler<UpdateApplicationMessage>,
         IMessageHandler<WalletStatusMessage>
     {
         #region Private Fields
@@ -210,6 +216,14 @@ namespace Neo.Gui.Wpf.Views.Home
         }
         #endregion
 
+        #region IDialogViewModel implementation 
+        public event EventHandler Close;
+
+        public event EventHandler<HomeDialogResult> SetDialogResultAndClose;
+
+        public HomeDialogResult DialogResult { get; set; }
+        #endregion
+
         #region ILoadable Implementation 
         public void OnLoad(params object[] parameters)
         {
@@ -225,13 +239,6 @@ namespace Neo.Gui.Wpf.Views.Home
         #endregion
 
         #region IMessageHandler implementation 
-        public void HandleMessage(UpdateApplicationMessage message)
-        {
-            // Start update
-            this.processHelper.Run(message.UpdateScriptPath);
-
-            this.messagePublisher.Publish(new ExitAppMessage());
-        }
 
         public void HandleMessage(CurrentWalletHasChangedMessage message)
         {
@@ -242,6 +249,20 @@ namespace Neo.Gui.Wpf.Views.Home
         {
             this.dialogManager.ShowDialog<InvokeContractDialogResult, InvokeContractLoadParameters>(
                 new LoadParameters<InvokeContractLoadParameters>(new InvokeContractLoadParameters(message.Transaction)));
+        }
+
+        public void HandleMessage(UpdateApplicationMessage message)
+        {
+            // Start update
+            this.processHelper.Run(message.UpdateScriptPath);
+
+            this.messagePublisher.Publish(new ExitAppMessage());
+        }
+
+        public void HandleMessage(NewVersionAvailableMessage message)
+        {
+            this.NewVersionLabel = $"{Strings.DownloadNewVersion}: {message.NewVersion}";
+            this.NewVersionVisible = true;
         }
 
         public void HandleMessage(WalletStatusMessage message)

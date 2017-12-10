@@ -1,12 +1,14 @@
-﻿namespace Neo.Gui.Base.Messages
+﻿using System;
+
+namespace Neo.Gui.Base.Messages
 {
     public class NewVersionAvailableMessage
     {
-        public NewVersionAvailableMessage(string newVersionLabel)
+        public NewVersionAvailableMessage(Version newVersion)
         {
-            this.NewVersionLabel = newVersionLabel;
+            this.NewVersion = newVersion;
         }
 
-        public string NewVersionLabel { get; }
+        public Version NewVersion { get; }
     }
 }

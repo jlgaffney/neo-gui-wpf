@@ -1,9 +1,14 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Windows;
+
 using Autofac;
+
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.MVVM;
+
+using Neo.Gui.WPF.Controls;
 
 namespace Neo.Gui.Wpf.Implementations.Managers
 {
@@ -14,34 +19,40 @@ namespace Neo.Gui.Wpf.Implementations.Managers
         #endregion
 
         #region IDialogManager implementation
+        
+        public IDialog<TDialogResult> CreateDialog<TDialogResult, TLoadParameters>(ILoadParameters<TLoadParameters> parameters, Action<TDialogResult> resultSetter)
+        {
+            var view = ResolveDialogInstance<TDialogResult>();
+
+            var loadable = view.DataContext as ILoadable;
+            loadable?.OnLoad(parameters);
+
+            InitializeDialogViewModel(view, resultSetter);
+
+            return view;
+        }
+
+        public IDialog<TDialogResult> CreateDialog<TDialogResult>(Action<TDialogResult> resultSetter)
+        {
+            var view = ResolveDialogInstance<TDialogResult>();
+
+            var loadable = view.DataContext as ILoadable;
+            loadable?.OnLoad();
+
+            InitializeDialogViewModel(view, resultSetter);
+
+            return view;
+        }
 
         public TDialogResult ShowDialog<TDialogResult>()
         {
             var dialogResult = default(TDialogResult);
 
-            var view = containerLifetimeScope?.Resolve<IDialog<TDialogResult>>();
-
-            Debug.Assert(view != null);
-            Debug.Assert(view is Window);
-
-            var viewWindow = view as Window;
-
-            var viewModel = view.DataContext as IDialogViewModel<TDialogResult>;
-            if (viewModel != null)
+            var view = CreateDialog<TDialogResult>(result =>
             {
-                viewModel.Close += (sender, e) =>
-                {
-                    viewWindow.Close();
-                };
-
-                viewModel.SetDialogResultAndClose += (sender, e) =>
-                {
-                    dialogResult = e;
-
-                    viewWindow.Close();
-                };
-            }
-
+                dialogResult = result;
+            });
+            
             view.ShowDialog();
 
             return dialogResult;
@@ -51,42 +62,29 @@ namespace Neo.Gui.Wpf.Implementations.Managers
         {
             var dialogResult = default(TDialogResult);
 
-            var view = containerLifetimeScope?.Resolve<IDialog<TDialogResult>>();
-
-            // TODO [AboimPinto]: Don't agree with this return. Is there is no IDialog<T> exported, in developement this should be catched. This should never happen in prodution or there was enough tests.
-            // Should throw an exception
-            if (view == null) return dialogResult;
-
-            if (view.DataContext is ILoadable loadableViewModel)
+            var view = CreateDialog<TDialogResult, TLoadParameters>(parameters, result =>
             {
-                loadableViewModel.OnLoad(parameters);
-            }
-
-            var viewModel = view.DataContext as IDialogViewModel<TDialogResult>;
-            if (viewModel != null)
-            {
-
-                viewModel.Close += (sender, e) =>
-                {
-                    var viewWindow = view as Window;
-                    viewWindow.Close();
-                };
-
-                viewModel.SetDialogResultAndClose += (sender, e) =>
-                {
-                    dialogResult = e;
-
-                    var viewWindow = view as Window;
-                    viewWindow.Close();
-                };
-            }
-
+                dialogResult = result;
+            });
+            
             view.ShowDialog();
 
             return dialogResult;
         }
 
-        public MessageDialogResult ShowMessage(string title, string message, MessageDialogType type = MessageDialogType.Ok, MessageDialogResult defaultResult = MessageDialogResult.Ok)
+        public string ShowInputDialog(string title, string message, string input = "")
+        {
+            var isOk = InputBox.Show(out var result, message, title, input);
+
+            return isOk ? result : null;
+        }
+
+        public void ShowInformationDialog(string title, string message, string text)
+        {
+            InformationBox.Show(text, message, title);
+        }
+
+        public MessageDialogResult ShowMessageDialog(string title, string message, MessageDialogType type = MessageDialogType.Ok, MessageDialogResult defaultResult = MessageDialogResult.Ok)
         {
             switch (type)
             {
@@ -137,6 +135,37 @@ namespace Neo.Gui.Wpf.Implementations.Managers
         public static void SetLifetimeScope(ILifetimeScope lifetimeScope)
         {
             containerLifetimeScope = lifetimeScope;
+        }
+
+        private static IDialog<TDialogResult> ResolveDialogInstance<TDialogResult>()
+        {
+            var view = containerLifetimeScope?.Resolve<IDialog<TDialogResult>>();
+
+            Debug.Assert(view != null);
+            Debug.Assert(view is Window);
+
+            return view;
+        }
+
+        private static void InitializeDialogViewModel<TDialogResult>(IDialog<TDialogResult> view, Action<TDialogResult> resultSetter)
+        {
+            var viewWindow = view as Window;
+
+            var viewModel = view.DataContext as IDialogViewModel<TDialogResult>;
+
+            if (viewModel == null) return;
+
+            viewModel.Close += (sender, e) =>
+            {
+                viewWindow?.Close();
+            };
+
+            viewModel.SetDialogResultAndClose += (sender, e) =>
+            {
+                resultSetter?.Invoke(e);
+
+                viewWindow?.Close();
+            };
         }
         #endregion
     }

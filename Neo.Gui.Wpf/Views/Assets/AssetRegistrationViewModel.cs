@@ -2,16 +2,19 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
+
 using Neo.Core;
 using Neo.Cryptography.ECC;
+using Neo.SmartContract;
+using Neo.VM;
+
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
+
 using Neo.Gui.Wpf.MVVM;
-using Neo.SmartContract;
-using Neo.VM;
 
 namespace Neo.Gui.Wpf.Views.Assets
 {

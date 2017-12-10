@@ -2,12 +2,14 @@
 using System.ComponentModel;
 using System.Net;
 using System.Windows.Input;
+
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results.Settings;
 using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
+
 using Neo.Gui.Wpf.MVVM;
 using Neo.Gui.Wpf.Properties;
 

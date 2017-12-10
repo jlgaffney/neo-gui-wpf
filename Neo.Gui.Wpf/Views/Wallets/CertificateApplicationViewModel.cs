@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+
 using CERTENROLLLib;
+
 using Neo.Cryptography.ECC;
+
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Services;
+
 using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Wallets

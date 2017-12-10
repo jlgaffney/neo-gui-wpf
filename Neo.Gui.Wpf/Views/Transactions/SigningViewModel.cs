@@ -1,35 +1,40 @@
 ﻿using System;
+
+using Neo.Network;
+using Neo.SmartContract;
+
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Globalization;
 using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Services;
+
 using Neo.Gui.Wpf.MVVM;
-using Neo.Network;
-using Neo.SmartContract;
-using Neo.UI.Base.Dialogs;
 
 namespace Neo.Gui.Wpf.Views.Transactions
 {
     public class SigningViewModel : ViewModelBase, IDialogViewModel<SigningDialogResult>
     {
-        private readonly IWalletController walletController;
-        private readonly INotificationService notificationService;
         private readonly IClipboardManager clipboardManager;
+        private readonly IDialogManager dialogManager;
+        private readonly INotificationService notificationService;
+        private readonly IWalletController walletController;
 
         private string input;
         private ContractParametersContext output;
         private bool broadcastVisible;
 
         public SigningViewModel(
-            IWalletController walletController,
             IClipboardManager clipboardManager,
-            INotificationService notificationService)
+            IDialogManager dialogManager,
+            INotificationService notificationService,
+            IWalletController walletController)
         {
-            this.walletController = walletController;
-            this.notificationService = notificationService;
             this.clipboardManager = clipboardManager;
+            this.dialogManager = dialogManager;
+            this.notificationService = notificationService;
+            this.walletController = walletController;
         }
 
         public string Input
@@ -126,7 +131,7 @@ namespace Neo.Gui.Wpf.Views.Transactions
 
             this.walletController.Relay(inventory);
 
-            InformationBox.Show(inventory.Hash.ToString(), Strings.RelaySuccessText, Strings.RelaySuccessTitle);
+            this.dialogManager.ShowInformationDialog(Strings.RelaySuccessTitle, Strings.RelaySuccessText, inventory.Hash.ToString());
 
             this.BroadcastVisible = false;
         }

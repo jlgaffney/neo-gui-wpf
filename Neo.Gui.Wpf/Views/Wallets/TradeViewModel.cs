@@ -2,21 +2,22 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using MahApps.Metro.Controls.Dialogs;
+
 using Neo.Core;
+using Neo.IO.Json;
+using Neo.SmartContract;
+
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Globalization;
 using Neo.Gui.Base.Services;
-using Neo.Gui.Wpf.MVVM;
-using Neo.IO.Json;
-using Neo.SmartContract;
-using Neo.UI.Base.Dialogs;
 using Neo.Gui.Base.MVVM;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Managers;
+
+using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Wallets
 {
@@ -184,8 +185,8 @@ namespace Neo.Gui.Wpf.Views.Wallets
 
             this.MyRequest = RequestToJson(tx).ToString();
 
-            InformationBox.Show(this.MyRequest, Strings.TradeRequestCreatedMessage, Strings.TradeRequestCreatedCaption);
-
+            this.dialogManager.ShowInformationDialog(Strings.TradeRequestCreatedCaption, Strings.TradeRequestCreatedMessage, this.MyRequest);
+            
             this.SelectedTabIndex = 1;
         }
 
@@ -205,7 +206,7 @@ namespace Neo.Gui.Wpf.Views.Wallets
                     var outputOthers = outputsOthers.FirstOrDefault(p => p.AssetId == outputMine.AssetId && p.Value == outputMine.Value && p.ScriptHash == outputMine.ScriptHash);
                     if (outputOthers == null)
                     {
-                        await DialogCoordinator.Instance.ShowMessageAsync(this, Strings.Failed, Strings.TradeFailedFakeDataMessage);
+                        this.dialogManager.ShowMessageDialog(Strings.Failed, Strings.TradeFailedFakeDataMessage);
                         return;
                     }
                     outputsOthers.Remove(outputOthers);
@@ -223,13 +224,13 @@ namespace Neo.Gui.Wpf.Views.Wallets
             {
                 if (inputs.Select(p => this.walletController.GetTransaction(p.PrevHash).Outputs[p.PrevIndex].ScriptHash).Distinct().Any(p => this.walletController.WalletContainsAddress(p)))
                 {
-                    await DialogCoordinator.Instance.ShowMessageAsync(this, Strings.Failed, Strings.TradeFailedInvalidDataMessage);
+                    this.dialogManager.ShowMessageDialog(Strings.Failed, Strings.TradeFailedInvalidDataMessage);
                     return;
                 }
             }
             catch
             {
-                await DialogCoordinator.Instance.ShowMessageAsync(this, Strings.Failed, Strings.TradeFailedNoSyncMessage);
+                this.dialogManager.ShowMessageDialog(Strings.Failed, Strings.TradeFailedNoSyncMessage);
                 return;
             }
 
@@ -266,13 +267,15 @@ namespace Neo.Gui.Wpf.Views.Wallets
             if (context.Completed)
             {
                 context.Verifiable.Scripts = context.GetScripts();
+
                 var tx = (ContractTransaction)context.Verifiable;
                 this.walletController.Relay(tx);
-                InformationBox.Show(tx.Hash.ToString(), Strings.TradeSuccessMessage, Strings.TradeSuccessCaption);
+
+                this.dialogManager.ShowInformationDialog(Strings.TradeSuccessCaption, Strings.TradeSuccessMessage, tx.Hash.ToString());
             }
             else
             {
-                InformationBox.Show(context.ToString(), Strings.TradeNeedSignatureMessage, Strings.TradeNeedSignatureCaption);
+                this.dialogManager.ShowInformationDialog(Strings.TradeNeedSignatureCaption, Strings.TradeNeedSignatureMessage, context.ToString());
             }
         }
 

@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Linq;
+
+using Neo.Wallets;
+
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.MVVM;
+
 using Neo.Gui.Wpf.MVVM;
-using Neo.Wallets;
 
 namespace Neo.Gui.Wpf.Views.Accounts
 {

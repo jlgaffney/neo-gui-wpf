@@ -1,6 +1,10 @@
 using System.IO;
 using System.Windows.Input;
+
 using Neo.Core;
+using Neo.SmartContract;
+using Neo.VM;
+
 using Neo.Gui.Base.Collections;
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Data;
@@ -10,9 +14,8 @@ using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.MVVM;
 using Neo.Gui.Base.Globalization;
 using Neo.Gui.Base.Managers;
+
 using Neo.Gui.Wpf.MVVM;
-using Neo.SmartContract;
-using Neo.VM;
 
 namespace Neo.Gui.Wpf.Views.Home
 {
@@ -118,7 +121,7 @@ namespace Neo.Gui.Wpf.Views.Home
 
             var value = this.walletController.GetAvailable(this.SelectedAsset.State.AssetId);
 
-            var result = this.dialogManager.ShowMessage(
+            var result = this.dialogManager.ShowMessageDialog(
                 Strings.DeleteConfirmation,
                 $"{Strings.DeleteAssetConfirmationMessage}\n{string.Join("\n", $"{this.SelectedAsset.State.GetName()}:{value}")}",
                 MessageDialogType.YesNo,
