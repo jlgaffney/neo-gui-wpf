@@ -1,7 +1,10 @@
 using System.IO;
-using System.Windows;
 using System.Windows.Input;
+
 using Neo.Core;
+using Neo.SmartContract;
+using Neo.VM;
+
 using Neo.Gui.Base.Collections;
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Data;
@@ -10,10 +13,9 @@ using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.MVVM;
 using Neo.Gui.Base.Globalization;
+using Neo.Gui.Base.Managers;
+
 using Neo.Gui.Wpf.MVVM;
-using Neo.SmartContract;
-using Neo.VM;
-using Neo.Wallets;
 
 namespace Neo.Gui.Wpf.Views.Home
 {
@@ -27,7 +29,9 @@ namespace Neo.Gui.Wpf.Views.Home
         #region Private Fields 
         private static readonly UInt160 RecycleScriptHash = new[] { (byte)OpCode.PUSHT }.ToScriptHash();
 
+        private readonly IDialogManager dialogManager;
         private readonly IProcessHelper processHelper;
+        private readonly ISettingsManager settingsManager;
         private readonly IWalletController walletController;
         private readonly IMessageSubscriber messageSubscriber;
         private readonly IMessagePublisher messagePublisher;
@@ -81,13 +85,17 @@ namespace Neo.Gui.Wpf.Views.Home
 
         #region Constructor 
         public AssetsViewModel(
-            IWalletController walletController,
+            IDialogManager dialogManager,
             IProcessHelper processHelper,
+            ISettingsManager settingsManager,
+            IWalletController walletController,
             IMessageSubscriber messageSubscriber,
             IMessagePublisher messagePublisher)
         {
-            this.walletController = walletController;
+            this.dialogManager = dialogManager;
             this.processHelper = processHelper;
+            this.settingsManager = settingsManager;
+            this.walletController = walletController;
             this.messageSubscriber = messageSubscriber;
             this.messagePublisher = messagePublisher;
 
@@ -101,8 +109,8 @@ namespace Neo.Gui.Wpf.Views.Home
             if (this.SelectedAsset == null || this.SelectedAsset.State == null) return;
 
             var hash = Contract.CreateSignatureRedeemScript(this.SelectedAsset.State.Owner).ToScriptHash();
-            var address = Wallet.ToAddress(hash);
-            var path = Path.Combine(Properties.Settings.Default.CertCachePath, $"{address}.cer");
+            var address = this.walletController.ToAddress(hash);
+            var path = Path.Combine(this.settingsManager.CertificateCachePath, $"{address}.cer");
 
             this.processHelper.Run(path);
         }
@@ -113,8 +121,13 @@ namespace Neo.Gui.Wpf.Views.Home
 
             var value = this.walletController.GetAvailable(this.SelectedAsset.State.AssetId);
 
-            if (MessageBox.Show($"{Strings.DeleteAssetConfirmationMessage}\n{string.Join("\n", $"{this.SelectedAsset.State.GetName()}:{value}")}",
-                    Strings.DeleteConfirmation, MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes) return;
+            var result = this.dialogManager.ShowMessageDialog(
+                Strings.DeleteConfirmation,
+                $"{Strings.DeleteAssetConfirmationMessage}\n{string.Join("\n", $"{this.SelectedAsset.State.GetName()}:{value}")}",
+                MessageDialogType.YesNo,
+                MessageDialogResult.No);
+
+            if (result != MessageDialogResult.Yes) return;
 
             var transaction = this.walletController.MakeTransaction(new ContractTransaction
             {
@@ -138,7 +151,7 @@ namespace Neo.Gui.Wpf.Views.Home
         {
             if (this.SelectedAsset == null) return;
 
-            var url = string.Format(Properties.Settings.Default.Urls.AssetUrl, this.SelectedAsset.Name.Substring(2));
+            var url = string.Format(this.settingsManager.AssetURLFormat, this.SelectedAsset.Name.Substring(2));
 
             this.processHelper.OpenInExternalBrowser(url);
         }

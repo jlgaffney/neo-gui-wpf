@@ -1,26 +1,30 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows;
+
 using Neo.Core;
 using Neo.Cryptography.ECC;
+using Neo.Wallets;
+
 using Neo.Gui.Base.Controllers;
-using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.Globalization;
-using Neo.Gui.Wpf.MVVM;
-using Neo.Wallets;
+using Neo.Gui.Base.Services;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Managers;
+
+using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Accounts
 {
     public class CreateMultiSigContractViewModel : ViewModelBase, IDialogViewModel<CreateMultiSigContractDialogResult>
     {
+        private readonly IDialogManager dialogManager;
         private readonly IWalletController walletController;
         private readonly IMessagePublisher messagePublisher;
-        private readonly IDispatchHelper dispatchHelper;
+        private readonly IDispatchService dispatchService;
 
         private int minimumSignatureNumber;
         private int minimumSignatureNumberMaxValue;
@@ -30,13 +34,15 @@ namespace Neo.Gui.Wpf.Views.Accounts
         private string newPublicKey;
 
         public CreateMultiSigContractViewModel(
+            IDialogManager dialogManager,
             IWalletController walletController,
             IMessagePublisher messagePublisher,
-            IDispatchHelper dispatchHelper)
+            IDispatchService dispatchService)
         {
+            this.dialogManager = dialogManager;
             this.walletController = walletController;
             this.messagePublisher = messagePublisher;
-            this.dispatchHelper = dispatchHelper;
+            this.dispatchService = dispatchService;
 
             this.PublicKeys = new ObservableCollection<string>();
         }
@@ -133,7 +139,7 @@ namespace Neo.Gui.Wpf.Views.Accounts
 
             if (contract == null)
             {
-                MessageBox.Show(Strings.AddContractFailedMessage);
+                this.dialogManager.ShowMessageDialog(string.Empty, Strings.AddContractFailedMessage);
                 return;
             }
 
@@ -149,11 +155,11 @@ namespace Neo.Gui.Wpf.Views.Accounts
             // Check if public key has already been added
             if (this.PublicKeys.Any(publicKey => publicKey.Equals(this.NewPublicKey, StringComparison.InvariantCultureIgnoreCase)))
             {
-                MessageBox.Show("Public key has already been added.");
+                this.dialogManager.ShowMessageDialog(string.Empty, "Public key has already been added.");
                 return;
             }
 
-            await this.dispatchHelper.InvokeOnMainUIThread(() => this.PublicKeys.Add(this.NewPublicKey));
+            await this.dispatchService.InvokeOnMainUIThread(() => this.PublicKeys.Add(this.NewPublicKey));
 
             this.NewPublicKey = string.Empty;
             this.MinimumSignatureNumberMaxValue = this.PublicKeys.Count;
@@ -163,7 +169,7 @@ namespace Neo.Gui.Wpf.Views.Accounts
         {
             if (!this.RemovePublicKeyEnabled) return;
 
-            await this.dispatchHelper.InvokeOnMainUIThread(() =>
+            await this.dispatchService.InvokeOnMainUIThread(() =>
             {
                 this.PublicKeys.Remove(this.SelectedPublicKey);
                 this.MinimumSignatureNumberMaxValue = this.PublicKeys.Count;

@@ -2,29 +2,30 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using MahApps.Metro.Controls.Dialogs;
+
 using Neo.Core;
+using Neo.IO.Json;
+using Neo.SmartContract;
+
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
-using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Globalization;
-using Neo.Gui.Wpf.MVVM;
-using Neo.IO.Json;
-using Neo.SmartContract;
-using Neo.UI.Base.Dialogs;
-using Neo.Wallets;
+using Neo.Gui.Base.Services;
 using Neo.Gui.Base.MVVM;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
+using Neo.Gui.Base.Managers;
+
+using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Wallets
 {
     public class TradeViewModel : ViewModelBase, IDialogViewModel<TradeDialogResult>
     {
-        private readonly IDialogHelper dialogHelper;
+        private readonly IDialogManager dialogManager;
         private readonly IWalletController walletController;
-        private readonly IDispatchHelper dispatchHelper;
+        private readonly IDispatchService dispatchService;
 
         private string payToAddress;
         private string myRequest;
@@ -37,13 +38,13 @@ namespace Neo.Gui.Wpf.Views.Wallets
         private int selectedTabIndex;
 
         public TradeViewModel(
-            IDialogHelper dialogHelper,
+            IDialogManager dialogManager,
             IWalletController walletController,
-            IDispatchHelper dispatchHelper)
+            IDispatchService dispatchService)
         {
-            this.dialogHelper = dialogHelper;
+            this.dialogManager = dialogManager;
             this.walletController = walletController;
-            this.dispatchHelper = dispatchHelper;
+            this.dispatchService = dispatchService;
 
             this.Items = new ObservableCollection<TransactionOutputItem>();
         }
@@ -66,14 +67,14 @@ namespace Neo.Gui.Wpf.Views.Wallets
                 
                 try
                 {
-                    this.ScriptHash = Wallet.ToScriptHash(this.PayToAddress);
+                    this.ScriptHash = this.walletController.ToScriptHash(this.PayToAddress);
                 }
                 catch (FormatException)
                 {
                     this.ScriptHash = null;
                 }
 
-                this.dispatchHelper.InvokeOnMainUIThread(() => this.Items.Clear());
+                this.dispatchService.InvokeOnMainUIThread(() => this.Items.Clear());
             }
         }
 
@@ -184,8 +185,8 @@ namespace Neo.Gui.Wpf.Views.Wallets
 
             this.MyRequest = RequestToJson(tx).ToString();
 
-            InformationBox.Show(this.MyRequest, Strings.TradeRequestCreatedMessage, Strings.TradeRequestCreatedCaption);
-
+            this.dialogManager.ShowInformationDialog(Strings.TradeRequestCreatedCaption, Strings.TradeRequestCreatedMessage, this.MyRequest);
+            
             this.SelectedTabIndex = 1;
         }
 
@@ -196,7 +197,7 @@ namespace Neo.Gui.Wpf.Views.Wallets
             var json = JObject.Parse(this.CounterPartyRequest);
             if (json.ContainsProperty("hex"))
             {
-                var txMine = JsonToRequest(JObject.Parse(this.MyRequest));
+                var txMine = this.JsonToRequest(JObject.Parse(this.MyRequest));
                 var txOthers = (ContractTransaction)ContractParametersContext.FromJson(json).Verifiable;
                 inputs = txOthers.Inputs.Except(txMine.Inputs);
                 var outputsOthers = new List<TransactionOutput>(txOthers.Outputs);
@@ -205,7 +206,7 @@ namespace Neo.Gui.Wpf.Views.Wallets
                     var outputOthers = outputsOthers.FirstOrDefault(p => p.AssetId == outputMine.AssetId && p.Value == outputMine.Value && p.ScriptHash == outputMine.ScriptHash);
                     if (outputOthers == null)
                     {
-                        await DialogCoordinator.Instance.ShowMessageAsync(this, Strings.Failed, Strings.TradeFailedFakeDataMessage);
+                        this.dialogManager.ShowMessageDialog(Strings.Failed, Strings.TradeFailedFakeDataMessage);
                         return;
                     }
                     outputsOthers.Remove(outputOthers);
@@ -214,7 +215,7 @@ namespace Neo.Gui.Wpf.Views.Wallets
             }
             else
             {
-                var txOthers = JsonToRequest(json);
+                var txOthers = this.JsonToRequest(json);
                 inputs = txOthers.Inputs;
                 outputs = txOthers.Outputs;
             }
@@ -223,19 +224,19 @@ namespace Neo.Gui.Wpf.Views.Wallets
             {
                 if (inputs.Select(p => this.walletController.GetTransaction(p.PrevHash).Outputs[p.PrevIndex].ScriptHash).Distinct().Any(p => this.walletController.WalletContainsAddress(p)))
                 {
-                    await DialogCoordinator.Instance.ShowMessageAsync(this, Strings.Failed, Strings.TradeFailedInvalidDataMessage);
+                    this.dialogManager.ShowMessageDialog(Strings.Failed, Strings.TradeFailedInvalidDataMessage);
                     return;
                 }
             }
             catch
             {
-                await DialogCoordinator.Instance.ShowMessageAsync(this, Strings.Failed, Strings.TradeFailedNoSyncMessage);
+                this.dialogManager.ShowMessageDialog(Strings.Failed, Strings.TradeFailedNoSyncMessage);
                 return;
             }
 
             outputs = outputs.Where(p => this.walletController.WalletContainsAddress(p.ScriptHash));
 
-            var dialogResult = this.dialogHelper.ShowDialog<TradeVerificationDialogResult, TradeVerificationLoadParameters>(
+            var dialogResult = this.dialogManager.ShowDialog<TradeVerificationDialogResult, TradeVerificationLoadParameters>(
                 new LoadParameters<TradeVerificationLoadParameters>(new TradeVerificationLoadParameters(outputs)));
 
             this.MergeEnabled = dialogResult.TradeAccepted;
@@ -251,8 +252,8 @@ namespace Neo.Gui.Wpf.Views.Wallets
             }
             else
             {
-                var tx1 = JsonToRequest(json1);
-                var tx2 = JsonToRequest(JObject.Parse(this.MyRequest));
+                var tx1 = this.JsonToRequest(json1);
+                var tx2 = this.JsonToRequest(JObject.Parse(this.MyRequest));
                 context = new ContractParametersContext(new ContractTransaction
                 {
                     Attributes = new TransactionAttribute[0],
@@ -266,17 +267,19 @@ namespace Neo.Gui.Wpf.Views.Wallets
             if (context.Completed)
             {
                 context.Verifiable.Scripts = context.GetScripts();
+
                 var tx = (ContractTransaction)context.Verifiable;
                 this.walletController.Relay(tx);
-                InformationBox.Show(tx.Hash.ToString(), Strings.TradeSuccessMessage, Strings.TradeSuccessCaption);
+
+                this.dialogManager.ShowInformationDialog(Strings.TradeSuccessCaption, Strings.TradeSuccessMessage, tx.Hash.ToString());
             }
             else
             {
-                InformationBox.Show(context.ToString(), Strings.TradeNeedSignatureMessage, Strings.TradeNeedSignatureCaption);
+                this.dialogManager.ShowInformationDialog(Strings.TradeNeedSignatureCaption, Strings.TradeNeedSignatureMessage, context.ToString());
             }
         }
 
-        private static ContractTransaction JsonToRequest(JObject json)
+        private ContractTransaction JsonToRequest(JObject json)
         {
             return new ContractTransaction
             {
@@ -289,7 +292,7 @@ namespace Neo.Gui.Wpf.Views.Wallets
                 {
                     AssetId = UInt256.Parse(p["asset"].AsString()),
                     Value = Fixed8.Parse(p["value"].AsString()),
-                    ScriptHash = Wallet.ToScriptHash(p["address"].AsString())
+                    ScriptHash = this.walletController.ToScriptHash(p["address"].AsString())
                 }).ToArray()
             };
         }
@@ -300,7 +303,7 @@ namespace Neo.Gui.Wpf.Views.Wallets
             {
                 ["vin"] = tx.Inputs.Select(p => p.ToJson()).ToArray(),
                 ["vout"] = tx.Outputs.Select((p, i) => p.ToJson((ushort)i)).ToArray(),
-                ["change_address"] = Wallet.ToAddress(this.walletController.GetChangeAddress())
+                ["change_address"] = this.walletController.ToAddress(this.walletController.GetChangeAddress())
             };
             return json;
         }

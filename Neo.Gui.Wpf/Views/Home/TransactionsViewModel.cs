@@ -1,11 +1,13 @@
-﻿using System.Windows;
-using System.Windows.Input;
+﻿using System.Windows.Input;
+
 using Neo.Gui.Base.Collections;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Helpers.Interfaces;
+using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.MVVM;
+
 using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Home
@@ -19,7 +21,9 @@ namespace Neo.Gui.Wpf.Views.Home
     {
         #region Private Fields 
         private readonly IMessageSubscriber messageSubscriber;
+        private readonly IClipboardManager clipboardManager;
         private readonly IProcessHelper processHelper;
+        private readonly ISettingsManager settingsManager;
 
         private TransactionItem selectedTransaction;
         #endregion
@@ -53,10 +57,14 @@ namespace Neo.Gui.Wpf.Views.Home
         #region Constructor 
         public TransactionsViewModel(
             IMessageSubscriber messageSubscriber,
-            IProcessHelper processHelper)
+            IClipboardManager clipboardManager,
+            IProcessHelper processHelper,
+            ISettingsManager settingsManager)
         {
             this.messageSubscriber = messageSubscriber;
+            this.clipboardManager = clipboardManager;
             this.processHelper = processHelper;
+            this.settingsManager = settingsManager;
 
             this.Transactions = new ConcurrentObservableCollection<TransactionItem>();
         }
@@ -81,7 +89,7 @@ namespace Neo.Gui.Wpf.Views.Home
         {
             if (this.SelectedTransaction == null) return;
 
-            Clipboard.SetDataObject(this.SelectedTransaction.Id);
+            this.clipboardManager.SetText(this.SelectedTransaction.Id);
         }
 
         private void ViewSelectedTransactionDetails()
@@ -90,7 +98,7 @@ namespace Neo.Gui.Wpf.Views.Home
 
             if (string.IsNullOrEmpty(this.SelectedTransaction.Id)) return;
 
-            var url = string.Format(Properties.Settings.Default.Urls.TransactionUrl, this.SelectedTransaction.Id.Substring(2));
+            var url = string.Format(this.settingsManager.TransactionURLFormat, this.SelectedTransaction.Id.Substring(2));
 
             this.processHelper.OpenInExternalBrowser(url);
         }

@@ -2,23 +2,25 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using MahApps.Metro.Controls.Dialogs;
-using Neo.Gui.Base.Controllers;
-using Neo.Gui.Base.Extensions;
-using Neo.Gui.Base.Helpers.Interfaces;
-using Neo.Gui.Base.Globalization;
-using Neo.Gui.Wpf.MVVM;
+
 using Neo.Network;
 using Neo.SmartContract;
-using Neo.UI.Base.Dialogs;
-using Neo.Wallets;
+
+using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Extensions;
+using Neo.Gui.Base.Globalization;
+using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.Services;
+
+using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Development
 {
     public class ContractParametersViewModel : ViewModelBase
     {
+        private readonly IDialogManager dialogManager;
         private readonly IWalletController walletController;
-        private readonly IDispatchHelper dispatchHelper;
+        private readonly IDispatchService dispatchService;
 
         private ContractParametersContext context;
 
@@ -32,11 +34,13 @@ namespace Neo.Gui.Wpf.Views.Development
         private bool broadcastVisible;
 
         public ContractParametersViewModel(
+            IDialogManager dialogManager,
             IWalletController walletController,
-            IDispatchHelper dispatchHelper)
+            IDispatchService dispatchService)
         {
+            this.dialogManager = dialogManager;
             this.walletController = walletController;
-            this.dispatchHelper = dispatchHelper;
+            this.dispatchService = dispatchService;
 
             this.ScriptHashAddresses = new ObservableCollection<string>();
         }
@@ -53,7 +57,7 @@ namespace Neo.Gui.Wpf.Views.Development
 
                 if (string.IsNullOrEmpty(this.SelectedScriptHashAddress)) return emptyCollection;
 
-                var scriptHash = Wallet.ToScriptHash(this.SelectedScriptHashAddress);
+                var scriptHash = this.walletController.ToScriptHash(this.SelectedScriptHashAddress);
 
                 if (scriptHash == null) return emptyCollection;
 
@@ -160,7 +164,7 @@ namespace Neo.Gui.Wpf.Views.Development
 
         private async void Load()
         {
-            if (!InputBox.Show(out var input, "ParametersContext", "ParametersContext")) return;
+            var input = this.dialogManager.ShowInputDialog("ParametersContext", "ParametersContext");
 
             if (string.IsNullOrEmpty(input)) return;
 
@@ -170,17 +174,17 @@ namespace Neo.Gui.Wpf.Views.Development
             }
             catch (FormatException ex)
             {
-                await DialogCoordinator.Instance.ShowMessageAsync(this, string.Empty, ex.Message);
+                this.dialogManager.ShowMessageDialog(string.Empty, ex.Message);
                 return;
             }
 
-            await this.dispatchHelper.InvokeOnMainUIThread(() =>
+            await this.dispatchService.InvokeOnMainUIThread(() =>
             {
                 this.ScriptHashAddresses.Clear();
                 this.CurrentValue = string.Empty;
                 this.NewValue = string.Empty;
 
-                this.ScriptHashAddresses.AddRange(context.ScriptHashes.Select(Wallet.ToAddress));
+                this.ScriptHashAddresses.AddRange(context.ScriptHashes.Select(this.walletController.ToAddress));
             });
 
             this.SelectedScriptHashAddress = null;
@@ -194,7 +198,7 @@ namespace Neo.Gui.Wpf.Views.Development
 
         private void Show()
         {
-            InformationBox.Show(context.ToString(), "ParametersContext", "ParametersContext");
+            this.dialogManager.ShowInformationDialog("ParametersContext", "ParametersContext", context.ToString());
         }
 
         private void Broadcast()
@@ -205,7 +209,7 @@ namespace Neo.Gui.Wpf.Views.Development
 
             this.walletController.Relay(inventory);
 
-            InformationBox.Show(inventory.Hash.ToString(), Strings.RelaySuccessText, Strings.RelaySuccessTitle);
+            this.dialogManager.ShowInformationDialog(Strings.RelaySuccessTitle, Strings.RelaySuccessText, inventory.Hash.ToString());
         }
 
         private void Update()

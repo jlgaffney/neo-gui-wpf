@@ -2,9 +2,9 @@
 
 namespace Neo.Gui.Base.Controllers
 {
-    public class BlockChainStatus
+    public class BlockchainStatus
     {
-        public BlockChainStatus(uint height, uint headerHeight, bool nextBlockProgressIsIndeterminate,
+        public BlockchainStatus(uint height, uint headerHeight, bool nextBlockProgressIsIndeterminate,
             double nextBlockProgressFraction, TimeSpan timeSinceLastBlock, uint nodeCount)
         {
             this.Height = height;

@@ -1,17 +1,30 @@
 ﻿using System;
-using Microsoft.Win32;
+
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
+using Neo.Gui.Base.Services;
+
 using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Wallets
 {
     public class CreateWalletViewModel : ViewModelBase, IDialogViewModel<CreateWalletDialogResult>
     {
+        private readonly IFileDialogService fileDialogService;
+
         private string walletPath;
         private string password;
         private string reEnteredPassword;
-        
+
+        #region Constructor
+
+        public CreateWalletViewModel(
+            IFileDialogService fileDialogService)
+        {
+            this.fileDialogService = fileDialogService;
+        }
+        #endregion
+
         public string WalletPath
         {
             get => this.walletPath;
@@ -77,32 +90,24 @@ namespace Neo.Gui.Wpf.Views.Wallets
 
         private void GetWalletPath()
         {
-            // TODO Issue #76 [AboimPinto]: SaveDialog need to be abstracted
-            var saveFileDialog = new SaveFileDialog
-            {
-                DefaultExt = "db3",
-                Filter = "Wallet File|*.db3"
-            };
+            var walletFilePath = this.fileDialogService.SaveFileDialog("db3", "Wallet File|*.db3");
 
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                this.WalletPath = saveFileDialog.FileName;
-            }
+            if (string.IsNullOrEmpty(walletFilePath)) return;
+
+            this.WalletPath = walletFilePath;
         }
 
         private void Confirm()
         {
             if (!this.ConfirmEnabled) return;
 
-            if (this.SetDialogResultAndClose != null)
-            {
-                var dialogResult = new CreateWalletDialogResult(
-                    this.WalletPath,
-                    this.password);
-                this.SetDialogResultAndClose(this, dialogResult);
-            }
+            if (this.SetDialogResultAndClose == null) return;
 
-            this.Close(this, EventArgs.Empty);
+            var dialogResult = new CreateWalletDialogResult(
+                this.WalletPath,
+                this.password);
+
+            this.SetDialogResultAndClose(this, dialogResult);
         }
     }
 }

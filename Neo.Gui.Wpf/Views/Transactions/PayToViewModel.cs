@@ -2,19 +2,21 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+
+using Neo.Wallets;
+
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Data;
-using Neo.Gui.Base.Helpers.Interfaces;
+using Neo.Gui.Base.Services;
+
 using Neo.Gui.Wpf.MVVM;
-using Neo.Wallets;
-using NeoSettings = Neo.Gui.Wpf.Properties.Settings;
 
 namespace Neo.Gui.Wpf.Views.Transactions
 {
     public class PayToViewModel : ViewModelBase
     {
         private readonly IWalletController walletController;
-        private readonly IDispatchHelper dispatchHelper;
+        private readonly IDispatchService dispatchService;
 
         private bool assetSelectionEnabled;
         private AssetDescriptor selectedAsset;
@@ -28,10 +30,10 @@ namespace Neo.Gui.Wpf.Views.Transactions
 
         public PayToViewModel(
             IWalletController walletController,
-            IDispatchHelper dispatchHelper)
+            IDispatchService dispatchService)
         {
             this.walletController = walletController;
-            this.dispatchHelper = dispatchHelper;
+            this.dispatchService = dispatchService;
 
             this.Assets = new ObservableCollection<AssetDescriptor>();
         }
@@ -126,7 +128,7 @@ namespace Neo.Gui.Wpf.Views.Transactions
                 
                 try
                 {
-                    Wallet.ToScriptHash(this.PayToAddress);
+                    this.walletController.ToScriptHash(this.PayToAddress);
                 }
                 catch (FormatException)
                 {
@@ -152,7 +154,7 @@ namespace Neo.Gui.Wpf.Views.Transactions
 
         public void Load(AssetDescriptor asset = null, UInt160 scriptHash = null)
         {
-            this.dispatchHelper.InvokeOnMainUIThread(() =>
+            this.dispatchService.InvokeOnMainUIThread(() =>
             {
                 this.Assets.Clear();
 
@@ -192,7 +194,7 @@ namespace Neo.Gui.Wpf.Views.Transactions
 
                 if (scriptHash != null)
                 {
-                    this.PayToAddress = Wallet.ToAddress(scriptHash);
+                    this.PayToAddress = this.walletController.ToAddress(scriptHash);
                     this.PayToAddressReadOnly = true;
                 }
             });
@@ -221,7 +223,7 @@ namespace Neo.Gui.Wpf.Views.Transactions
                 AssetName = asset.AssetName,
                 AssetId = asset.AssetId,
                 Value = new BigDecimal(Fixed8.Parse(this.Amount).GetData(), 8),
-                ScriptHash = Wallet.ToScriptHash(this.PayToAddress)
+                ScriptHash = this.walletController.ToScriptHash(this.PayToAddress)
             };
         }
     }

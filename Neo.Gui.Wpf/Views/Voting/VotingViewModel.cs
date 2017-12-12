@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Linq;
+
 using Neo.Core;
+using Neo.VM;
+
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results.Voting;
@@ -8,9 +11,8 @@ using Neo.Gui.Base.Extensions;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.MVVM;
+
 using Neo.Gui.Wpf.MVVM;
-using Neo.VM;
-using Neo.Wallets;
 
 namespace Neo.Gui.Wpf.Views.Voting
 {
@@ -78,7 +80,7 @@ namespace Neo.Gui.Wpf.Views.Voting
             var account = this.walletController.GetAccountState(hash);
 
             // Set address
-            this.Address = Wallet.ToAddress(hash);
+            this.Address = this.walletController.ToAddress(hash);
 
             // Concatenate votes into multi-line string
             var voteStrings = account.Votes.Select(p => p.ToString()).ToArray();

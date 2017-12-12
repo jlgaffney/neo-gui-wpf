@@ -266,20 +266,22 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controllers\LocalBlockChainController.cs" />
     <Compile Include="Converters\ColorToSolidColorBrushConverter.cs" />
     <Compile Include="Extensions\CollectionExtensions.cs" />
-    <Compile Include="Helpers\ISettingsHelper.cs" />
-    <Compile Include="Helpers\SettingsHelper.cs" />
+    <Compile Include="Implementations\Managers\ClipboardManager.cs" />
+    <Compile Include="Implementations\Managers\SettingsManager.cs" />
+    <Compile Include="Implementations\Services\FileDialogService.cs" />
     <Compile Include="RegistrationModules\ControllersRegistrationModule.cs" />
     <Compile Include="Extensions\ColorExtensions.cs" />
-    <Compile Include="Helpers\DialogHelper.cs" />
-    <Compile Include="Helpers\ProcessHelper.cs" />
+    <Compile Include="Implementations\Managers\DialogManager.cs" />
+    <Compile Include="Implementations\Helpers\ProcessHelper.cs" />
+    <Compile Include="RegistrationModules\ServicesRegistrationModule.cs" />
+    <Compile Include="RegistrationModules\ManagersRegistrationModule.cs" />
     <Compile Include="RegistrationModules\HelpersRegistrationModule.cs" />
-    <Compile Include="Helpers\NotificationHelper.cs" />
-    <Compile Include="Helpers\DispatchHelper.cs" />
+    <Compile Include="Implementations\Services\NotificationService.cs" />
+    <Compile Include="Implementations\Services\DispatchService.cs" />
     <Compile Include="RegistrationModules\MessagingRegistrationModule.cs" />
-    <Compile Include="Certificates\RootCertificate.cs" />
+    <Compile Include="RootCertificate.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -308,8 +310,6 @@
       <DependentUpon>CreateLockAccountView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Accounts\ImportCertificateViewModel.cs" />
-    <Compile Include="Views\Accounts\ViewContractLoadParameters.cs" />
-    <Compile Include="Views\Accounts\ViewPrivateKeyLoadParameters.cs" />
     <Compile Include="Views\Assets\AssetDistributionView.xaml.cs">
       <DependentUpon>AssetDistributionView.xaml</DependentUpon>
     </Compile>
@@ -317,9 +317,8 @@
     <Compile Include="Controls\TransactionPropertyGrid.xaml.cs">
       <DependentUpon>TransactionPropertyGrid.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\ThemeHelper.cs" />
+    <Compile Include="Implementations\Managers\ThemeManager.cs" />
     <Compile Include="RegistrationModules\DialogsRegistrationModule.cs" />
-    <Compile Include="Views\Contracts\InvokeContractLoadParameters.cs" />
     <Compile Include="Views\Home\TransactionsView.xaml.cs">
       <DependentUpon>TransactionsView.xaml</DependentUpon>
     </Compile>
@@ -343,10 +342,10 @@
     <Compile Include="Controls\TxOutListBox.xaml.cs">
       <DependentUpon>TxOutListBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\InformationBox.xaml.cs">
+    <Compile Include="Controls\InformationBox.xaml.cs">
       <DependentUpon>InformationBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\InputBox.xaml.cs">
+    <Compile Include="Controls\InputBox.xaml.cs">
       <DependentUpon>InputBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Contracts\ParametersEditorView.xaml.cs">
@@ -380,9 +379,7 @@
     <Compile Include="Views\Transactions\SigningViewModel.cs" />
     <Compile Include="RegistrationModules\ViewModelsRegistrationModule.cs" />
     <Compile Include="Views\Voting\ElectionViewModel.cs" />
-    <Compile Include="Views\Voting\VotingLoadParameters.cs" />
     <Compile Include="Views\Voting\VotingViewModel.cs" />
-    <Compile Include="Views\Wallets\TradeVerificationLoadParameters.cs" />
     <Compile Include="Views\Wallets\TradeView.xaml.cs">
       <DependentUpon>TradeView.xaml</DependentUpon>
     </Compile>
@@ -474,7 +471,7 @@
     </Compile>
     <Compile Include="Views\Wallets\RestoreAccountsViewModel.cs" />
     <Compile Include="Views\Wallets\TransferViewModel.cs" />
-    <Compile Include="Helpers\VersionHelper.cs" />
+    <Compile Include="Implementations\Helpers\VersionHelper.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -557,6 +554,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="ResourceDictionaries\StyleResources.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\AboutView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -585,11 +586,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Resources\ConverterResources.xaml">
+    <Page Include="ResourceDictionaries\ConverterResources.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Resources\CustomAccentThemeResources.xaml">
+    <Page Include="ResourceDictionaries\CustomAccentThemeResources.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -643,11 +644,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Dialogs\InformationBox.xaml">
+    <Page Include="Controls\InformationBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Dialogs\InputBox.xaml">
+    <Page Include="Controls\InputBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

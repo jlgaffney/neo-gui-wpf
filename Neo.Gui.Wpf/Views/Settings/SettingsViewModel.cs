@@ -2,22 +2,26 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using MahApps.Metro.Controls.Dialogs;
+
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Extensions;
 using Neo.Gui.Base.Helpers.Interfaces;
+using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Theming;
+
 using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Settings
 {
     public class SettingsViewModel : ViewModelBase, IDialogViewModel<SettingsDialogResult>
     {
+        private readonly IDialogManager dialogManager;
         private readonly IWalletController walletController;
         private readonly IProcessHelper processHelper;
-        private readonly IThemeHelper themeHelper;
+        private readonly ISettingsManager settingsManager;
+        private readonly IThemeManager themeManager;
 
         private string currentNEP5ContractsList;
         private string nep5ContractsList;
@@ -36,13 +40,17 @@ namespace Neo.Gui.Wpf.Views.Settings
 
 
         public SettingsViewModel(
+            IDialogManager dialogManager,
             IWalletController walletController,
             IProcessHelper processHelper,
-            IThemeHelper themeHelper)
+            ISettingsManager settingsManager,
+            IThemeManager themeManager)
         {
+            this.dialogManager = dialogManager;
             this.walletController = walletController;
             this.processHelper = processHelper;
-            this.themeHelper = themeHelper;
+            this.settingsManager = settingsManager;
+            this.themeManager = themeManager;
 
             this.LoadSettings();
         }
@@ -76,7 +84,7 @@ namespace Neo.Gui.Wpf.Views.Settings
 
         private void LoadAppearanceSettings()
         {
-            var currentTheme = this.themeHelper.CurrentTheme;
+            var currentTheme = this.themeManager.CurrentTheme;
 
             // Set theme style
             this.currentStyle = currentTheme.Style;
@@ -303,9 +311,8 @@ namespace Neo.Gui.Wpf.Views.Settings
                 validNEP5WatchScriptHashesHex.Add(nep5WatchScriptHashHex);
             }
 
-            Properties.Settings.Default.NEP5Watched.Clear();
-            Properties.Settings.Default.NEP5Watched.AddRange(validNEP5WatchScriptHashesHex.ToArray());
-            Properties.Settings.Default.Save();
+            this.settingsManager.NEP5WatchScriptHashes = validNEP5WatchScriptHashesHex.ToArray();
+            this.settingsManager.Save();
 
             this.walletController.SetNEP5WatchScriptHashes(validNEP5WatchScriptHashesHex);
             
@@ -314,13 +321,13 @@ namespace Neo.Gui.Wpf.Views.Settings
             NotifyPropertyChanged(nameof(this.NEP5SettingsChanged));
         }
 
-        private async void ApplyAppearanceSettings()
+        private  void ApplyAppearanceSettings()
         {
-            var restartApprovedResult = await DialogCoordinator.Instance.ShowMessageAsync(this,
-                "App will need to be restarted", "This application needs to be restarted for the new theme settings to be applied",
-                    MessageDialogStyle.AffirmativeAndNegative);
+            var restartApprovedResult = this.dialogManager.ShowMessageDialog("App will need to be restarted",
+                "This application needs to be restarted for the new theme settings to be applied",
+                    MessageDialogType.YesNo, MessageDialogResult.No);
 
-            if (restartApprovedResult != MessageDialogResult.Affirmative) return;
+            if (restartApprovedResult != MessageDialogResult.Yes) return;
 
             // Application restart approved
 
@@ -370,8 +377,8 @@ namespace Neo.Gui.Wpf.Views.Settings
 
             // Export and save as JSON in settings
             var newThemeJson = Theme.ExportToJson(newTheme);
-            Properties.Settings.Default.AppTheme = newThemeJson;
-            Properties.Settings.Default.Save();
+            this.settingsManager.AppTheme = newThemeJson;
+            this.settingsManager.Save();
 
             // Update settings' current values
             this.currentStyle = this.SelectedStyle;

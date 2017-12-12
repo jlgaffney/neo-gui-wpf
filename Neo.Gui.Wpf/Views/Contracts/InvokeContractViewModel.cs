@@ -1,22 +1,24 @@
-﻿using System.IO;
+﻿using System;
 using System.Linq;
 using System.Text;
-using System.Windows;
 using System.Windows.Input;
-using Microsoft.Win32;
+
 using Neo.Core;
+using Neo.IO.Json;
+using Neo.SmartContract;
+using Neo.VM;
+
+using Neo.Gui.Base.Dialogs.Results.Contracts;
+using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.MVVM;
+using Neo.Gui.Base.Services;
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.Globalization;
+
 using Neo.Gui.Wpf.MVVM;
-using Neo.IO.Json;
-using Neo.SmartContract;
-using Neo.VM;
-using Neo.Gui.Base.Dialogs.Results.Contracts;
-using Neo.Gui.Base.Dialogs.Interfaces;
-using System;
-using Neo.Gui.Base.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Contracts
 {
@@ -24,6 +26,9 @@ namespace Neo.Gui.Wpf.Views.Contracts
     {
         private static readonly Fixed8 NetworkFee = Fixed8.FromDecimal(0.001m);
 
+        private readonly IDialogManager dialogManager;
+        private readonly IFileManager fileManager;
+        private readonly IFileDialogService fileDialogService;
         private readonly IWalletController walletController;
         private readonly IMessagePublisher messagePublisher;
 
@@ -45,9 +50,15 @@ namespace Neo.Gui.Wpf.Views.Contracts
         private bool invokeEnabled;
 
         public InvokeContractViewModel(
+            IDialogManager dialogManager,
+            IFileManager fileManager,
+            IFileDialogService fileDialogService,
             IWalletController walletController,
             IMessagePublisher messagePublisher)
         {
+            this.dialogManager = dialogManager;
+            this.fileManager = fileManager;
+            this.fileDialogService = fileDialogService;
             this.walletController = walletController;
             this.messagePublisher = messagePublisher;
         }
@@ -225,7 +236,7 @@ namespace Neo.Gui.Wpf.Views.Contracts
 
             if (contractState == null)
             {
-                MessageBox.Show("Cannot find contract.");
+                this.dialogManager.ShowMessageDialog(string.Empty, "Cannot find contract.");
                 return;
             }
 
@@ -267,25 +278,29 @@ namespace Neo.Gui.Wpf.Views.Contracts
 
         private void Load()
         {
-            var openFileDialog = new OpenFileDialog();
+            var filePath = this.fileDialogService.OpenFileDialog();
 
-            if (openFileDialog.ShowDialog() != true) return;
+            if (string.IsNullOrEmpty(filePath)) return;
 
-            byte[] script = null;
+            byte[] loadedBytes;
             try
             {
-                script = File.ReadAllBytes(openFileDialog.FileName);
+                loadedBytes = this.fileManager.ReadAllBytes(filePath);
             }
-            catch {  } // Swallow any exceptions
-        
-            var scriptHex = string.Empty;
-
-            if (script != null)
+            catch
             {
-                scriptHex = script.ToHexString();
+                // TODO Show error message
+                return;
+            }
+        
+            var hexString = string.Empty;
+
+            if (loadedBytes != null)
+            {
+                hexString = loadedBytes.ToHexString();
             }
 
-            this.CustomScript = scriptHex;
+            this.CustomScript = hexString;
         }
 
         private void Test()
@@ -326,7 +341,7 @@ namespace Neo.Gui.Wpf.Views.Contracts
             }
             else
             {
-                MessageBox.Show(Strings.ExecutionFailed);
+                this.dialogManager.ShowMessageDialog(string.Empty, Strings.ExecutionFailed);
             }
         }
 

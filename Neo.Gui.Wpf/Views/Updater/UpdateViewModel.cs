@@ -1,14 +1,15 @@
 ﻿using System;
 using System.ComponentModel;
-using System.IO;
-using System.IO.Compression;
 using System.Net;
 using System.Windows.Input;
+
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results.Settings;
 using Neo.Gui.Base.Helpers.Interfaces;
+using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
+
 using Neo.Gui.Wpf.MVVM;
 using Neo.Gui.Wpf.Properties;
 
@@ -23,6 +24,9 @@ namespace Neo.Gui.Wpf.Views.Updater
 
         private readonly WebClient web = new WebClient();
 
+        private readonly ICompressedFileManager compressedFileManager;
+        private readonly IDirectoryManager directoryManager;
+        private readonly IFileManager fileManager;
         private readonly IProcessHelper processHelper;
         private readonly IMessagePublisher messagePublisher;
 
@@ -34,10 +38,16 @@ namespace Neo.Gui.Wpf.Views.Updater
         private bool buttonsEnabled;
 
         public UpdateViewModel(
+            ICompressedFileManager compressedFileManager,
+            IDirectoryManager directoryManager,
+            IFileManager fileManager,
             IProcessHelper processHelper,
             IVersionHelper versionHelper,
             IMessagePublisher messagePublisher)
         {
+            this.compressedFileManager = compressedFileManager;
+            this.directoryManager = directoryManager;
+            this.fileManager = fileManager;
             this.processHelper = processHelper;
             this.messagePublisher = messagePublisher;
 
@@ -131,28 +141,33 @@ namespace Neo.Gui.Wpf.Views.Updater
         {
             if (e.Cancelled || e.Error != null) return;
 
-            var directoryInfo = new DirectoryInfo("update");
+            const string update1DirectoryPath = "update";
+            const string update2DirectoryPath = "update2";
 
             // Delete update directory if it exists
-            if (directoryInfo.Exists) directoryInfo.Delete(true);
-
-            // Create update directory
-            directoryInfo.Create();
-
-            // Extract update zip file to directory
-            ZipFile.ExtractToDirectory(DownloadPath, directoryInfo.Name);
-
-            var fileSystemInfo = directoryInfo.GetFileSystemInfos();
-            if (fileSystemInfo.Length == 1 && fileSystemInfo[0] is DirectoryInfo)
+            if (this.directoryManager.DirectoryExists(update1DirectoryPath))
             {
-                ((DirectoryInfo) fileSystemInfo[0]).MoveTo("update2");
-
-                directoryInfo.Delete();
-
-                Directory.Move("update2", directoryInfo.Name);
+                this.directoryManager.Delete(update1DirectoryPath);
             }
 
-            File.WriteAllBytes(UpdateFileName, Resources.UpdateBat);
+            // Create update directory
+            this.directoryManager.Create(update1DirectoryPath);
+
+            // Extract update zip file to directory
+            this.compressedFileManager.ExtractZipFileToDirectory(DownloadPath, update1DirectoryPath);
+
+            var updateSubDirectories = this.directoryManager.GetSubDirectories(update1DirectoryPath);
+
+            if (updateSubDirectories.Length == 1)
+            {
+                this.directoryManager.Move(updateSubDirectories[0], update2DirectoryPath);
+
+                this.directoryManager.Delete(update1DirectoryPath);
+
+                this.directoryManager.Move(update2DirectoryPath, update1DirectoryPath);
+            }
+
+            this.fileManager.WriteAllBytes(UpdateFileName, Resources.UpdateBat);
 
             // Update application
             this.messagePublisher.Publish(new UpdateApplicationMessage(UpdateFileName));

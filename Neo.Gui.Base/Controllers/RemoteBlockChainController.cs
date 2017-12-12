@@ -5,7 +5,7 @@ using Neo.Network;
 
 namespace Neo.Gui.Base.Controllers
 {
-    public class RemoteBlockChainController : IBlockChainController
+    public class RemoteBlockchainController : IBlockchainController
     {
         public RegisterTransaction GoverningToken => throw new NotImplementedException();
 
@@ -25,7 +25,7 @@ namespace Neo.Gui.Base.Controllers
             throw new NotImplementedException();
         }
 
-        public BlockChainStatus GetStatus()
+        public BlockchainStatus GetStatus()
         {
             throw new NotImplementedException();
         }

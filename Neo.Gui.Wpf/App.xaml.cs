@@ -1,23 +1,32 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
+
 using Autofac;
+
 using Neo.Gui.Base;
 using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Dialogs.Results.Home;
+using Neo.Gui.Base.Dialogs.Results.Settings;
 using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
+using Neo.Gui.Base.MVVM;
 using Neo.Gui.Base.Globalization;
-using Neo.Gui.Wpf.Certificates;
+using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.Services;
+
 using Neo.Gui.Wpf.Extensions;
-using Neo.Gui.Wpf.Helpers;
+using Neo.Gui.Wpf.Implementations.Managers;
 using Neo.Gui.Wpf.MarkupExtensions;
+using Neo.Gui.Wpf.Properties;
 using Neo.Gui.Wpf.RegistrationModules;
 using Neo.Gui.Wpf.Views.Home;
 using Neo.Gui.Wpf.Views.Updater;
-using Settings = Neo.Gui.Wpf.Properties.Settings;
 using SplashScreen = Neo.Gui.Wpf.Views.SplashScreen;
 
 namespace Neo.Gui.Wpf
@@ -36,6 +45,15 @@ namespace Neo.Gui.Wpf
             this.Setup();
         }
 
+        protected override void OnExit(ExitEventArgs e)
+        {
+            // Dispose of controller instances
+            this.walletController.Dispose();
+            this.walletController = null;
+
+            base.OnExit(e);
+        }
+
         private void Setup()
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -45,88 +63,150 @@ namespace Neo.Gui.Wpf
             Debug.Assert(containerLifetimeScope != null);
 
             // Set static lifetime scopes
-            DialogHelper.SetLifetimeScope(containerLifetimeScope);
+            DialogManager.SetLifetimeScope(containerLifetimeScope);
             DataContextBindingExtension.SetLifetimeScope(containerLifetimeScope);
 
-            var dispatchHelper = containerLifetimeScope.Resolve<IDispatchHelper>();
-            var themeHelper = containerLifetimeScope.Resolve<IThemeHelper>();
-            var versionHelper = containerLifetimeScope.Resolve<IVersionHelper>();
+            var dialogManager = containerLifetimeScope.Resolve<IDialogManager>() as DialogManager;
+            var dispatchService = containerLifetimeScope.Resolve<IDispatchService>();
+            var messagePublisher = containerLifetimeScope.Resolve<IMessagePublisher>();
             var messageSubscriber = containerLifetimeScope.Resolve<IMessageSubscriber>();
+            var themeManager = containerLifetimeScope.Resolve<IThemeManager>();
+            var versionHelper = containerLifetimeScope.Resolve<IVersionHelper>();
+            this.walletController = containerLifetimeScope.Resolve<IWalletController>();
+
+            Debug.Assert(
+                dialogManager != null &&
+                dispatchService != null &&
+                messagePublisher != null &&
+                messageSubscriber != null &&
+                themeManager != null &&
+                versionHelper != null &&
+                this.walletController != null);
 
             messageSubscriber.Subscribe(this);
 
-            Debug.Assert(dispatchHelper != null);
-
-            Task.Run(() =>
+            Task.Run(async () =>
             {
-                themeHelper?.LoadTheme();
+                InstallRootCertificateIfRequired();
 
+                themeManager.LoadTheme();
+
+                // Show splash screen
                 SplashScreen splashScreen = null;
-                dispatchHelper.InvokeOnMainUIThread(() =>
+                await dispatchService.InvokeOnMainUIThread(() =>
                 {
                     splashScreen = new SplashScreen();
                     splashScreen.Show();
                 });
 
-                var updateIsRequired = false;
+                Window window = null;
+                Version newerVersion = null;
                 try
                 {
-                    
-                    if (versionHelper != null)
+                    if (versionHelper.UpdateIsRequired)
                     {
-                        updateIsRequired = versionHelper.UpdateIsRequired;
+                        // Display update window
+                        await dispatchService.InvokeOnMainUIThread(() =>
+                        {
+                            window = dialogManager.CreateDialog<UpdateDialogResult>(result => {  }) as Window;
+                        });
+                        return;
                     }
 
-                    if (updateIsRequired) return;
+                    // Application is starting normally
 
-                    // Application is starting normally, initialize controllers
-                    this.walletController = containerLifetimeScope.Resolve<IWalletController>();
-
-                    Debug.Assert(this.walletController != null);
-
-                    if (!Settings.Default.RemoteNodeMode)
-                    {
-                        // Local node is being used, install root certificate
-                        if (!RootCertificate.Install()) return;
-                    }
-
+                    // Initialize wallet controller
                     this.walletController.Initialize(Settings.Default.CertCachePath);
-
                     this.walletController.SetNEP5WatchScriptHashes(Settings.Default.NEP5Watched.ToArray());
+
+                    // Check if there a newer version is available
+                    var latestVersion = versionHelper.LatestVersion;
+                    var currentVersion = versionHelper.CurrentVersion;
+                    if (latestVersion != null && currentVersion != null && latestVersion > currentVersion)
+                    {
+                        newerVersion = latestVersion;
+                    }
+
+                    await dispatchService.InvokeOnMainUIThread(() =>
+                    {
+                        window = dialogManager.CreateDialog<HomeDialogResult>(result => { }) as Window;
+                    });
                 }
                 finally
                 {
-                    dispatchHelper.InvokeOnMainUIThread(() =>
+                    Debug.Assert(window != null);
+
+                    await dispatchService.InvokeOnMainUIThread(() =>
                     {
-                        this.MainWindow = updateIsRequired ? (Window) new UpdateView() : new HomeView();
+                        // Load this.MainWindow.DataContext if required
+                        var loadableDataContext = window.DataContext as ILoadable;
+                        loadableDataContext?.OnLoad();
 
-                        splashScreen.Close();
-
+                        this.MainWindow = window;
                         this.MainWindow?.Show();
-
-                        if (versionHelper == null || updateIsRequired) return;
-
-                        // Check if there is a newer version
-                        var latestVersion = versionHelper.LatestVersion;
-                        var currentVersion = versionHelper.CurrentVersion;
-
-                        if (latestVersion == null || latestVersion <= currentVersion) return;
-
-                        var messagePublisher = containerLifetimeScope.Resolve(typeof(IMessagePublisher)) as IMessagePublisher;
-
-                        messagePublisher?.Publish(new NewVersionAvailableMessage($"{Strings.DownloadNewVersion}: {latestVersion}"));
+                        
+                        if (newerVersion != null)
+                        {
+                            messagePublisher.Publish(new NewVersionAvailableMessage(newerVersion));
+                        }
+                        
+                        // Close splash screen
+                        splashScreen.Close();
                     });
                 }
             });
         }
 
-        protected override void OnExit(ExitEventArgs e)
+        private static void InstallRootCertificateIfRequired()
         {
-            // Dispose of controller instances
-            this.walletController.Dispose();
-            this.walletController = null;
+            // Only install if using a local node
+            // TODO Is the root certificate required if connecting to a remote node?
+            if (Settings.Default.RemoteNodeMode) return;
 
-            base.OnExit(e);
+            if (!Settings.Default.InstallCertificate) return;
+
+            // Check if root certificate is already installed
+            if (RootCertificate.IsInstalled) return;
+
+            // Confirm with user before trying to install root certificate
+            if (MessageBox.Show(Strings.InstallCertificateText, Strings.InstallCertificateCaption,
+                MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes) != MessageBoxResult.Yes)
+            {
+                // User has chosen not to install the Onchain root certificate
+                Settings.Default.InstallCertificate = false;
+                Settings.Default.Save();
+                return;
+            }
+
+            // Try install root certificate
+            var certificateInstalled = RootCertificate.Install();
+
+            if (certificateInstalled) return;
+
+            var runAsAdmin = MessageBox.Show(
+                "Onchain root certificate could not be installed! Do you want to try running the application as adminstrator?",
+                "Root certificate installation failed!", MessageBoxButton.YesNo, MessageBoxImage.Exclamation,
+                MessageBoxResult.No);
+
+            if (runAsAdmin != MessageBoxResult.Yes) return;
+
+            // Try running application as administrator to install root certificate
+            try
+            {
+                // TODO Stop this application instance
+
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = Assembly.GetExecutingAssembly().Location,
+                    UseShellExecute = true,
+                    Verb = "runas",
+                    WorkingDirectory = Environment.CurrentDirectory
+                });
+            }
+            catch (Win32Exception)
+            {
+                // TODO Log exception somewhere
+            }
         }
 
         private static ILifetimeScope BuildContainer()
@@ -138,6 +218,8 @@ namespace Neo.Gui.Wpf
             autoFacContainerBuilder.RegisterModule<MessagingRegistrationModule>();
             autoFacContainerBuilder.RegisterModule<ControllersRegistrationModule>();
             autoFacContainerBuilder.RegisterModule<HelpersRegistrationModule>();
+            autoFacContainerBuilder.RegisterModule<ManagersRegistrationModule>();
+            autoFacContainerBuilder.RegisterModule<ServicesRegistrationModule>();
             autoFacContainerBuilder.RegisterModule<DialogsRegistrationModule>();
 
             var container = autoFacContainerBuilder.Build();

@@ -3,22 +3,22 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Security.Cryptography;
 using System.Timers;
 using Neo.Core;
+using Neo.Cryptography.ECC;
 using Neo.Gui.Base.Certificates;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Extensions;
 using Neo.Gui.Base.Globalization;
-using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
+using Neo.Gui.Base.Services;
 using Neo.Implementations.Wallets.EntityFramework;
 using Neo.Network;
 using Neo.SmartContract;
 using Neo.VM;
 using Neo.Wallets;
-using ECPoint = Neo.Cryptography.ECC.ECPoint;
+using CryptographicException = System.Security.Cryptography.CryptographicException;
 
 namespace Neo.Gui.Base.Controllers
 {
@@ -35,9 +35,9 @@ namespace Neo.Gui.Base.Controllers
 
         #region Private Fields 
 
-        private readonly IBlockChainController blockChainController;
+        private readonly IBlockchainController blockchainController;
         private readonly ICertificateQueryService certificateQueryService;
-        private readonly INotificationHelper notificationHelper;
+        private readonly INotificationService notificationService;
         private readonly IMessagePublisher messagePublisher;
         private readonly IMessageSubscriber messageSubscriber;
 
@@ -49,6 +49,7 @@ namespace Neo.Gui.Base.Controllers
 
         private readonly object walletRefreshLock = new object();
 
+        private bool initialized;
         private bool disposed;
 
         private Timer refreshTimer;
@@ -65,15 +66,15 @@ namespace Neo.Gui.Base.Controllers
         #region Constructor 
 
         public WalletController(
-            IBlockChainController blockChainController,
+            IBlockchainController blockchainController,
             ICertificateQueryService certificateQueryService,
-            INotificationHelper notificationHelper,
+            INotificationService notificationService,
             IMessagePublisher messagePublisher,
             IMessageSubscriber messageSubscriber)
         {
-            this.blockChainController = blockChainController;
+            this.blockchainController = blockchainController;
             this.certificateQueryService = certificateQueryService;
-            this.notificationHelper = notificationHelper;
+            this.notificationService = notificationService;
             this.messagePublisher = messagePublisher;
             this.messageSubscriber = messageSubscriber;
 
@@ -92,7 +93,17 @@ namespace Neo.Gui.Base.Controllers
 
         public void Initialize(string certificateCachePath)
         {
-            this.blockChainController.Initialize();
+            if (this.disposed)
+            {
+                throw new ObjectDisposedException(nameof(IWalletController));
+            }
+
+            if (this.initialized)
+            {
+                throw new Exception(nameof(IWalletController) + " has already been initialized!");
+            }
+
+            this.blockchainController.Initialize();
 
             this.certificateQueryService.Initialize(certificateCachePath);
 
@@ -105,13 +116,15 @@ namespace Neo.Gui.Base.Controllers
             };
 
             this.refreshTimer.Elapsed += this.Refresh;
+
+            this.initialized = true;
         }
 
         public bool WalletIsOpen => this.currentWallet != null;
 
         public uint WalletHeight => !this.WalletIsOpen ? 0 : this.currentWallet.WalletHeight;
 
-        public bool WalletIsSynchronized => this.WalletHeight > this.blockChainController.BlockHeight + 1;
+        public bool WalletIsSynchronized => this.WalletHeight > this.blockchainController.BlockHeight + 1;
 
 
         public bool WalletNeedUpgrade(string walletPath)
@@ -135,7 +148,7 @@ namespace Neo.Gui.Base.Controllers
             File.Move(pathNew, walletPath);
 
             // TODO [AboimPinto]: this string need to be localized.
-            this.notificationHelper.ShowInformationNotification("Wallet migration completed.");
+            this.notificationService.ShowInformationNotification("Wallet migration completed.");
         }
 
         public void CreateWallet(string walletPath, string password)
@@ -195,7 +208,7 @@ namespace Neo.Gui.Base.Controllers
 
         public void Relay(Transaction transaction, bool saveTransaction = true)
         {
-            this.blockChainController.Relay(transaction);
+            this.blockchainController.Relay(transaction);
 
             if (saveTransaction)
             {
@@ -205,7 +218,7 @@ namespace Neo.Gui.Base.Controllers
 
         public void Relay(IInventory inventory)
         {
-            this.blockChainController.Relay(inventory);
+            this.blockchainController.Relay(inventory);
         }
 
         public void SetNEP5WatchScriptHashes(IEnumerable<string> nep5WatchScriptHashesHex)
@@ -321,27 +334,27 @@ namespace Neo.Gui.Base.Controllers
 
         public Transaction GetTransaction(UInt256 hash)
         {
-            return this.blockChainController.GetTransaction(hash);
+            return this.blockchainController.GetTransaction(hash);
         }
 
         public Transaction GetTransaction(UInt256 hash, out int height)
         {
-            return this.blockChainController.GetTransaction(hash, out height);
+            return this.blockchainController.GetTransaction(hash, out height);
         }
 
         public AccountState GetAccountState(UInt160 scriptHash)
         {
-            return this.blockChainController.GetAccountState(scriptHash);
+            return this.blockchainController.GetAccountState(scriptHash);
         }
 
         public ContractState GetContractState(UInt160 scriptHash)
         {
-            return this.blockChainController.GetContractState(scriptHash);
+            return this.blockchainController.GetContractState(scriptHash);
         }
 
         public AssetState GetAssetState(UInt256 assetId)
         {
-            return this.blockChainController.GetAssetState(assetId);
+            return this.blockchainController.GetAssetState(assetId);
         }
 
         public bool CanViewCertificate(AssetItem item)
@@ -364,19 +377,19 @@ namespace Neo.Gui.Base.Controllers
 
         public Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, bool ignoreClaimed = true)
         {
-            return this.blockChainController.CalculateBonus(inputs, ignoreClaimed);
+            return this.blockchainController.CalculateBonus(inputs, ignoreClaimed);
         }
 
         public Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, uint heightEnd)
         {
-            return this.blockChainController.CalculateBonus(inputs, heightEnd);
+            return this.blockchainController.CalculateBonus(inputs, heightEnd);
         }
 
         public Fixed8 CalculateUnavailableBonusGas(uint height)
         {
             if (!this.WalletIsOpen) return Fixed8.Zero;
 
-            var unspent = this.FindUnspentCoins().Where(p =>p.Output.AssetId.Equals(this.blockChainController.GoverningToken.Hash)).Select(p => p.Reference);
+            var unspent = this.FindUnspentCoins().Where(p =>p.Output.AssetId.Equals(this.blockchainController.GoverningToken.Hash)).Select(p => p.Reference);
             
             var references = new HashSet<CoinReference>();
 
@@ -505,12 +518,22 @@ namespace Neo.Gui.Base.Controllers
                 {
                     new TransactionOutput
                     {
-                        AssetId = this.blockChainController.UtilityToken.Hash,
+                        AssetId = this.blockchainController.UtilityToken.Hash,
                         Value = this.CalculateBonus(claims),
                         ScriptHash = this.GetChangeAddress()
                     }
                 }
             };
+        }
+
+        public UInt160 ToScriptHash(string address)
+        {
+            return Wallet.ToScriptHash(address);
+        }
+
+        public string ToAddress(UInt160 scriptHash)
+        {
+            return Wallet.ToAddress(scriptHash);
         }
 
         #endregion
@@ -594,7 +617,7 @@ namespace Neo.Gui.Base.Controllers
 
             if (transaction == null)
             {
-                this.notificationHelper.ShowErrorNotification(Strings.InsufficientFunds);
+                this.notificationService.ShowErrorNotification(Strings.InsufficientFunds);
                 return;
             }
 
@@ -605,7 +628,7 @@ namespace Neo.Gui.Base.Controllers
             }
             catch (InvalidOperationException)
             {
-                this.notificationHelper.ShowErrorNotification(Strings.UnsynchronizedBlock);
+                this.notificationService.ShowErrorNotification(Strings.UnsynchronizedBlock);
                 return;
             }
 
@@ -617,11 +640,11 @@ namespace Neo.Gui.Base.Controllers
 
                 this.Relay(transaction);
 
-                this.notificationHelper.ShowSuccessNotification($"{Strings.SendTxSucceedMessage} {transaction.Hash}");
+                this.notificationService.ShowSuccessNotification($"{Strings.SendTxSucceedMessage} {transaction.Hash}");
             }
             else
             {
-                this.notificationHelper.ShowSuccessNotification($"{Strings.IncompletedSignatureMessage} {context}");
+                this.notificationService.ShowSuccessNotification($"{Strings.IncompletedSignatureMessage} {context}");
             }
         }
 
@@ -652,7 +675,7 @@ namespace Neo.Gui.Base.Controllers
         {
             lock (this.walletRefreshLock)
             {
-                var blockChainStatus = this.blockChainController.GetStatus();
+                var blockChainStatus = this.blockchainController.GetStatus();
 
                 var walletStatus = new WalletStatus(this.WalletHeight, blockChainStatus.Height,
                     blockChainStatus.HeaderHeight,
@@ -724,7 +747,7 @@ namespace Neo.Gui.Base.Controllers
             }
             catch (CryptographicException)
             {
-                this.notificationHelper.ShowErrorNotification(Strings.PasswordIncorrect);
+                this.notificationService.ShowErrorNotification(Strings.PasswordIncorrect);
             }
 
             return null;
@@ -1063,7 +1086,7 @@ namespace Neo.Gui.Base.Controllers
                     transactionHeight = transactionItem.Info.Height.Value;
                 }
 
-                var confirmations = this.blockChainController.BlockHeight - transactionHeight + 1;
+                var confirmations = this.blockchainController.BlockHeight - transactionHeight + 1;
 
                 transactionItem.SetConfirmations((int) confirmations);
             }
@@ -1144,11 +1167,11 @@ namespace Neo.Gui.Base.Controllers
                     this.messageSubscriber.Unsubscribe(this);
 
                     // Stop automatic refresh timer
-                    this.refreshTimer.Stop();
+                    this.refreshTimer?.Stop();
                     this.refreshTimer = null;
 
                     // Dispose of blockchain controller
-                    this.blockChainController.Dispose();
+                    this.blockchainController.Dispose();
 
                     this.disposed = true;
                 }

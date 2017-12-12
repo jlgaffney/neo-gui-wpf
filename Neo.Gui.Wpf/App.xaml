@@ -4,7 +4,8 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/neo-gui;component/Resources/ConverterResources.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/neo-gui;component/ResourceDictionaries/ConverterResources.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/neo-gui;component/ResourceDictionaries/StyleResources.xaml" />
                 
                 
                 <!-- MahApps resource dictionaries -->

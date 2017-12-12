@@ -1,7 +1,10 @@
 ﻿using System;
-using Microsoft.Win32;
+
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
+using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.Services;
+
 using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Wallets
@@ -9,9 +12,27 @@ namespace Neo.Gui.Wpf.Views.Wallets
     public class OpenWalletViewModel : ViewModelBase, IDialogViewModel<OpenWalletDialogResult>
     {
         #region Private Fields
+        private readonly IFileDialogService fileDialogService;
+
         private string walletPath;
         private string password;
         private bool repairMode;
+        #endregion
+
+        #region Constructor
+
+        public OpenWalletViewModel(
+            IFileManager fileManager,
+            IFileDialogService fileDialogService,
+            ISettingsManager settingsManager)
+        {
+            this.fileDialogService = fileDialogService;
+
+            if (fileManager.FileExists(settingsManager.LastWalletPath))
+            {
+                this.WalletPath = settingsManager.LastWalletPath;
+            }
+        }
         #endregion
 
         #region Public Properties 
@@ -81,33 +102,28 @@ namespace Neo.Gui.Wpf.Views.Wallets
         #endregion
 
         #region Private Methods 
+
         private void GetWalletPath()
         {
-            // TODO Issue #76 [AboimPinto]: The OpenFileDialog should be abstracted from ViewModels.
-            var openFileDialog = new OpenFileDialog
-            {
-                DefaultExt = "db3",
-                Filter = "Wallet File|*.db3"
-            };
+            var walletFilePath = this.fileDialogService.OpenFileDialog("db3", "Wallet File|*.db3");
 
-            if (openFileDialog.ShowDialog() == true)
-            {
-                this.WalletPath = openFileDialog.FileName;
-            }
+            if (string.IsNullOrEmpty(walletFilePath)) return;
+
+            this.WalletPath = walletFilePath;
         }
 
         private void Confirm()
         {
             if (!this.ConfirmEnabled) return;
 
-            if (this.SetDialogResultAndClose != null)
-            {
-                var dialogResult = new OpenWalletDialogResult(
-                    this.WalletPath, 
-                    this.password, 
-                    this.RepairMode);
-                this.SetDialogResultAndClose(this, dialogResult);
-            }
+            if (this.SetDialogResultAndClose == null) return;
+
+            var dialogResult = new OpenWalletDialogResult(
+                this.WalletPath, 
+                this.password, 
+                this.RepairMode);
+
+            this.SetDialogResultAndClose(this, dialogResult);
         }
         #endregion
     }

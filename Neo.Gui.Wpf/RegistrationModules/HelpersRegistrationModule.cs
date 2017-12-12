@@ -1,6 +1,6 @@
 ﻿using Autofac;
 using Neo.Gui.Base.Helpers.Interfaces;
-using Neo.Gui.Wpf.Helpers;
+using Neo.Gui.Wpf.Implementations.Helpers;
 
 namespace Neo.Gui.Wpf.RegistrationModules
 {
@@ -9,26 +9,8 @@ namespace Neo.Gui.Wpf.RegistrationModules
         protected override void Load(ContainerBuilder builder)
         {
             builder
-                .RegisterType<DialogHelper>()
-                .As<IDialogHelper>();
-
-            builder
-                .RegisterType<DispatchHelper>()
-                .As<IDispatchHelper>()
-                .SingleInstance();
-
-            builder
                 .RegisterType<ProcessHelper>()
-                .As<IProcessHelper>();
-
-            builder
-                .RegisterType<NotificationHelper>()
-                .As<INotificationHelper>()
-                .SingleInstance();
-
-            builder
-                .RegisterType<ThemeHelper>()
-                .As<IThemeHelper>()
+                .As<IProcessHelper>()
                 .SingleInstance();
 
             builder

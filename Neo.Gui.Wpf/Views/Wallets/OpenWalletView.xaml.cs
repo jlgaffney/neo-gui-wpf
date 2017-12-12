@@ -1,9 +1,7 @@
-﻿using System.IO;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
-using NeoSettings = Neo.Gui.Wpf.Properties.Settings;
+using Neo.Gui.Base.Managers;
 
 namespace Neo.Gui.Wpf.Views.Wallets
 {
@@ -14,28 +12,24 @@ namespace Neo.Gui.Wpf.Views.Wallets
     {
         private readonly OpenWalletViewModel viewModel;
 
-        public OpenWalletView()
+        public OpenWalletView(
+            IFileManager fileManager,
+            ISettingsManager settingsManager)
         {
             InitializeComponent();
 
-            this.viewModel = this.DataContext as OpenWalletViewModel;
-
-            if (File.Exists(NeoSettings.Default.LastWalletPath) && this.viewModel != null)
+            if (fileManager.FileExists(settingsManager.LastWalletPath))
             {
-                this.viewModel.WalletPath = NeoSettings.Default.LastWalletPath;
-
-                // focus in password input if wallet has been set
+                // Focus in password input if wallet path has been set
                 this.Password.Focus();
             }
+
+            this.viewModel = this.DataContext as OpenWalletViewModel;
         }
 
         private void PasswordChanged(object sender, RoutedEventArgs e)
         {
-            var passwordBox = sender as PasswordBox;
-
-            if (passwordBox == null) return;
-
-            this.viewModel?.UpdatePassword(passwordBox.Password);
+            this.viewModel?.UpdatePassword(this.Password.Password);
         }
     }
 }

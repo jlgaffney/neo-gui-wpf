@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+
 using Neo.Core;
+
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
-using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.MVVM;
+using Neo.Gui.Base.Services;
+
 using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Wallets
@@ -17,7 +20,7 @@ namespace Neo.Gui.Wpf.Views.Wallets
     {
         #region Private Fields 
         private readonly IWalletController walletController;
-        private readonly IDispatchHelper dispatchHelper;
+        private readonly IDispatchService dispatchService;
         #endregion
 
         #region Public Properties 
@@ -26,17 +29,15 @@ namespace Neo.Gui.Wpf.Views.Wallets
         public RelayCommand AcceptCommand => new RelayCommand(this.Accept);
 
         public RelayCommand RefuseCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
-
-        public bool TradeAccepted { get; set; }
         #endregion
 
         #region Constructor 
         public TradeVerificationViewModel(
             IWalletController walletController,
-            IDispatchHelper dispatchHelper)
+            IDispatchService dispatchService)
         {
             this.walletController = walletController;
-            this.dispatchHelper = dispatchHelper;
+            this.dispatchService = dispatchService;
 
             this.Items = new ObservableCollection<TransactionOutputItem>();
         }
@@ -68,13 +69,16 @@ namespace Neo.Gui.Wpf.Views.Wallets
         #region Private Methods 
         private void Accept()
         {
-            this.TradeAccepted = true;
-            this.SetDialogResultAndClose(this, new TradeVerificationDialogResult(this.TradeAccepted));
+            if (this.SetDialogResultAndClose == null) return;
+
+            var dialogResult = new TradeVerificationDialogResult(true);
+
+            this.SetDialogResultAndClose(this, dialogResult);
         }
 
         private void SetOutputs(IEnumerable<TransactionOutput> outputs)
         {
-            this.dispatchHelper.InvokeOnMainUIThread(() =>
+            this.dispatchService.InvokeOnMainUIThread(() =>
             {
                 foreach (var output in outputs)
                 {
