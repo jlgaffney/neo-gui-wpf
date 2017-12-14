@@ -16,7 +16,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Neo.Gui.ViewModels\Neo.Gui.ViewModels.csproj" />
-    <ProjectReference Include="..\Neo.Gui.Wpf\Neo.Gui.Wpf.csproj" />
   </ItemGroup>
 
 </Project>
