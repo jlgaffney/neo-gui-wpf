@@ -2,6 +2,7 @@
 using Neo.Core;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
+using Neo.Gui.ViewModels.Assets;
 
 namespace Neo.Gui.Wpf.Views.Assets
 {

@@ -1,4 +1,5 @@
 using System.Windows.Input;
+using Neo.Gui.ViewModels.Home;
 
 namespace Neo.Gui.Wpf.Views.Home
 {

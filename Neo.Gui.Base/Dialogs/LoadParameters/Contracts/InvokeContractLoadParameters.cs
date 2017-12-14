@@ -1,6 +1,6 @@
 ﻿using Neo.Core;
 
-namespace Neo.Gui.Wpf.Views.Contracts
+namespace Neo.Gui.Base.Dialogs.LoadParameters.Contracts
 {
     public class InvokeContractLoadParameters
     {
