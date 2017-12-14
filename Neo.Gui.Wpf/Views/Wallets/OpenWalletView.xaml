@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:globalization="clr-namespace:Neo.Gui.Base.Globalization;assembly=Neo.Gui.Base"
-    xmlns:wallets="clr-namespace:Neo.Gui.Wpf.Views.Wallets"
+    xmlns:wallets="clr-namespace:Neo.Gui.ViewModels.Wallets;assembly=Neo.Gui.ViewModels"
     xmlns:controls="clr-namespace:Neo.Gui.Wpf.Controls"
     xmlns:markupExtensions="clr-namespace:Neo.Gui.Wpf.MarkupExtensions"
     DataContext="{markupExtensions:DataContextBinding ViewModel=wallets:OpenWalletViewModel}"

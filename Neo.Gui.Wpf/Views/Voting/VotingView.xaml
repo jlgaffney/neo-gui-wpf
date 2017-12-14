@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:Neo.Gui.Wpf.Controls"
         xmlns:globalization="clr-namespace:Neo.Gui.Base.Globalization;assembly=Neo.Gui.Base"
-        xmlns:voting="clr-namespace:Neo.Gui.Wpf.Views.Voting"
+        xmlns:voting="clr-namespace:Neo.Gui.ViewModels.Voting;assembly=Neo.Gui.ViewModels"
         xmlns:markupExtensions="clr-namespace:Neo.Gui.Wpf.MarkupExtensions"
         DataContext="{markupExtensions:DataContextBinding ViewModel=voting:VotingViewModel}"
         Title="{x:Static globalization:Strings.VotingTitle}"

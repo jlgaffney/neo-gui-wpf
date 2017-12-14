@@ -4,7 +4,7 @@
         xmlns:globalization="clr-namespace:Neo.Gui.Base.Globalization;assembly=Neo.Gui.Base"
         xmlns:controls="clr-namespace:Neo.Gui.Wpf.Controls"
         xmlns:markupExtensions="clr-namespace:Neo.Gui.Wpf.MarkupExtensions"
-        xmlns:wallets="clr-namespace:Neo.Gui.Wpf.Views.Wallets"
+        xmlns:wallets="clr-namespace:Neo.Gui.ViewModels.Wallets;assembly=Neo.Gui.ViewModels"
         DataContext="{markupExtensions:DataContextBinding ViewModel=wallets:TransferViewModel}"
         Title="{x:Static globalization:Strings.Transfer}"
         Width="600" Height="410" ResizeMode="NoResize">

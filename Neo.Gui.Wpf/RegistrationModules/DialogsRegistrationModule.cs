@@ -49,6 +49,9 @@ namespace Neo.Gui.Wpf.RegistrationModules
         private static void RegisterContractDialogs(ContainerBuilder builder)
         {
             builder
+                .RegisterType<ContractParametersEditorView>()
+                .As<IDialog<ContractParametersEditorDialogResult>>();
+            builder
                 .RegisterType<DeployContractView>()
                 .As<IDialog<DeployContractDialogResult>>();
             builder

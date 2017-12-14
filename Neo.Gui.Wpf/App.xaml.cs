@@ -25,9 +25,9 @@ using Neo.Gui.Wpf.Implementations.Managers;
 using Neo.Gui.Wpf.MarkupExtensions;
 using Neo.Gui.Wpf.Properties;
 using Neo.Gui.Wpf.RegistrationModules;
-using Neo.Gui.Wpf.Views.Home;
-using Neo.Gui.Wpf.Views.Updater;
 using SplashScreen = Neo.Gui.Wpf.Views.SplashScreen;
+using ViewModelsRegistrationModule = Neo.Gui.ViewModels.ViewModelsRegistrationModule;
+using WpfProjectViewModelsRegistrationModule = Neo.Gui.Wpf.RegistrationModules.ViewModelsRegistrationModule;
 
 namespace Neo.Gui.Wpf
 {
@@ -214,6 +214,7 @@ namespace Neo.Gui.Wpf
             var autoFacContainerBuilder = new ContainerBuilder();
 
             autoFacContainerBuilder.RegisterModule<BaseRegistrationModule>();
+            autoFacContainerBuilder.RegisterModule<WpfProjectViewModelsRegistrationModule>();
             autoFacContainerBuilder.RegisterModule<ViewModelsRegistrationModule>();
             autoFacContainerBuilder.RegisterModule<MessagingRegistrationModule>();
             autoFacContainerBuilder.RegisterModule<ControllersRegistrationModule>();

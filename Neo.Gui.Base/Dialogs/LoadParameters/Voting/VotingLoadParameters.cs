@@ -1,4 +1,4 @@
-﻿namespace Neo.Gui.Wpf.Views.Voting
+﻿namespace Neo.Gui.Base.Dialogs.LoadParameters.Voting
 {
     public class VotingLoadParameters
     {

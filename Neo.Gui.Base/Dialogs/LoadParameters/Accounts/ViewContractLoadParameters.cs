@@ -1,6 +1,6 @@
 ﻿using Neo.Wallets;
 
-namespace Neo.Gui.Wpf.Views.Accounts
+namespace Neo.Gui.Base.Dialogs.LoadParameters.Accounts
 {
     public class ViewContractLoadParameters
     {

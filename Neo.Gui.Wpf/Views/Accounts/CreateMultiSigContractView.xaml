@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mahapps="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:globalization="clr-namespace:Neo.Gui.Base.Globalization;assembly=Neo.Gui.Base"
-        xmlns:accounts="clr-namespace:Neo.Gui.Wpf.Views.Accounts"
+        xmlns:accounts="clr-namespace:Neo.Gui.ViewModels.Accounts;assembly=Neo.Gui.ViewModels"
         xmlns:controls="clr-namespace:Neo.Gui.Wpf.Controls"
         xmlns:markupExtensions="clr-namespace:Neo.Gui.Wpf.MarkupExtensions"
         DataContext="{markupExtensions:DataContextBinding ViewModel=accounts:CreateMultiSigContractViewModel}"

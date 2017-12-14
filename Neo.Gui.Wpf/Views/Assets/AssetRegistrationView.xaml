@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mahapps="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:globalization="clr-namespace:Neo.Gui.Base.Globalization;assembly=Neo.Gui.Base"
-        xmlns:assets="clr-namespace:Neo.Gui.Wpf.Views.Assets"
+        xmlns:assets="clr-namespace:Neo.Gui.ViewModels.Assets;assembly=Neo.Gui.ViewModels"
         xmlns:controls="clr-namespace:Neo.Gui.Wpf.Controls"
         xmlns:markupExtensions="clr-namespace:Neo.Gui.Wpf.MarkupExtensions"
         DataContext="{markupExtensions:DataContextBinding ViewModel=assets:AssetRegistrationViewModel}"
