@@ -179,7 +179,7 @@ namespace Neo.Gui.Wpf.Views.Home
 
         public RelayCommand DeployContractCommand => new RelayCommand(() => this.dialogManager.ShowDialog<DeployContractDialogResult>());
 
-        public RelayCommand InvokeContractCommand => new RelayCommand(InvokeContract);
+        public RelayCommand InvokeContractCommand => new RelayCommand(() => this.messagePublisher.Publish(new InvokeContractMessage(null)));
 
         public RelayCommand ShowElectionDialogCommand => new RelayCommand(() => this.dialogManager.ShowDialog<ElectionDialogResult>());
 
@@ -189,7 +189,7 @@ namespace Neo.Gui.Wpf.Views.Home
 
         public RelayCommand ShowOfficialWebsiteCommand => new RelayCommand(() => this.processHelper.OpenInExternalBrowser(OfficialWebsiteUrl));
 
-        public RelayCommand ShowDeveloperToolsCommand => new RelayCommand(ShowDeveloperTools);
+        public RelayCommand ShowDeveloperToolsCommand => new RelayCommand(() => this.dialogManager.ShowDialog<DeveloperToolsDialogResult>());
 
         public RelayCommand AboutNeoCommand => new RelayCommand(() => this.dialogManager.ShowDialog<AboutDialogResult>());
 
@@ -280,11 +280,6 @@ namespace Neo.Gui.Wpf.Views.Home
         #endregion
 
         #region Private Methods 
-        private void InvokeContract()
-        {
-            this.messagePublisher.Publish(new InvokeContractMessage(null));
-        }
-
         private void CreateWallet()
         {
             var result = this.dialogManager.ShowDialog<CreateWalletDialogResult>();
@@ -313,7 +308,7 @@ namespace Neo.Gui.Wpf.Views.Home
 
                 //if (!migrationApproved.Yes) return;
 
-                //this.walletController.UpgradeWallet(result.WalletPath);
+                this.walletController.UpgradeWallet(result.WalletPath);
             }
 
             this.walletController.OpenWallet(result.WalletPath, result.Password, result.OpenInRepairMode);
@@ -322,20 +317,12 @@ namespace Neo.Gui.Wpf.Views.Home
             this.settingsManager.Save();
         }
 
-        private async void RebuildIndex()
+        private void RebuildIndex()
         {
-            await this.dispatchService.InvokeOnMainUIThread(() =>
-            {
-                this.messagePublisher.Publish(new ClearAssetsMessage());
-                this.messagePublisher.Publish(new ClearTransactionsMessage());
-            });
+            this.messagePublisher.Publish(new ClearAssetsMessage());
+            this.messagePublisher.Publish(new ClearTransactionsMessage());
 
             this.walletController.RebuildCurrentWallet();
-        }
-
-        private void ShowDeveloperTools()
-        {
-            this.dialogManager.ShowDialog<DeveloperToolsDialogResult>();
         }
         #endregion
     }
