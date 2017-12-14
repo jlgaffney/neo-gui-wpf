@@ -4,10 +4,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mahapps="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:globalization="clr-namespace:Neo.Gui.Base.Globalization;assembly=Neo.Gui.Base"
-    xmlns:home="clr-namespace:Neo.Gui.ViewModels.Home;assembly=Neo.Gui.ViewModels"
+    xmlns:homeVm="clr-namespace:Neo.Gui.ViewModels.Home;assembly=Neo.Gui.ViewModels"
+    xmlns:home="clr-namespace:Neo.Gui.Wpf.Views.Home"
     xmlns:controls="clr-namespace:Neo.Gui.Wpf.Controls"
     xmlns:markupExtensions="clr-namespace:Neo.Gui.Wpf.MarkupExtensions"
-    DataContext="{markupExtensions:DataContextBinding ViewModel=home:HomeViewModel}"
+    DataContext="{markupExtensions:DataContextBinding ViewModel=homeVm:HomeViewModel}"
     Title="{x:Static globalization:Strings.GuiTitle}" 
     Height="520" 
     Width="740">
