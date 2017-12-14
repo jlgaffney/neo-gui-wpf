@@ -1,5 +1,4 @@
 ﻿using Xunit;
-using Neo.Gui.Wpf.Views.Home;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Controllers;
@@ -8,12 +7,13 @@ using Neo.Gui.Base.Helpers.Interfaces;
 using Moq;
 using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.MVVM;
-using Neo.Gui.Wpf.Views.Contracts;
 using Neo.Gui.Base.Dialogs.Results.Contracts;
 using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Dialogs.Results.Development;
 using Neo.Gui.Base.Dialogs.Results.Settings;
+using Neo.Gui.ViewModels.Home;
+using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
 
 namespace Neo.Gui.ViewModels.Tests.Home
 {
