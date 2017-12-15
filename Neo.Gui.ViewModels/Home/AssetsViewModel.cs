@@ -39,8 +39,8 @@ namespace Neo.Gui.ViewModels.Home
         private AssetItem selectedAsset;
         #endregion
 
-        #region Properties
-        public ConcurrentObservableCollection<AssetItem> Assets { get; }
+        #region Public Properties
+        public ConcurrentObservableCollection<AssetItem> Assets { get; private set; }
 
         public AssetItem SelectedAsset
         {
@@ -75,14 +75,13 @@ namespace Neo.Gui.ViewModels.Home
                                           (this.SelectedAsset.State == null ||
                                            (this.SelectedAsset.State.AssetType != AssetType.GoverningToken &&
                                             this.SelectedAsset.State.AssetType != AssetType.UtilityToken));
+
+        public RelayCommand ViewCertificateCommand => new RelayCommand(this.ViewCertificate);
+
+        public RelayCommand DeleteAssetCommand => new RelayCommand(this.DeleteAsset);
+
+        public RelayCommand ViewSelectedAssetDetailsCommand => new RelayCommand(this.ViewSelectedAssetDetails);
         #endregion Properties
-
-        #region Commands
-        public ICommand ViewCertificateCommand => new RelayCommand(this.ViewCertificate);
-        public ICommand DeleteAssetCommand => new RelayCommand(this.DeleteAsset);
-
-        public ICommand ViewSelectedAssetDetailsCommand => new RelayCommand(this.ViewSelectedAssetDetails);
-        #endregion Commands
 
         #region Constructor 
         public AssetsViewModel(
@@ -103,8 +102,43 @@ namespace Neo.Gui.ViewModels.Home
             this.Assets = new ConcurrentObservableCollection<AssetItem>();
         }
         #endregion
-        
-        #region Menu Command Methods
+
+        #region ILoadable implementation
+        public void OnLoad(params object[] parameters)
+        {
+            this.messageSubscriber.Subscribe(this);
+        }
+        #endregion
+
+        #region IUnloadable implementation
+        public void OnUnload()
+        {
+            this.messageSubscriber.Unsubscribe(this);
+        }
+        #endregion
+
+        #region IMessageHandler implementation
+        public void HandleMessage(ClearAssetsMessage message)
+        {
+            this.Assets.Clear();
+        }
+
+        public void HandleMessage(AssetAddedMessage message)
+        {
+            this.Assets.Add(message.Asset);
+        }
+        #endregion
+
+        #region Private Methods 
+        private void ViewSelectedAssetDetails()
+        {
+            if (this.SelectedAsset == null) return;
+
+            var url = string.Format(this.settingsManager.AssetURLFormat, this.SelectedAsset.Name.Substring(2));
+
+            this.processHelper.OpenInExternalBrowser(url);
+        }
+
         private void ViewCertificate()
         {
             if (this.SelectedAsset == null || this.SelectedAsset.State == null) return;
@@ -144,44 +178,6 @@ namespace Neo.Gui.ViewModels.Home
             }, fee: Fixed8.Zero);
 
             this.messagePublisher.Publish(new SignTransactionAndShowInformationMessage(transaction));
-        }
-        #endregion Menu Command Methods
-
-        #region Private Methods 
-        private void ViewSelectedAssetDetails()
-        {
-            if (this.SelectedAsset == null) return;
-
-            var url = string.Format(this.settingsManager.AssetURLFormat, this.SelectedAsset.Name.Substring(2));
-
-            this.processHelper.OpenInExternalBrowser(url);
-        }
-        #endregion
-
-        #region ILoadable implementation
-        public void OnLoad(params object[] parameters)
-        {
-            this.messageSubscriber.Subscribe(this);
-        }
-        #endregion
-
-        #region IUnloadable implementation
-        public void OnUnload()
-        {
-            this.messageSubscriber.Unsubscribe(this);
-        }
-        #endregion
-
-        #region IMessageHandler implementation
-
-        public void HandleMessage(ClearAssetsMessage message)
-        {
-            this.Assets.Clear();
-        }
-
-        public void HandleMessage(AssetAddedMessage message)
-        {
-            this.Assets.Add(message.Asset);
         }
         #endregion
     }
