@@ -143,6 +143,7 @@ namespace Neo.Gui.ViewModels.Home
         {
             if (this.SelectedAsset == null || this.SelectedAsset.State == null) return;
 
+            // TODO: this dependency to NEO need to be abstracted. Added this to Wallet for example.
             var hash = Contract.CreateSignatureRedeemScript(this.SelectedAsset.State.Owner).ToScriptHash();
             var address = this.walletController.ToAddress(hash);
             var path = Path.Combine(this.settingsManager.CertificateCachePath, $"{address}.cer");
