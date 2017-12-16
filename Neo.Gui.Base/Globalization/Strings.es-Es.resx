@@ -532,9 +532,6 @@ Aviso: los ficheros actualizados no podran ser abiertos por clientes de versione
   <data name="RequestCertificateMenuHeader" xml:space="preserve">
     <value>Solicitar _Certificado…</value>
   </data>
-  <data name="RestoreAccountsMenuHeader" xml:space="preserve">
-    <value>_Restaurar cuentas…</value>
-  </data>
   <data name="Results" xml:space="preserve">
     <value>Resultados</value>
   </data>
@@ -810,9 +807,6 @@ Aviso: los ficheros actualizados no podran ser abiertos por clientes de versione
   </data>
   <data name="RepairMode" xml:space="preserve">
     <value>Modo reparación</value>
-  </data>
-  <data name="RestoreAccountsTitle" xml:space="preserve">
-    <value>Restaurar cuentas</value>
   </data>
   <data name="TradeTitle" xml:space="preserve">
     <value>Transacción</value>

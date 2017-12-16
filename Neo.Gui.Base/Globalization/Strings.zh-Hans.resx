@@ -532,9 +532,6 @@
   <data name="RequestCertificateMenuHeader" xml:space="preserve">
     <value>申请证书(_C)…</value>
   </data>
-  <data name="RestoreAccountsMenuHeader" xml:space="preserve">
-    <value>还原账户(_R)…</value>
-  </data>
   <data name="Results" xml:space="preserve">
     <value>运行结果</value>
   </data>
@@ -810,9 +807,6 @@
   </data>
   <data name="RepairMode" xml:space="preserve">
     <value>修复模式</value>
-  </data>
-  <data name="RestoreAccountsTitle" xml:space="preserve">
-    <value>还原账户</value>
   </data>
   <data name="TradeTitle" xml:space="preserve">
     <value>交易</value>

@@ -5,6 +5,7 @@ using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Globalization;
 using Neo.Gui.Base.Helpers.Interfaces;
 using Moq;
+using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.MVVM;
 using Neo.Gui.Base.Dialogs.Results.Contracts;

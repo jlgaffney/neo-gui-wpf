@@ -1,38 +1,28 @@
-﻿using Neo.Gui.Base.MVVM;
-using Neo.Wallets;
+﻿using Neo.Wallets;
+
+using Neo.Gui.Base.MVVM;
 
 namespace Neo.Gui.Base.Data
 {
     public class AccountItem : BindableClass
     {
-        private string address;
-        private AccountType type;
         private Fixed8 neo;
         private Fixed8 gas;
 
-        public string Address
-        {
-            get => this.address;
-            set
-            {
-                if (this.address == value) return;
-
-                this.address = value;
-
-                NotifyPropertyChanged();
-            }
-        }
+        public string Address => this.Account.Address;
 
         public AccountType Type
         {
-            get => this.type;
-            set
+            get
             {
-                if (this.type == value) return;
+                if (this.Account.WatchOnly)
+                {
+                    return AccountType.WatchOnly;
+                }
 
-                this.type = value;
-
-                NotifyPropertyChanged();
+                return this.Account.Contract.IsStandard
+                    ? AccountType.Standard
+                    : AccountType.NonStandard;
             }
         }
 
@@ -62,8 +52,6 @@ namespace Neo.Gui.Base.Data
             }
         }
 
-        public UInt160 ScriptHash { get; set; }
-
-        public VerificationContract Contract { get; set; }
+        public WalletAccount Account { get; set; }
     }
 }

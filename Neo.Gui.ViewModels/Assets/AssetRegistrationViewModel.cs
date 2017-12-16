@@ -50,11 +50,9 @@ namespace Neo.Gui.ViewModels.Assets
             
             this.AssetTypes = new ObservableCollection<AssetType>(assetTypes);
 
-            var contracts = this.walletController.GetContracts().ToList();
-
-            this.Owners = new ObservableCollection<ECPoint>(contracts.Where(p => p.IsStandard).Select(p => walletController.GetKey(p.PublicKeyHash).PublicKey));
-            this.Admins = new ObservableCollection<string>(contracts.Select(p => p.Address));
-            this.Issuers = new ObservableCollection<string>(contracts.Select(p => p.Address));
+            this.Owners = new ObservableCollection<ECPoint>(this.walletController.GetStandardAccounts().Select(p => p.GetKey().PublicKey));
+            this.Admins = new ObservableCollection<string>(this.walletController.GetNonWatchOnlyAccounts().Select(p => p.Address));
+            this.Issuers = new ObservableCollection<string>(this.walletController.GetNonWatchOnlyAccounts().Select(p => p.Address));
         }
 
         public ObservableCollection<AssetType> AssetTypes { get; }

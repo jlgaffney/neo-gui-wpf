@@ -311,10 +311,24 @@ namespace Neo.Gui.ViewModels.Contracts
 
         private void Test()
         {
-            if (this.transaction == null) this.transaction = new InvocationTransaction();
+            byte[] script;
+            try
+            {
+                script = this.CustomScript.Trim().HexToBytes();
+            }
+            catch (FormatException ex)
+            {
+                this.dialogManager.ShowMessageDialog("An error occurred!", ex.Message);
+                return;
+            }
+
+            if (this.transaction == null)
+            {
+                this.transaction = new InvocationTransaction();
+            }
 
             this.transaction.Version = 1;
-            this.transaction.Script = this.CustomScript.HexToBytes();
+            this.transaction.Script = script;
 
             // Load default transaction values if required
             if (this.transaction.Attributes == null) this.transaction.Attributes = new TransactionAttribute[0];

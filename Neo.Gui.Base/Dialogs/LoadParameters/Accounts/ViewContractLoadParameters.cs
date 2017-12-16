@@ -1,12 +1,12 @@
-﻿using Neo.Wallets;
+﻿using Neo.SmartContract;
 
 namespace Neo.Gui.Base.Dialogs.LoadParameters.Accounts
 {
     public class ViewContractLoadParameters
     {
-        public VerificationContract Contract { get; }
+        public Contract Contract { get; }
 
-        public ViewContractLoadParameters(VerificationContract contract)
+        public ViewContractLoadParameters(Contract contract)
         {
             this.Contract = contract;
         }

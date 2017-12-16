@@ -22,8 +22,8 @@
 
     <ListView.ContextMenu>
         <ContextMenu>
-            <MenuItem Header="{x:Static globalization:Strings.CreateNewAddressMenuHeader}" Command="{Binding CreateNewAddressCommand}" IsEnabled="{Binding MenuItemsEnabled}" />
-            <MenuItem Header="{x:Static globalization:Strings.ImportMenuHeader}" IsEnabled="{Binding MenuItemsEnabled}">
+            <MenuItem Header="{x:Static globalization:Strings.CreateNewAddressMenuHeader}" Command="{Binding CreateNewAddressCommand}" IsEnabled="{Binding WalletIsOpen}" />
+            <MenuItem Header="{x:Static globalization:Strings.ImportMenuHeader}" IsEnabled="{Binding WalletIsOpen}">
                 <MenuItem Header="{x:Static globalization:Strings.ImportFromWifMenuHeader}" Command="{Binding ImportWifPrivateKeyCommand}" />
                 <MenuItem Header="{x:Static globalization:Strings.ImportFromCertificateMenuHeader}" Command="{Binding ImportFromCertificateCommand}" />
 
@@ -31,7 +31,7 @@
 
                 <MenuItem Header="{x:Static globalization:Strings.ImportWatchOnlyAddressMenuHeader}" Command="{Binding ImportWatchOnlyAddressCommand}" />
             </MenuItem>
-            <MenuItem Header="{x:Static globalization:Strings.CreateContractAddressMenuHeader}" IsEnabled="{Binding MenuItemsEnabled}">
+            <MenuItem Header="{x:Static globalization:Strings.CreateContractAddressMenuHeader}" IsEnabled="{Binding WalletIsOpen}">
                 <MenuItem Header="{x:Static globalization:Strings.MultiSignatureMenuHeader}" Command="{Binding CreateMultiSignatureContractAddressCommand}" />
                 <MenuItem Header="{x:Static globalization:Strings.LockMenuHeader}" Command="{Binding CreateLockContractAddressCommand}" />
 

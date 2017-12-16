@@ -6,11 +6,9 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-using Neo.Core;
 using Neo.Cryptography.ECC;
-using Neo.Wallets;
+using Neo.SmartContract;
 
-using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.Globalization;
@@ -24,7 +22,6 @@ namespace Neo.Gui.ViewModels.Accounts
     public class CreateMultiSigContractViewModel : ViewModelBase, IDialogViewModel<CreateMultiSigContractDialogResult>
     {
         private readonly IDialogManager dialogManager;
-        private readonly IWalletController walletController;
         private readonly IMessagePublisher messagePublisher;
         private readonly IDispatchService dispatchService;
 
@@ -37,12 +34,10 @@ namespace Neo.Gui.ViewModels.Accounts
 
         public CreateMultiSigContractViewModel(
             IDialogManager dialogManager,
-            IWalletController walletController,
             IMessagePublisher messagePublisher,
             IDispatchService dispatchService)
         {
             this.dialogManager = dialogManager;
-            this.walletController = walletController;
             this.messagePublisher = messagePublisher;
             this.dispatchService = dispatchService;
 
@@ -178,20 +173,11 @@ namespace Neo.Gui.ViewModels.Accounts
             });
         }
 
-        private VerificationContract GenerateContract()
+        private Contract GenerateContract()
         {
             var publicKeys = this.PublicKeys.Select(p => ECPoint.DecodePoint(p.HexToBytes(), ECCurve.Secp256r1)).ToArray();
 
-            foreach (var publicKey in publicKeys)
-            {
-                var key = this.walletController.GetKey(publicKey.EncodePoint(true).ToScriptHash());
-
-                if (key == null) continue;
-
-                return VerificationContract.CreateMultiSigContract(key.PublicKeyHash, this.MinimumSignatureNumber, publicKeys);
-            }
-
-            return null;
+            return Contract.CreateMultiSigContract(this.MinimumSignatureNumber, publicKeys);
         }
     }
 }

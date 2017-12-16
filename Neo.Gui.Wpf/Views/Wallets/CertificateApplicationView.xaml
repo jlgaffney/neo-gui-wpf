@@ -23,7 +23,7 @@
                 </Grid.ColumnDefinitions>
 
                 <Label Grid.Column="0" Content="{x:Static globalization:Strings.PublicKey}" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                <ComboBox Grid.Column="1" ItemsSource="{Binding PublicKeys}" SelectedItem="{Binding SelectedPublicKey}" Margin="4" Padding="4" HorizontalAlignment="Stretch" />
+                <ComboBox Grid.Column="1" ItemsSource="{Binding KeyPairs}" SelectedItem="{Binding SelectedKeyPair}" Margin="4" Padding="4" HorizontalAlignment="Stretch" />
             </Grid>
         </GroupBox>
 

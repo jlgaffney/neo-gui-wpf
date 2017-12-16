@@ -92,7 +92,7 @@ namespace Neo.Gui.ViewModels.Wallets
 
         private void GetWalletPath()
         {
-            var walletFilePath = this.fileDialogService.SaveFileDialog("db3", "Wallet File|*.db3");
+            var walletFilePath = this.fileDialogService.SaveFileDialog("Wallet File|*.json", "json");
 
             if (string.IsNullOrEmpty(walletFilePath)) return;
 

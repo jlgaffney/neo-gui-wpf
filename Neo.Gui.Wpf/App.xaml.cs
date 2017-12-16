@@ -116,7 +116,7 @@ namespace Neo.Gui.Wpf
                     // Application is starting normally
 
                     // Initialize wallet controller
-                    this.walletController.Initialize(Settings.Default.CertCachePath);
+                    this.walletController.Initialize(Settings.Default.Paths.CertCache);
                     this.walletController.SetNEP5WatchScriptHashes(Settings.Default.NEP5Watched.ToArray());
 
                     // Check if there a newer version is available
@@ -161,7 +161,7 @@ namespace Neo.Gui.Wpf
         {
             // Only install if using a local node
             // TODO Is the root certificate required if connecting to a remote node?
-            if (Settings.Default.RemoteNodeMode) return;
+            if (Settings.Default.P2P.RemoteNodeMode) return;
 
             if (!Settings.Default.InstallCertificate) return;
 

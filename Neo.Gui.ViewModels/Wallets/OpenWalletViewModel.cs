@@ -18,7 +18,6 @@ namespace Neo.Gui.ViewModels.Wallets
 
         private string walletPath;
         private string password;
-        private bool repairMode;
         #endregion
 
         #region Constructor
@@ -51,19 +50,6 @@ namespace Neo.Gui.ViewModels.Wallets
 
                 // Update dependent property
                 RaisePropertyChanged(nameof(this.ConfirmEnabled));
-            }
-        }
-
-        public bool RepairMode
-        {
-            get => this.repairMode;
-            set
-            {
-                if (this.repairMode == value) return;
-
-                this.repairMode = value;
-
-                RaisePropertyChanged();
             }
         }
 
@@ -107,11 +93,12 @@ namespace Neo.Gui.ViewModels.Wallets
 
         private void GetWalletPath()
         {
-            var walletFilePath = this.fileDialogService.OpenFileDialog("db3", "Wallet File|*.db3");
+            // TODO Localise file filter text
+            var path = this.fileDialogService.OpenFileDialog("NEP-6 Wallet|*.json|SQLite Wallet|*.db3");
 
-            if (string.IsNullOrEmpty(walletFilePath)) return;
+            if (string.IsNullOrEmpty(path)) return;
 
-            this.WalletPath = walletFilePath;
+            this.WalletPath = path;
         }
 
         private void Confirm()
@@ -122,8 +109,7 @@ namespace Neo.Gui.ViewModels.Wallets
 
             var dialogResult = new OpenWalletDialogResult(
                 this.WalletPath, 
-                this.password, 
-                this.RepairMode);
+                this.password);
 
             this.SetDialogResultAndClose(this, dialogResult);
         }

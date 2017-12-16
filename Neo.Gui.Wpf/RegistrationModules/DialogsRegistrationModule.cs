@@ -126,9 +126,6 @@ namespace Neo.Gui.Wpf.RegistrationModules
                 .RegisterType<OpenWalletView>()
                 .As<IDialog<OpenWalletDialogResult>>();
             builder
-                .RegisterType<RestoreAccountsView>()
-                .As<IDialog<RestoreAccountsDialogResult>>();
-            builder
                 .RegisterType<TransferView>()
                 .As<IDialog<TransferDialogResult>>();
             builder

@@ -1,15 +1,15 @@
-﻿using Neo.Wallets;
+﻿using Neo.SmartContract;
 
 namespace Neo.Gui.Base.Messages
 {
     public class AddContractMessage
     {
         #region Public Properties 
-        public VerificationContract Contract { get; }
+        public Contract Contract { get; }
         #endregion
 
         #region Constructor 
-        public AddContractMessage(VerificationContract contract)
+        public AddContractMessage(Contract contract)
         {
             this.Contract = contract;
         }

@@ -116,7 +116,7 @@ namespace Neo.Gui.ViewModels.Wallets
             }
             else
             {
-                var addresses = this.walletController.GetAddresses().ToArray();
+                var addresses = this.walletController.GetAccounts().Select(p => p.ScriptHash).ToArray();
                 var sAttributes = new HashSet<UInt160>();
                 using (var builder = new ScriptBuilder())
                 {

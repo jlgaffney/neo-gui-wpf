@@ -1655,24 +1655,6 @@ namespace Neo.Gui.Base.Globalization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to _Restore Accounts….
-        /// </summary>
-        public static string RestoreAccountsMenuHeader {
-            get {
-                return ResourceManager.GetString("RestoreAccountsMenuHeader", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Restore Accounts.
-        /// </summary>
-        public static string RestoreAccountsTitle {
-            get {
-                return ResourceManager.GetString("RestoreAccountsTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Results.
         /// </summary>
         public static string Results {

@@ -233,7 +233,7 @@ namespace Neo.Gui.ViewModels.Contracts
 
         private void Load()
         {
-            var filePath = this.fileDialogService.OpenFileDialog("avm", "AVM File|*.avm");
+            var filePath = this.fileDialogService.OpenFileDialog("AVM File|*.avm", "avm");
 
             if (string.IsNullOrEmpty(filePath)) return;
 
