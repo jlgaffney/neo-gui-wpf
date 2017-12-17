@@ -730,7 +730,7 @@ Note: updated files cannot be openned by clients in older versions!</value>
   <data name="Candidates" xml:space="preserve">
     <value>Candidates</value>
   </data>
-  <data name="CertificateApplicationTitle" xml:space="preserve">
+  <data name="CertificateRequestTitle" xml:space="preserve">
     <value>Certificate Application</value>
   </data>
   <data name="ChangeLogs" xml:space="preserve">

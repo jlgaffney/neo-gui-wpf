@@ -346,7 +346,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.RequestCertificateCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<CertificateApplicationDialogResult>());
+            dialogManagerMock.Verify(x => x.ShowDialog<CertificateRequestDialogResult>());
         }
 
         [Fact]

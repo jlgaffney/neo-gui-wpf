@@ -13,21 +13,21 @@ using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Services;
 
-namespace Neo.Gui.Wpf.Views.Wallets
+namespace Neo.Gui.ViewModels.Wallets
 {
-    public class CertificateApplicationViewModel : ViewModelBase, IDialogViewModel<CertificateApplicationDialogResult>
+    public class CertificateRequestViewModel : ViewModelBase, IDialogViewModel<CertificateRequestDialogResult>
     {
         private readonly ICertificateService certificateService;
         private readonly IFileManager fileManager;
         private readonly IFileDialogService fileDialogService;
 
         private KeyPair selectedKeyPair;
+
         private string cn;
         private string c;
         private string s;
-        private string serialNumber;
 
-        public CertificateApplicationViewModel(
+        public CertificateRequestViewModel(
             ICertificateService certificateService,
             IFileManager fileManager,
             IFileDialogService fileDialogService,
@@ -107,28 +107,11 @@ namespace Neo.Gui.Wpf.Views.Wallets
             }
         }
 
-        public string SerialNumber
-        {
-            get => this.serialNumber;
-            set
-            {
-                if (this.serialNumber == value) return;
-
-                this.serialNumber = value;
-
-                RaisePropertyChanged();
-
-                // Update dependent properties
-                RaisePropertyChanged(nameof(this.RequestCertificateEnabled));
-            }
-        }
-
         public bool RequestCertificateEnabled => 
             this.SelectedKeyPair != null &&
             !string.IsNullOrEmpty(this.CN) &&
             !string.IsNullOrEmpty(this.C) &&
-            !string.IsNullOrEmpty(this.S) &&
-            !string.IsNullOrEmpty(this.SerialNumber);
+            !string.IsNullOrEmpty(this.S);
 
         public RelayCommand RequestCertificateCommand => new RelayCommand(this.RequestCertificate);
 
@@ -137,9 +120,9 @@ namespace Neo.Gui.Wpf.Views.Wallets
         #region IDialogViewModel implementation 
         public event EventHandler Close;
 
-        public event EventHandler<CertificateApplicationDialogResult> SetDialogResultAndClose;
+        public event EventHandler<CertificateRequestDialogResult> SetDialogResultAndClose;
 
-        public CertificateApplicationDialogResult DialogResult { get; private set; }
+        public CertificateRequestDialogResult DialogResult { get; private set; }
         #endregion
 
         private void RequestCertificate()

@@ -405,9 +405,9 @@ namespace Neo.Gui.Base.Globalization {
         /// <summary>
         ///   Looks up a localized string similar to Certificate Application.
         /// </summary>
-        public static string CertificateApplicationTitle {
+        public static string CertificateRequestTitle {
             get {
-                return ResourceManager.GetString("CertificateApplicationTitle", resourceCulture);
+                return ResourceManager.GetString("CertificateRequestTitle", resourceCulture);
             }
         }
         

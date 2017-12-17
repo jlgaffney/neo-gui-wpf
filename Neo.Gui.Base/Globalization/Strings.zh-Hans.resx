@@ -730,7 +730,7 @@
   <data name="Candidates" xml:space="preserve">
     <value>候选人</value>
   </data>
-  <data name="CertificateApplicationTitle" xml:space="preserve">
+  <data name="CertificateRequestTitle" xml:space="preserve">
     <value>证书申请</value>
   </data>
   <data name="ChangeLogs" xml:space="preserve">

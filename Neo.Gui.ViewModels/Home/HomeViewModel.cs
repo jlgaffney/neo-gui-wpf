@@ -170,7 +170,7 @@ namespace Neo.Gui.ViewModels.Home
 
         public ICommand ClaimCommand => new RelayCommand(() => this.dialogManager.ShowDialog<ClaimDialogResult>());
 
-        public ICommand RequestCertificateCommand => new RelayCommand(() => this.dialogManager.ShowDialog<CertificateApplicationDialogResult>());
+        public ICommand RequestCertificateCommand => new RelayCommand(() => this.dialogManager.ShowDialog<CertificateRequestDialogResult>());
 
         public ICommand AssetRegistrationCommand => new RelayCommand(() => this.dialogManager.ShowDialog<AssetRegistrationDialogResult>());
 

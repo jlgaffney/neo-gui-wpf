@@ -106,8 +106,8 @@ namespace Neo.Gui.Wpf.RegistrationModules
         private static void RegisterWalletDialogs(ContainerBuilder builder)
         {
             builder
-                .RegisterType<CertificateApplicationView>()
-                .As<IDialog<CertificateApplicationDialogResult>>();
+                .RegisterType<CertificateRequestView>()
+                .As<IDialog<CertificateRequestDialogResult>>();
             builder
                 .RegisterType<ChangePasswordView>()
                 .As<IDialog<ChangePasswordDialogResult>>();

@@ -730,7 +730,7 @@ Aviso: los ficheros actualizados no podran ser abiertos por clientes de versione
   <data name="Candidates" xml:space="preserve">
     <value>Candidatos</value>
   </data>
-  <data name="CertificateApplicationTitle" xml:space="preserve">
+  <data name="CertificateRequestTitle" xml:space="preserve">
     <value>Solicitud de certificado</value>
   </data>
   <data name="ChangeLogs" xml:space="preserve">

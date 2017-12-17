@@ -1,12 +1,11 @@
 ﻿using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
 
 namespace Neo.Gui.Wpf.Views.Wallets
 {
-    public partial class CertificateApplicationView : IDialog<CertificateApplicationDialogResult>
+    public partial class CertificateRequestView : IDialog<CertificateRequestDialogResult>
     {
-        public CertificateApplicationView()
+        public CertificateRequestView()
         {
             InitializeComponent();
         }

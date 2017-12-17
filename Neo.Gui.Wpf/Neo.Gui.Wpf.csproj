@@ -391,7 +391,6 @@
     <Compile Include="Views\Wallets\TradeVerificationView.xaml.cs">
       <DependentUpon>TradeVerificationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Wallets\CertificateApplicationViewModel.cs" />
     <Compile Include="Views\Accounts\ViewContractView.xaml.cs">
       <DependentUpon>ViewContractView.xaml</DependentUpon>
     </Compile>
@@ -422,8 +421,8 @@
     <Compile Include="Views\Voting\ElectionView.xaml.cs">
       <DependentUpon>ElectionView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Wallets\CertificateApplicationView.xaml.cs">
-      <DependentUpon>CertificateApplicationView.xaml</DependentUpon>
+    <Compile Include="Views\Wallets\CertificateRequestView.xaml.cs">
+      <DependentUpon>CertificateRequestView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Wallets\ChangePasswordView.xaml.cs">
       <DependentUpon>ChangePasswordView.xaml</DependentUpon>
@@ -692,7 +691,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Wallets\CertificateApplicationView.xaml">
+    <Page Include="Views\Wallets\CertificateRequestView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
