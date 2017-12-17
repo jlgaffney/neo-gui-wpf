@@ -1,18 +1,20 @@
 ﻿using System;
 
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+
 using Neo.Network;
 using Neo.SmartContract;
 
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
+using Neo.Gui.Base.Dialogs.Results.Transactions;
 using Neo.Gui.Base.Globalization;
 using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Services;
 
-using Neo.Gui.Wpf.MVVM;
-
-namespace Neo.Gui.Wpf.Views.Transactions
+namespace Neo.Gui.ViewModels.Transactions
 {
     public class SigningViewModel : ViewModelBase, IDialogViewModel<SigningDialogResult>
     {
@@ -46,7 +48,7 @@ namespace Neo.Gui.Wpf.Views.Transactions
 
                 this.input = value;
 
-                NotifyPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -61,7 +63,7 @@ namespace Neo.Gui.Wpf.Views.Transactions
 
                 this.broadcastVisible = value;
 
-                NotifyPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -107,7 +109,7 @@ namespace Neo.Gui.Wpf.Views.Transactions
             }
 
             this.output = context;
-            NotifyPropertyChanged(nameof(this.Output));
+            RaisePropertyChanged(nameof(this.Output));
 
             if (context.Completed) this.BroadcastVisible = true;
         }

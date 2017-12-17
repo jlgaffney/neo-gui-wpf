@@ -8,16 +8,19 @@ using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Base.Dialogs.Results;
+using Neo.Gui.Base.Dialogs.Results.Assets;
 using Neo.Gui.Base.Dialogs.Results.Contracts;
 using Neo.Gui.Base.Dialogs.Results.Settings;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Dialogs.Results.Development;
 using Neo.Gui.Base.Dialogs.Results.Home;
-using Neo.Gui.Base.Helpers.Interfaces;
+using Neo.Gui.Base.Dialogs.Results.Transactions;
+using Neo.Gui.Base.Dialogs.Results.Voting;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.MVVM;
 using Neo.Gui.Base.Globalization;
+using Neo.Gui.Base.Helpers;
 using Neo.Gui.Base.Managers;
 
 namespace Neo.Gui.ViewModels.Home

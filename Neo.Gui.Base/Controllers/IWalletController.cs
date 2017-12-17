@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using Neo.Core;
+using Neo.Cryptography.ECC;
 using Neo.Network;
 using Neo.SmartContract;
 using Neo.Wallets;
@@ -81,7 +82,9 @@ namespace Neo.Gui.Base.Controllers
 
         AssetState GetAssetState(UInt256 assetId);
 
-        bool CanViewCertificate(AssetItem item);
+        bool CanViewCertificate(ECPoint publicKey);
+
+        bool ViewCertificate(ECPoint publicKey);
 
         Fixed8 CalculateBonus();
 
@@ -110,6 +113,14 @@ namespace Neo.Gui.Base.Controllers
         IssueTransaction MakeTransaction(IssueTransaction transaction, UInt160 changeAddress = null, Fixed8 fee = default(Fixed8));
 
         Transaction MakeClaimTransaction(CoinReference[] claims);
+
+        InvocationTransaction MakeValidatorRegistrationTransaction(ECPoint publicKey);
+
+        InvocationTransaction MakeAssetCreationTransaction(AssetType? assetType, string assetName,
+            Fixed8 amount, byte precision, ECPoint assetOwner, UInt160 assetAdmin, UInt160 assetIssuer);
+
+        InvocationTransaction MakeContrateCreationTransaction(byte[] script, byte[] parameterList, ContractParameterType returnType,
+            bool needsStorage, string name, string version, string author, string email, string description);
 
         UInt160 ToScriptHash(string address);
 

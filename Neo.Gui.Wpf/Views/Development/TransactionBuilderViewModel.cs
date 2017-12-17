@@ -4,15 +4,17 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Input;
 
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+
 using Neo.Core;
 using Neo.SmartContract;
 
 using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Dialogs.Results.Transactions;
 using Neo.Gui.Base.Globalization;
 using Neo.Gui.Base.Managers;
 
-using Neo.Gui.Wpf.MVVM;
-using Neo.Gui.Wpf.Views.Transactions;
 using Neo.UI.Base.Wrappers;
 
 namespace Neo.Gui.Wpf.Views.Development
@@ -50,7 +52,7 @@ namespace Neo.Gui.Wpf.Views.Development
 
                 this.selectedTransactionType = value;
 
-                NotifyPropertyChanged();
+                RaisePropertyChanged();
 
                 // Transaction type has changed, get new transaction wrapper
                 var newTransactionWrapper = GetNewTransactionWrapper();
@@ -71,10 +73,10 @@ namespace Neo.Gui.Wpf.Views.Development
                 this.transactionWrapper = (TransactionWrapper)value;
 
                 //(TransactionWrapper)propertyGrid1.SelectedObject;
-                NotifyPropertyChanged();
+                RaisePropertyChanged();
 
                 // Update dependent property
-                NotifyPropertyChanged(nameof(this.SidePanelEnabled));
+                RaisePropertyChanged(nameof(this.SidePanelEnabled));
             }
         }
 
@@ -140,19 +142,16 @@ namespace Neo.Gui.Wpf.Views.Development
 
         private void SetupOutputs()
         {
-            var view = new PayToView();
-            view.ShowDialog();
+            var result = dialogManager.ShowDialog<PayToDialogResult>();
 
-            var output = view.GetOutput();
-
-            if (output == null) return;
+            if (result.Output == null) return;
 
             var transaction = (TransactionWrapper) this.TransactionWrapper;
             transaction.Outputs.Add(new TransactionOutputWrapper
             {
-                AssetId = (UInt256)output.AssetId,
-                Value = new Fixed8((long)output.Value.Value),
-                ScriptHash = output.ScriptHash
+                AssetId = (UInt256)result.Output.AssetId,
+                Value = new Fixed8((long)result.Output.Value.Value),
+                ScriptHash = result.Output.ScriptHash
             });
         }
 

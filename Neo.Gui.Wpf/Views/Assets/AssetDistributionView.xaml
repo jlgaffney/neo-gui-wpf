@@ -49,7 +49,7 @@
         </GroupBox>
 
         <GroupBox Grid.Row="2" Header="{x:Static globalization:Strings.Distribution}" IsEnabled="{Binding DistributionEnabled}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <controls:TxOutListBox Items="{Binding Items}" Asset="{Binding Asset}" ItemsChanged="TxOutListBox_OnItemsChanged" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            <controls:TransactionOutputListBox Items="{Binding Items}" Asset="{Binding Asset}" ItemsChanged="TxOutListBox_OnItemsChanged" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </GroupBox>
 
         <DockPanel Grid.Row="3" Margin="0 8 0 0" HorizontalAlignment="Right" VerticalAlignment="Stretch">

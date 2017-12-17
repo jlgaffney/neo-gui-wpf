@@ -15,7 +15,7 @@
         </Grid.RowDefinitions>
 
         <GroupBox Grid.Row="0" Header="{x:Static globalization:Strings.AssetsYouWillAcquire}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <controls:TxOutListBox Items="{Binding Items}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            <controls:TransactionOutputListBox Items="{Binding Items}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </GroupBox>
 
         <DockPanel Grid.Row="1" Margin="0 8 0 0" HorizontalAlignment="Right" VerticalAlignment="Stretch">

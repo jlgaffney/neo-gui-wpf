@@ -307,6 +307,7 @@
     <Compile Include="Implementations\Services\NotificationService.cs" />
     <Compile Include="Implementations\Services\DispatchService.cs" />
     <Compile Include="RegistrationModules\MessagingRegistrationModule.cs" />
+    <Compile Include="RegistrationModules\ViewModelsRegistrationModule.cs" />
     <Compile Include="RootCertificate.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -355,8 +356,8 @@
     <Compile Include="Views\SplashScreen.xaml.cs">
       <DependentUpon>SplashScreen.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\TxOutListBox.xaml.cs">
-      <DependentUpon>TxOutListBox.xaml</DependentUpon>
+    <Compile Include="Controls\TransactionOutputListBox.xaml.cs">
+      <DependentUpon>TransactionOutputListBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\InformationBox.xaml.cs">
       <DependentUpon>InformationBox.xaml</DependentUpon>
@@ -371,8 +372,6 @@
       <DependentUpon>DeployContractView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\NeoWindow.cs" />
-    <Compile Include="MVVM\RelayCommand.cs" />
-    <Compile Include="MVVM\ViewModelBase.cs" />
     <Compile Include="Views\Development\TransactionBuilderViewModel.cs" />
     <Compile Include="Views\Transactions\SigningView.xaml.cs">
       <DependentUpon>SigningView.xaml</DependentUpon>
@@ -380,13 +379,9 @@
     <Compile Include="Views\Transactions\BulkPayView.xaml.cs">
       <DependentUpon>BulkPayView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Transactions\BulkPayViewModel.cs" />
     <Compile Include="Views\Transactions\PayToView.xaml.cs">
       <DependentUpon>PayToView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Transactions\PayToViewModel.cs" />
-    <Compile Include="Views\Transactions\SigningViewModel.cs" />
-    <Compile Include="RegistrationModules\ViewModelsRegistrationModule.cs" />
     <Compile Include="Views\Wallets\TradeView.xaml.cs">
       <DependentUpon>TradeView.xaml</DependentUpon>
     </Compile>
@@ -592,7 +587,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\TxOutListBox.xaml">
+    <Page Include="Controls\TransactionOutputListBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -722,7 +717,9 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="MVVM\" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\logo_72.png" />
   </ItemGroup>

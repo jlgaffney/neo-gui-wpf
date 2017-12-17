@@ -4,50 +4,70 @@ using System.IO;
 using System.Net;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+
 using Neo.Core;
+using Neo.Gui.Base.Helpers;
 using Neo.SmartContract;
 using Neo.Wallets;
+using Neo.Gui.Base.Managers;
+
 using ECCurve = Neo.Cryptography.ECC.ECCurve;
 using ECPoint = Neo.Cryptography.ECC.ECPoint;
 
 namespace Neo.Gui.Base.Certificates
 {
-    internal class CertificateQueryService : ICertificateQueryService
+    internal class CertificateService : ICertificateService
     {
+        private readonly IDirectoryManager directoryManager;
+        private readonly IFileManager fileManager;
+        private readonly IProcessHelper processHelper;
+
         private readonly Dictionary<UInt160, CertificateQueryResult> results = new Dictionary<UInt160, CertificateQueryResult>();
 
         private string certCachePath;
         private bool initialized;
 
+        public CertificateService(
+            IDirectoryManager directoryManager,
+            IFileManager fileManager,
+            IProcessHelper processHelper)
+        {
+            this.directoryManager = directoryManager;
+            this.fileManager = fileManager;
+            this.processHelper = processHelper;
+        }
+
         public void Initialize(string certificateCachePath)
         {
             this.certCachePath = certificateCachePath;
 
-            Directory.CreateDirectory(this.certCachePath);
+            if (!this.directoryManager.DirectoryExists(certificateCachePath))
+            {
+                this.directoryManager.Create(certificateCachePath);
+            }
 
             this.initialized = true;
         }
 
-        public CertificateQueryResult Query(ECPoint pubkey)
-        {
-            return Query(Contract.CreateSignatureRedeemScript(pubkey).ToScriptHash());
-        }
-
-        public CertificateQueryResult Query(UInt160 hash)
+        public CertificateQueryResult Query(ECPoint publickey)
         {
             if (!this.initialized)
             {
                 throw new Exception("Service has not been initialized!");
             }
 
+            var hash = GetRedeemScriptHashFromPublicKey(publickey);
+
             lock (results)
             {
                 if (results.ContainsKey(hash)) return results[hash];
                 results[hash] = new CertificateQueryResult { Type = CertificateQueryResultType.Querying };
             }
+
+            var path = this.GetCachedCertificatePathFromScriptHash(hash);
             var address = Wallet.ToAddress(hash);
-            var path = Path.Combine(this.certCachePath, $"{address}.cer");
-            if (File.Exists(path))
+
+            if (this.fileManager.FileExists(path))
             {
                 lock (results)
                 {
@@ -64,31 +84,57 @@ namespace Neo.Gui.Base.Certificates
             return results[hash];
         }
 
+        public bool ViewCertificate(ECPoint publicKey)
+        {
+            if (!this.initialized)
+            {
+                throw new Exception("Service has not been initialized!");
+            }
+
+            var hash = GetRedeemScriptHashFromPublicKey(publicKey);
+
+            var path = this.GetCachedCertificatePathFromScriptHash(hash);
+
+            if (!this.fileManager.FileExists(path)) return false;
+
+            this.processHelper.Run(path);
+
+            return true;
+        }
+
         #region Private methods
 
         private void UpdateResultFromFile(UInt160 hash)
         {
-            var address = Wallet.ToAddress(hash);
+            var path = this.GetCachedCertificatePathFromScriptHash(hash);
+
             X509Certificate2 cert;
             try
             {
-                cert = new X509Certificate2(Path.Combine(this.certCachePath, $"{address}.cer"));
+                cert = new X509Certificate2(path);
             }
             catch (CryptographicException)
             {
                 results[hash].Type = CertificateQueryResultType.Missing;
                 return;
             }
+
             if (cert.PublicKey.Oid.Value != "1.2.840.10045.2.1")
             {
                 results[hash].Type = CertificateQueryResultType.Missing;
                 return;
             }
-            if (!hash.Equals(Contract.CreateSignatureRedeemScript(ECPoint.DecodePoint(cert.PublicKey.EncodedKeyValue.RawData, ECCurve.Secp256r1)).ToScriptHash()))
+
+            // Compare hash with cached value
+            var decodedPublicKey = ECPoint.DecodePoint(cert.PublicKey.EncodedKeyValue.RawData, ECCurve.Secp256r1);
+            var decodedHash = GetRedeemScriptHashFromPublicKey(decodedPublicKey);
+
+            if (!hash.Equals(decodedHash))
             {
                 results[hash].Type = CertificateQueryResultType.Missing;
                 return;
             }
+
             using (var chain = new X509Chain())
             {
                 results[hash].Certificate = cert;
@@ -123,15 +169,28 @@ namespace Neo.Gui.Base.Certificates
                 }
                 else
                 {
-                    var address = Wallet.ToAddress(hash);
-                    var path = Path.Combine(this.certCachePath, $"{address}.cer");
-                    File.WriteAllBytes(path, e.Result);
+                    var path = this.GetCachedCertificatePathFromScriptHash(hash);
+
+                    this.fileManager.WriteAllBytes(path, e.Result);
+
                     lock (results)
                     {
                         this.UpdateResultFromFile(hash);
                     }
                 }
             }
+        }
+
+        private static UInt160 GetRedeemScriptHashFromPublicKey(ECPoint publicKey)
+        {
+            return Contract.CreateSignatureRedeemScript(publicKey).ToScriptHash();
+        }
+
+        private string GetCachedCertificatePathFromScriptHash(UInt160 scriptHash)
+        {
+            var address = Wallet.ToAddress(scriptHash);
+
+            return Path.Combine(this.certCachePath, $"{address}.cer");
         }
 
         #endregion

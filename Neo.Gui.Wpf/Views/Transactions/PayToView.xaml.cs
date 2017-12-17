@@ -1,24 +1,13 @@
-﻿using Neo.Gui.Base.Data;
-using Neo.Wallets;
+﻿using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.Results.Transactions;
 
 namespace Neo.Gui.Wpf.Views.Transactions
 {
-    public partial class PayToView
+    public partial class PayToView : IDialog<PayToDialogResult>
     {
-        private readonly PayToViewModel viewModel;
-
-        public PayToView(AssetDescriptor asset = null, UInt160 scriptHash = null)
+        public PayToView()
         {
             InitializeComponent();
-
-            this.viewModel = this.DataContext as PayToViewModel;
-
-            this.viewModel?.Load(asset, scriptHash);
-        }
-
-        public TransactionOutputItem GetOutput()
-        {
-            return this.viewModel?.GetOutput();
         }
     }
 }

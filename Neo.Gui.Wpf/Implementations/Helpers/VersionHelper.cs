@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
-using Neo.Gui.Base.Helpers.Interfaces;
+using Neo.Gui.Base.Helpers;
 using Neo.Gui.Base.Updating;
 
 namespace Neo.Gui.Wpf.Implementations.Helpers
@@ -52,6 +52,12 @@ namespace Neo.Gui.Wpf.Implementations.Helpers
         {
             get
             {
+                #if DEBUG
+
+                return this.CurrentVersion;
+
+                #endif
+
                 var latestVersionStr = UpdateXmlDocument?.Element("update")?.Attribute("latest")?.Value;
 
                 if (string.IsNullOrEmpty(latestVersionStr)) return null;
@@ -65,7 +71,19 @@ namespace Neo.Gui.Wpf.Implementations.Helpers
             }
         }
 
-        public bool UpdateIsRequired => CurrentVersion < MinimumVersion;
+        public bool UpdateIsRequired
+        {
+            get
+            {
+                #if DEBUG
+
+                return false;
+
+                #endif
+
+                return CurrentVersion < MinimumVersion;
+            }   
+        }
         
         public ReleaseInfo GetLatestReleaseInfo()
         {

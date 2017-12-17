@@ -3,18 +3,28 @@ using System.ComponentModel;
 using System.Net;
 using System.Windows.Input;
 
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results.Settings;
-using Neo.Gui.Base.Helpers.Interfaces;
+using Neo.Gui.Base.Helpers;
 using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 
-using Neo.Gui.Wpf.MVVM;
 using Neo.Gui.Wpf.Properties;
 
 namespace Neo.Gui.Wpf.Views.Updater
 {
+    /// <summary>
+    /// View model for updating the application. NOTE this view model is Windows-specific,
+    /// and is only capable of updating the application on the Windows platform.
+    /// </summary>
+    /// <remarks>
+    /// DO NOT move this view model out of the WPF project unless the Windows-specific
+    /// application updating logic has been abstracted out of this view model.
+    /// </remarks>
     public class UpdateViewModel : ViewModelBase, IDialogViewModel<UpdateDialogResult>
     {
         private const string OfficialWebsiteUrl = "https://neo.org/";
@@ -80,7 +90,7 @@ namespace Neo.Gui.Wpf.Views.Updater
 
                 this.updateDownloadProgress = value;
 
-                NotifyPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -93,7 +103,7 @@ namespace Neo.Gui.Wpf.Views.Updater
 
                 this.buttonsEnabled = value;
 
-                NotifyPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 

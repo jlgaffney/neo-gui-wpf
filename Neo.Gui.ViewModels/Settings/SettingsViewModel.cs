@@ -10,8 +10,9 @@ using GalaSoft.MvvmLight.Command;
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
+using Neo.Gui.Base.Dialogs.Results.Settings;
 using Neo.Gui.Base.Extensions;
-using Neo.Gui.Base.Helpers.Interfaces;
+using Neo.Gui.Base.Helpers;
 using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Theming;
 

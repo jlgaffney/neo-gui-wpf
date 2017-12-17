@@ -4,15 +4,17 @@ using System.Text;
 
 using CERTENROLLLib;
 
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+
 using Neo.Wallets;
 
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
+using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Services;
-
-using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Wallets
 {
@@ -50,10 +52,10 @@ namespace Neo.Gui.Wpf.Views.Wallets
 
                 this.selectedKeyPair = value;
 
-                NotifyPropertyChanged();
+                RaisePropertyChanged();
 
                 // Update dependent properties
-                NotifyPropertyChanged(nameof(this.RequestCertificateEnabled));
+                RaisePropertyChanged(nameof(this.RequestCertificateEnabled));
             }
         }
 
@@ -66,10 +68,10 @@ namespace Neo.Gui.Wpf.Views.Wallets
 
                 this.cn = value;
 
-                NotifyPropertyChanged();
+                RaisePropertyChanged();
 
                 // Update dependent properties
-                NotifyPropertyChanged(nameof(this.RequestCertificateEnabled));
+                RaisePropertyChanged(nameof(this.RequestCertificateEnabled));
             }
         }
 
@@ -82,10 +84,10 @@ namespace Neo.Gui.Wpf.Views.Wallets
 
                 this.c = value;
 
-                NotifyPropertyChanged();
+                RaisePropertyChanged();
 
                 // Update dependent properties
-                NotifyPropertyChanged(nameof(this.RequestCertificateEnabled));
+                RaisePropertyChanged(nameof(this.RequestCertificateEnabled));
             }
         }
 
@@ -98,10 +100,10 @@ namespace Neo.Gui.Wpf.Views.Wallets
 
                 this.s = value;
 
-                NotifyPropertyChanged();
+                RaisePropertyChanged();
 
                 // Update dependent properties
-                NotifyPropertyChanged(nameof(this.RequestCertificateEnabled));
+                RaisePropertyChanged(nameof(this.RequestCertificateEnabled));
             }
         }
 
@@ -114,10 +116,10 @@ namespace Neo.Gui.Wpf.Views.Wallets
 
                 this.serialNumber = value;
 
-                NotifyPropertyChanged();
+                RaisePropertyChanged();
 
                 // Update dependent properties
-                NotifyPropertyChanged(nameof(this.RequestCertificateEnabled));
+                RaisePropertyChanged(nameof(this.RequestCertificateEnabled));
             }
         }
 

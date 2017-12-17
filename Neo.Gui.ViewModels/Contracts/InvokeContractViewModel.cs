@@ -206,7 +206,7 @@ namespace Neo.Gui.ViewModels.Contracts
         }
         #endregion
 
-        private  void SetBaseTransaction(InvocationTransaction baseTransaction)
+        private void SetBaseTransaction(InvocationTransaction baseTransaction)
         {
             if (baseTransaction == null) return;
 
@@ -215,7 +215,7 @@ namespace Neo.Gui.ViewModels.Contracts
             this.CustomScript = this.transaction.Script.ToHexString();
         }
 
-        public InvocationTransaction GetTransaction()
+        private InvocationTransaction MakeTransaction()
         {
             if (this.transaction == null) return null;
 
@@ -265,8 +265,7 @@ namespace Neo.Gui.ViewModels.Contracts
         private void EditParameters()
         {
             this.dialogManager.ShowDialog<ContractParametersEditorDialogResult, ContractParametersEditorLoadParameters>(
-                new LoadParameters<ContractParametersEditorLoadParameters>(
-                    new ContractParametersEditorLoadParameters(this.parameters)));
+                new LoadParameters<ContractParametersEditorLoadParameters>(new ContractParametersEditorLoadParameters(this.parameters)));
 
             UpdateCustomScript();
         }
@@ -369,7 +368,7 @@ namespace Neo.Gui.ViewModels.Contracts
         {
             if (!this.InvokeEnabled) return;
 
-            var tx = this.GetTransaction();
+            var tx = this.MakeTransaction();
 
             if (tx == null) return;
 

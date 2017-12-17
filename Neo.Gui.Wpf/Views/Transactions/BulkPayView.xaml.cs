@@ -1,24 +1,13 @@
-﻿using Neo.Gui.Base.Data;
-using Neo.Wallets;
+﻿using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.Results.Transactions;
 
 namespace Neo.Gui.Wpf.Views.Transactions
 {
-    public partial class BulkPayView
+    public partial class BulkPayView : IDialog<BulkPayDialogResult>
     {
-        private readonly BulkPayViewModel viewModel;
-
-        public BulkPayView(AssetDescriptor asset = null)
+        public BulkPayView()
         {
             InitializeComponent();
-
-            this.viewModel = this.DataContext as BulkPayViewModel;
-
-            this.viewModel?.Load(asset);
-        }
-
-        public TransactionOutputItem[] GetOutputs()
-        {
-            return this.viewModel?.GetOutputs();
         }
     }
 }

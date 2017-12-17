@@ -5,7 +5,7 @@ using GalaSoft.MvvmLight.Command;
 
 using Neo.Gui.Base.Collections;
 using Neo.Gui.Base.Data;
-using Neo.Gui.Base.Helpers.Interfaces;
+using Neo.Gui.Base.Helpers;
 using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;

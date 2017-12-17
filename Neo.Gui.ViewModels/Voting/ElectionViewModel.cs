@@ -8,12 +8,11 @@ using GalaSoft.MvvmLight.Command;
 
 using Neo.Core;
 using Neo.Cryptography.ECC;
-using Neo.SmartContract;
-using Neo.VM;
 
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
+using Neo.Gui.Base.Dialogs.Results.Voting;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 
@@ -21,6 +20,7 @@ namespace Neo.Gui.ViewModels.Voting
 {
     public class ElectionViewModel : ViewModelBase, IDialogViewModel<ElectionDialogResult>
     {
+        private readonly IWalletController walletController;
         private readonly IMessagePublisher messagePublisher;
 
         private ECPoint selectedBookKeeper;
@@ -29,12 +29,11 @@ namespace Neo.Gui.ViewModels.Voting
             IWalletController walletController,
             IMessagePublisher messagePublisher)
         {
+            this.walletController = walletController;
             this.messagePublisher = messagePublisher;
 
-            if (!walletController.WalletIsOpen) return;
-
             // Load book keepers
-            var bookKeepers = walletController.GetStandardAccounts()
+            var bookKeepers = this.walletController.GetStandardAccounts()
                 .Select(p => p.GetKey().PublicKey);
 
             this.BookKeepers = new ObservableCollection<ECPoint>(bookKeepers);
@@ -74,7 +73,7 @@ namespace Neo.Gui.ViewModels.Voting
         {
             if (!this.OkEnabled) return;
 
-            var transaction = this.GenerateTransaction();
+            var transaction = this.MakeTransaction();
 
             if (transaction == null) return;
 
@@ -82,28 +81,9 @@ namespace Neo.Gui.ViewModels.Voting
             this.Close(this, EventArgs.Empty);
         }
 
-        private InvocationTransaction GenerateTransaction()
+        private InvocationTransaction MakeTransaction()
         {
-            if (this.SelectedBookKeeper == null) return null;
-
-            var publicKey = this.SelectedBookKeeper;
-
-            using (var builder = new ScriptBuilder())
-            {
-                builder.EmitSysCall("Neo.Validator.Register", publicKey);
-                return new InvocationTransaction
-                {
-                    Attributes = new[]
-                    {
-                        new TransactionAttribute
-                        {
-                            Usage = TransactionAttributeUsage.Script,
-                            Data = Contract.CreateSignatureRedeemScript(publicKey).ToScriptHash().ToArray()
-                        }
-                    },
-                    Script = builder.ToArray()
-                };
-            }
+            return this.walletController.MakeValidatorRegistrationTransaction(this.SelectedBookKeeper);
         }
     }
 }

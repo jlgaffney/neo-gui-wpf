@@ -2,7 +2,7 @@
 {
     public class TradeVerificationDialogResult
     {
-        public bool TradeAccepted { get; private set; }
+        public bool TradeAccepted { get; }
 
         public TradeVerificationDialogResult(bool tradeAccepted)
         {

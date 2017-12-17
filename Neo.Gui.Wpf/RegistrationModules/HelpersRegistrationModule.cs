@@ -1,5 +1,5 @@
 ﻿using Autofac;
-using Neo.Gui.Base.Helpers.Interfaces;
+using Neo.Gui.Base.Helpers;
 using Neo.Gui.Wpf.Implementations.Helpers;
 
 namespace Neo.Gui.Wpf.RegistrationModules

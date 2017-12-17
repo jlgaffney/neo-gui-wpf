@@ -9,12 +9,11 @@ using GalaSoft.MvvmLight.Command;
 
 using Neo.Core;
 using Neo.Cryptography.ECC;
-using Neo.SmartContract;
-using Neo.VM;
 
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
+using Neo.Gui.Base.Dialogs.Results.Assets;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 
@@ -222,34 +221,7 @@ namespace Neo.Gui.ViewModels.Assets
         public AssetRegistrationDialogResult DialogResult { get; private set; }
         #endregion
 
-        private InvocationTransaction GenerateTransaction()
-        {
-            var assetType = this.SelectedAssetType;
-            var formattedName = !string.IsNullOrWhiteSpace(this.Name)
-                ? $"[{{\"lang\":\"{CultureInfo.CurrentCulture.Name}\",\"name\":\"{this.Name}\"}}]"
-                : string.Empty;
-            var amount = this.TotalIsLimited ? Fixed8.Parse(this.TotalLimit) : -Fixed8.Satoshi;
-            var precisionByte = (byte) this.Precision;
-            var owner = this.SelectedOwner;
-            var admin = this.walletController.ToScriptHash(this.SelectedAdmin);
-            var issuer = this.walletController.ToScriptHash(this.SelectedIssuer);
-            using (var builder = new ScriptBuilder())
-            {
-                builder.EmitSysCall("Neo.Asset.Create", assetType, formattedName, amount, precisionByte, owner, admin, issuer);
-                return new InvocationTransaction
-                {
-                    Attributes = new[]
-                    {
-                        new TransactionAttribute
-                        {
-                            Usage = TransactionAttributeUsage.Script,
-                            Data = Contract.CreateSignatureRedeemScript(owner).ToScriptHash().ToArray()
-                        }
-                    },
-                    Script = builder.ToArray()
-                };
-            }
-        }
+        #region Private methods
 
         private void CheckForm()
         {
@@ -274,12 +246,29 @@ namespace Neo.Gui.ViewModels.Assets
 
             if (!this.OkEnabled) return;
 
-            var transaction = this.GenerateTransaction();
+            var transaction = this.MakeTransaction();
 
             if (transaction == null) return;
 
             this.messagePublisher.Publish(new InvokeContractMessage(transaction));
             this.Close(this, EventArgs.Empty);
         }
+
+        private InvocationTransaction MakeTransaction()
+        {
+            var assetType = this.SelectedAssetType;
+            var formattedName = !string.IsNullOrWhiteSpace(this.Name)
+                ? $"[{{\"lang\":\"{CultureInfo.CurrentCulture.Name}\",\"name\":\"{this.Name}\"}}]"
+                : string.Empty;
+            var amount = this.TotalIsLimited ? Fixed8.Parse(this.TotalLimit) : -Fixed8.Satoshi;
+            var precisionByte = (byte)this.Precision;
+            var owner = this.SelectedOwner;
+            var admin = this.walletController.ToScriptHash(this.SelectedAdmin);
+            var issuer = this.walletController.ToScriptHash(this.SelectedIssuer);
+
+            return this.walletController.MakeAssetCreationTransaction(assetType, formattedName, amount, precisionByte, owner, admin, issuer);
+        }
+
+        #endregion
     }
 }

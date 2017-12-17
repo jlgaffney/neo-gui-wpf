@@ -37,18 +37,17 @@ namespace Neo.Gui.Base.Controllers
         IMessageHandler<SignTransactionAndShowInformationMessage>,
         IMessageHandler<BlockchainPersistCompletedMessage>
     {
-        private const string MinimumMigratedWalletVersion = "1.3.5";
-
         #region Private Fields 
 
         private readonly IBlockchainController blockchainController;
-        private readonly ICertificateQueryService certificateQueryService;
+        private readonly ICertificateService certificateService;
         private readonly INotificationService notificationService;
         private readonly IMessagePublisher messagePublisher;
         private readonly IMessageSubscriber messageSubscriber;
 
         private readonly Dictionary<ECPoint, CertificateQueryResult> certificateQueryResultCache;
 
+        // TODO Convert to Dictionary, with ScriptHash as key
         private readonly IList<AccountItem> accounts;
         private readonly IList<AssetItem> assets;
         private readonly IList<TransactionItem> transactions;
@@ -73,13 +72,13 @@ namespace Neo.Gui.Base.Controllers
 
         public WalletController(
             IBlockchainController blockchainController,
-            ICertificateQueryService certificateQueryService,
+            ICertificateService certificateService,
             INotificationService notificationService,
             IMessagePublisher messagePublisher,
             IMessageSubscriber messageSubscriber)
         {
             this.blockchainController = blockchainController;
-            this.certificateQueryService = certificateQueryService;
+            this.certificateService = certificateService;
             this.notificationService = notificationService;
             this.messagePublisher = messagePublisher;
             this.messageSubscriber = messageSubscriber;
@@ -111,7 +110,7 @@ namespace Neo.Gui.Base.Controllers
 
             this.blockchainController.Initialize();
 
-            this.certificateQueryService.Initialize(certificateCachePath);
+            this.certificateService.Initialize(certificateCachePath);
 
             // Setup automatic refresh timer
             this.refreshTimer = new Timer
@@ -357,17 +356,22 @@ namespace Neo.Gui.Base.Controllers
             return this.blockchainController.GetAssetState(assetId);
         }
 
-        public bool CanViewCertificate(AssetItem item)
+        public bool CanViewCertificate(ECPoint publicKey)
         {
-            if (item.State == null) return false;
+            if (publicKey == null) return false;
 
-            var queryResult = GetCertificateQueryResult(item.State);
+            var queryResult = this.GetCertificateQueryResult(publicKey);
 
             if (queryResult == null) return false;
 
             return queryResult.Type == CertificateQueryResultType.Good ||
                    queryResult.Type == CertificateQueryResultType.Expired ||
                    queryResult.Type == CertificateQueryResultType.Invalid;
+        }
+
+        public bool ViewCertificate(ECPoint publicKey)
+        {
+            return this.certificateService.ViewCertificate(publicKey);
         }
 
         public Fixed8 CalculateBonus()
@@ -538,6 +542,60 @@ namespace Neo.Gui.Base.Controllers
                     }
                 }
             };
+        }
+
+        public InvocationTransaction MakeValidatorRegistrationTransaction(ECPoint publicKey)
+        {
+            using (var builder = new ScriptBuilder())
+            {
+                builder.EmitSysCall("Neo.Validator.Register", publicKey);
+                return new InvocationTransaction
+                {
+                    Attributes = new[]
+                    {
+                        new TransactionAttribute
+                        {
+                            Usage = TransactionAttributeUsage.Script,
+                            Data = Contract.CreateSignatureRedeemScript(publicKey).ToScriptHash().ToArray()
+                        }
+                    },
+                    Script = builder.ToArray()
+                };
+            }
+        }
+
+        public InvocationTransaction MakeAssetCreationTransaction(AssetType? assetType, string assetName,
+            Fixed8 amount, byte precision, ECPoint assetOwner, UInt160 assetAdmin, UInt160 assetIssuer)
+        {
+            using (var builder = new ScriptBuilder())
+            {
+                builder.EmitSysCall("Neo.Asset.Create", assetType, assetName, amount, precision, assetOwner, assetAdmin, assetIssuer);
+                return new InvocationTransaction
+                {
+                    Attributes = new[]
+                    {
+                        new TransactionAttribute
+                        {
+                            Usage = TransactionAttributeUsage.Script,
+                            Data = Contract.CreateSignatureRedeemScript(assetOwner).ToScriptHash().ToArray()
+                        }
+                    },
+                    Script = builder.ToArray()
+                };
+            }
+        }
+
+        public InvocationTransaction MakeContrateCreationTransaction(byte[] script, byte[] parameterList, ContractParameterType returnType,
+            bool needsStorage, string name, string version, string author, string email, string description)
+        {
+            using (var builder = new ScriptBuilder())
+            {
+                builder.EmitSysCall("Neo.Contract.Create", script, parameterList, returnType, needsStorage, name, version, author, email, description);
+                return new InvocationTransaction
+                {
+                    Script = builder.ToArray()
+                };
+            }
         }
 
         public UInt160 ToScriptHash(string address)
@@ -927,13 +985,13 @@ namespace Neo.Gui.Base.Controllers
             }
 
 
-            foreach (var item in this.assets)//.Groups["unchecked"].Items)
+            foreach (var asset in this.assets)//.Groups["unchecked"].Items)
             {
-                if (item.State == null) continue;
+                if (asset.State?.Owner == null) continue;
 
-                var asset = item.State;
+                var assetOwner = asset.State.Owner;
 
-                var queryResult = this.GetCertificateQueryResult(asset);
+                var queryResult = this.GetCertificateQueryResult(assetOwner);
 
                 if (queryResult == null) continue;
 
@@ -946,19 +1004,19 @@ namespace Neo.Gui.Base.Controllers
                             break;
                         case CertificateQueryResultType.System:
                             //subitem.ForeColor = Color.Green;
-                            item.Issuer = Strings.SystemIssuer;
+                            asset.Issuer = Strings.SystemIssuer;
                             break;
                         case CertificateQueryResultType.Invalid:
                             //subitem.ForeColor = Color.Red;
-                            item.Issuer = $"[{Strings.InvalidCertificate}][{asset.Owner}]";
+                            asset.Issuer = $"[{Strings.InvalidCertificate}][{assetOwner}]";
                             break;
                         case CertificateQueryResultType.Expired:
                             //subitem.ForeColor = Color.Yellow;
-                            item.Issuer = $"[{Strings.ExpiredCertificate}]{queryResult.Certificate.Subject}[{asset.Owner}]";
+                            asset.Issuer = $"[{Strings.ExpiredCertificate}]{queryResult.Certificate.Subject}[{assetOwner}]";
                             break;
                         case CertificateQueryResultType.Good:
                             //subitem.ForeColor = Color.Black;
-                            item.Issuer = $"{queryResult.Certificate.Subject}[{asset.Owner}]";
+                            asset.Issuer = $"{queryResult.Certificate.Subject}[{assetOwner}]";
                             break;
                     }
                     switch (queryResult.Type)
@@ -1095,41 +1153,25 @@ namespace Neo.Gui.Base.Controllers
             return this.assets.FirstOrDefault(a => a.State != null && a.State.AssetId != null && a.State.AssetId.Equals(assetId));
         }
 
-        private int GetTransactionIndex(TransactionItem transactionItem)
+        private CertificateQueryResult GetCertificateQueryResult(ECPoint publicKey)
         {
-            for (int i = 0; i < this.transactions.Count; i++)
+            // Check if certificate has been cached from a previous query
+            if (this.certificateQueryResultCache.ContainsKey(publicKey))
             {
-                if (this.transactions[i].Equals(transactionItem)) return i;
+                return this.certificateQueryResultCache[publicKey];
             }
 
-            // Could not find transaction
-            return -1;
-        }
+            // Query for certificate
+            var result = this.certificateService.Query(publicKey);
 
-        private CertificateQueryResult GetCertificateQueryResult(AssetState asset)
-        {
-            CertificateQueryResult result;
-            if (asset.AssetType == AssetType.GoverningToken || asset.AssetType == AssetType.UtilityToken)
-            {
-                result = new CertificateQueryResult { Type = CertificateQueryResultType.System };
-            }
-            else
-            {
-                if (!this.certificateQueryResultCache.ContainsKey(asset.Owner))
-                {
-                    result = this.certificateQueryService.Query(asset.Owner);
+            if (result == null) return null;
 
-                    if (result == null) return null;
-
-                    // Cache query result
-                    this.certificateQueryResultCache.Add(asset.Owner, result);
-                }
-
-                result = this.certificateQueryResultCache[asset.Owner];
-            }
+            // Cache certificate query result
+            this.certificateQueryResultCache.Add(publicKey, result);
 
             return result;
         }
+
         #endregion
 
         #region IDisposable implementation
@@ -1151,6 +1193,18 @@ namespace Neo.Gui.Base.Controllers
                     // Stop automatic refresh timer
                     this.refreshTimer?.Stop();
                     this.refreshTimer = null;
+
+                    // Save and dispose of wallet if required
+                    if (this.WalletIsOpen)
+                    {
+                        this.currentWallet.BalanceChanged -= this.CurrentWalletBalanceChanged;
+
+                        var nep6Wallet = this.currentWallet as NEP6Wallet;
+                        nep6Wallet?.Save();
+
+                        var disposableWallet = this.currentWallet as IDisposable;
+                        disposableWallet?.Dispose();
+                    }
 
                     // Dispose of blockchain controller
                     this.blockchainController.Dispose();

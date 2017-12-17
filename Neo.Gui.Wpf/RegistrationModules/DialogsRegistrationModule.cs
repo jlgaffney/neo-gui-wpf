@@ -1,12 +1,16 @@
 ﻿using Autofac;
+
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
+using Neo.Gui.Base.Dialogs.Results.Assets;
 using Neo.Gui.Base.Dialogs.Results.Contracts;
 using Neo.Gui.Base.Dialogs.Results.Development;
 using Neo.Gui.Base.Dialogs.Results.Home;
 using Neo.Gui.Base.Dialogs.Results.Settings;
+using Neo.Gui.Base.Dialogs.Results.Transactions;
 using Neo.Gui.Base.Dialogs.Results.Voting;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
+
 using Neo.Gui.Wpf.Views;
 using Neo.Gui.Wpf.Views.Accounts;
 using Neo.Gui.Wpf.Views.Assets;
@@ -78,6 +82,12 @@ namespace Neo.Gui.Wpf.RegistrationModules
 
         private static void RegisterTransactionDialogs(ContainerBuilder builder)
         {
+            builder
+                .RegisterType<BulkPayView>()
+                .As<IDialog<BulkPayDialogResult>>();
+            builder
+                .RegisterType<PayToView>()
+                .As<IDialog<PayToDialogResult>>();
             builder
                 .RegisterType<SigningView>()
                 .As<IDialog<SigningDialogResult>>();
