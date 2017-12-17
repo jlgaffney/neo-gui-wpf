@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq;
-using System.Text;
-
-using CERTENROLLLib;
+using System.Security.Cryptography.X509Certificates;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -11,7 +9,6 @@ using Neo.Wallets;
 
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Services;
@@ -20,6 +17,7 @@ namespace Neo.Gui.Wpf.Views.Wallets
 {
     public class CertificateApplicationViewModel : ViewModelBase, IDialogViewModel<CertificateApplicationDialogResult>
     {
+        private readonly ICertificateService certificateService;
         private readonly IFileManager fileManager;
         private readonly IFileDialogService fileDialogService;
 
@@ -30,10 +28,12 @@ namespace Neo.Gui.Wpf.Views.Wallets
         private string serialNumber;
 
         public CertificateApplicationViewModel(
+            ICertificateService certificateService,
             IFileManager fileManager,
             IFileDialogService fileDialogService,
             IWalletController walletController)
         {
+            this.certificateService = certificateService;
             this.fileManager = fileManager;
             this.fileDialogService = fileDialogService;
 
@@ -149,44 +149,10 @@ namespace Neo.Gui.Wpf.Views.Wallets
             if (string.IsNullOrEmpty(savedCertificatePath)) return;
 
             var key = this.SelectedKeyPair;
-            var publicKey = key.PublicKey.EncodePoint(false).Skip(1).ToArray();
 
-            byte[] privateKey;
-            using (key.Decrypt())
-            {
-                const int ECDSA_PRIVATE_P256_MAGIC = 0x32534345;
-                privateKey = BitConverter.GetBytes(ECDSA_PRIVATE_P256_MAGIC).Concat(BitConverter.GetBytes(32)).Concat(publicKey).Concat(key.PrivateKey).ToArray();
-            }
+            var certificate = this.certificateService.GenerateCertificate(key, this.CN, this.C, this.S);
 
-            var x509Key = new CX509PrivateKey();
-
-            // Set property using Reflection so this project can compile if this property isn't available
-            var property = typeof(CX509PrivateKey).GetProperty("AlgorithmName");
-
-            if (property == null)
-            {
-                // TODO Find a way to generate a certificate without setting this property
-            }
-            else
-            {
-                property.SetValue(x509Key, "ECDSA_P256", null);
-            }
-
-            x509Key.Import("ECCPRIVATEBLOB", Convert.ToBase64String(privateKey));
-
-            Array.Clear(privateKey, 0, privateKey.Length);
-
-            var request = new CX509CertificateRequestPkcs10();
-
-            request.InitializeFromPrivateKey(X509CertificateEnrollmentContext.ContextUser, x509Key, null);
-            request.Subject = new CX500DistinguishedName();
-            request.Subject.Encode($"CN={this.CN},C={this.C},S={this.S},SERIALNUMBER={this.SerialNumber}");
-            request.Encode();
-
-            var certificateText = "-----BEGIN NEW CERTIFICATE REQUEST-----\r\n" + request.RawData + "-----END NEW CERTIFICATE REQUEST-----\r\n";
-            var certificateBytes = Encoding.UTF8.GetBytes(certificateText);
-
-            this.fileManager.WriteAllBytes(savedCertificatePath, certificateBytes);
+            this.fileManager.WriteAllBytes(savedCertificatePath, certificate.Export(X509ContentType.Cert));
 
             this.Close(this, EventArgs.Empty);
         }

@@ -18,10 +18,11 @@ namespace Neo.Gui.Base.Managers
             return File.ReadAllBytes(path);
         }
 
+        /// <summary>
+        /// NOTE - This will overwrite any existing content at the specified file path.
+        /// </summary>
         public void WriteAllBytes(string path, byte[] bytes)
         {
-            if (!this.FileExists(path)) return;
-
             File.WriteAllBytes(path, bytes);
         }
 

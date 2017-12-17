@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Neo.Gui.Base.Certificates;
+using Neo.Gui.Base.Services;
 
 namespace Neo.Gui.Base
 {

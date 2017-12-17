@@ -1162,7 +1162,7 @@ namespace Neo.Gui.Base.Controllers
             }
 
             // Query for certificate
-            var result = this.certificateService.Query(publicKey);
+            var result = this.certificateService.GetCertificate(publicKey);
 
             if (result == null) return null;
 
