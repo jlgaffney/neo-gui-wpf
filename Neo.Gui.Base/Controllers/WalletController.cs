@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Timers;
+using System.Threading;
 
 using Neo.Core;
 using Neo.Cryptography.ECC;
@@ -25,6 +25,7 @@ using Neo.Gui.Base.Services;
 
 using CryptographicException = System.Security.Cryptography.CryptographicException;
 using DeprecatedWallet = Neo.Implementations.Wallets.EntityFramework.UserWallet;
+using Timer = System.Timers.Timer;
 
 namespace Neo.Gui.Base.Controllers
 {
@@ -120,7 +121,7 @@ namespace Neo.Gui.Base.Controllers
                 AutoReset = true
             };
 
-            this.refreshTimer.Elapsed += this.Refresh;
+            this.refreshTimer.Elapsed += (sender, e) => this.Refresh();
 
             this.initialized = true;
         }
@@ -757,9 +758,13 @@ namespace Neo.Gui.Base.Controllers
             throw new WalletIsNotOpenException();
         }
         
-        private void Refresh(object sender, ElapsedEventArgs e)
+        private void Refresh()
         {
-            lock (this.walletRefreshLock)
+            // Only allow one thread to refresh at a time
+            var lockAcquired = Monitor.TryEnter(this.walletRefreshLock);
+            if (!lockAcquired) return;
+
+            try
             {
                 var blockChainStatus = this.blockchainController.GetStatus();
 
@@ -778,6 +783,10 @@ namespace Neo.Gui.Base.Controllers
                 this.UpdateFirstClassAssetBalances();
 
                 this.UpdateNEP5TokenBalances(blockChainStatus.TimeSinceLastBlock);
+            }
+            finally
+            {
+                Monitor.Exit(this.walletRefreshLock);
             }
         }
 
