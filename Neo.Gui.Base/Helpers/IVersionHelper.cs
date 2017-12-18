@@ -1,7 +1,7 @@
 ﻿using System;
 using Neo.Gui.Base.Updating;
 
-namespace Neo.Gui.Base.Helpers.Interfaces
+namespace Neo.Gui.Base.Helpers
 {
     public interface IVersionHelper
     {

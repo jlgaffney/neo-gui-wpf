@@ -79,6 +79,8 @@ namespace Neo.Gui.Base.Controllers
 
         public BlockchainStatus GetStatus()
         {
+            if (this.disposed) return null;
+
             var timeSinceLastBlock = DateTime.UtcNow - this.timeOfLastBlock;
 
             if (timeSinceLastBlock < TimeSpan.Zero)

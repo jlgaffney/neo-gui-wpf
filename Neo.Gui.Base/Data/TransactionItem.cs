@@ -1,24 +1,32 @@
-﻿using System.Globalization;
+﻿using System;
 using Neo.Core;
+using Neo.Gui.Base.Globalization;
 using Neo.Gui.Base.MVVM;
-using Neo.Implementations.Wallets.EntityFramework;
-//using Neo.Gui.Wpf.Properties;
 
 namespace Neo.Gui.Base.Data
 {
     public class TransactionItem : BindableClass
     {
+        private readonly Transaction transaction;
+
         private int confirmations;
 
-        public string Time => this.Info?.Time.ToString(CultureInfo.CurrentUICulture);
+        public TransactionItem(Transaction transaction, uint height, DateTime time)
+        {
+            this.transaction = transaction ?? throw new ArgumentNullException(nameof(transaction));
+            this.Height = height;
+            this.Time = time;
+        }
+        
+        public string Id => this.transaction.Hash.ToString();
 
-        public string Id => this.Info == null ? string.Empty : this.Info.Transaction.Hash.ToString();
+        public uint Height { get; }
 
-        public string Confirmations => this.confirmations > 0 ? this.confirmations.ToString() : string.Empty;//Strings.Unconfirmed;
+        public DateTime Time { get; }
 
-        public string Type => this.Info == null ? string.Empty : TransactionTypeToString(this.Info.Transaction.Type);
+        public TransactionType Type => this.transaction.Type;
 
-        public TransactionInfo Info { get; set; }
+        public string Confirmations => this.confirmations > 0 ? this.confirmations.ToString() : Strings.Unconfirmed;
 
         public void SetConfirmations(int value)
         {
@@ -31,9 +39,18 @@ namespace Neo.Gui.Base.Data
             NotifyPropertyChanged(nameof(this.Confirmations));
         }
 
-        private static string TransactionTypeToString(TransactionType type)
+        public override int GetHashCode()
         {
-            return type.ToString();
+            return this.transaction.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            var transactionItem = obj as TransactionItem;
+            
+            if (transactionItem == null) return false;
+
+            return this.transaction.Hash.Equals(transactionItem.transaction.Hash);
         }
     }
 }

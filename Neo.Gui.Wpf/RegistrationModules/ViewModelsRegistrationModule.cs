@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Autofac;
-using Neo.Gui.Wpf.MVVM;
+
+using GalaSoft.MvvmLight;
+using Module = Autofac.Module;
 
 namespace Neo.Gui.Wpf.RegistrationModules
 {
@@ -9,7 +12,7 @@ namespace Neo.Gui.Wpf.RegistrationModules
     {
         protected override void Load(ContainerBuilder builder)
         {
-            var viewModelTypes = GetLoadedViewModelTypes();
+            var viewModelTypes = GetViewModelTypesInAssembly();
 
             foreach (var viewModelType in viewModelTypes)
             {
@@ -19,18 +22,17 @@ namespace Neo.Gui.Wpf.RegistrationModules
             base.Load(builder);
         }
 
-        private static IEnumerable<Type> GetLoadedViewModelTypes()
+        private static IEnumerable<Type> GetViewModelTypesInAssembly()
         {
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                foreach (var type in assembly.GetExportedTypes())
-                {
-                    // Check if type derives from ViewModelBase
-                    if (!type.IsSubclassOf(typeof(ViewModelBase))) continue;
+            var assembly = Assembly.GetAssembly(typeof(ViewModelsRegistrationModule));
 
-                    // Found view model type
-                    yield return type;
-                }
+            foreach (var type in assembly.GetExportedTypes())
+            {
+                // Check if type derives from ViewModelBase
+                if (!type.IsSubclassOf(typeof(ViewModelBase))) continue;
+
+                // Found view model type
+                yield return type;
             }
         }
     }

@@ -12,19 +12,20 @@ using Neo.Gui.Base;
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Results.Home;
 using Neo.Gui.Base.Dialogs.Results.Settings;
-using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.MVVM;
 using Neo.Gui.Base.Globalization;
+using Neo.Gui.Base.Helpers;
 using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Services;
-
+using Neo.Gui.Wpf.Controls;
 using Neo.Gui.Wpf.Extensions;
 using Neo.Gui.Wpf.Implementations.Managers;
 using Neo.Gui.Wpf.MarkupExtensions;
 using Neo.Gui.Wpf.Properties;
 using Neo.Gui.Wpf.RegistrationModules;
+
 using SplashScreen = Neo.Gui.Wpf.Views.SplashScreen;
 using ViewModelsRegistrationModule = Neo.Gui.ViewModels.ViewModelsRegistrationModule;
 using WpfProjectViewModelsRegistrationModule = Neo.Gui.Wpf.RegistrationModules.ViewModelsRegistrationModule;
@@ -42,7 +43,7 @@ namespace Neo.Gui.Wpf
         {
             this.InitializeComponent();
 
-            this.Setup();
+            this.Initialize();
         }
 
         protected override void OnExit(ExitEventArgs e)
@@ -54,7 +55,7 @@ namespace Neo.Gui.Wpf
             base.OnExit(e);
         }
 
-        private void Setup()
+        private void Initialize()
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
@@ -84,6 +85,8 @@ namespace Neo.Gui.Wpf
                 this.walletController != null);
 
             messageSubscriber.Subscribe(this);
+
+            TransactionOutputListBox.SetDialogManager(dialogManager);
 
             Task.Run(async () =>
             {
@@ -116,7 +119,7 @@ namespace Neo.Gui.Wpf
                     // Application is starting normally
 
                     // Initialize wallet controller
-                    this.walletController.Initialize(Settings.Default.CertCachePath);
+                    this.walletController.Initialize(Settings.Default.Paths.CertCache);
                     this.walletController.SetNEP5WatchScriptHashes(Settings.Default.NEP5Watched.ToArray());
 
                     // Check if there a newer version is available
@@ -161,7 +164,7 @@ namespace Neo.Gui.Wpf
         {
             // Only install if using a local node
             // TODO Is the root certificate required if connecting to a remote node?
-            if (Settings.Default.RemoteNodeMode) return;
+            if (Settings.Default.P2P.RemoteNodeMode) return;
 
             if (!Settings.Default.InstallCertificate) return;
 

@@ -62,6 +62,10 @@ namespace Neo.Gui.Base.Data
             }
         }
 
+        public bool IsSystemAsset => this.State != null &&
+            (this.State.AssetType == AssetType.GoverningToken ||
+                this.State.AssetType == AssetType.UtilityToken);
+
         public AssetState State { get; set; }
 
         public UInt160 ScriptHashNEP5 { get; set; }

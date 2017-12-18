@@ -1,4 +1,4 @@
-﻿namespace Neo.Gui.Base.Dialogs.Results
+﻿namespace Neo.Gui.Base.Dialogs.Results.Wallets
 {
     public class OpenWalletDialogResult
     {
@@ -6,13 +6,10 @@
 
         public string Password { get; }
 
-        public bool OpenInRepairMode { get; }
-
-        public OpenWalletDialogResult(string walletPath, string password, bool openInRepairMode)
+        public OpenWalletDialogResult(string walletPath, string password)
         {
             this.WalletPath = walletPath;
             this.Password = password;
-            this.OpenInRepairMode = openInRepairMode;
         }
     }
 }

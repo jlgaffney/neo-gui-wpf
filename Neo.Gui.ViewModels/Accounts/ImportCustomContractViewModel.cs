@@ -22,38 +22,14 @@ namespace Neo.Gui.ViewModels.Accounts
     public class ImportCustomContractViewModel : ViewModelBase, IDialogViewModel<ImportCustomContractDialogResult>
     {
         private readonly IMessagePublisher messagePublisher;
-
-        private ECPoint selectedRelatedAccount;
+        
         private string parameterList;
         private string script;
 
         public ImportCustomContractViewModel(
-            IWalletController walletController,
             IMessagePublisher messagePublisher)
         {
             this.messagePublisher = messagePublisher;
-
-            this.RelatedAccounts = new ObservableCollection<ECPoint>(
-                walletController.GetContracts().Where(p => p.IsStandard).Select(p =>
-                    walletController.GetKey(p.PublicKeyHash).PublicKey));
-        }
-
-        public ObservableCollection<ECPoint> RelatedAccounts { get; }
-
-        public ECPoint SelectedRelatedAccount
-        {
-            get => this.selectedRelatedAccount;
-            set
-            {
-                if (Equals(this.selectedRelatedAccount, value)) return;
-
-                this.selectedRelatedAccount = value;
-
-                RaisePropertyChanged();
-
-                // Update dependent property
-                RaisePropertyChanged(nameof(this.ConfirmEnabled));
-            }
         }
 
         public string ParameterList
@@ -89,7 +65,6 @@ namespace Neo.Gui.ViewModels.Accounts
         }
 
         public bool ConfirmEnabled =>
-            this.SelectedRelatedAccount != null &&
             !string.IsNullOrEmpty(this.ParameterList) &&
             !string.IsNullOrEmpty(this.Script);
 
@@ -116,15 +91,14 @@ namespace Neo.Gui.ViewModels.Accounts
             this.Close(this, EventArgs.Empty);
         }
 
-        private VerificationContract GenerateContract()
+        private Contract GenerateContract()
         {
             if (!this.ConfirmEnabled) return null;
 
-            var publicKeyHash = this.SelectedRelatedAccount.EncodePoint(true).ToScriptHash();
             var parameters = this.ParameterList.HexToBytes().Select(p => (ContractParameterType)p).ToArray();
             var redeemScript = this.Script.HexToBytes();
 
-            return VerificationContract.Create(publicKeyHash, parameters, redeemScript);
+            return Contract.Create(parameters, redeemScript);
         }
     }
 }

@@ -9,7 +9,7 @@ namespace Neo.Gui.Wpf.RegistrationModules
         protected override void Load(ContainerBuilder builder)
         {
             // TODO Figure out a better way of switching between remote and local node controllers
-            var blockChainControllerType = Settings.Default.RemoteNodeMode
+            var blockChainControllerType = Settings.Default.P2P.RemoteNodeMode
                 ? typeof(RemoteBlockchainController)
                 : typeof(LocalBlockchainController);
 

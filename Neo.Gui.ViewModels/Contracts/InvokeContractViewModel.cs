@@ -206,7 +206,7 @@ namespace Neo.Gui.ViewModels.Contracts
         }
         #endregion
 
-        private  void SetBaseTransaction(InvocationTransaction baseTransaction)
+        private void SetBaseTransaction(InvocationTransaction baseTransaction)
         {
             if (baseTransaction == null) return;
 
@@ -215,7 +215,7 @@ namespace Neo.Gui.ViewModels.Contracts
             this.CustomScript = this.transaction.Script.ToHexString();
         }
 
-        public InvocationTransaction GetTransaction()
+        private InvocationTransaction MakeTransaction()
         {
             if (this.transaction == null) return null;
 
@@ -265,8 +265,7 @@ namespace Neo.Gui.ViewModels.Contracts
         private void EditParameters()
         {
             this.dialogManager.ShowDialog<ContractParametersEditorDialogResult, ContractParametersEditorLoadParameters>(
-                new LoadParameters<ContractParametersEditorLoadParameters>(
-                    new ContractParametersEditorLoadParameters(this.parameters)));
+                new LoadParameters<ContractParametersEditorLoadParameters>(new ContractParametersEditorLoadParameters(this.parameters)));
 
             UpdateCustomScript();
         }
@@ -311,10 +310,24 @@ namespace Neo.Gui.ViewModels.Contracts
 
         private void Test()
         {
-            if (this.transaction == null) this.transaction = new InvocationTransaction();
+            byte[] script;
+            try
+            {
+                script = this.CustomScript.Trim().HexToBytes();
+            }
+            catch (FormatException ex)
+            {
+                this.dialogManager.ShowMessageDialog("An error occurred!", ex.Message);
+                return;
+            }
+
+            if (this.transaction == null)
+            {
+                this.transaction = new InvocationTransaction();
+            }
 
             this.transaction.Version = 1;
-            this.transaction.Script = this.CustomScript.HexToBytes();
+            this.transaction.Script = script;
 
             // Load default transaction values if required
             if (this.transaction.Attributes == null) this.transaction.Attributes = new TransactionAttribute[0];
@@ -355,7 +368,7 @@ namespace Neo.Gui.ViewModels.Contracts
         {
             if (!this.InvokeEnabled) return;
 
-            var tx = this.GetTransaction();
+            var tx = this.MakeTransaction();
 
             if (tx == null) return;
 

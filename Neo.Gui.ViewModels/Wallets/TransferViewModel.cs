@@ -17,6 +17,7 @@ using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
+using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.Globalization;
@@ -116,7 +117,7 @@ namespace Neo.Gui.ViewModels.Wallets
             }
             else
             {
-                var addresses = this.walletController.GetAddresses().ToArray();
+                var addresses = this.walletController.GetAccounts().Select(p => p.ScriptHash).ToArray();
                 var sAttributes = new HashSet<UInt160>();
                 using (var builder = new ScriptBuilder())
                 {

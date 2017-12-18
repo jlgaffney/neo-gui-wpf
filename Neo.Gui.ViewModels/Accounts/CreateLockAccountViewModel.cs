@@ -7,8 +7,6 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-using Neo.Core;
-using Neo.Cryptography.ECC;
 using Neo.SmartContract;
 using Neo.VM;
 using Neo.Wallets;
@@ -31,7 +29,7 @@ namespace Neo.Gui.ViewModels.Accounts
         private readonly IDialogManager dialogManager;
         private readonly IMessagePublisher messagePublisher;
 
-        private ECPoint selectedAccount;
+        private KeyPair selectedKeyPair;
         private DateTime unlockDate;
         private int unlockHour;
         private int unlockMinute;
@@ -44,7 +42,9 @@ namespace Neo.Gui.ViewModels.Accounts
             this.dialogManager = dialogManager;
             this.messagePublisher = messagePublisher;
 
-            this.Accounts = new ObservableCollection<ECPoint>(walletController.GetContracts().Where(p => p.IsStandard).Select(p => walletController.GetKey(p.PublicKeyHash).PublicKey).ToArray());
+            this.KeyPairs = new ObservableCollection<KeyPair>(
+                walletController.GetStandardAccounts()
+                    .Select(p => p.GetKey()).ToArray());
 
             this.Hours = new List<int>();
 
@@ -64,16 +64,16 @@ namespace Neo.Gui.ViewModels.Accounts
             this.UnlockMinute = time.Minutes;
         }
 
-        public ObservableCollection<ECPoint> Accounts { get; }
+        public ObservableCollection<KeyPair> KeyPairs { get; }
 
-        public ECPoint SelectedAccount
+        public KeyPair SelectedKeyPair
         {
-            get => this.selectedAccount;
+            get => this.selectedKeyPair;
             set
             {
-                if (Equals(this.selectedAccount, value)) return;
+                if (Equals(this.selectedKeyPair, value)) return;
 
-                this.selectedAccount = value;
+                this.selectedKeyPair = value;
 
                 RaisePropertyChanged();
 
@@ -127,7 +127,7 @@ namespace Neo.Gui.ViewModels.Accounts
             }
         }
 
-        public bool CreateEnabled => this.SelectedAccount != null;
+        public bool CreateEnabled => this.SelectedKeyPair != null;
 
         public ICommand CreateCommand => new RelayCommand(this.Create);
 
@@ -152,11 +152,11 @@ namespace Neo.Gui.ViewModels.Accounts
             this.Close(this, EventArgs.Empty);
         }
 
-        private VerificationContract GenerateContract()
+        private Contract GenerateContract()
         {
-            if (this.SelectedAccount == null) return null;
+            if (this.SelectedKeyPair == null) return null;
 
-            var publicKey = this.SelectedAccount;
+            var publicKey = this.SelectedKeyPair.PublicKey;
 
             // Combine unlock date and time
             var unlockDateTime = this.UnlockDate.Date
@@ -174,8 +174,7 @@ namespace Neo.Gui.ViewModels.Accounts
 
                 try
                 {
-                    return VerificationContract.Create(publicKey.EncodePoint(true).ToScriptHash(),
-                        new[] {ContractParameterType.Signature}, sb.ToArray());
+                    return Contract.Create(new[] {ContractParameterType.Signature}, sb.ToArray());
                 }
                 catch
                 {

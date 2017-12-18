@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Input;
+
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-using Neo.Wallets;
+using Neo.SmartContract;
 
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Accounts;
@@ -38,19 +39,18 @@ namespace Neo.Gui.ViewModels.Accounts
         #region ILoadable implementation 
         public void OnLoad(params object[] parameters)
         {
-            if (!parameters.Any())
-            {
-                return;
-            }
+            if (!parameters.Any()) return;
 
             var viewContractLoadParameters = parameters[0] as ViewContractLoadParameters;
+
+            if (viewContractLoadParameters == null) return;
 
             this.SetContract(viewContractLoadParameters.Contract);
         }
         #endregion
 
         #region Private Methods 
-        private void SetContract(VerificationContract contract)
+        private void SetContract(Contract contract)
         {
             this.Address = contract.Address;
             this.ScriptHash = contract.ScriptHash.ToString();

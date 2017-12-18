@@ -1,4 +1,4 @@
-﻿namespace Neo.Gui.Base.Dialogs.Results
+﻿namespace Neo.Gui.Base.Dialogs.Results.Contracts
 {
     public class DeployContractDialogResult
     {

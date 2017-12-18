@@ -8,8 +8,8 @@ namespace Neo.Gui.Base
         protected override void Load(ContainerBuilder builder)
         {
             builder
-                .RegisterType<CertificateQueryService>()
-                .As<ICertificateQueryService>()
+                .RegisterType<CertificateService>()
+                .As<ICertificateService>()
                 .SingleInstance();
 
             base.Load(builder);

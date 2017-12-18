@@ -1,21 +1,19 @@
-using System.IO;
 using System.Windows.Input;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
 using Neo.Core;
-using Neo.SmartContract;
 using Neo.VM;
 
 using Neo.Gui.Base.Collections;
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Data;
-using Neo.Gui.Base.Helpers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.MVVM;
 using Neo.Gui.Base.Globalization;
+using Neo.Gui.Base.Helpers;
 using Neo.Gui.Base.Managers;
 
 namespace Neo.Gui.ViewModels.Home
@@ -65,16 +63,19 @@ namespace Neo.Gui.ViewModels.Home
             {
                 if (this.SelectedAsset == null) return false;
 
-                if (this.SelectedAsset.State == null) return false;
+                if (this.SelectedAsset.IsSystemAsset) return false;
 
-                return this.walletController.CanViewCertificate(this.SelectedAsset);
+                if (this.SelectedAsset.State?.Owner == null) return false;
+
+                return this.walletController.CanViewCertificate(this.SelectedAsset.State.Owner);
             }
         }
 
-        public bool DeleteAssetEnabled => this.SelectedAsset != null &&
-                                          (this.SelectedAsset.State == null ||
-                                           (this.SelectedAsset.State.AssetType != AssetType.GoverningToken &&
-                                            this.SelectedAsset.State.AssetType != AssetType.UtilityToken));
+        public bool DeleteAssetEnabled => 
+            this.SelectedAsset != null &&
+            (this.SelectedAsset.State == null ||
+            (this.SelectedAsset.State.AssetType != AssetType.GoverningToken &&
+            this.SelectedAsset.State.AssetType != AssetType.UtilityToken));
 
         public RelayCommand ViewCertificateCommand => new RelayCommand(this.ViewCertificate);
 
@@ -141,19 +142,19 @@ namespace Neo.Gui.ViewModels.Home
 
         private void ViewCertificate()
         {
-            if (this.SelectedAsset == null || this.SelectedAsset.State == null) return;
+            if (!this.ViewCertificateEnabled) return;
+            
+            var success = this.walletController.ViewCertificate(this.SelectedAsset.State.Owner);
 
-            // TODO: this dependency to NEO need to be abstracted. Added this to Wallet for example.
-            var hash = Contract.CreateSignatureRedeemScript(this.SelectedAsset.State.Owner).ToScriptHash();
-            var address = this.walletController.ToAddress(hash);
-            var path = Path.Combine(this.settingsManager.CertificateCachePath, $"{address}.cer");
-
-            this.processHelper.Run(path);
+            if (!success)
+            {
+                // TODO Show error message
+            }
         }
 
         private void DeleteAsset()
         {
-            if (this.SelectedAsset == null || this.SelectedAsset.State == null) return;
+            if (this.SelectedAsset?.State == null) return;
 
             var value = this.walletController.GetAvailable(this.SelectedAsset.State.AssetId);
 

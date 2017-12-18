@@ -11,7 +11,7 @@ namespace Neo.Gui.ViewModels
     {
         protected override void Load(ContainerBuilder builder)
         {
-            var viewModelTypes = GetLoadedViewModelTypes();
+            var viewModelTypes = GetViewModelTypesInAssembly();
 
             foreach (var viewModelType in viewModelTypes)
             {
@@ -21,7 +21,7 @@ namespace Neo.Gui.ViewModels
             base.Load(builder);
         }
 
-        private static IEnumerable<Type> GetLoadedViewModelTypes()
+        private static IEnumerable<Type> GetViewModelTypesInAssembly()
         {
             var assembly = Assembly.GetAssembly(typeof(ViewModelsRegistrationModule));
 

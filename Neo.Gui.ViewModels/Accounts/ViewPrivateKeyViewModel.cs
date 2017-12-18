@@ -7,7 +7,6 @@ using GalaSoft.MvvmLight.Command;
 
 using Neo.Wallets;
 
-using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Accounts;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
@@ -17,14 +16,6 @@ namespace Neo.Gui.ViewModels.Accounts
 {
     public class ViewPrivateKeyViewModel : ViewModelBase, IDialogViewModel<ViewPrivateKeyDialogResult>, ILoadable
     {
-        private readonly IWalletController walletController;
-
-        public ViewPrivateKeyViewModel(
-            IWalletController walletController)
-        {
-            this.walletController = walletController;
-        }
-
         #region Public Properties
         public string Address { get; private set; }
 
@@ -52,17 +43,21 @@ namespace Neo.Gui.ViewModels.Accounts
 
             var viewPrivateKeyLoadParameters = (parameters[0] as LoadParameters<ViewPrivateKeyLoadParameters>)?.Parameters;
 
-            if (viewPrivateKeyLoadParameters == null) return;
+            if (viewPrivateKeyLoadParameters?.Account == null) return;
 
-            this.SetKeyInfo(viewPrivateKeyLoadParameters.Key, viewPrivateKeyLoadParameters.ScriptHash);
+            this.SetAccountInfo(viewPrivateKeyLoadParameters.Account);
         }
         #endregion
 
         #region Private Methods 
 
-        private void SetKeyInfo(KeyPair key, UInt160 scriptHash)
+        private void SetAccountInfo(WalletAccount account)
         {
-            this.Address = this.walletController.ToAddress(scriptHash);
+            if (account == null) return;
+
+            var key = account.GetKey();
+
+            this.Address = account.Address;
             this.PublicKeyHex = key.PublicKey.EncodePoint(true).ToHexString();
             using (key.Decrypt())
             {

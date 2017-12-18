@@ -4,15 +4,17 @@ using System.Text;
 
 using CERTENROLLLib;
 
-using Neo.Cryptography.ECC;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+
+using Neo.Wallets;
 
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
+using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Services;
-
-using Neo.Gui.Wpf.MVVM;
 
 namespace Neo.Gui.Wpf.Views.Wallets
 {
@@ -20,9 +22,8 @@ namespace Neo.Gui.Wpf.Views.Wallets
     {
         private readonly IFileManager fileManager;
         private readonly IFileDialogService fileDialogService;
-        private readonly IWalletController walletController;
 
-        private ECPoint selectedPublicKey;
+        private KeyPair selectedKeyPair;
         private string cn;
         private string c;
         private string s;
@@ -35,27 +36,26 @@ namespace Neo.Gui.Wpf.Views.Wallets
         {
             this.fileManager = fileManager;
             this.fileDialogService = fileDialogService;
-            this.walletController = walletController;
 
-            this.PublicKeys = this.walletController.GetContracts().Where(p => p.IsStandard).Select(p =>
-                this.walletController.GetKey(p.PublicKeyHash).PublicKey).ToArray();
+            this.KeyPairs = walletController.GetStandardAccounts()
+                .Select(p => p.GetKey()).ToArray();
         }
 
-        public ECPoint[] PublicKeys { get; }
+        public KeyPair[] KeyPairs { get; }
 
-        public ECPoint SelectedPublicKey
+        public KeyPair SelectedKeyPair
         {
-            get => this.selectedPublicKey;
+            get => this.selectedKeyPair;
             set
             {
-                if (Equals(this.selectedPublicKey, value)) return;
+                if (Equals(this.selectedKeyPair, value)) return;
 
-                this.selectedPublicKey = value;
+                this.selectedKeyPair = value;
 
-                NotifyPropertyChanged();
+                RaisePropertyChanged();
 
                 // Update dependent properties
-                NotifyPropertyChanged(nameof(this.RequestCertificateEnabled));
+                RaisePropertyChanged(nameof(this.RequestCertificateEnabled));
             }
         }
 
@@ -68,10 +68,10 @@ namespace Neo.Gui.Wpf.Views.Wallets
 
                 this.cn = value;
 
-                NotifyPropertyChanged();
+                RaisePropertyChanged();
 
                 // Update dependent properties
-                NotifyPropertyChanged(nameof(this.RequestCertificateEnabled));
+                RaisePropertyChanged(nameof(this.RequestCertificateEnabled));
             }
         }
 
@@ -84,10 +84,10 @@ namespace Neo.Gui.Wpf.Views.Wallets
 
                 this.c = value;
 
-                NotifyPropertyChanged();
+                RaisePropertyChanged();
 
                 // Update dependent properties
-                NotifyPropertyChanged(nameof(this.RequestCertificateEnabled));
+                RaisePropertyChanged(nameof(this.RequestCertificateEnabled));
             }
         }
 
@@ -100,10 +100,10 @@ namespace Neo.Gui.Wpf.Views.Wallets
 
                 this.s = value;
 
-                NotifyPropertyChanged();
+                RaisePropertyChanged();
 
                 // Update dependent properties
-                NotifyPropertyChanged(nameof(this.RequestCertificateEnabled));
+                RaisePropertyChanged(nameof(this.RequestCertificateEnabled));
             }
         }
 
@@ -116,15 +116,15 @@ namespace Neo.Gui.Wpf.Views.Wallets
 
                 this.serialNumber = value;
 
-                NotifyPropertyChanged();
+                RaisePropertyChanged();
 
                 // Update dependent properties
-                NotifyPropertyChanged(nameof(this.RequestCertificateEnabled));
+                RaisePropertyChanged(nameof(this.RequestCertificateEnabled));
             }
         }
 
         public bool RequestCertificateEnabled => 
-            this.SelectedPublicKey != null &&
+            this.SelectedKeyPair != null &&
             !string.IsNullOrEmpty(this.CN) &&
             !string.IsNullOrEmpty(this.C) &&
             !string.IsNullOrEmpty(this.S) &&
@@ -144,13 +144,12 @@ namespace Neo.Gui.Wpf.Views.Wallets
 
         private void RequestCertificate()
         {
-            var savedCertificatePath = this.fileDialogService.SaveFileDialog("req", "Certificate Request|*.req|All files|*.*");
+            var savedCertificatePath = this.fileDialogService.SaveFileDialog("Certificate Request|*.req|All files|*.*", "req");
 
             if (string.IsNullOrEmpty(savedCertificatePath)) return;
 
-            var point = this.SelectedPublicKey;
-            var key = this.walletController.GetKey(point);
-            var publicKey = point.EncodePoint(false).Skip(1).ToArray();
+            var key = this.SelectedKeyPair;
+            var publicKey = key.PublicKey.EncodePoint(false).Skip(1).ToArray();
 
             byte[] privateKey;
             using (key.Decrypt())

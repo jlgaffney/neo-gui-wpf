@@ -3,18 +3,26 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+
 using Neo.Wallets;
 
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Data;
+using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.LoadParameters.Transactions;
+using Neo.Gui.Base.Dialogs.Results.Transactions;
 using Neo.Gui.Base.Extensions;
+using Neo.Gui.Base.MVVM;
 using Neo.Gui.Base.Services;
 
-using Neo.Gui.Wpf.MVVM;
-
-namespace Neo.Gui.Wpf.Views.Transactions
+namespace Neo.Gui.ViewModels.Transactions
 {
-    public class BulkPayViewModel : ViewModelBase
+    public class BulkPayViewModel :
+        ViewModelBase,
+        ILoadable,
+        IDialogViewModel<BulkPayDialogResult>
     {
         private readonly IWalletController walletController;
         private readonly IDispatchService dispatchService;
@@ -24,9 +32,7 @@ namespace Neo.Gui.Wpf.Views.Transactions
         private AssetDescriptor selectedAsset;
 
         private string addressesAndAmounts;
-
-        private TransactionOutputItem[] outputs;
-
+        
         public BulkPayViewModel(
             IWalletController walletController,
             IDispatchService dispatchService)
@@ -48,7 +54,7 @@ namespace Neo.Gui.Wpf.Views.Transactions
 
                 this.assetSelectionEnabled = value;
 
-                NotifyPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -61,11 +67,11 @@ namespace Neo.Gui.Wpf.Views.Transactions
 
                 this.selectedAsset = value;
 
-                NotifyPropertyChanged();
+                RaisePropertyChanged();
 
                 // Update dependent properties
-                NotifyPropertyChanged(nameof(this.AssetBalance));
-                NotifyPropertyChanged(nameof(this.OkEnabled));
+                RaisePropertyChanged(nameof(this.AssetBalance));
+                RaisePropertyChanged(nameof(this.OkEnabled));
             }
         }
 
@@ -81,7 +87,7 @@ namespace Neo.Gui.Wpf.Views.Transactions
 
                 this.addressesAndAmounts = value;
 
-                NotifyPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -90,7 +96,28 @@ namespace Neo.Gui.Wpf.Views.Transactions
         public ICommand OkCommand => new RelayCommand(this.Ok);
 
 
-        internal void Load(AssetDescriptor asset = null)
+        #region IDialogViewModel implementation 
+        public event EventHandler Close;
+
+        public event EventHandler<BulkPayDialogResult> SetDialogResultAndClose;
+
+        public BulkPayDialogResult DialogResult { get; private set; }
+        #endregion
+
+        #region ILoadable implementation 
+        public void OnLoad(params object[] parameters)
+        {
+            if (!parameters.Any()) return;
+
+            var loadParameters = parameters[0] as BulkPayLoadParameters;
+
+            this.Load(loadParameters?.Asset);
+
+        }
+        #endregion
+
+        // TODO Replace with ILoadable implementation using BulkPayLoadParameters
+        private void Load(AssetDescriptor asset)
         {
             this.dispatchService.InvokeOnMainUIThread(() =>
             {
@@ -136,14 +163,13 @@ namespace Neo.Gui.Wpf.Views.Transactions
 
         private void Ok()
         {
-            this.outputs = this.GenerateOutputs();
+            if (!this.OkEnabled) return;
 
-            //this.TryClose();
-        }
+            var outputs = this.GenerateOutputs();
 
-        internal TransactionOutputItem[] GetOutputs()
-        {
-            return this.outputs;
+            var result = new BulkPayDialogResult(outputs);
+
+            this.SetDialogResultAndClose?.Invoke(this, result);
         }
 
         private TransactionOutputItem[] GenerateOutputs()

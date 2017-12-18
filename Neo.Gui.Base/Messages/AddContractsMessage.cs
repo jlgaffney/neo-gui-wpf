@@ -1,18 +1,20 @@
 ﻿using System.Collections.Generic;
-using Neo.Wallets;
+using System.Linq;
+
+using Neo.SmartContract;
 
 namespace Neo.Gui.Base.Messages
 {
     public class AddContractsMessage
     {
         #region Public Properties 
-        public IEnumerable<VerificationContract> Contracts { get; }
+        public List<Contract> Contracts { get; }
         #endregion
 
         #region Constructor 
-        public AddContractsMessage(IEnumerable<VerificationContract> contracts)
+        public AddContractsMessage(IEnumerable<Contract> contracts)
         {
-            this.Contracts = contracts;
+            this.Contracts = contracts.ToList();
         }
         #endregion
     }

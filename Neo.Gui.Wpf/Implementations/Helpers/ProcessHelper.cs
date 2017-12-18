@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using System.Windows;
-using Neo.Gui.Base.Helpers.Interfaces;
+using Neo.Gui.Base.Helpers;
 
 namespace Neo.Gui.Wpf.Implementations.Helpers
 {

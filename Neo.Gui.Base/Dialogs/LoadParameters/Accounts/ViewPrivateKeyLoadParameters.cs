@@ -4,14 +4,11 @@ namespace Neo.Gui.Base.Dialogs.LoadParameters.Accounts
 {
     public class ViewPrivateKeyLoadParameters
     {
-        public KeyPair Key { get; }
+        public WalletAccount Account { get; }
 
-        public UInt160 ScriptHash { get; }
-
-        public ViewPrivateKeyLoadParameters(KeyPair key, UInt160 scriptHash)
+        public ViewPrivateKeyLoadParameters(WalletAccount account)
         {
-            this.Key = key;
-            this.ScriptHash = scriptHash;
+            this.Account = account;
         }
     }
 }

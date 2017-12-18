@@ -6,11 +6,13 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
 using Neo.Core;
+using Neo.Gui.Base.Controllers;
 using Neo.SmartContract;
 using Neo.VM;
 
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
+using Neo.Gui.Base.Dialogs.Results.Contracts;
 using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
@@ -23,6 +25,7 @@ namespace Neo.Gui.ViewModels.Contracts
         private readonly IFileManager fileManager;
         private readonly IFileDialogService fileDialogService;
         private readonly IMessagePublisher messagePublisher;
+        private readonly IWalletController walletController;
 
         private string name;
         private string version;
@@ -38,11 +41,13 @@ namespace Neo.Gui.ViewModels.Contracts
         public DeployContractViewModel(
             IFileManager fileManager,
             IFileDialogService fileDialogService,
-            IMessagePublisher messagePublisher)
+            IMessagePublisher messagePublisher,
+            IWalletController walletController)
         {
             this.fileManager = fileManager;
             this.fileDialogService = fileDialogService;
             this.messagePublisher = messagePublisher;
+            this.walletController = walletController;
         }
 
 
@@ -233,7 +238,7 @@ namespace Neo.Gui.ViewModels.Contracts
 
         private void Load()
         {
-            var filePath = this.fileDialogService.OpenFileDialog("avm", "AVM File|*.avm");
+            var filePath = this.fileDialogService.OpenFileDialog("AVM File|*.avm", "avm");
 
             if (string.IsNullOrEmpty(filePath)) return;
 
@@ -260,7 +265,7 @@ namespace Neo.Gui.ViewModels.Contracts
 
         private void Deploy()
         {
-            var transaction = this.GenerateTransaction();
+            var transaction = this.MakeTransaction();
 
             if (transaction == null) return;
 
@@ -268,7 +273,7 @@ namespace Neo.Gui.ViewModels.Contracts
             this.Close(this, EventArgs.Empty);
         }
 
-        private InvocationTransaction GenerateTransaction()
+        private InvocationTransaction MakeTransaction()
         {
             if (!this.DeployEnabled) return null;
 
@@ -285,14 +290,8 @@ namespace Neo.Gui.ViewModels.Contracts
                 returnType = this.ReturnType.HexToBytes().Select(p => (ContractParameterType?)p).FirstOrDefault() ?? ContractParameterType.Void;
             }
 
-            using (var builder = new ScriptBuilder())
-            {
-                builder.EmitSysCall("Neo.Contract.Create", script, parameterListBytes, returnType, this.NeedsStorage, this.Name, this.Version, this.Author, this.Email, this.Description);
-                return new InvocationTransaction
-                {
-                    Script = builder.ToArray()
-                };
-            }
+            return this.walletController.MakeContrateCreationTransaction(script, parameterListBytes, returnType,
+                this.NeedsStorage, this.Name, this.Version, this.Author, this.Email, this.Description);
         }
     }
 }

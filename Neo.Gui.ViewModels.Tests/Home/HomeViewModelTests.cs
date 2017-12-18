@@ -3,8 +3,8 @@ using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Globalization;
-using Neo.Gui.Base.Helpers.Interfaces;
 using Moq;
+using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.MVVM;
 using Neo.Gui.Base.Dialogs.Results.Contracts;
@@ -14,6 +14,10 @@ using Neo.Gui.Base.Dialogs.Results.Development;
 using Neo.Gui.Base.Dialogs.Results.Settings;
 using Neo.Gui.ViewModels.Home;
 using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
+using Neo.Gui.Base.Dialogs.Results.Assets;
+using Neo.Gui.Base.Dialogs.Results.Transactions;
+using Neo.Gui.Base.Dialogs.Results.Voting;
+using Neo.Gui.Base.Helpers;
 
 namespace Neo.Gui.ViewModels.Tests.Home
 {
@@ -175,17 +179,16 @@ namespace Neo.Gui.ViewModels.Tests.Home
         }
 
         [Fact]
-        public void OpenWalletCommand_WalletDoNotNeedUpgrade_ShowOpenDialogAndCallWalletController()
+        public void OpenWalletCommand_WalletDoesNotNeedMigrating_ShowOpenDialogAndCallWalletController()
         {
             // Arrange
             var walletPath = "walletPath";
             var walletPassword = "walletPassword";
-            var isRepairMode = false;
-            var openWalletDialogResult = new OpenWalletDialogResult(walletPath, walletPassword, isRepairMode);
+            var openWalletDialogResult = new OpenWalletDialogResult(walletPath, walletPassword);
 
             var walletControllerMock = this.AutoMockContainer.GetMock<IWalletController>();
             walletControllerMock
-                .Setup(x => x.WalletNeedUpgrade(walletPath))
+                .Setup(x => x.WalletCanBeMigrated(walletPath))
                 .Returns(false);
 
             var settingsManagerMock = this.AutoMockContainer.GetMock<ISettingsManager>();
@@ -202,23 +205,23 @@ namespace Neo.Gui.ViewModels.Tests.Home
 
             // Assert
             dialogManagerMock.Verify(x => x.ShowDialog<OpenWalletDialogResult>());
-            walletControllerMock.Verify(x => x.OpenWallet(walletPath, walletPassword, isRepairMode));
+            walletControllerMock.Verify(x => x.OpenWallet(walletPath, walletPassword));
             settingsManagerMock.VerifySet(x => x.LastWalletPath = walletPath);
             settingsManagerMock.Verify(x => x.Save(), Times.Once);
         }
 
         [Fact]
-        public void OpenWalletCommand_WalletNeedUpgrade_ShowOpenDialogAndCallWalletController()
+        public void OpenWalletCommand_WalletDoesNeedMigrating_ShowOpenDialogAndCallWalletController()
         {
             // Arrange
             var walletPath = "walletPath";
+            var newWalletPath = "newWalletPath";
             var walletPassword = "walletPassword";
-            var isRepairMode = true;
-            var openWalletDialogResult = new OpenWalletDialogResult(walletPath, walletPassword, isRepairMode);
+            var openWalletDialogResult = new OpenWalletDialogResult(walletPath, walletPassword);
 
             var walletControllerMock = this.AutoMockContainer.GetMock<IWalletController>();
             walletControllerMock
-                .Setup(x => x.WalletNeedUpgrade(walletPath))
+                .Setup(x => x.WalletCanBeMigrated(walletPath))
                 .Returns(true);
 
             var settingsManagerMock = this.AutoMockContainer.GetMock<ISettingsManager>();
@@ -235,8 +238,8 @@ namespace Neo.Gui.ViewModels.Tests.Home
 
             // Assert
             dialogManagerMock.Verify(x => x.ShowDialog<OpenWalletDialogResult>());
-            walletControllerMock.Verify(x => x.OpenWallet(walletPath, walletPassword, isRepairMode));
-            walletControllerMock.Verify(x => x.UpgradeWallet(walletPath));
+            walletControllerMock.Verify(x => x.OpenWallet(walletPath, walletPassword));
+            walletControllerMock.Verify(x => x.MigrateWallet(walletPath, walletPassword, newWalletPath));
             settingsManagerMock.VerifySet(x => x.LastWalletPath = walletPath);
             settingsManagerMock.Verify(x => x.Save(), Times.Once);
         }
@@ -254,40 +257,6 @@ namespace Neo.Gui.ViewModels.Tests.Home
 
             // Assert
             dialogManagerMock.Verify(x => x.ShowDialog<ChangePasswordDialogResult>());
-        }
-
-        [Fact]
-        public void RebuildIndexCommand_PublishClearAssetsMessageAndClearTransactionsMessage_RebuildCurrentWalletCalled()
-        {
-            // Arrange
-            var messagePublisherMock = this.AutoMockContainer.GetMock<IMessagePublisher>();
-
-            var walletControlerMock = this.AutoMockContainer.GetMock<IWalletController>();
-
-            var viewModel = this.AutoMockContainer.Create<HomeViewModel>();
-
-            // Act
-            viewModel.RebuildIndexCommand.Execute(null);
-
-            // Assert
-            messagePublisherMock.Verify(x => x.Publish(It.IsAny<ClearAssetsMessage>()));
-            messagePublisherMock.Verify(x => x.Publish(It.IsAny<ClearTransactionsMessage>()));
-            walletControlerMock.Verify(x => x.RebuildCurrentWallet());
-        }
-
-        [Fact]
-        public void RestoreAccountsCommand_RestoreAccountsDialog()
-        {
-            // Arrange
-            var dialogManagerMock = this.AutoMockContainer.GetMock<IDialogManager>();
-
-            var viewModel = this.AutoMockContainer.Create<HomeViewModel>();
-
-            // Act
-            viewModel.RestoreAccountsCommand.Execute(null);
-
-            // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<RestoreAccountsDialogResult>());
         }
 
         [Fact]

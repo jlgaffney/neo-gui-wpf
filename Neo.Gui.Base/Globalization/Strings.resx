@@ -532,9 +532,6 @@ Note: updated files cannot be openned by clients in older versions!</value>
   <data name="RequestCertificateMenuHeader" xml:space="preserve">
     <value>Request _Certificate…</value>
   </data>
-  <data name="RestoreAccountsMenuHeader" xml:space="preserve">
-    <value>_Restore Accounts…</value>
-  </data>
   <data name="Results" xml:space="preserve">
     <value>Results</value>
   </data>
@@ -813,9 +810,6 @@ Note: updated files cannot be openned by clients in older versions!</value>
   </data>
   <data name="RepairMode" xml:space="preserve">
     <value>Repair mode</value>
-  </data>
-  <data name="RestoreAccountsTitle" xml:space="preserve">
-    <value>Restore Accounts</value>
   </data>
   <data name="TradeTitle" xml:space="preserve">
     <value>Transaction</value>

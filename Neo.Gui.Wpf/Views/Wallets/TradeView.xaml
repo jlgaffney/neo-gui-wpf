@@ -30,7 +30,7 @@
                     </Grid>
 
                     <GroupBox Grid.Row="1" Header="{x:Static globalization:Strings.AssetsTheCounterpartyWillAcquire}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                        <controls:TxOutListBox Items="{Binding Items}" ScriptHash="{Binding ScriptHash}" IsEnabled="{Binding ItemsListEnabled}" ItemsChanged="TxOutListBox_OnItemsChanged" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                        <controls:TransactionOutputListBox Items="{Binding Items}" ScriptHash="{Binding ScriptHash}" IsEnabled="{Binding ItemsListEnabled}" ItemsChanged="TxOutListBox_OnItemsChanged" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
                     </GroupBox>
 
                     <Button Grid.Row="2" Content="{x:Static globalization:Strings.InitiateRequest}" Width="70" Margin="0 6 0 0" HorizontalAlignment="Right" Command="{Binding InitiateCommand}" IsEnabled="{Binding InitiateEnabled}" />

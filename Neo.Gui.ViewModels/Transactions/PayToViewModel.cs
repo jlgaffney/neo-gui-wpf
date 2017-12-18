@@ -3,17 +3,25 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+
 using Neo.Wallets;
 
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Data;
+using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.LoadParameters.Transactions;
+using Neo.Gui.Base.Dialogs.Results.Transactions;
+using Neo.Gui.Base.MVVM;
 using Neo.Gui.Base.Services;
 
-using Neo.Gui.Wpf.MVVM;
-
-namespace Neo.Gui.Wpf.Views.Transactions
+namespace Neo.Gui.ViewModels.Transactions
 {
-    public class PayToViewModel : ViewModelBase
+    public class PayToViewModel :
+        ViewModelBase,
+        ILoadable,
+        IDialogViewModel<PayToDialogResult>
     {
         private readonly IWalletController walletController;
         private readonly IDispatchService dispatchService;
@@ -25,8 +33,6 @@ namespace Neo.Gui.Wpf.Views.Transactions
         private string payToAddress;
 
         private string amount;
-
-        private TransactionOutputItem output;
 
         public PayToViewModel(
             IWalletController walletController,
@@ -49,7 +55,7 @@ namespace Neo.Gui.Wpf.Views.Transactions
 
                 this.assetSelectionEnabled = value;
 
-                NotifyPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -62,11 +68,11 @@ namespace Neo.Gui.Wpf.Views.Transactions
 
                 this.selectedAsset = value;
 
-                NotifyPropertyChanged();
+                RaisePropertyChanged();
 
                 // Update dependent properties
-                NotifyPropertyChanged(nameof(this.AssetBalance));
-                NotifyPropertyChanged(nameof(this.OkEnabled));
+                RaisePropertyChanged(nameof(this.AssetBalance));
+                RaisePropertyChanged(nameof(this.OkEnabled));
             }
         }
 
@@ -82,7 +88,7 @@ namespace Neo.Gui.Wpf.Views.Transactions
 
                 this.payToAddressReadOnly = value;
 
-                NotifyPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -95,10 +101,10 @@ namespace Neo.Gui.Wpf.Views.Transactions
 
                 this.payToAddress = value;
                 
-                NotifyPropertyChanged();
+                RaisePropertyChanged();
 
                 // Update dependent property
-                NotifyPropertyChanged(nameof(this.OkEnabled));
+                RaisePropertyChanged(nameof(this.OkEnabled));
             }
         }
 
@@ -111,10 +117,10 @@ namespace Neo.Gui.Wpf.Views.Transactions
 
                 this.amount = value;
 
-                NotifyPropertyChanged();
+                RaisePropertyChanged();
 
                 // Update dependent property
-                NotifyPropertyChanged(nameof(this.OkEnabled));
+                RaisePropertyChanged(nameof(this.OkEnabled));
             }
         }
 
@@ -150,9 +156,30 @@ namespace Neo.Gui.Wpf.Views.Transactions
         }
 
         public ICommand OkCommand => new RelayCommand(this.Ok);
+        
+
+        #region IDialogViewModel implementation 
+        public event EventHandler Close;
+
+        public event EventHandler<PayToDialogResult> SetDialogResultAndClose;
+
+        public PayToDialogResult DialogResult { get; private set; }
+        #endregion
+
+        #region ILoadable implementation 
+        public void OnLoad(params object[] parameters)
+        {
+            if (!parameters.Any()) return;
+
+            var loadParameters = parameters[0] as PayToLoadParameters;
+
+            this.Load(loadParameters?.Asset, loadParameters?.ScriptHash);
+
+        }
+        #endregion
 
 
-        public void Load(AssetDescriptor asset = null, UInt160 scriptHash = null)
+        private void Load(AssetDescriptor asset, UInt160 scriptHash)
         {
             this.dispatchService.InvokeOnMainUIThread(() =>
             {
@@ -202,14 +229,13 @@ namespace Neo.Gui.Wpf.Views.Transactions
 
         private void Ok()
         {
-            this.output = this.GenerateOutput();
+            if (!this.OkEnabled) return;
 
-            //this.TryClose();
-        }
+            var output = this.GenerateOutput();
 
-        public TransactionOutputItem GetOutput()
-        {
-            return this.output;
+            var result = new PayToDialogResult(output);
+
+            this.SetDialogResultAndClose?.Invoke(this, result);
         }
 
         private TransactionOutputItem GenerateOutput()

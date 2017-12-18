@@ -4,9 +4,14 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
-using Neo.Gui.Base.Data;
-using Neo.Gui.Wpf.Views.Transactions;
+
 using Neo.Wallets;
+
+using Neo.Gui.Base.Data;
+using Neo.Gui.Base.Dialogs.LoadParameters.Transactions;
+using Neo.Gui.Base.Dialogs.Results.Transactions;
+using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.MVVM;
 
 namespace Neo.Gui.Wpf.Controls
 {
@@ -14,11 +19,13 @@ namespace Neo.Gui.Wpf.Controls
     /// Interaction logic for TxOutListBox.xaml
     /// </summary>
     [DefaultEvent(nameof(ItemsChanged))]
-    public partial class TxOutListBox
+    public partial class TransactionOutputListBox
     {
+        private static IDialogManager dialogManager;
+
         public event EventHandler ItemsChanged;
 
-        public TxOutListBox()
+        public TransactionOutputListBox()
         {
             InitializeComponent();
 
@@ -27,16 +34,18 @@ namespace Neo.Gui.Wpf.Controls
             this.UpdateRemoveButtonEnabled();
         }
 
+        #region Public properties
+
         // Dependency Property
         public static readonly DependencyProperty ItemsProperty =
             DependencyProperty.Register("Items",
-                typeof(ObservableCollection<TransactionOutputItem>), typeof(TxOutListBox),
+                typeof(ObservableCollection<TransactionOutputItem>), typeof(TransactionOutputListBox),
                 new FrameworkPropertyMetadata(null));
 
         // Dependency Property
         public static readonly DependencyProperty ScriptHashProperty =
             DependencyProperty.Register("ScriptHash",
-                typeof(UInt160), typeof(TxOutListBox),
+                typeof(UInt160), typeof(TransactionOutputListBox),
                 new FrameworkPropertyMetadata(null,
                     OnScriptHashPropertyChanged,
                     OnCoerceScriptHashProperty));
@@ -44,7 +53,7 @@ namespace Neo.Gui.Wpf.Controls
         // Dependency Property
         public static readonly DependencyProperty AssetProperty =
             DependencyProperty.Register("Asset",
-                typeof(AssetDescriptor), typeof(TxOutListBox),
+                typeof(AssetDescriptor), typeof(TransactionOutputListBox),
                 new FrameworkPropertyMetadata(null));
 
         // .NET Property wrapper
@@ -76,10 +85,9 @@ namespace Neo.Gui.Wpf.Controls
             set => this.DockPanel.IsEnabled = !value;
         }
 
-        private void UpdateRemoveButtonEnabled()
-        {
-            this.RemoveButton.IsEnabled = this.ListBox.SelectedItem != null;
-        }
+        #endregion
+
+        #region Public methods
 
         public void Clear()
         {
@@ -98,6 +106,15 @@ namespace Neo.Gui.Wpf.Controls
             }));
         }
 
+        #endregion
+
+        #region Private methods
+
+        private void UpdateRemoveButtonEnabled()
+        {
+            this.RemoveButton.IsEnabled = this.ListBox.SelectedItem != null;
+        }
+
         private void ListBox_SelectionChanged(object sender, EventArgs e)
         {
             this.UpdateRemoveButtonEnabled();
@@ -105,17 +122,15 @@ namespace Neo.Gui.Wpf.Controls
 
         private void AddButton_Click(object sender, EventArgs e)
         {
-            var view = new PayToView(this.Asset, this.ScriptHash);
-            view.ShowDialog();
+            var result = dialogManager.ShowDialog<PayToDialogResult, PayToLoadParameters>(
+                new LoadParameters<PayToLoadParameters>(new PayToLoadParameters(this.Asset, this.ScriptHash)));
 
-            var output = view.GetOutput();
-
-            if (output == null) return;
+            if (result.Output == null) return;
 
             // Execute on main UI thread
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
             {
-                this.Items.Add(output);
+                this.Items.Add(result.Output);
 
                 ItemsChanged?.Invoke(this, EventArgs.Empty);
 
@@ -143,17 +158,15 @@ namespace Neo.Gui.Wpf.Controls
 
         private void BulkPayButton_Click(object sender, EventArgs e)
         {
-            var view = new BulkPayView(this.Asset);
-            view.ShowDialog();
+            var result = dialogManager.ShowDialog<BulkPayDialogResult, BulkPayLoadParameters>(
+                new LoadParameters<BulkPayLoadParameters>(new BulkPayLoadParameters(this.Asset)));
 
-            var outputs = view.GetOutputs();
-
-            if (outputs == null || outputs.Length == 0) return;
+            if (result.Outputs == null || !result.Outputs.Any()) return;
 
             // Execute on main UI thread
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
             {
-                foreach (var output in outputs)
+                foreach (var output in result.Outputs)
                 {
                     this.Items.Add(output);
                 }
@@ -164,10 +177,23 @@ namespace Neo.Gui.Wpf.Controls
             }));
         }
 
+        #endregion
+
+        #region Public static methods
+
+        // TODO Find a better way of opening dialogs from within this class than this static setter method
+        public static void SetDialogManager(IDialogManager manager)
+        {
+            dialogManager = manager;
+        }
+
+        #endregion
+
+        #region Private static methods
 
         private static void OnScriptHashPropertyChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
         {
-            var listBox = source as TxOutListBox;
+            var listBox = source as TransactionOutputListBox;
 
             if (listBox == null) return;
 
@@ -176,7 +202,7 @@ namespace Neo.Gui.Wpf.Controls
 
         private static object OnCoerceScriptHashProperty(DependencyObject source, object data)
         {
-            var listBox = source as TxOutListBox;
+            var listBox = source as TransactionOutputListBox;
 
             if (listBox == null) return data;
 
@@ -184,5 +210,7 @@ namespace Neo.Gui.Wpf.Controls
 
             return data;
         }
+
+        #endregion
     }
 }

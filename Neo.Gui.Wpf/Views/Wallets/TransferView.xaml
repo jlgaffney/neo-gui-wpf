@@ -16,7 +16,7 @@
 
         <GroupBox Grid.Row="0" Header="{x:Static globalization:Strings.RecipientList}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <controls:TxOutListBox Items="{Binding Items}" ItemsChanged="TxOutListBox_OnItemsChanged" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                <controls:TransactionOutputListBox Items="{Binding Items}" ItemsChanged="TxOutListBox_OnItemsChanged" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 
                 <Button ToolTip="{x:Static globalization:Strings.Remark}" Width="28" Height="28" Padding="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Command="{Binding RemarkCommand}">
                     <Image Source="/Resources/remark.png" Width="20" Height="20" />
