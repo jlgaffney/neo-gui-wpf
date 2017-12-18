@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
 using Org.BouncyCastle.Asn1.X509;
-using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Operators;
+using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Crypto.Prng;
 using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Security;
@@ -22,10 +23,8 @@ using Neo.Gui.Base.Certificates;
 using Neo.Gui.Base.Helpers;
 using Neo.Gui.Base.Managers;
 
-using BCECPoint = Org.BouncyCastle.Math.EC.ECPointBase;
-
-using NeoECCurve = Neo.Cryptography.ECC.ECCurve;
-using NeoECPoint = Neo.Cryptography.ECC.ECPoint;
+using ECCurve = Neo.Cryptography.ECC.ECCurve;
+using ECPoint = Neo.Cryptography.ECC.ECPoint;
 
 namespace Neo.Gui.Base.Services
 {
@@ -62,7 +61,7 @@ namespace Neo.Gui.Base.Services
             this.initialized = true;
         }
 
-        public CertificateQueryResult GetCertificate(NeoECPoint publickey)
+        public CertificateQueryResult GetCertificate(ECPoint publickey)
         {
             if (!this.initialized)
             {
@@ -97,7 +96,7 @@ namespace Neo.Gui.Base.Services
             return results[hash];
         }
 
-        public bool ViewCertificate(NeoECPoint publicKey)
+        public bool ViewCertificate(ECPoint publicKey)
         {
             if (!this.initialized)
             {
@@ -117,11 +116,6 @@ namespace Neo.Gui.Base.Services
 
         public X509Certificate2 GenerateCertificate(KeyPair key, string cn, string c, string s)
         {
-            // Get key parameters
-
-            // TODO
-            //var subjectKeys = new AsymmetricCipherKeyPair(null,null);
-
             var certificateGenerator = new X509V3CertificateGenerator();
 
             // Generate random serial number
@@ -131,16 +125,25 @@ namespace Neo.Gui.Base.Services
             certificateGenerator.SetSerialNumber(serialNumber);
             
             // Set subject and issuer as same name
-            var distinguishedName = new X509Name($"CN={cn},C={c},S={s}");
+            var distinguishedName = new X509Name($"CN={cn},C={c},ST={s}");
             certificateGenerator.SetIssuerDN(distinguishedName);
             certificateGenerator.SetSubjectDN(distinguishedName);
 
-            var subjectKeys = new AsymmetricCipherKeyPair(null, null);
+            // Get key parameters
+            var publicKey = key.PublicKey.EncodePoint(false).Skip(1).ToArray();
+            byte[] privateKey;
+            using (key.Decrypt())
+            {
+                privateKey = key.PrivateKey;
+            }
+            var publicParameters = (ECPublicKeyParameters)PublicKeyFactory.CreateKey(publicKey);
+            var privateParameters = (ECPrivateKeyParameters)PrivateKeyFactory.CreateKey(privateKey);
+
             // Set public key
-            certificateGenerator.SetPublicKey(subjectKeys.Public);
+            certificateGenerator.SetPublicKey(publicParameters);
 
             // Generate certificate
-            var signatureFactory = new Asn1SignatureFactory("SHA256WITHECDSA", subjectKeys.Private);
+            var signatureFactory = new Asn1SignatureFactory("SHA256WITHECDSA", privateParameters);
             var certificate = certificateGenerator.Generate(signatureFactory);
 
             var certificateBytes = certificate.GetEncoded();
@@ -205,7 +208,7 @@ namespace Neo.Gui.Base.Services
             }
 
             // Compare hash with cached value
-            var decodedPublicKey = NeoECPoint.DecodePoint(cert.PublicKey.EncodedKeyValue.RawData, NeoECCurve.Secp256r1);
+            var decodedPublicKey = ECPoint.DecodePoint(cert.PublicKey.EncodedKeyValue.RawData, ECCurve.Secp256r1);
             var decodedHash = GetRedeemScriptHashFromPublicKey(decodedPublicKey);
 
             if (!hash.Equals(decodedHash))
@@ -260,7 +263,7 @@ namespace Neo.Gui.Base.Services
             }
         }
 
-        private static UInt160 GetRedeemScriptHashFromPublicKey(NeoECPoint publicKey)
+        private static UInt160 GetRedeemScriptHashFromPublicKey(ECPoint publicKey)
         {
             return Contract.CreateSignatureRedeemScript(publicKey).ToScriptHash();
         }
