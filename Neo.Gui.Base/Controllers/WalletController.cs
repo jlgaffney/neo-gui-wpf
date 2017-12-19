@@ -356,11 +356,11 @@ namespace Neo.Gui.Base.Controllers
             return this.blockchainController.GetAssetState(assetId);
         }
 
-        public bool CanViewCertificate(ECPoint publicKey)
+        public bool CanViewCertificate(AssetItem assetItem)
         {
-            if (publicKey == null) return false;
+            if (assetItem == null) return false;
 
-            var queryResult = this.GetCertificateQueryResult(publicKey);
+            var queryResult = this.GetCertificateQueryResult(assetItem.State.Owner);
 
             if (queryResult == null) return false;
 
@@ -369,9 +369,9 @@ namespace Neo.Gui.Base.Controllers
                    queryResult.Type == CertificateQueryResultType.Invalid;
         }
 
-        public bool ViewCertificate(ECPoint publicKey)
+        public string ViewCertificate(AssetItem assetItem)
         {
-            return this.certificateService.ViewCertificate(publicKey);
+            return this.certificateService.ViewCertificate(assetItem.State.Owner);
         }
 
         public Fixed8 CalculateBonus()

@@ -44,6 +44,30 @@ namespace Neo.Gui.ViewModels.Tests.Builders
             return this;
         }
 
+        public AssetItemBuilder WithGoverningToken()
+        {
+            this.internalAssetState = new AssetState { Owner = new Cryptography.ECC.ECPoint(), AssetType = AssetType.GoverningToken, Name = "NEO" };
+            return this;
+        }
+
+        public AssetItemBuilder WithUtilityToken()
+        {
+            this.internalAssetState = new AssetState { Owner = new Cryptography.ECC.ECPoint(), AssetType = AssetType.UtilityToken, Name = "NEOGas" };
+            return this;
+        }
+
+        public AssetItemBuilder WithCustomToken()
+        {
+            this.internalAssetState = new AssetState { Owner = new Cryptography.ECC.ECPoint(), AssetType = AssetType.Token, Name = "Token" };
+            return this;
+        }
+
+        public AssetItemBuilder WithAssetId(UInt256 assetId)
+        {
+            this.internalAssetState.AssetId = assetId;
+            return this;
+        }
+
         public AssetItem Build()
         {
             return new AssetItem
@@ -52,7 +76,7 @@ namespace Neo.Gui.ViewModels.Tests.Builders
                 Type = this.internalType, 
                 Value = this.internalValue,
                 Issuer = this.internalIssuer,
-                State = this.internalAssetState
+                State = this.internalAssetState,
             };
         }
     }

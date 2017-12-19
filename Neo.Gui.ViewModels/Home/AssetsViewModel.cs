@@ -67,7 +67,7 @@ namespace Neo.Gui.ViewModels.Home
 
                 if (this.SelectedAsset.State?.Owner == null) return false;
 
-                return this.walletController.CanViewCertificate(this.SelectedAsset.State.Owner);
+                return this.walletController.CanViewCertificate(this.SelectedAsset);
             }
         }
 
@@ -144,11 +144,15 @@ namespace Neo.Gui.ViewModels.Home
         {
             if (!this.ViewCertificateEnabled) return;
             
-            var success = this.walletController.ViewCertificate(this.SelectedAsset.State.Owner);
+            var certificatePath = this.walletController.ViewCertificate(this.SelectedAsset);
 
-            if (!success)
+            if (string.IsNullOrEmpty(certificatePath))
             {
                 // TODO Show error message
+            }
+            else
+            {
+                this.processHelper.Run(certificatePath);
             }
         }
 
