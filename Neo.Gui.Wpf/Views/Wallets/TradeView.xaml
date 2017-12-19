@@ -1,0 +1,70 @@
+﻿<controls:NeoWindow x:Class="Neo.Gui.Wpf.Views.Wallets.TradeView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:globalization="clr-namespace:Neo.Gui.Base.Globalization;assembly=Neo.Gui.Base"
+        xmlns:wallets="clr-namespace:Neo.Gui.ViewModels.Wallets;assembly=Neo.Gui.ViewModels"
+        xmlns:controls="clr-namespace:Neo.Gui.Wpf.Controls"
+        xmlns:markupExtensions="clr-namespace:Neo.Gui.Wpf.MarkupExtensions"
+        DataContext="{markupExtensions:DataContextBinding ViewModel=wallets:TradeViewModel}"
+        Title="{x:Static globalization:Strings.TradeTitle}"
+        Width="520" Height="580" ResizeMode="NoResize">
+    <Grid>
+        <TabControl x:Name="TabControl" SelectedIndex="{Binding SelectedTabIndex}"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <!-- Initiate Tab -->
+            <TabItem Header="{x:Static globalization:Strings.InitiateTxRequest}">
+                <Grid Margin="8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Column="0" Content="{x:Static globalization:Strings.PayTo}" Margin="0 0 8 0" VerticalAlignment="Center" />
+                        <TextBox Grid.Column="1" Text="{Binding PayToAddress, UpdateSourceTrigger=PropertyChanged}" Margin="0 8" Padding="4" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+                    </Grid>
+
+                    <GroupBox Grid.Row="1" Header="{x:Static globalization:Strings.AssetsTheCounterpartyWillAcquire}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <controls:TransactionOutputListBox Items="{Binding Items}" ScriptHash="{Binding ScriptHash}" IsEnabled="{Binding ItemsListEnabled}" ItemsChanged="TxOutListBox_OnItemsChanged" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                    </GroupBox>
+
+                    <Button Grid.Row="2" Content="{x:Static globalization:Strings.InitiateRequest}" Width="70" Margin="0 6 0 0" HorizontalAlignment="Right" Command="{Binding InitiateCommand}" IsEnabled="{Binding InitiateEnabled}" />
+                </Grid>
+            </TabItem>
+            
+            <!-- Merge Tab -->
+            <TabItem Header="{x:Static globalization:Strings.MergeTxRequest}">
+                <Grid Margin="8" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1.4*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <GroupBox Grid.Row="0" Header="{x:Static globalization:Strings.CounterpartyRequest}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            
+                            <TextBox Grid.Row="0" Text="{Binding CounterPartyRequest, UpdateSourceTrigger=PropertyChanged}"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" />
+                            <Button Grid.Row="1" Content="{x:Static globalization:Strings.Validate}" Width="70" HorizontalAlignment="Right" Margin="0 6 0 2" Command="{Binding ValidateCommand}" IsEnabled="{Binding ValidateEnabled}" />
+                        </Grid>
+                    </GroupBox>
+
+                    <GroupBox Grid.Row="1" Header="{x:Static globalization:Strings.MyTradeRequest}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <TextBox Text="{Binding MyRequest, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" />
+                    </GroupBox>
+
+                    <Button Grid.Row="2" Content="{x:Static globalization:Strings.Merge}" Width="70" Margin="0 6 0 0" HorizontalAlignment="Right" Command="{Binding MergeCommand}" IsEnabled="{Binding MergeEnabled}" />
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</controls:NeoWindow>

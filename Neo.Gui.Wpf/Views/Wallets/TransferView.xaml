@@ -1,0 +1,32 @@
+﻿<controls:NeoWindow x:Class="Neo.Gui.Wpf.Views.Wallets.TransferView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:globalization="clr-namespace:Neo.Gui.Base.Globalization;assembly=Neo.Gui.Base"
+        xmlns:controls="clr-namespace:Neo.Gui.Wpf.Controls"
+        xmlns:markupExtensions="clr-namespace:Neo.Gui.Wpf.MarkupExtensions"
+        xmlns:wallets="clr-namespace:Neo.Gui.ViewModels.Wallets;assembly=Neo.Gui.ViewModels"
+        DataContext="{markupExtensions:DataContextBinding ViewModel=wallets:TransferViewModel}"
+        Title="{x:Static globalization:Strings.Transfer}"
+        Width="600" Height="410" ResizeMode="NoResize">
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <GroupBox Grid.Row="0" Header="{x:Static globalization:Strings.RecipientList}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <controls:TransactionOutputListBox Items="{Binding Items}" ItemsChanged="TxOutListBox_OnItemsChanged" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+
+                <Button ToolTip="{x:Static globalization:Strings.Remark}" Width="28" Height="28" Padding="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Command="{Binding RemarkCommand}">
+                    <Image Source="/Resources/remark.png" Width="20" Height="20" />
+                </Button>
+            </Grid>
+        </GroupBox>
+
+        <DockPanel Grid.Row="1" Margin="0 8 0 0" HorizontalAlignment="Right" VerticalAlignment="Stretch">
+            <Button Content="{x:Static globalization:Strings.OK}" Width="70" Margin="0 0 8 0" Command="{Binding OkCommand}" IsEnabled="{Binding OkEnabled}" />
+            <Button Content="{x:Static globalization:Strings.Cancel}" Width="70" Command="{Binding CancelCommand}" />
+        </DockPanel>
+    </Grid>
+</controls:NeoWindow>

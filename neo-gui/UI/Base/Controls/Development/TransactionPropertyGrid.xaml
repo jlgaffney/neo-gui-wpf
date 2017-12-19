@@ -1,6 +1,0 @@
-﻿<WindowsFormsHost x:Class="Neo.UI.Base.Controls.Development.TransactionPropertyGrid"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:forms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms">
-    <forms:PropertyGrid x:Name="PropertyGrid" />
-</WindowsFormsHost>
