@@ -125,7 +125,7 @@ namespace Neo.Gui.Wpf.Controls
             var result = dialogManager.ShowDialog<PayToDialogResult, PayToLoadParameters>(
                 new LoadParameters<PayToLoadParameters>(new PayToLoadParameters(this.Asset, this.ScriptHash)));
 
-            if (result.Output == null) return;
+            if (result?.Output == null) return;
 
             // Execute on main UI thread
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
