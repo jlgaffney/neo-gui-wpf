@@ -367,7 +367,7 @@ namespace Neo.Gui.Base.Controllers
 
         public string ViewCertificate(AssetItem assetItem)
         {
-            return this.certificateService.ViewCertificate(assetItem.State.Owner);
+            return this.certificateService.GetCachedCertificatePath(assetItem.State.Owner);
         }
 
         public Fixed8 CalculateBonus()

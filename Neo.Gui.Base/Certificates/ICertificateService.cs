@@ -8,6 +8,6 @@ namespace Neo.Gui.Base.Certificates
 
         CertificateQueryResult Query(ECPoint publickey);
 
-        string ViewCertificate(ECPoint publicKey);
+        string GetCachedCertificatePath(ECPoint publicKey);
     }
 }

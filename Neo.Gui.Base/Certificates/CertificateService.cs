@@ -85,7 +85,7 @@ namespace Neo.Gui.Base.Certificates
             return results[hash];
         }
 
-        public string ViewCertificate(ECPoint publicKey)
+        public string GetCachedCertificatePath(ECPoint publicKey)
         {
             if (!this.initialized)
             {
