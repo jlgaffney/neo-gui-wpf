@@ -1,5 +1,3 @@
-using System.Windows.Input;
-
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
@@ -135,7 +133,8 @@ namespace Neo.Gui.ViewModels.Home
         {
             if (this.SelectedAsset == null) return;
 
-            var url = string.Format(this.settingsManager.AssetURLFormat, this.SelectedAsset.Name.Substring(2));
+            var assetURLFormat = this.settingsManager.AddressURLFormat;
+            var url = string.Format(assetURLFormat, this.SelectedAsset.Name.Substring(2));
 
             this.processHelper.OpenInExternalBrowser(url);
         }
@@ -170,20 +169,7 @@ namespace Neo.Gui.ViewModels.Home
 
             if (result != MessageDialogResult.Yes) return;
 
-            var transaction = this.walletController.MakeTransaction(new ContractTransaction
-            {
-                Outputs = new[]
-                {
-                    new TransactionOutput
-                    {
-                        AssetId = this.SelectedAsset.State.AssetId,
-                        Value = value,
-                        ScriptHash = RecycleScriptHash
-                    }
-                }
-            }, fee: Fixed8.Zero);
-
-            this.messagePublisher.Publish(new SignTransactionAndShowInformationMessage(transaction));
+            this.walletController.DeleteAsset(this.SelectedAsset);
         }
         #endregion
     }

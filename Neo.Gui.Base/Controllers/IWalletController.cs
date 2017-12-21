@@ -125,5 +125,7 @@ namespace Neo.Gui.Base.Controllers
         UInt160 ToScriptHash(string address);
 
         string ToAddress(UInt160 scriptHash);
+
+        void DeleteAsset(AssetItem assetItem);
     }
 }

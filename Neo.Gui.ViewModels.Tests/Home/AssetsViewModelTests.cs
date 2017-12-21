@@ -126,22 +126,20 @@ namespace Neo.Gui.ViewModels.Tests.Home
         public void DeleteAssetCommand_ShowCertificate()
         {
             // Arrange
-            var tokenId = new UInt256();        // TODO: the AssetId should be more customizable.
+            var tokenId = UInt256.Parse("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF");
 
             var selectedAssetItem = new AssetItemBuilder()
                 .WithAssetId(tokenId)
                 .WithCustomToken()
                 .Build();
 
-            var messagePublisherMock = this.AutoMockContainer.GetMock<IMessagePublisher>();
-
             var walletControllerMock = this.AutoMockContainer.GetMock<IWalletController>();
             walletControllerMock
                 .Setup(x => x.GetAvailable(tokenId))
                 .Returns(Fixed8.Zero);
 
-            var dialogManager = this.AutoMockContainer.GetMock<IDialogManager>();
-            dialogManager
+            var dialogManagerMock = this.AutoMockContainer.GetMock<IDialogManager>();
+            dialogManagerMock
                 .Setup(x => x.ShowMessageDialog(Strings.DeleteConfirmation, It.IsAny<string>(), MessageDialogType.YesNo, MessageDialogResult.No))
                 .Returns(MessageDialogResult.Yes);
 
@@ -152,8 +150,37 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.DeleteAssetCommand.Execute(null);
 
             // Assert
-            walletControllerMock.Verify(x => x.MakeTransaction(It.IsAny<ContractTransaction>(), null, Fixed8.Zero));        // TODO: The test should not be with It.IsAny but testing the transaction is well created.
-            messagePublisherMock.Verify(x => x.Publish(It.IsAny<SignTransactionAndShowInformationMessage>()));              // TODO: The test should assert if the created transaction is the one sended.
+            walletControllerMock.Verify(x => x.DeleteAsset(selectedAssetItem));
+        }
+
+        [Fact]
+        public void ViewSelectedAssetDetailsCommand_OpenBrowserWithAssetDetails()
+        {
+            // Arrange
+            var expectedAddressURLFormat = @"https://www.xpto.com/{0}";
+            var tokenName = "1234";
+            var tokenId = UInt256.Parse("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF");
+
+            var selectedAssetItem = new AssetItemBuilder()
+                .WithAssetId(tokenId)
+                .WithName(tokenName)
+                .Build();
+
+            var processHelperMock = this.AutoMockContainer.GetMock<IProcessHelper>();
+
+            var settingsManagerMock = this.AutoMockContainer.GetMock<ISettingsManager>();
+            settingsManagerMock
+                .SetupGet(x => x.AddressURLFormat)
+                .Returns(expectedAddressURLFormat);
+
+            var viewModel = this.AutoMockContainer.Create<AssetsViewModel>();
+
+            // Act
+            viewModel.SelectedAsset = selectedAssetItem;
+            viewModel.ViewSelectedAssetDetailsCommand.Execute(null);
+
+            // Assert
+            processHelperMock.Verify(x => x.OpenInExternalBrowser(string.Format(expectedAddressURLFormat, tokenName.Substring(2))));
         }
     }
 }
