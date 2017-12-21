@@ -6,7 +6,9 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/neo-gui;component/ResourceDictionaries/ConverterResources.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/neo-gui;component/ResourceDictionaries/StyleResources.xaml" />
-                
+
+                <!-- ToastNotifications resource dictionary -->
+                <ResourceDictionary Source="pack://application:,,,/ToastNotifications.Messages;component/Themes/Default.xaml" />
                 
                 <!-- MahApps resource dictionaries -->
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
