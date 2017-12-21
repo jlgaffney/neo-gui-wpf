@@ -6,7 +6,6 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
 using Neo.Core;
-using Neo.Gui.Base.Helpers;
 using Neo.SmartContract;
 using Neo.Wallets;
 using Neo.Gui.Base.Managers;
@@ -18,25 +17,27 @@ namespace Neo.Gui.Base.Certificates
 {
     internal class CertificateService : ICertificateService
     {
+        #region Private Fields 
         private readonly IDirectoryManager directoryManager;
         private readonly IFileManager fileManager;
-        private readonly IProcessHelper processHelper;
 
         private readonly Dictionary<UInt160, CertificateQueryResult> results = new Dictionary<UInt160, CertificateQueryResult>();
 
         private string certCachePath;
         private bool initialized;
+        #endregion
 
+        #region Constructor 
         public CertificateService(
             IDirectoryManager directoryManager,
-            IFileManager fileManager,
-            IProcessHelper processHelper)
+            IFileManager fileManager)
         {
             this.directoryManager = directoryManager;
             this.fileManager = fileManager;
-            this.processHelper = processHelper;
         }
+        #endregion
 
+        #region Public Methods 
         public void Initialize(string certificateCachePath)
         {
             this.certCachePath = certificateCachePath;
@@ -84,7 +85,7 @@ namespace Neo.Gui.Base.Certificates
             return results[hash];
         }
 
-        public bool ViewCertificate(ECPoint publicKey)
+        public string GetCachedCertificatePath(ECPoint publicKey)
         {
             if (!this.initialized)
             {
@@ -95,12 +96,10 @@ namespace Neo.Gui.Base.Certificates
 
             var path = this.GetCachedCertificatePathFromScriptHash(hash);
 
-            if (!this.fileManager.FileExists(path)) return false;
-
-            this.processHelper.Run(path);
-
-            return true;
+            if (!this.fileManager.FileExists(path)) return null;
+            return path;
         }
+        #endregion
 
         #region Private methods
 

@@ -1,8 +1,10 @@
 ﻿using System.IO;
 using System.Linq;
 using Moq;
+using Neo.Core;
 using Neo.Gui.Base.Controllers;
-using Neo.Gui.Base.Helpers.Interfaces;
+using Neo.Gui.Base.Globalization;
+using Neo.Gui.Base.Helpers;
 using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
@@ -94,24 +96,21 @@ namespace Neo.Gui.ViewModels.Tests.Home
         public void ViewCertificateCommand_ShowCertificate()
         {
             // Arrange
-            var expectedAddress = "Address";
             var expectedCertificatePath = @"X:\";
 
-            var selectedAssetItem = new AssetItemBuilder().Build();
+            var selectedAssetItem = new AssetItemBuilder()
+                .WithCustomToken()
+                .Build();
 
             var processHelperMock = this.AutoMockContainer.GetMock<IProcessHelper>();
 
             var walletControllerMock = this.AutoMockContainer.GetMock<IWalletController>();
             walletControllerMock
-                .Setup(x => x.ToAddress(It.IsAny<UInt160>()))
-                .Returns(expectedAddress);
-
-            var settingsManagerMock = this.AutoMockContainer.GetMock<ISettingsManager>();
-            settingsManagerMock
-                .SetupGet(x => x.CertificateCachePath)
+                .Setup(x => x.ViewCertificate(selectedAssetItem))
                 .Returns(expectedCertificatePath);
-
-            var expectedPath = Path.Combine(expectedCertificatePath, $"{expectedAddress}.cer");
+            walletControllerMock
+                .Setup(x => x.CanViewCertificate(selectedAssetItem))
+                .Returns(true);
 
             var viewModel = this.AutoMockContainer.Create<AssetsViewModel>();
 
@@ -120,7 +119,68 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.ViewCertificateCommand.Execute(null);
 
             // Assert
-            processHelperMock.Verify(x => x.Run(expectedPath));
+            processHelperMock.Verify(x => x.Run(expectedCertificatePath));
+        }
+
+        [Fact]
+        public void DeleteAssetCommand_ShowCertificate()
+        {
+            // Arrange
+            var tokenId = UInt256.Parse("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF");
+
+            var selectedAssetItem = new AssetItemBuilder()
+                .WithAssetId(tokenId)
+                .WithCustomToken()
+                .Build();
+
+            var walletControllerMock = this.AutoMockContainer.GetMock<IWalletController>();
+            walletControllerMock
+                .Setup(x => x.GetAvailable(tokenId))
+                .Returns(Fixed8.Zero);
+
+            var dialogManagerMock = this.AutoMockContainer.GetMock<IDialogManager>();
+            dialogManagerMock
+                .Setup(x => x.ShowMessageDialog(Strings.DeleteConfirmation, It.IsAny<string>(), MessageDialogType.YesNo, MessageDialogResult.No))
+                .Returns(MessageDialogResult.Yes);
+
+            var viewModel = this.AutoMockContainer.Create<AssetsViewModel>();
+
+            // Act
+            viewModel.SelectedAsset = selectedAssetItem;
+            viewModel.DeleteAssetCommand.Execute(null);
+
+            // Assert
+            walletControllerMock.Verify(x => x.DeleteAsset(selectedAssetItem));
+        }
+
+        [Fact]
+        public void ViewSelectedAssetDetailsCommand_OpenBrowserWithAssetDetails()
+        {
+            // Arrange
+            var expectedAddressURLFormat = @"https://www.xpto.com/{0}";
+            var tokenName = "1234";
+            var tokenId = UInt256.Parse("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF");
+
+            var selectedAssetItem = new AssetItemBuilder()
+                .WithAssetId(tokenId)
+                .WithName(tokenName)
+                .Build();
+
+            var processHelperMock = this.AutoMockContainer.GetMock<IProcessHelper>();
+
+            var settingsManagerMock = this.AutoMockContainer.GetMock<ISettingsManager>();
+            settingsManagerMock
+                .SetupGet(x => x.AddressURLFormat)
+                .Returns(expectedAddressURLFormat);
+
+            var viewModel = this.AutoMockContainer.Create<AssetsViewModel>();
+
+            // Act
+            viewModel.SelectedAsset = selectedAssetItem;
+            viewModel.ViewSelectedAssetDetailsCommand.Execute(null);
+
+            // Assert
+            processHelperMock.Verify(x => x.OpenInExternalBrowser(string.Format(expectedAddressURLFormat, tokenName.Substring(2))));
         }
     }
 }

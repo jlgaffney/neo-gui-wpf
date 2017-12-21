@@ -82,9 +82,9 @@ namespace Neo.Gui.Base.Controllers
 
         AssetState GetAssetState(UInt256 assetId);
 
-        bool CanViewCertificate(ECPoint publicKey);
+        bool CanViewCertificate(AssetItem assetItem);
 
-        bool ViewCertificate(ECPoint publicKey);
+        string ViewCertificate(AssetItem assetItem);
 
         Fixed8 CalculateBonus();
 
@@ -125,5 +125,7 @@ namespace Neo.Gui.Base.Controllers
         UInt160 ToScriptHash(string address);
 
         string ToAddress(UInt160 scriptHash);
+
+        void DeleteAsset(AssetItem assetItem);
     }
 }

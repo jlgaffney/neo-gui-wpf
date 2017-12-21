@@ -38,6 +38,7 @@ namespace Neo.Gui.Base.Controllers
         IMessageHandler<BlockchainPersistCompletedMessage>
     {
         #region Private Fields 
+        private readonly UInt160 RecycleScriptHash = new[] { (byte)OpCode.PUSHT }.ToScriptHash();
 
         private readonly IBlockchainController blockchainController;
         private readonly ICertificateService certificateService;
@@ -65,11 +66,9 @@ namespace Neo.Gui.Base.Controllers
         private bool checkNep5Balance;
 
         private UInt160[] nep5WatchScriptHashes;
-
         #endregion
 
         #region Constructor 
-
         public WalletController(
             IBlockchainController blockchainController,
             ICertificateService certificateService,
@@ -91,11 +90,9 @@ namespace Neo.Gui.Base.Controllers
 
             this.certificateQueryResultCache = new Dictionary<ECPoint, CertificateQueryResult>();
         }
-
         #endregion
 
         #region IWalletController implementation 
-
         public void Initialize(string certificateCachePath)
         {
             if (this.disposed)
@@ -130,7 +127,6 @@ namespace Neo.Gui.Base.Controllers
         public uint WalletHeight => !this.WalletIsOpen ? 0 : this.currentWallet.WalletHeight;
 
         public bool WalletIsSynchronized => this.WalletHeight > this.blockchainController.BlockHeight + 1;
-
 
         public bool WalletCanBeMigrated(string walletPath)
         {
@@ -356,11 +352,11 @@ namespace Neo.Gui.Base.Controllers
             return this.blockchainController.GetAssetState(assetId);
         }
 
-        public bool CanViewCertificate(ECPoint publicKey)
+        public bool CanViewCertificate(AssetItem assetItem)
         {
-            if (publicKey == null) return false;
+            if (assetItem == null) return false;
 
-            var queryResult = this.GetCertificateQueryResult(publicKey);
+            var queryResult = this.GetCertificateQueryResult(assetItem.State.Owner);
 
             if (queryResult == null) return false;
 
@@ -369,9 +365,9 @@ namespace Neo.Gui.Base.Controllers
                    queryResult.Type == CertificateQueryResultType.Invalid;
         }
 
-        public bool ViewCertificate(ECPoint publicKey)
+        public string ViewCertificate(AssetItem assetItem)
         {
-            return this.certificateService.ViewCertificate(publicKey);
+            return this.certificateService.GetCachedCertificatePath(assetItem.State.Owner);
         }
 
         public Fixed8 CalculateBonus()
@@ -493,7 +489,9 @@ namespace Neo.Gui.Base.Controllers
             return true;
         }
 
-        public Transaction MakeTransaction(Transaction transaction, UInt160 changeAddress = null,
+        public Transaction MakeTransaction(
+            Transaction transaction, 
+            UInt160 changeAddress = null,
             Fixed8 fee = default(Fixed8))
         {
             this.ThrowIfWalletIsNotOpen();
@@ -501,7 +499,9 @@ namespace Neo.Gui.Base.Controllers
             return this.currentWallet.MakeTransaction(transaction);
         }
 
-        public ContractTransaction MakeTransaction(ContractTransaction transaction, UInt160 changeAddress = null,
+        public ContractTransaction MakeTransaction(
+            ContractTransaction transaction, 
+            UInt160 changeAddress = null,
             Fixed8 fee = default(Fixed8))
         {
             this.ThrowIfWalletIsNotOpen();
@@ -509,7 +509,9 @@ namespace Neo.Gui.Base.Controllers
             return this.currentWallet.MakeTransaction(transaction, changeAddress, fee);
         }
 
-        public InvocationTransaction MakeTransaction(InvocationTransaction transaction, UInt160 changeAddress = null,
+        public InvocationTransaction MakeTransaction(
+            InvocationTransaction transaction, 
+            UInt160 changeAddress = null,
             Fixed8 fee = default(Fixed8))
         {
             this.ThrowIfWalletIsNotOpen();
@@ -517,7 +519,9 @@ namespace Neo.Gui.Base.Controllers
             return this.currentWallet.MakeTransaction(transaction, changeAddress, fee);
         }
 
-        public IssueTransaction MakeTransaction(IssueTransaction transaction, UInt160 changeAddress = null,
+        public IssueTransaction MakeTransaction(
+            IssueTransaction transaction, 
+            UInt160 changeAddress = null,
             Fixed8 fee = default(Fixed8))
         {
             this.ThrowIfWalletIsNotOpen();
@@ -564,8 +568,14 @@ namespace Neo.Gui.Base.Controllers
             }
         }
 
-        public InvocationTransaction MakeAssetCreationTransaction(AssetType? assetType, string assetName,
-            Fixed8 amount, byte precision, ECPoint assetOwner, UInt160 assetAdmin, UInt160 assetIssuer)
+        public InvocationTransaction MakeAssetCreationTransaction(
+            AssetType? assetType, 
+            string assetName,
+            Fixed8 amount, 
+            byte precision, 
+            ECPoint assetOwner, 
+            UInt160 assetAdmin, 
+            UInt160 assetIssuer)
         {
             using (var builder = new ScriptBuilder())
             {
@@ -585,8 +595,16 @@ namespace Neo.Gui.Base.Controllers
             }
         }
 
-        public InvocationTransaction MakeContrateCreationTransaction(byte[] script, byte[] parameterList, ContractParameterType returnType,
-            bool needsStorage, string name, string version, string author, string email, string description)
+        public InvocationTransaction MakeContrateCreationTransaction(
+            byte[] script, 
+            byte[] parameterList, 
+            ContractParameterType returnType,
+            bool needsStorage, 
+            string name, 
+            string version, 
+            string author, 
+            string email, 
+            string description)
         {
             using (var builder = new ScriptBuilder())
             {
@@ -608,10 +626,28 @@ namespace Neo.Gui.Base.Controllers
             return Wallet.ToAddress(scriptHash);
         }
 
+        public void DeleteAsset(AssetItem assetItem)
+        {
+            var value = this.GetAvailable(assetItem.State.AssetId);
+
+            var transactionOutput = new TransactionOutput
+            {
+                AssetId = assetItem.State.AssetId,
+                Value = value,
+                ScriptHash = this.RecycleScriptHash
+            };
+
+            var deleteTransaction = this.MakeTransaction(new ContractTransaction
+            {
+                Outputs = new[] { transactionOutput }
+            }, fee: Fixed8.Zero);
+
+            this.SignAndRelayTransaction(deleteTransaction);
+
+        }
         #endregion
 
         #region IMessageHandler implementation 
-
         public void HandleMessage(AddContractsMessage message)
         {
             if (message.Contracts == null || !message.Contracts.Any()) return;
@@ -691,39 +727,7 @@ namespace Neo.Gui.Base.Controllers
 
         public void HandleMessage(SignTransactionAndShowInformationMessage message)
         {
-            var transaction = message.Transaction;
-
-            if (transaction == null)
-            {
-                this.notificationService.ShowErrorNotification(Strings.InsufficientFunds);
-                return;
-            }
-
-            ContractParametersContext context;
-            try
-            {
-                context = new ContractParametersContext(transaction);
-            }
-            catch (InvalidOperationException)
-            {
-                this.notificationService.ShowErrorNotification(Strings.UnsynchronizedBlock);
-                return;
-            }
-
-            this.Sign(context);
-
-            if (context.Completed)
-            {
-                context.Verifiable.Scripts = context.GetScripts();
-
-                this.Relay(transaction);
-
-                this.notificationService.ShowSuccessNotification($"{Strings.SendTxSucceedMessage} {transaction.Hash}");
-            }
-            else
-            {
-                this.notificationService.ShowSuccessNotification($"{Strings.IncompletedSignatureMessage} {context}");
-            }
+            this.SignAndRelayTransaction(message.Transaction);
         }
 
         public void HandleMessage(BlockchainPersistCompletedMessage message)
@@ -742,11 +746,49 @@ namespace Neo.Gui.Base.Controllers
 
             this.RefreshTransactionConfirmations();
         }
+        #endregion
 
+        #region IDisposable implementation
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!this.disposed)
+            {
+                if (disposing)
+                {
+                    this.messageSubscriber.Unsubscribe(this);
+
+                    // Stop automatic refresh timer
+                    this.refreshTimer?.Stop();
+                    this.refreshTimer = null;
+
+                    // Save and dispose of wallet if required
+                    if (this.WalletIsOpen)
+                    {
+                        this.currentWallet.BalanceChanged -= this.CurrentWalletBalanceChanged;
+
+                        var nep6Wallet = this.currentWallet as NEP6Wallet;
+                        nep6Wallet?.Save();
+
+                        var disposableWallet = this.currentWallet as IDisposable;
+                        disposableWallet?.Dispose();
+                    }
+
+                    // Dispose of blockchain controller
+                    this.blockchainController.Dispose();
+
+                    this.disposed = true;
+                }
+            }
+        }
         #endregion
 
         #region Private Methods
-
         /// <summary>
         /// Throws <see cref="WalletIsNotOpenException" /> if a wallet is not open.
         /// </summary>
@@ -756,7 +798,7 @@ namespace Neo.Gui.Base.Controllers
 
             throw new WalletIsNotOpenException();
         }
-        
+
         private void Refresh(object sender, ElapsedEventArgs e)
         {
             lock (this.walletRefreshLock)
@@ -821,7 +863,7 @@ namespace Neo.Gui.Base.Controllers
                 foreach (var i in walletTransactions.Select(p => new
                 {
                     Transaction = Blockchain.Default.GetTransaction(p, out int height),
-                    Height = (uint) height
+                    Height = (uint)height
                 }).Where(p => p.Transaction != null).Select(p => new
 
                 {
@@ -846,7 +888,7 @@ namespace Neo.Gui.Base.Controllers
         {
             // TODO Check this logic is correct
             var transactionHeight = e.Height ?? this.blockchainController.BlockHeight;
-            
+
             this.AddTransaction(e.Transaction, transactionHeight, e.Time);
 
             this.SetWalletBalanceChangedFlag();
@@ -896,7 +938,7 @@ namespace Neo.Gui.Base.Controllers
         private void UpdateFirstClassAssetBalances()
         {
             if (this.WalletIsSynchronized) return;
-            
+
             if (this.GetWalletBalanceChangedFlag())
             {
                 var coins = this.GetCoins().Where(p => !p.State.HasFlag(CoinState.Spent)).ToList();
@@ -1067,7 +1109,7 @@ namespace Neo.Gui.Base.Controllers
                 var balance = new BigDecimal(amount, decimals);
                 var valueText = balance.ToString();
 
-                var item = this.GetAsset(scriptHash); 
+                var item = this.GetAsset(scriptHash);
 
                 if (item != null)
                 {
@@ -1097,7 +1139,7 @@ namespace Neo.Gui.Base.Controllers
 
             // Add transaction to beginning of list
             this.transactions.Insert(0, transactionItem);
-            
+
             this.messagePublisher.Publish(new TransactionsHaveChangedMessage(this.transactions));
         }
 
@@ -1172,48 +1214,40 @@ namespace Neo.Gui.Base.Controllers
             return result;
         }
 
-        #endregion
-
-        #region IDisposable implementation
-        
-        public void Dispose()
+        private void SignAndRelayTransaction(Transaction transaction)
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!this.disposed)
+            if (transaction == null)
             {
-                if (disposing)
-                {
-                    this.messageSubscriber.Unsubscribe(this);
+                this.notificationService.ShowErrorNotification(Strings.InsufficientFunds);
+                return;
+            }
 
-                    // Stop automatic refresh timer
-                    this.refreshTimer?.Stop();
-                    this.refreshTimer = null;
+            ContractParametersContext context;
+            try
+            {
+                context = new ContractParametersContext(transaction);
+            }
+            catch (InvalidOperationException)
+            {
+                this.notificationService.ShowErrorNotification(Strings.UnsynchronizedBlock);
+                return;
+            }
 
-                    // Save and dispose of wallet if required
-                    if (this.WalletIsOpen)
-                    {
-                        this.currentWallet.BalanceChanged -= this.CurrentWalletBalanceChanged;
+            this.Sign(context);
 
-                        var nep6Wallet = this.currentWallet as NEP6Wallet;
-                        nep6Wallet?.Save();
+            if (context.Completed)
+            {
+                context.Verifiable.Scripts = context.GetScripts();
 
-                        var disposableWallet = this.currentWallet as IDisposable;
-                        disposableWallet?.Dispose();
-                    }
+                this.Relay(transaction);
 
-                    // Dispose of blockchain controller
-                    this.blockchainController.Dispose();
-
-                    this.disposed = true;
-                }
+                this.notificationService.ShowSuccessNotification($"{Strings.SendTxSucceedMessage} {transaction.Hash}");
+            }
+            else
+            {
+                this.notificationService.ShowSuccessNotification($"{Strings.IncompletedSignatureMessage} {context}");
             }
         }
-
         #endregion
     }
 }
