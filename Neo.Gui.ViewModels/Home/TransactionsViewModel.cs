@@ -1,6 +1,4 @@
-﻿using System.Windows.Input;
-
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
 using Neo.Gui.Base.Collections;
@@ -30,7 +28,7 @@ namespace Neo.Gui.ViewModels.Home
         #endregion
 
         #region Public Properties 
-        public ConcurrentObservableCollection<TransactionItem> Transactions { get; }
+        public ConcurrentObservableCollection<TransactionItem> Transactions { get; private set; }
 
         public TransactionItem SelectedTransaction
         {
@@ -50,9 +48,9 @@ namespace Neo.Gui.ViewModels.Home
 
         public bool CopyTransactionIdEnabled => this.SelectedTransaction != null;
 
-        public ICommand CopyTransactionIdCommand => new RelayCommand(this.CopyTransactionId);
+        public RelayCommand CopyTransactionIdCommand => new RelayCommand(this.CopyTransactionId);
 
-        public ICommand ViewSelectedTransactionDetailsCommand => new RelayCommand(this.ViewSelectedTransactionDetails);
+        public RelayCommand ViewSelectedTransactionDetailsCommand => new RelayCommand(this.ViewSelectedTransactionDetails);
         #endregion
 
         #region Constructor 
@@ -85,6 +83,23 @@ namespace Neo.Gui.ViewModels.Home
         }
         #endregion
 
+        #region IMessageHandler Implementation 
+        public void HandleMessage(ClearTransactionsMessage message)
+        {
+            this.Transactions.Clear();
+        }
+
+        public void HandleMessage(TransactionsHaveChangedMessage message)
+        {
+            this.Transactions.Clear();
+
+            foreach (var transaction in message.Transactions)
+            {
+                this.Transactions.Add(transaction);
+            }
+        }
+        #endregion
+
         #region Private Methods 
         private void CopyTransactionId()
         {
@@ -102,23 +117,6 @@ namespace Neo.Gui.ViewModels.Home
             var url = string.Format(this.settingsManager.TransactionURLFormat, this.SelectedTransaction.Id.Substring(2));
 
             this.processHelper.OpenInExternalBrowser(url);
-        }
-        #endregion
-
-        #region IMessageHandler Implementation 
-        public void HandleMessage(ClearTransactionsMessage message)
-        {
-            this.Transactions.Clear();
-        }
-
-        public void HandleMessage(TransactionsHaveChangedMessage message)
-        {
-            this.Transactions.Clear();
-
-            foreach (var transaction in message.Transactions)
-            {
-                this.Transactions.Add(transaction);
-            }
         }
         #endregion
     }

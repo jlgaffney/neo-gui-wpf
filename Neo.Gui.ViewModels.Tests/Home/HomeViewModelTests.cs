@@ -13,7 +13,6 @@ using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Dialogs.Results.Development;
 using Neo.Gui.Base.Dialogs.Results.Settings;
 using Neo.Gui.ViewModels.Home;
-using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Base.Dialogs.Results.Assets;
 using Neo.Gui.Base.Dialogs.Results.Transactions;
 using Neo.Gui.Base.Dialogs.Results.Voting;
