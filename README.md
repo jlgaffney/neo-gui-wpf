@@ -34,7 +34,7 @@ then copy `libleveldb.dll` to the working directory (i.e. /bin/Debug, /bin/Relea
 ## Help
 
 - Open a new [issue](https://github.com/CityOfZion/neo-gui-wpf/issues/new) if you encountered a problem.
-- Or ping **@lostfella** on the [NEO Slack](https://neo-slack-invite.herokuapp.com).
+- Or ping **@lostfella** or **@AboimPinto** in the [NEO Discord Channel](https://discord.gg/R8v48YA).
 - Submitting PRs to the project is always welcome!
 
 ## License
