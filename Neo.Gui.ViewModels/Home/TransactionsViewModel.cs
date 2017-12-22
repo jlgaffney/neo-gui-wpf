@@ -105,16 +105,16 @@ namespace Neo.Gui.ViewModels.Home
         {
             if (this.SelectedTransaction == null) return;
 
-            this.clipboardManager.SetText(this.SelectedTransaction.Id);
+            this.clipboardManager.SetText(this.SelectedTransaction.Hash.ToString());
         }
 
         private void ViewSelectedTransactionDetails()
         {
             if (this.SelectedTransaction == null) return;
 
-            if (string.IsNullOrEmpty(this.SelectedTransaction.Id)) return;
+            if (string.IsNullOrEmpty(this.SelectedTransaction.Hash.ToString())) return;
 
-            var url = string.Format(this.settingsManager.TransactionURLFormat, this.SelectedTransaction.Id.Substring(2));
+            var url = string.Format(this.settingsManager.TransactionURLFormat, this.SelectedTransaction.Hash.ToString().Substring(2));
 
             this.processHelper.OpenInExternalBrowser(url);
         }

@@ -1135,7 +1135,7 @@ namespace Neo.Gui.Base.Controllers
 
         private void AddTransaction(Transaction transaction, uint height, uint timestamp)
         {
-            var transactionItem = new TransactionItem(transaction, height, UnixTimeStampToDateTime(timestamp));
+            var transactionItem = new TransactionItem(transaction.Hash, transaction.Type, height, UnixTimeStampToDateTime(timestamp));
 
             // Add transaction to beginning of list
             this.transactions.Insert(0, transactionItem);

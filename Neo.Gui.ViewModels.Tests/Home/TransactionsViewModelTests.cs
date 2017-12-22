@@ -57,10 +57,9 @@ namespace Neo.Gui.ViewModels.Tests.Home
             var transactionsHaveChangedMessageHandler = viewModel as IMessageHandler<TransactionsHaveChangedMessage>;
 
             var hash = UInt256.Parse("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF");
-            var transactionA = Blockchain.Default.GetTransaction(hash);
             var transactions = new List<TransactionItem>
             {
-                new TransactionItem(transactionA, uint.MinValue, System.DateTime.Now)
+                new TransactionItem(hash, TransactionType.ContractTransaction, uint.MinValue, System.DateTime.Now)
             };
 
             // Act
@@ -70,6 +69,30 @@ namespace Neo.Gui.ViewModels.Tests.Home
             // Assert
             Assert.Equal(0, transactionsCount);
             Assert.Single(viewModel.Transactions);
+        }
+
+        [Fact]
+        public void ClearTransactionsMessageReceived_TransactionsAreClear()
+        {
+            // Arrange
+            var viewModel = this.AutoMockContainer.Create<TransactionsViewModel>();
+            var transactionsHaveChangedMessageHandler = viewModel as IMessageHandler<TransactionsHaveChangedMessage>;
+            var clearTransactionsMessageHandler = viewModel as IMessageHandler<ClearTransactionsMessage>;
+
+            var hash = UInt256.Parse("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF");
+            var transactions = new List<TransactionItem>
+            {
+                new TransactionItem(hash, TransactionType.ContractTransaction, uint.MinValue, System.DateTime.Now)
+            };
+
+            // Act
+            transactionsHaveChangedMessageHandler.HandleMessage(new TransactionsHaveChangedMessage(transactions));
+            var afterAddTransactionsCount = viewModel.Transactions.Count;
+            clearTransactionsMessageHandler.HandleMessage(new ClearTransactionsMessage());
+
+            // Assert
+            Assert.Equal(1, afterAddTransactionsCount);
+            Assert.Empty(viewModel.Transactions);
         }
     }
 }
