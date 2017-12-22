@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Neo.Core;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
+using Neo.Gui.TestHelpers;
 using Neo.Gui.ViewModels.Home;
 using Xunit;
 
@@ -59,7 +61,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             var hash = UInt256.Parse("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF");
             var transactions = new List<TransactionItem>
             {
-                new TransactionItem(hash, TransactionType.ContractTransaction, uint.MinValue, System.DateTime.Now)
+                new TransactionItem(hash, TransactionType.ContractTransaction, uint.MinValue, DateTime.Now)
             };
 
             // Act
@@ -82,7 +84,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             var hash = UInt256.Parse("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF");
             var transactions = new List<TransactionItem>
             {
-                new TransactionItem(hash, TransactionType.ContractTransaction, uint.MinValue, System.DateTime.Now)
+                new TransactionItem(hash, TransactionType.ContractTransaction, uint.MinValue, DateTime.Now)
             };
 
             // Act

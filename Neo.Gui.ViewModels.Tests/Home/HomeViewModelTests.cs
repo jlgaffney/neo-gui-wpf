@@ -17,6 +17,7 @@ using Neo.Gui.Base.Dialogs.Results.Assets;
 using Neo.Gui.Base.Dialogs.Results.Transactions;
 using Neo.Gui.Base.Dialogs.Results.Voting;
 using Neo.Gui.Base.Helpers;
+using Neo.Gui.TestHelpers;
 
 namespace Neo.Gui.ViewModels.Tests.Home
 {

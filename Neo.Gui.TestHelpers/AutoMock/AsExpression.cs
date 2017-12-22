@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Neo.Gui.ViewModels.Tests.AutoMock
+namespace Neo.Gui.TestHelpers.AutoMock
 {
     public class AsExpression
     {

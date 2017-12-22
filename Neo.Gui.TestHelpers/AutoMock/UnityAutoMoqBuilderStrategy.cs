@@ -5,7 +5,7 @@ using Moq;
 using Unity.Builder;
 using Unity.Builder.Strategy;
 
-namespace Neo.Gui.ViewModels.Tests.AutoMock
+namespace Neo.Gui.TestHelpers.AutoMock
 {
     public class UnityAutoMoqBuilderStrategy : BuilderStrategy
     {

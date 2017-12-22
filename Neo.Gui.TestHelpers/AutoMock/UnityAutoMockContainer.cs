@@ -5,7 +5,7 @@ using Moq;
 using Unity;
 using Unity.Lifetime;
 
-namespace Neo.Gui.ViewModels.Tests.AutoMock
+namespace Neo.Gui.TestHelpers.AutoMock
 {
     public class UnityAutoMockContainer : UnityContainer, IAutoMockContainer
     {

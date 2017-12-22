@@ -1,6 +1,6 @@
 ﻿using Moq;
 
-namespace Neo.Gui.ViewModels.Tests.AutoMock
+namespace Neo.Gui.TestHelpers.AutoMock
 {
     public interface IAutoMockContainer
     {
