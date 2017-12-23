@@ -385,7 +385,7 @@ namespace Neo.Gui.Base.Controllers
         {
             if (assetItem == null) return false;
 
-            var queryResult = this.GetCertificateQueryResult(assetItem.State.Owner);
+            var queryResult = this.GetCertificateQueryResult(assetItem.AssetOwner);
 
             if (queryResult == null) return false;
 
@@ -396,7 +396,7 @@ namespace Neo.Gui.Base.Controllers
 
         public string ViewCertificate(FirstClassAssetItem assetItem)
         {
-            return this.certificateService.GetCachedCertificatePath(assetItem.State.Owner);
+            return this.certificateService.GetCachedCertificatePath(assetItem.AssetOwner);
         }
 
         public Fixed8 CalculateBonus()
@@ -626,11 +626,11 @@ namespace Neo.Gui.Base.Controllers
 
         public void DeleteFirstClassAsset(FirstClassAssetItem assetItem)
         {
-            var value = this.GetAvailable(assetItem.State.AssetId);
+            var value = this.GetAvailable(assetItem.AssetId);
 
             var transactionOutput = new TransactionOutput
             {
-                AssetId = assetItem.State.AssetId,
+                AssetId = assetItem.AssetId,
                 Value = value,
                 ScriptHash = this.RecycleScriptHash
             };
@@ -985,7 +985,7 @@ namespace Neo.Gui.Base.Controllers
 
                 foreach (var asset in this.currentWalletInfo.GetFirstClassAssets())
                 {
-                    if (assetDictionary.ContainsKey(asset.State.AssetId)) continue;
+                    if (assetDictionary.ContainsKey(asset.AssetId)) continue;
 
                     this.currentWalletInfo.RemoveAsset(asset);
                 }
@@ -1022,13 +1022,11 @@ namespace Neo.Gui.Base.Controllers
                                 break;
                         }
 
-                        var assetItem = new FirstClassAssetItem
+                        var assetItem = new FirstClassAssetItem(asset.Asset.AssetId, asset.Asset.Owner, asset.Asset.AssetType)
                         {
                             Name = assetName,
-                            Type = asset.Asset.AssetType.ToString(),
                             Issuer = $"{Strings.UnknownIssuer}[{asset.Asset.Owner}]",
-                            Value = valueText,
-                            State = asset.Asset
+                            Value = valueText
                         };
 
                         this.currentWalletInfo.AddAsset(assetItem);
@@ -1086,13 +1084,10 @@ namespace Neo.Gui.Base.Controllers
                 }
                 else
                 {
-                    var assetItem = new NEP5AssetItem
+                    var assetItem = new NEP5AssetItem(nep5ScriptHash)
                     {
                         Name = name,
-                        Type = "NEP-5",
-                        Issuer = $"ScriptHash:{nep5ScriptHash}",
-                        Value = valueText,
-                        ScriptHash = nep5ScriptHash
+                        Value = valueText
                     };
 
                     this.currentWalletInfo.AddAsset(assetItem);
@@ -1121,11 +1116,9 @@ namespace Neo.Gui.Base.Controllers
             foreach (var asset in this.currentWalletInfo.GetFirstClassAssets()
                 .Where(item => !item.IssuerCertificateChecked))
             {
-                if (asset.State?.Owner == null) continue;
+                if (asset.AssetOwner == null) continue;
 
-                var assetOwner = asset.State.Owner;
-
-                var queryResult = this.GetCertificateQueryResult(assetOwner);
+                var queryResult = this.GetCertificateQueryResult(asset.AssetOwner);
 
                 if (queryResult == null) continue;
 

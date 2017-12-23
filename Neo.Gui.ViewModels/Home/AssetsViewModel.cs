@@ -65,7 +65,7 @@ namespace Neo.Gui.ViewModels.Home
 
                 if (selectedFirstClassAsset.IsSystemAsset) return false;
 
-                if (selectedFirstClassAsset.State?.Owner == null) return false;
+                if (selectedFirstClassAsset.AssetOwner == null) return false;
 
                 return this.walletController.CanViewCertificate(selectedFirstClassAsset);
             }
@@ -163,11 +163,11 @@ namespace Neo.Gui.ViewModels.Home
 
             if (firstClassAssetItem == null) return;
 
-            var value = this.walletController.GetAvailable(firstClassAssetItem.State.AssetId);
+            var value = this.walletController.GetAvailable(firstClassAssetItem.AssetId);
 
             var result = this.dialogManager.ShowMessageDialog(
                 Strings.DeleteConfirmation,
-                $"{Strings.DeleteAssetConfirmationMessage}\n{string.Join("\n", $"{firstClassAssetItem.State.GetName()}:{value}")}",
+                $"{Strings.DeleteAssetConfirmationMessage}\n{string.Join("\n", $"{firstClassAssetItem.Name}:{value}")}",
                 MessageDialogType.YesNo,
                 MessageDialogResult.No);
 

@@ -1,18 +1,34 @@
 ﻿using Neo.Core;
+using Neo.Cryptography.ECC;
+
 using Neo.Gui.Base.Certificates;
+
 using Neo.Gui.Globalization.Resources;
 
 namespace Neo.Gui.Base.Data
 {
     public class FirstClassAssetItem : AssetItem
     {
+        public FirstClassAssetItem(UInt256 assetId, ECPoint assetOwner, AssetType assetType)
+        {
+            this.AssetId = assetId;
+            this.AssetOwner = assetOwner;
+            this.AssetType = assetType;
+        }
+
         public bool IssuerCertificateChecked { get; private set; }
 
-        public bool IsSystemAsset => this.State != null &&
-            (this.State.AssetType == AssetType.GoverningToken ||
-                this.State.AssetType == AssetType.UtilityToken);
+        public bool IsSystemAsset => 
+            this.AssetType == AssetType.GoverningToken ||
+            this.AssetType == AssetType.UtilityToken;
 
-        public AssetState State { get; set; }
+        public override string Type => this.AssetType.ToString();
+
+        public UInt256 AssetId { get; }
+
+        public ECPoint AssetOwner { get; }
+
+        public AssetType AssetType { get; }
 
         public void SetIssuerCertificateQueryResult(CertificateQueryResult queryResult)
         {
@@ -22,25 +38,28 @@ namespace Neo.Gui.Base.Data
             {
                 switch (queryResult.Type)
                 {
-                    case CertificateQueryResultType.Querying:
-                    case CertificateQueryResultType.QueryFailed:
-                        break;
                     case CertificateQueryResultType.System:
                         //subitem.ForeColor = Color.Green;
                         this.Issuer = Strings.SystemIssuer;
                         break;
                     case CertificateQueryResultType.Invalid:
                         //subitem.ForeColor = Color.Red;
-                        this.Issuer = $"[{Strings.InvalidCertificate}][{this.State.Owner}]";
+                        this.Issuer = $"[{Strings.InvalidCertificate}][{this.AssetOwner}]";
                         break;
                     case CertificateQueryResultType.Expired:
                         //subitem.ForeColor = Color.Yellow;
-                        this.Issuer = $"[{Strings.ExpiredCertificate}]{queryResult.Certificate.Subject}[{this.State.Owner}]";
+                        this.Issuer = $"[{Strings.ExpiredCertificate}]{queryResult.Certificate.Subject}[{this.AssetOwner}]";
                         break;
                     case CertificateQueryResultType.Good:
                         //subitem.ForeColor = Color.Black;
-                        this.Issuer = $"{queryResult.Certificate.Subject}[{this.State.Owner}]";
+                        this.Issuer = $"{queryResult.Certificate.Subject}[{this.AssetOwner}]";
                         break;
+
+                    case CertificateQueryResultType.Querying:
+                    case CertificateQueryResultType.QueryFailed:
+                        this.Issuer = $"{Strings.UnknownIssuer}[{this.AssetOwner}]";
+                        break;
+
                 }
 
                 switch (queryResult.Type)

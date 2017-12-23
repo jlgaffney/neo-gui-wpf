@@ -56,7 +56,7 @@ namespace Neo.Gui.Base.Data
             if (assetId == null) return null;
 
             return this.assets.FirstOrDefault(asset => asset is FirstClassAssetItem &&
-                assetId.Equals(((FirstClassAssetItem) asset).State?.AssetId)) as FirstClassAssetItem;
+                assetId.Equals(((FirstClassAssetItem) asset).AssetId)) as FirstClassAssetItem;
         }
 
         public NEP5AssetItem GetNEP5Asset(UInt160 scriptHash)
