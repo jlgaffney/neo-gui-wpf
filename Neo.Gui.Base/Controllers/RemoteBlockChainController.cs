@@ -1,15 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
+
 using Neo.Core;
+using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Network;
 
 namespace Neo.Gui.Base.Controllers
 {
-    public class RemoteBlockchainController : IBlockchainController
+    public class RemoteBlockchainController :
+        BaseBlockchainController,
+        IBlockchainController
     {
-        public RegisterTransaction GoverningToken => throw new NotImplementedException();
-
-        public RegisterTransaction UtilityToken => throw new NotImplementedException();
+        public RemoteBlockchainController(
+            ISettingsManager settingsManager)
+            : base(settingsManager.LocalNodePort, settingsManager.LocalWSPort)
+        {
+        }
 
         public uint BlockHeight => throw new NotImplementedException();
 
@@ -65,12 +71,7 @@ namespace Neo.Gui.Base.Controllers
             throw new NotImplementedException();
         }
 
-        public Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, bool ignoreClaimed = true)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, uint heightEnd)
+        public DateTime GetTimeOfBlock(uint blockHeight)
         {
             throw new NotImplementedException();
         }

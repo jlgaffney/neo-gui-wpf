@@ -3,6 +3,7 @@ using System.Linq;
 using Moq;
 using Neo.Core;
 using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Globalization;
 using Neo.Gui.Base.Helpers;
 using Neo.Gui.Base.Managers;
@@ -106,10 +107,10 @@ namespace Neo.Gui.ViewModels.Tests.Home
 
             var walletControllerMock = this.AutoMockContainer.GetMock<IWalletController>();
             walletControllerMock
-                .Setup(x => x.ViewCertificate(selectedAssetItem))
+                .Setup(x => x.ViewCertificate(selectedAssetItem as FirstClassAssetItem))
                 .Returns(expectedCertificatePath);
             walletControllerMock
-                .Setup(x => x.CanViewCertificate(selectedAssetItem))
+                .Setup(x => x.CanViewCertificate(selectedAssetItem as FirstClassAssetItem))
                 .Returns(true);
 
             var viewModel = this.AutoMockContainer.Create<AssetsViewModel>();
@@ -150,7 +151,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.DeleteAssetCommand.Execute(null);
 
             // Assert
-            walletControllerMock.Verify(x => x.DeleteAsset(selectedAssetItem));
+            walletControllerMock.Verify(x => x.DeleteFirstClassAsset(selectedAssetItem as FirstClassAssetItem));
         }
 
         [Fact]

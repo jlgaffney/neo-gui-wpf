@@ -1,53 +1,51 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Threading.Tasks;
+
 using Neo.Core;
+using Neo.Implementations.Blockchains.LevelDB;
+using Neo.IO;
+
+using Neo.Gui.Base.Helpers;
 using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
-using Neo.Implementations.Blockchains.LevelDB;
-using Neo.IO;
-using Neo.Network;
 
 namespace Neo.Gui.Base.Controllers
 {
-    public class LocalBlockchainController : IBlockchainController
+    public class LocalBlockchainController :
+        BaseBlockchainController,
+        IBlockchainController
     {
-        private const string PeerStatePath = "peers.dat";
-
         #region Private Fields
         private readonly IMessagePublisher messagePublisher;
-        private readonly ISettingsManager settingsManager;
+
+        private readonly string blockchainDataDirectoryPath;
 
         private bool initialized;
         private bool disposed;
 
-        private Blockchain blockChain;
-
-        private LocalNode localNode;
+        private Blockchain blockchain;
 
         private DateTime timeOfLastBlock = DateTime.MinValue;
-       #endregion
+        #endregion
 
         #region Constructor 
         public LocalBlockchainController(
             IMessagePublisher messagePublisher,
             ISettingsManager settingsManager)
+            : base(settingsManager.LocalNodePort, settingsManager.LocalWSPort)
         {
             this.messagePublisher = messagePublisher;
-            this.settingsManager = settingsManager;
+
+            this.blockchainDataDirectoryPath = settingsManager.BlockchainDataDirectoryPath;
         }
         #endregion
 
         #region IBlockChainController implementation 
 
-        public RegisterTransaction GoverningToken => Blockchain.GoverningToken;
-
-        public RegisterTransaction UtilityToken => Blockchain.UtilityToken;
-
-        public uint BlockHeight => Blockchain.Default.Height;
+        public uint BlockHeight => this.blockchain.Height;
 
         public event EventHandler<Block> PersistCompleted
         {
@@ -55,8 +53,10 @@ namespace Neo.Gui.Base.Controllers
             remove => Blockchain.PersistCompleted -= value;
         }
 
-        public void Initialize()
+        public override void Initialize()
         {
+            base.Initialize();
+
             if (this.disposed)
             {
                 throw new ObjectDisposedException(nameof(IBlockchainController));
@@ -67,12 +67,7 @@ namespace Neo.Gui.Base.Controllers
                 throw new Exception(nameof(IBlockchainController) + " has already been initialized!");
             }
 
-            // Initialize blockchain
-            this.blockChain = Blockchain.RegisterBlockchain(new LevelDBBlockchain(settingsManager.LocalNodeBlockchainDataDirectoryPath));
-
-            // Initialize local node
-            TryLoadPeerState();
-            this.StartLocalNode();
+            this.InitializeBlockchain();
 
             this.initialized = true;
         }
@@ -110,98 +105,80 @@ namespace Neo.Gui.Base.Controllers
                 nextBlockProgressFraction = 1.0;
             }
 
-            var nodeCount = (uint)this.localNode.RemoteNodeCount;
+            var nodeCount = this.GetRemoteNodeCount();
 
-            return new BlockchainStatus(Blockchain.Default.Height, Blockchain.Default.HeaderHeight,
+            return new BlockchainStatus(this.blockchain.Height, this.blockchain.HeaderHeight,
                 nextBlockProgressIsIndeterminate, nextBlockProgressFraction, timeSinceLastBlock, nodeCount);
-        }
-
-        public void Relay(Transaction transaction)
-        {
-            this.localNode.Relay(transaction);
-        }
-
-        public void Relay(IInventory inventory)
-        {
-            this.localNode.Relay(inventory);
         }
 
         public Transaction GetTransaction(UInt256 hash)
         {
-            return Blockchain.Default.GetTransaction(hash);
+            return this.blockchain.GetTransaction(hash);
         }
 
         public Transaction GetTransaction(UInt256 hash, out int height)
         {
-            return Blockchain.Default.GetTransaction(hash, out height);
+            return this.blockchain.GetTransaction(hash, out height);
         }
 
         public AccountState GetAccountState(UInt160 scriptHash)
         {
-            return Blockchain.Default.GetAccountState(scriptHash);
+            return this.blockchain.GetAccountState(scriptHash);
         }
 
         public ContractState GetContractState(UInt160 scriptHash)
         {
-            return Blockchain.Default.GetContract(scriptHash);
+            return this.blockchain.GetContract(scriptHash);
         }
 
         public AssetState GetAssetState(UInt256 assetId)
         {
-            return Blockchain.Default.GetAssetState(assetId);
+            return this.blockchain.GetAssetState(assetId);
         }
 
-        public Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, bool ignoreClaimed = true)
+        public DateTime GetTimeOfBlock(uint blockHeight)
         {
-            return Blockchain.CalculateBonus(inputs, ignoreClaimed);
-        }
+            var unixTimestamp = this.blockchain.GetHeader(blockHeight).Timestamp;
 
-        public Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, uint heightEnd)
-        {
-            return Blockchain.CalculateBonus(inputs, heightEnd);
+            return TimeHelper.UnixTimestampToDateTime(unixTimestamp);
         }
 
         #endregion
 
         #region Private Methods
-
-        private void StartLocalNode()
+        
+        private void InitializeBlockchain()
         {
-            this.localNode = new LocalNode
-            {
-                UpnpEnabled = true
-            };
+            this.blockchain = new LevelDBBlockchain(blockchainDataDirectoryPath);
 
             Task.Run(() =>
             {
-                ImportBlocksIfRequired();
+                ImportBlocksIfRequired(this.blockchain);
 
                 Blockchain.PersistCompleted += this.BlockchainPersistCompleted;
-
-                // Start node
-                this.localNode?.Start(this.settingsManager.LocalNodePort, this.settingsManager.LocalWSPort);
             });
         }
-
+        
         private void BlockchainPersistCompleted(object sender, Block block)
         {
             this.timeOfLastBlock = DateTime.UtcNow;
             this.messagePublisher.Publish(new BlockchainPersistCompletedMessage());
         }
 
-        private static void ImportBlocksIfRequired()
+        private static void ImportBlocksIfRequired(Blockchain blockchain)
         {
+            if (blockchain == null) return;
+
             const string accPath = "chain.acc";
             const string accZipPath = accPath + ".zip";
 
-            // Check if blocks need importing
-            if (File.Exists(accPath))
+            if (File.Exists(accPath)) // Check if import file exists
             {
                 // Import blocks
                 bool importCompleted;
                 using (var fileStream = new FileStream(accPath, FileMode.Open, FileAccess.Read, FileShare.None))
                 {
-                    importCompleted = ImportBlocks(fileStream);
+                    importCompleted = ImportBlocks(blockchain, fileStream);
                 }
 
                 if (importCompleted)
@@ -209,7 +186,7 @@ namespace Neo.Gui.Base.Controllers
                     File.Delete(accPath);
                 }
             }
-            else if (File.Exists(accZipPath))
+            else if (File.Exists(accZipPath)) // Check if ZIP import file exists
             {
                 // Import blocks
                 bool importCompleted;
@@ -217,7 +194,7 @@ namespace Neo.Gui.Base.Controllers
                 using (var zip = new ZipArchive(fileStream, ZipArchiveMode.Read))
                 using (var zipStream = zip.GetEntry(accPath).Open())
                 {
-                    importCompleted = ImportBlocks(zipStream);
+                    importCompleted = ImportBlocks(blockchain, zipStream);
                 }
 
                 if (importCompleted)
@@ -227,10 +204,15 @@ namespace Neo.Gui.Base.Controllers
             }
         }
 
-        private static bool ImportBlocks(Stream stream)
+        private static bool ImportBlocks(Blockchain blockchain, Stream stream)
         {
-            var blockchain = (LevelDBBlockchain)Blockchain.Default;
-            blockchain.VerifyBlocks = false;
+            var levelDBBlockchain = blockchain as LevelDBBlockchain;
+
+            if (levelDBBlockchain != null)
+            {
+                levelDBBlockchain.VerifyBlocks = false;
+            }
+
             using (var reader = new BinaryReader(stream))
             {
                 var count = reader.ReadUInt32();
@@ -250,76 +232,33 @@ namespace Neo.Gui.Base.Controllers
                     {
                         // Blockchain instance has been disposed. This is most likely due to the application exiting
 
-                        // TODO Check if application is exiting. If it is not, throw exception or show error message
-
                         return false;
                     }
                 }
             }
-            blockchain.VerifyBlocks = true;
+
+            if (levelDBBlockchain != null)
+            {
+                levelDBBlockchain.VerifyBlocks = true;
+            }
 
             return true;
-        }
-
-        private static void TryLoadPeerState()
-        {
-            if (!File.Exists(PeerStatePath)) return;
-
-            try
-            {
-                using (var fileStream = new FileStream(PeerStatePath, FileMode.Open, FileAccess.Read, FileShare.Read))
-                {
-                    LocalNode.LoadState(fileStream);
-                }
-            }
-            catch
-            {
-                // Swallow exception
-                // TODO Log exception somewhere
-            }
-        }
-
-        private static void SavePeerState()
-        {
-            try
-            {
-                using (var fileStream = new FileStream(PeerStatePath, FileMode.Create, FileAccess.Write, FileShare.None))
-                {
-                    LocalNode.SaveState(fileStream);
-                }
-            }
-            catch
-            {
-                // Swallow exception
-                // TODO Log exception somewhere
-            }
         }
 
         #endregion
         
         #region IDisposable implementation
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (!this.disposed)
             {
                 if (disposing)
                 {
-                    SavePeerState();
-
                     if (this.initialized)
                     {
-                        this.localNode.Dispose();
-                        this.localNode = null;
-
-                        this.blockChain.Dispose();
-                        this.blockChain = null;
+                        this.blockchain.Dispose();
+                        this.blockchain = null;
                     }
 
                     this.disposed = true;

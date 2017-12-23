@@ -82,9 +82,9 @@ namespace Neo.Gui.Base.Controllers
 
         AssetState GetAssetState(UInt256 assetId);
 
-        bool CanViewCertificate(AssetItem assetItem);
+        bool CanViewCertificate(FirstClassAssetItem assetItem);
 
-        string ViewCertificate(AssetItem assetItem);
+        string ViewCertificate(FirstClassAssetItem assetItem);
 
         Fixed8 CalculateBonus();
 
@@ -119,13 +119,13 @@ namespace Neo.Gui.Base.Controllers
         InvocationTransaction MakeAssetCreationTransaction(AssetType? assetType, string assetName,
             Fixed8 amount, byte precision, ECPoint assetOwner, UInt160 assetAdmin, UInt160 assetIssuer);
 
-        InvocationTransaction MakeContrateCreationTransaction(byte[] script, byte[] parameterList, ContractParameterType returnType,
+        InvocationTransaction MakeContractCreationTransaction(byte[] script, byte[] parameterList, ContractParameterType returnType,
             bool needsStorage, string name, string version, string author, string email, string description);
 
         UInt160 ToScriptHash(string address);
 
         string ToAddress(UInt160 scriptHash);
 
-        void DeleteAsset(AssetItem assetItem);
+        void DeleteFirstClassAsset(FirstClassAssetItem assetItem);
     }
 }

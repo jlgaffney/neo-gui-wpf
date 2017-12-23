@@ -290,7 +290,7 @@ namespace Neo.Gui.ViewModels.Contracts
                 returnType = this.ReturnType.HexToBytes().Select(p => (ContractParameterType?)p).FirstOrDefault() ?? ContractParameterType.Void;
             }
 
-            return this.walletController.MakeContrateCreationTransaction(script, parameterListBytes, returnType,
+            return this.walletController.MakeContractCreationTransaction(script, parameterListBytes, returnType,
                 this.NeedsStorage, this.Name, this.Version, this.Author, this.Email, this.Description);
         }
     }

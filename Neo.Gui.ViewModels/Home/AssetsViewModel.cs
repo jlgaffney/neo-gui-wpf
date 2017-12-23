@@ -59,21 +59,23 @@ namespace Neo.Gui.ViewModels.Home
         {
             get
             {
-                if (this.SelectedAsset == null) return false;
+                var selectedFirstClassAsset = this.SelectedAsset as FirstClassAssetItem;
 
-                if (this.SelectedAsset.IsSystemAsset) return false;
+                if (selectedFirstClassAsset == null) return false;
 
-                if (this.SelectedAsset.State?.Owner == null) return false;
+                if (selectedFirstClassAsset.IsSystemAsset) return false;
 
-                return this.walletController.CanViewCertificate(this.SelectedAsset);
+                if (selectedFirstClassAsset.State?.Owner == null) return false;
+
+                return this.walletController.CanViewCertificate(selectedFirstClassAsset);
             }
         }
 
+        // TODO Should this also check if the user issued the asset?
         public bool DeleteAssetEnabled => 
             this.SelectedAsset != null &&
-            (this.SelectedAsset.State == null ||
-            (this.SelectedAsset.State.AssetType != AssetType.GoverningToken &&
-            this.SelectedAsset.State.AssetType != AssetType.UtilityToken));
+            this.SelectedAsset is FirstClassAssetItem &&
+            !((FirstClassAssetItem)this.SelectedAsset).IsSystemAsset;
 
         public RelayCommand ViewCertificateCommand => new RelayCommand(this.ViewCertificate);
 
@@ -143,7 +145,7 @@ namespace Neo.Gui.ViewModels.Home
         {
             if (!this.ViewCertificateEnabled) return;
             
-            var certificatePath = this.walletController.ViewCertificate(this.SelectedAsset);
+            var certificatePath = this.walletController.ViewCertificate(this.SelectedAsset as FirstClassAssetItem);
 
             if (string.IsNullOrEmpty(certificatePath))
             {
@@ -157,19 +159,21 @@ namespace Neo.Gui.ViewModels.Home
 
         private void DeleteAsset()
         {
-            if (this.SelectedAsset?.State == null) return;
+            var firstClassAssetItem = this.SelectedAsset as FirstClassAssetItem;
 
-            var value = this.walletController.GetAvailable(this.SelectedAsset.State.AssetId);
+            if (firstClassAssetItem == null) return;
+
+            var value = this.walletController.GetAvailable(firstClassAssetItem.State.AssetId);
 
             var result = this.dialogManager.ShowMessageDialog(
                 Strings.DeleteConfirmation,
-                $"{Strings.DeleteAssetConfirmationMessage}\n{string.Join("\n", $"{this.SelectedAsset.State.GetName()}:{value}")}",
+                $"{Strings.DeleteAssetConfirmationMessage}\n{string.Join("\n", $"{firstClassAssetItem.State.GetName()}:{value}")}",
                 MessageDialogType.YesNo,
                 MessageDialogResult.No);
 
             if (result != MessageDialogResult.Yes) return;
 
-            this.walletController.DeleteAsset(this.SelectedAsset);
+            this.walletController.DeleteFirstClassAsset(firstClassAssetItem);
         }
         #endregion
     }

@@ -1,5 +1,4 @@
-﻿using Neo.Core;
-using Neo.Gui.Base.MVVM;
+﻿using Neo.Gui.Base.MVVM;
 
 namespace Neo.Gui.Base.Data
 {
@@ -61,13 +60,5 @@ namespace Neo.Gui.Base.Data
                 NotifyPropertyChanged();
             }
         }
-
-        public bool IsSystemAsset => this.State != null &&
-            (this.State.AssetType == AssetType.GoverningToken ||
-                this.State.AssetType == AssetType.UtilityToken);
-
-        public AssetState State { get; set; }
-
-        public UInt160 ScriptHashNEP5 { get; set; }
     }
 }

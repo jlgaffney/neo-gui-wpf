@@ -68,9 +68,10 @@ namespace Neo.Gui.ViewModels.Tests.Builders
             return this;
         }
 
+        // TODO Support both FirstClassAssetItem's and NEP5AssetItem's
         public AssetItem Build()
         {
-            return new AssetItem
+            return new FirstClassAssetItem
             {
                 Name = this.internalName,
                 Type = this.internalType, 
