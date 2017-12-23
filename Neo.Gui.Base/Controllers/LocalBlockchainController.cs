@@ -52,7 +52,7 @@ namespace Neo.Gui.Base.Controllers
             }
 
             // Setup blockchain
-            var levelDBBlockchain = new LevelDBBlockchain(blockchainDataDirectoryPath);
+            var levelDBBlockchain = Blockchain.RegisterBlockchain(new LevelDBBlockchain(blockchainDataDirectoryPath));
 
             Blockchain.PersistCompleted += this.BlockAdded;
 
