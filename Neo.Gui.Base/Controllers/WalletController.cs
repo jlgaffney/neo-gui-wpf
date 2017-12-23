@@ -16,7 +16,7 @@ using Neo.Wallets;
 using Neo.Gui.Base.Certificates;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Exceptions;
-using Neo.Gui.Base.Globalization;
+using Neo.Gui.Globalization.Resources;
 using Neo.Gui.Base.Helpers;
 using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Messages;

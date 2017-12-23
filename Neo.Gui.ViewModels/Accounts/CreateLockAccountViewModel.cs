@@ -14,7 +14,7 @@ using Neo.Wallets;
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
-using Neo.Gui.Base.Globalization;
+using Neo.Gui.Globalization.Resources;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Managers;

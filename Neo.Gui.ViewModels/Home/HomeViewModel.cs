@@ -19,7 +19,7 @@ using Neo.Gui.Base.Dialogs.Results.Voting;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.MVVM;
-using Neo.Gui.Base.Globalization;
+using Neo.Gui.Globalization.Resources;
 using Neo.Gui.Base.Helpers;
 using Neo.Gui.Base.Managers;
 

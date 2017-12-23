@@ -1,7 +1,7 @@
 ﻿<controls:NeoWindow x:Class="Neo.Gui.Wpf.Views.Accounts.ViewPrivateKeyView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:globalization="clr-namespace:Neo.Gui.Base.Globalization;assembly=Neo.Gui.Base"
+        xmlns:globalization="clr-namespace:Neo.Gui.Globalization.Resources;assembly=Neo.Gui.Globalization"
         xmlns:accounts="clr-namespace:Neo.Gui.ViewModels.Accounts;assembly=Neo.Gui.ViewModels"
         xmlns:controls="clr-namespace:Neo.Gui.Wpf.Controls"
         xmlns:markupExtensions="clr-namespace:Neo.Gui.Wpf.MarkupExtensions"

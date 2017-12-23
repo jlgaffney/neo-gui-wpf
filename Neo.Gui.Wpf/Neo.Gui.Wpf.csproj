@@ -716,15 +716,16 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="MVVM\" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\logo_72.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Neo.Gui.Base\Neo.Gui.Base.csproj">
       <Project>{929FDF79-F89D-4B4F-BB56-DBD1D31528B4}</Project>
       <Name>Neo.Gui.Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Neo.Gui.Globalization\Neo.Gui.Globalization.csproj">
+      <Project>{34501d6d-410c-4e1e-8c47-1a2ebbfbe611}</Project>
+      <Name>Neo.Gui.Globalization</Name>
     </ProjectReference>
     <ProjectReference Include="..\Neo.Gui.ViewModels\Neo.Gui.ViewModels.csproj">
       <Project>{e7116c94-ca06-4045-9517-b4332c47fd4c}</Project>

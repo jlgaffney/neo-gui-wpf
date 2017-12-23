@@ -8,7 +8,7 @@ using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
-using Neo.Gui.Base.Globalization;
+using Neo.Gui.Globalization.Resources;
 using Neo.Gui.Base.Services;
 
 namespace Neo.Gui.ViewModels.Wallets

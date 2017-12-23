@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Neo.Gui.Base\Neo.Gui.Base.csproj" />
+    <ProjectReference Include="..\Neo.Gui.Globalization\Neo.Gui.Globalization.csproj" />
   </ItemGroup>
 
 </Project>

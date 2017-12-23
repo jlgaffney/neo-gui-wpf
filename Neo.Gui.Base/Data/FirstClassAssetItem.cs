@@ -1,6 +1,6 @@
 ﻿using Neo.Core;
 using Neo.Gui.Base.Certificates;
-using Neo.Gui.Base.Globalization;
+using Neo.Gui.Globalization.Resources;
 
 namespace Neo.Gui.Base.Data
 {

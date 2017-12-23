@@ -4,7 +4,7 @@ using Moq;
 using Neo.Core;
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Data;
-using Neo.Gui.Base.Globalization;
+using Neo.Gui.Globalization.Resources;
 using Neo.Gui.Base.Helpers;
 using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Messages;
