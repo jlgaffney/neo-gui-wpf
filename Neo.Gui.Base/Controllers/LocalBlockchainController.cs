@@ -1,16 +1,12 @@
 ﻿using System;
-using System.IO;
-using System.IO.Compression;
-using System.Threading.Tasks;
 
 using Neo.Core;
 using Neo.Implementations.Blockchains.LevelDB;
-using Neo.IO;
 
 using Neo.Gui.Base.Helpers;
-using Neo.Gui.Base.Managers;
-using Neo.Gui.Base.Messages;
+using Neo.Gui.Base.Importers;
 using Neo.Gui.Base.Messaging.Interfaces;
+using Neo.Gui.Base.Status;
 
 namespace Neo.Gui.Base.Controllers
 {
@@ -19,27 +15,17 @@ namespace Neo.Gui.Base.Controllers
         IBlockchainController
     {
         #region Private Fields
-        private readonly IMessagePublisher messagePublisher;
-
-        private readonly string blockchainDataDirectoryPath;
-
         private bool initialized;
         private bool disposed;
 
         private Blockchain blockchain;
-
-        private DateTime timeOfLastBlock = DateTime.MinValue;
         #endregion
 
         #region Constructor 
         public LocalBlockchainController(
-            IMessagePublisher messagePublisher,
-            ISettingsManager settingsManager)
-            : base(settingsManager.LocalNodePort, settingsManager.LocalWSPort)
+            IMessagePublisher messagePublisher)
+                : base(messagePublisher)
         {
-            this.messagePublisher = messagePublisher;
-
-            this.blockchainDataDirectoryPath = settingsManager.BlockchainDataDirectoryPath;
         }
         #endregion
 
@@ -53,10 +39,8 @@ namespace Neo.Gui.Base.Controllers
             remove => Blockchain.PersistCompleted -= value;
         }
 
-        public override void Initialize()
+        public void Initialize(string blockchainDataDirectoryPath)
         {
-            base.Initialize();
-
             if (this.disposed)
             {
                 throw new ObjectDisposedException(nameof(IBlockchainController));
@@ -67,7 +51,14 @@ namespace Neo.Gui.Base.Controllers
                 throw new Exception(nameof(IBlockchainController) + " has already been initialized!");
             }
 
-            this.InitializeBlockchain();
+            // Setup blockchain
+            var levelDBBlockchain = new LevelDBBlockchain(blockchainDataDirectoryPath);
+
+            Blockchain.PersistCompleted += this.BlockAdded;
+
+            BlockchainImporter.ImportBlocksIfRequired(levelDBBlockchain);
+
+            this.blockchain = levelDBBlockchain;
 
             this.initialized = true;
         }
@@ -76,7 +67,7 @@ namespace Neo.Gui.Base.Controllers
         {
             if (this.disposed) return null;
 
-            var timeSinceLastBlock = DateTime.UtcNow - this.timeOfLastBlock;
+            var timeSinceLastBlock = this.GetTimeSinceLastBlock();
 
             if (timeSinceLastBlock < TimeSpan.Zero)
             {
@@ -105,10 +96,8 @@ namespace Neo.Gui.Base.Controllers
                 nextBlockProgressFraction = 1.0;
             }
 
-            var nodeCount = this.GetRemoteNodeCount();
-
             return new BlockchainStatus(this.blockchain.Height, this.blockchain.HeaderHeight,
-                nextBlockProgressIsIndeterminate, nextBlockProgressFraction, timeSinceLastBlock, nodeCount);
+                nextBlockProgressIsIndeterminate, nextBlockProgressFraction, timeSinceLastBlock);
         }
 
         public Transaction GetTransaction(UInt256 hash)
@@ -145,111 +134,15 @@ namespace Neo.Gui.Base.Controllers
 
         #endregion
 
-        #region Private Methods
-        
-        private void InitializeBlockchain()
-        {
-            this.blockchain = new LevelDBBlockchain(blockchainDataDirectoryPath);
-
-            Task.Run(() =>
-            {
-                ImportBlocksIfRequired(this.blockchain);
-
-                Blockchain.PersistCompleted += this.BlockchainPersistCompleted;
-            });
-        }
-        
-        private void BlockchainPersistCompleted(object sender, Block block)
-        {
-            this.timeOfLastBlock = DateTime.UtcNow;
-            this.messagePublisher.Publish(new BlockchainPersistCompletedMessage());
-        }
-
-        private static void ImportBlocksIfRequired(Blockchain blockchain)
-        {
-            if (blockchain == null) return;
-
-            const string accPath = "chain.acc";
-            const string accZipPath = accPath + ".zip";
-
-            if (File.Exists(accPath)) // Check if import file exists
-            {
-                // Import blocks
-                bool importCompleted;
-                using (var fileStream = new FileStream(accPath, FileMode.Open, FileAccess.Read, FileShare.None))
-                {
-                    importCompleted = ImportBlocks(blockchain, fileStream);
-                }
-
-                if (importCompleted)
-                {
-                    File.Delete(accPath);
-                }
-            }
-            else if (File.Exists(accZipPath)) // Check if ZIP import file exists
-            {
-                // Import blocks
-                bool importCompleted;
-                using (var fileStream = new FileStream(accZipPath, FileMode.Open, FileAccess.Read, FileShare.None))
-                using (var zip = new ZipArchive(fileStream, ZipArchiveMode.Read))
-                using (var zipStream = zip.GetEntry(accPath).Open())
-                {
-                    importCompleted = ImportBlocks(blockchain, zipStream);
-                }
-
-                if (importCompleted)
-                {
-                    File.Delete(accZipPath);
-                }
-            }
-        }
-
-        private static bool ImportBlocks(Blockchain blockchain, Stream stream)
-        {
-            var levelDBBlockchain = blockchain as LevelDBBlockchain;
-
-            if (levelDBBlockchain != null)
-            {
-                levelDBBlockchain.VerifyBlocks = false;
-            }
-
-            using (var reader = new BinaryReader(stream))
-            {
-                var count = reader.ReadUInt32();
-                for (int height = 0; height < count; height++)
-                {
-                    var array = reader.ReadBytes(reader.ReadInt32());
-
-                    if (height <= blockchain.Height) continue;
-
-                    var block = array.AsSerializable<Block>();
-
-                    try
-                    {
-                        blockchain.AddBlock(block);
-                    }
-                    catch (ObjectDisposedException)
-                    {
-                        // Blockchain instance has been disposed. This is most likely due to the application exiting
-
-                        return false;
-                    }
-                }
-            }
-
-            if (levelDBBlockchain != null)
-            {
-                levelDBBlockchain.VerifyBlocks = true;
-            }
-
-            return true;
-        }
-
-        #endregion
-        
         #region IDisposable implementation
 
-        protected override void Dispose(bool disposing)
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
         {
             if (!this.disposed)
             {
@@ -257,6 +150,8 @@ namespace Neo.Gui.Base.Controllers
                 {
                     if (this.initialized)
                     {
+                        Blockchain.PersistCompleted -= this.BlockAdded;
+
                         this.blockchain.Dispose();
                         this.blockchain = null;
                     }

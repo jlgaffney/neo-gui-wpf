@@ -53,7 +53,7 @@ namespace Neo.Gui.ViewModels.Home
         private bool newVersionVisible;
 
         private string heightStatus;
-        private uint nodeCount;
+        private int nodeCount;
         private string blockStatus;
         #endregion
         
@@ -73,7 +73,7 @@ namespace Neo.Gui.ViewModels.Home
             }
         }
 
-        public uint NodeCount
+        public int NodeCount
         {
             get => this.nodeCount;
             set
@@ -267,11 +267,11 @@ namespace Neo.Gui.ViewModels.Home
             var status = message.Status;
 
             // TODO
-            this.HeightStatus = $"{status.WalletHeight}/{status.BlockChainHeight}/{status.BlockChainHeaderHeight}";
-            this.NextBlockProgressIsIndeterminate = status.NextBlockProgressIsIndeterminate;
-            this.NextBlockProgressFraction = status.NextBlockProgressFraction;
+            this.HeightStatus = $"{status.WalletHeight}/{status.BlockchainStatus.Height}/{status.BlockchainStatus.HeaderHeight}";
+            this.NextBlockProgressIsIndeterminate = status.BlockchainStatus.NextBlockProgressIsIndeterminate;
+            this.NextBlockProgressFraction = status.BlockchainStatus.NextBlockProgressFraction;
 
-            this.NodeCount = status.NodeCount;
+            this.NodeCount = status.NetworkStatus.NodeCount;
             this.BlockStatus = $"{Strings.WaitingForNextBlock}:"; // TODO Update property to return actual status
         }
         #endregion

@@ -1,8 +1,7 @@
 ﻿using Autofac;
-using Neo.Gui.Base.Messaging;
 using Neo.Gui.Base.Messaging.Interfaces;
 
-namespace Neo.Gui.Wpf.RegistrationModules
+namespace Neo.Gui.Base.Messaging
 {
     public class MessagingRegistrationModule : Module
     {

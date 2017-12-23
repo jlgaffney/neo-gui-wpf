@@ -2,15 +2,17 @@
 
 using Neo.Core;
 
+using Neo.Gui.Base.Status;
+
 namespace Neo.Gui.Base.Controllers
 {
-    public interface IBlockchainController : IBaseBlockchainController
+    public interface IBlockchainController : IBaseBlockchainController, IDisposable
     {
         uint BlockHeight { get; }
 
         event EventHandler<Block> PersistCompleted;
 
-        void Initialize();
+        void Initialize(string blockchainDataDirectoryPath);
 
         BlockchainStatus GetStatus();
 

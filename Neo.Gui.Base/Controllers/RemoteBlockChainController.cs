@@ -1,9 +1,9 @@
 ﻿using System;
 
 using Neo.Core;
-using Neo.Gui.Base.Managers;
+
 using Neo.Gui.Base.Messaging.Interfaces;
-using Neo.Network;
+using Neo.Gui.Base.Status;
 
 namespace Neo.Gui.Base.Controllers
 {
@@ -11,11 +11,13 @@ namespace Neo.Gui.Base.Controllers
         BaseBlockchainController,
         IBlockchainController
     {
+        #region Constructor
         public RemoteBlockchainController(
-            ISettingsManager settingsManager)
-            : base(settingsManager.LocalNodePort, settingsManager.LocalWSPort)
+            IMessagePublisher messagePublisher)
+                : base(messagePublisher)
         {
         }
+        #endregion
 
         public uint BlockHeight => throw new NotImplementedException();
 
@@ -25,23 +27,13 @@ namespace Neo.Gui.Base.Controllers
             remove => throw new NotImplementedException();
         }
 
-        public void Initialize()
+        public void Initialize(string blockchainDataDirectoryPath)
         {
             // Remote nodes are not supported yet
             throw new NotImplementedException();
         }
 
         public BlockchainStatus GetStatus()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Relay(Transaction transaction)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Relay(IInventory inventory)
         {
             throw new NotImplementedException();
         }

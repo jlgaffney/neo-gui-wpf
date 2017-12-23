@@ -1,21 +1,25 @@
 ﻿using Autofac;
-using Neo.Gui.Base.Controllers;
-using Neo.Gui.Wpf.Properties;
 
-namespace Neo.Gui.Wpf.RegistrationModules
+namespace Neo.Gui.Base.Controllers
 {
     public class ControllersRegistrationModule : Module
     {
         protected override void Load(ContainerBuilder builder)
         {
-            // TODO Figure out a better way of switching between remote and local node controllers
-            var blockChainControllerType = Settings.Default.P2P.RemoteNodeMode
+            // TODO Implement a way of switching between remote and local blockchain controllers
+            const bool lightMode = false;
+            var blockChainControllerType = lightMode
                 ? typeof(RemoteBlockchainController)
                 : typeof(LocalBlockchainController);
 
             builder
                 .RegisterType(blockChainControllerType)
                 .As<IBlockchainController>()
+                .SingleInstance();
+
+            builder
+                .RegisterType<NetworkController>()
+                .As<INetworkController>()
                 .SingleInstance();
 
             builder

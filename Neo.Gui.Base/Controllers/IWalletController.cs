@@ -13,7 +13,7 @@ namespace Neo.Gui.Base.Controllers
 {
     public interface IWalletController : IDisposable
     {
-        void Initialize(string certificateCachePath);
+        void Initialize();
 
         bool WalletIsOpen { get; }
 

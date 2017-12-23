@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using System;
+using Xunit;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Controllers;
@@ -18,6 +19,7 @@ using Neo.Gui.Base.Dialogs.Results.Assets;
 using Neo.Gui.Base.Dialogs.Results.Transactions;
 using Neo.Gui.Base.Dialogs.Results.Voting;
 using Neo.Gui.Base.Helpers;
+using Neo.Gui.Base.Status;
 
 namespace Neo.Gui.ViewModels.Tests.Home
 {
@@ -71,7 +73,8 @@ namespace Neo.Gui.ViewModels.Tests.Home
             uint blockChainHeaderHeight = 0;
             bool nextBlockProgressIsIndeterminate = false;
             double nextBlockProgressFraction = 0;
-            uint nodeCount = 1;
+            TimeSpan timeSinceLastBlock = TimeSpan.Zero;
+            int nodeCount = 1;
 
             var expectedHeightStatus = $"{walletHeight}/{blockChainHeight}/{blockChainHeaderHeight}";
 
@@ -82,11 +85,13 @@ namespace Neo.Gui.ViewModels.Tests.Home
             walletStatusMessageHandler.HandleMessage(new WalletStatusMessage(
                 new WalletStatus(
                     walletHeight, 
-                    blockChainHeight, 
-                    blockChainHeaderHeight, 
-                    nextBlockProgressIsIndeterminate, 
-                    nextBlockProgressFraction, 
-                    nodeCount)));
+                    new BlockchainStatus(
+                        blockChainHeight, 
+                        blockChainHeaderHeight, 
+                        nextBlockProgressIsIndeterminate, 
+                        nextBlockProgressFraction,
+                        timeSinceLastBlock),
+                    new NetworkStatus(nodeCount))));
 
             // Assert
             Assert.Equal(expectedHeightStatus, viewModel.HeightStatus);

@@ -22,6 +22,7 @@ using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.Services;
+using Neo.Gui.Base.Status;
 
 using CryptographicException = System.Security.Cryptography.CryptographicException;
 using DeprecatedWallet = Neo.Implementations.Wallets.EntityFramework.UserWallet;
@@ -29,23 +30,31 @@ using Timer = System.Timers.Timer;
 
 namespace Neo.Gui.Base.Controllers
 {
-    public class WalletController :
+    internal class WalletController :
         IWalletController,
         IMessageHandler<AddContractsMessage>,
         IMessageHandler<AddContractMessage>,
         IMessageHandler<ImportPrivateKeyMessage>,
         IMessageHandler<ImportCertificateMessage>,
         IMessageHandler<SignTransactionAndShowInformationMessage>,
-        IMessageHandler<BlockchainPersistCompletedMessage>
+        IMessageHandler<BlockAddedMessage>
     {
         #region Private Fields 
         private readonly UInt160 RecycleScriptHash = new[] { (byte)OpCode.PUSHT }.ToScriptHash();
 
         private readonly IBlockchainController blockchainController;
         private readonly ICertificateService certificateService;
+        private readonly INetworkController networkController;
         private readonly INotificationService notificationService;
         private readonly IMessagePublisher messagePublisher;
         private readonly IMessageSubscriber messageSubscriber;
+        
+        private readonly int localNodePort;
+        private readonly int localWSPort;
+
+        private readonly string blockchainDataDirectoryPath;
+
+        private readonly string certificateCachePath;
 
         private readonly Dictionary<ECPoint, CertificateQueryResult> certificateQueryResultCache;
 
@@ -70,15 +79,25 @@ namespace Neo.Gui.Base.Controllers
         public WalletController(
             IBlockchainController blockchainController,
             ICertificateService certificateService,
+            INetworkController networkController,
             INotificationService notificationService,
             IMessagePublisher messagePublisher,
-            IMessageSubscriber messageSubscriber)
+            IMessageSubscriber messageSubscriber,
+            ISettingsManager settingsManager)
         {
             this.blockchainController = blockchainController;
             this.certificateService = certificateService;
+            this.networkController = networkController;
             this.notificationService = notificationService;
             this.messagePublisher = messagePublisher;
             this.messageSubscriber = messageSubscriber;
+
+            this.blockchainDataDirectoryPath = settingsManager.BlockchainDataDirectoryPath;
+
+            this.localNodePort = settingsManager.LocalNodePort;
+            this.localWSPort = settingsManager.LocalWSPort;
+
+            this.certificateCachePath = settingsManager.CertificateCachePath;
 
             this.messageSubscriber.Subscribe(this);
 
@@ -87,7 +106,7 @@ namespace Neo.Gui.Base.Controllers
         #endregion
 
         #region IWalletController implementation 
-        public void Initialize(string certificateCachePath)
+        public void Initialize()
         {
             if (this.disposed)
             {
@@ -99,9 +118,9 @@ namespace Neo.Gui.Base.Controllers
                 throw new Exception(nameof(IWalletController) + " has already been initialized!");
             }
 
-            this.blockchainController.Initialize();
-
-            this.certificateService.Initialize(certificateCachePath);
+            this.networkController.Initialize(this.localNodePort, this.localWSPort);
+            this.blockchainController.Initialize(this.blockchainDataDirectoryPath);
+            this.certificateService.Initialize(this.certificateCachePath);
 
             // Setup automatic refresh timer
             this.refreshTimer = new Timer
@@ -237,7 +256,7 @@ namespace Neo.Gui.Base.Controllers
 
         public void Relay(Transaction transaction, bool saveTransaction = true)
         {
-            this.blockchainController.Relay(transaction);
+            this.networkController.Relay(transaction);
 
             if (saveTransaction)
             {
@@ -247,7 +266,7 @@ namespace Neo.Gui.Base.Controllers
 
         public void Relay(IInventory inventory)
         {
-            this.blockchainController.Relay(inventory);
+            this.networkController.Relay(inventory);
         }
 
         public void SetNEP5WatchScriptHashes(IEnumerable<string> nep5WatchScriptHashesHex)
@@ -691,7 +710,7 @@ namespace Neo.Gui.Base.Controllers
             this.SignAndRelayTransaction(message.Transaction);
         }
 
-        public void HandleMessage(BlockchainPersistCompletedMessage message)
+        public void HandleMessage(BlockAddedMessage message)
         {
             if (!this.WalletIsOpen) return;
 
@@ -769,14 +788,9 @@ namespace Neo.Gui.Base.Controllers
             try
             {
                 var blockchainStatus = this.blockchainController.GetStatus();
+                var networkStatus = this.networkController.GetStatus();
 
-                var walletStatus = new WalletStatus(
-                    this.WalletHeight,
-                    blockchainStatus.Height,
-                    blockchainStatus.HeaderHeight,
-                    blockchainStatus.NextBlockProgressIsIndeterminate,
-                    blockchainStatus.NextBlockProgressFraction,
-                    blockchainStatus.NodeCount);
+                var walletStatus = new WalletStatus(this.WalletHeight, blockchainStatus, networkStatus);
 
                 this.messagePublisher.Publish(new WalletStatusMessage(walletStatus));
 
