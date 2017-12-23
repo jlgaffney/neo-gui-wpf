@@ -33,7 +33,7 @@ namespace Neo.Gui.Base.Data
 
         public void AddAccount(AccountItem account)
         {
-            this.accounts.Add(account.Account.ScriptHash, account);
+            this.accounts.Add(account.ScriptHash, account);
         }
 
         public void RemoveAccount(UInt160 scriptHash)

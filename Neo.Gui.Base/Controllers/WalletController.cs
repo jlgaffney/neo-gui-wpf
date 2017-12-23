@@ -340,6 +340,22 @@ namespace Neo.Gui.Base.Controllers
             return this.currentWallet.GetChangeAddress();
         }
 
+        public Contract GetAccountContract(UInt160 accountScriptHash)
+        {
+            var walletAccount = this.GetWalletAccount(accountScriptHash);
+
+            return walletAccount?.Contract;
+        }
+
+        public KeyPair GetAccountKey(UInt160 accountScriptHash)
+        {
+            var walletAccount = this.GetWalletAccount(accountScriptHash);
+
+            if (walletAccount == null) return null;
+
+            return walletAccount.HasKey ? walletAccount.GetKey() : null;
+        }
+
         public Transaction GetTransaction(UInt256 hash)
         {
             return this.blockchainController.GetTransaction(hash);
@@ -482,20 +498,22 @@ namespace Neo.Gui.Base.Controllers
             }
         }
 
-        public bool DeleteAccount(AccountItem accountToDelete)
+        public bool DeleteAccount(AccountItem account)
         {
             this.ThrowIfWalletIsNotOpen();
 
-            if (accountToDelete == null)
+            if (account == null)
             {
-                throw new ArgumentNullException(nameof(accountToDelete));
+                throw new ArgumentNullException(nameof(account));
             }
 
-            var deletedSuccessfully = this.currentWallet.DeleteAccount(accountToDelete.Account.ScriptHash);
+            var accountScriptHash = account.ScriptHash;
+
+            var deletedSuccessfully = this.currentWallet.DeleteAccount(accountScriptHash);
 
             if (!deletedSuccessfully) return false;
 
-            this.currentWalletInfo.RemoveAccount(accountToDelete.Account.ScriptHash);
+            this.currentWalletInfo.RemoveAccount(accountScriptHash);
 
             this.SetWalletBalanceChangedFlag();
 
@@ -879,17 +897,35 @@ namespace Neo.Gui.Base.Controllers
             this.SetWalletBalanceChangedFlag();
         }
 
+        private WalletAccount GetWalletAccount(UInt160 scriptHash)
+        {
+            if (scriptHash == null) return null;
+
+            this.ThrowIfWalletIsNotOpen();
+
+            return this.GetAccounts().FirstOrDefault(account =>
+                scriptHash.Equals(account.ScriptHash));
+        }
+
         private void AddAccountItem(WalletAccount account)
         {
             // Check if account item already exists
             if (this.currentWalletInfo.ContainsAccount(account.ScriptHash)) return;
 
-            var newAccountItem = new AccountItem
+            AccountType accountType;
+
+            if (account.WatchOnly)
             {
-                Neo = Fixed8.Zero,
-                Gas = Fixed8.Zero,
-                Account = account
-            };
+                accountType = AccountType.WatchOnly;
+            }
+            else
+            {
+                accountType = account.Contract.IsStandard
+                    ? AccountType.Standard
+                    : AccountType.NonStandard;
+            }
+
+            var newAccountItem = new AccountItem(account.Label, account.ScriptHash, accountType);
 
             this.currentWalletInfo.AddAccount(newAccountItem);
 
@@ -909,7 +945,7 @@ namespace Neo.Gui.Base.Controllers
 
             foreach (var account in accountsList)
             {
-                var scriptHash = account.Account.ScriptHash;
+                var scriptHash = account.ScriptHash;
                 var neo = balanceNeo.ContainsKey(scriptHash) ? balanceNeo[scriptHash] : Fixed8.Zero;
                 var gas = balanceGas.ContainsKey(scriptHash) ? balanceGas[scriptHash] : Fixed8.Zero;
                 account.Neo = neo;
@@ -1015,7 +1051,7 @@ namespace Neo.Gui.Base.Controllers
             if (timeSinceLastBlock <= TimeSpan.FromSeconds(2)) return;
 
             // Update balances
-            var accountScriptHashes = this.currentWalletInfo.GetAccounts().Select(p => p.Account.ScriptHash).ToList();
+            var accountScriptHashes = this.currentWalletInfo.GetAccounts().Select(account => account.ScriptHash).ToList();
 
             foreach (var nep5ScriptHash in this.nep5WatchScriptHashes)
             {

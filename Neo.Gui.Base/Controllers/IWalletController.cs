@@ -72,6 +72,10 @@ namespace Neo.Gui.Base.Controllers
 
         UInt160 GetChangeAddress();
 
+        Contract GetAccountContract(UInt160 accountScriptHash);
+
+        KeyPair GetAccountKey(UInt160 accountScriptHash);
+
         Transaction GetTransaction(UInt256 hash);
 
         Transaction GetTransaction(UInt256 hash, out int height);
