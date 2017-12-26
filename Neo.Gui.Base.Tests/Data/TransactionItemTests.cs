@@ -1,7 +1,7 @@
 ﻿using System;
 using Neo.Core;
 using Neo.Gui.Base.Data;
-using Neo.Gui.Base.Globalization;
+using Neo.Gui.Globalization.Resources;
 using Xunit;
 
 namespace Neo.Gui.Base.Tests.Data

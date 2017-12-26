@@ -3,7 +3,6 @@ using Xunit;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Controllers;
-using Neo.Gui.Globalization.Resources;
 using Moq;
 using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Base.Managers;
