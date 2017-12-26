@@ -1,4 +1,6 @@
-﻿using Neo.Gui.Base.MVVM;
+﻿using Neo.Wallets;
+
+using Neo.Gui.Base.MVVM;
 
 namespace Neo.Gui.Base.Data
 {
@@ -20,6 +22,8 @@ namespace Neo.Gui.Base.Data
         public string Label { get; }
 
         public UInt160 ScriptHash { get; }
+
+        public string Address => Wallet.ToAddress(this.ScriptHash);
 
         public AccountType Type { get; }
 

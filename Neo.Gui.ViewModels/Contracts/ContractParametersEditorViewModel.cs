@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.Linq;
 using System.Numerics;
 using System.Windows.Input;
 
@@ -17,15 +16,13 @@ using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Base.Dialogs.Results.Contracts;
 using Neo.Gui.Base.Managers;
-using Neo.Gui.Base.MVVM;
 using Neo.Gui.Base.Services;
 
 namespace Neo.Gui.ViewModels.Contracts
 {
     public class ContractParametersEditorViewModel :
         ViewModelBase,
-        IDialogViewModel<ContractParametersEditorDialogResult>,
-        ILoadable
+        ILoadableDialogViewModel<ContractParametersEditorDialogResult, ContractParametersEditorLoadParameters>
     {
         private readonly IDialogManager dialogManager;
         private readonly IDispatchService dispatchService;
@@ -127,23 +124,18 @@ namespace Neo.Gui.ViewModels.Contracts
 
         public ICommand UpdateCommand => new RelayCommand(this.Update);
 
-        #region IDialogViewModel implementation 
+        #region ILoadableDialogViewModel implementation 
         public event EventHandler Close;
 
         public event EventHandler<ContractParametersEditorDialogResult> SetDialogResultAndClose;
 
         public ContractParametersEditorDialogResult DialogResult { get; private set; }
-        #endregion
-
-
-        #region ILoadable implementation 
-        public void OnLoad(params object[] parameters)
+        
+        public void OnDialogLoad(ContractParametersEditorLoadParameters parameters)
         {
-            if (!parameters.Any()) return;
+            if (parameters == null) return;
 
-            var loadParameters = parameters[0] as ContractParametersEditorLoadParameters;
-
-            this.Load(loadParameters.ContractParameters);
+            this.Load(parameters.ContractParameters);
         }
         #endregion
 
@@ -206,8 +198,7 @@ namespace Neo.Gui.ViewModels.Contracts
             var parameter = this.SelectedParameter.Parameter;
 
             this.dialogManager.ShowDialog<ContractParametersEditorDialogResult, ContractParametersEditorLoadParameters>(
-                new LoadParameters<ContractParametersEditorLoadParameters>(
-                    new ContractParametersEditorLoadParameters((IList<ContractParameter>) parameter.Value)));
+                new ContractParametersEditorLoadParameters((IList<ContractParameter>) parameter.Value));
 
             // TODO Ensure listview updates with the this Value property's new value
             //listView1.SelectedItems[0].SubItems["value"].Text = parameter.ToString();

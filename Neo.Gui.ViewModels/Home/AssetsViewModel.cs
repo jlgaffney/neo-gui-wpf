@@ -105,7 +105,7 @@ namespace Neo.Gui.ViewModels.Home
         #endregion
 
         #region ILoadable implementation
-        public void OnLoad(params object[] parameters)
+        public void OnLoad()
         {
             this.messageSubscriber.Subscribe(this);
         }

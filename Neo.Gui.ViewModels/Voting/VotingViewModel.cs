@@ -15,11 +15,11 @@ using Neo.Gui.Base.Dialogs.Results.Voting;
 using Neo.Gui.Base.Extensions;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
-using Neo.Gui.Base.MVVM;
 
 namespace Neo.Gui.ViewModels.Voting
 {
-    public class VotingViewModel : ViewModelBase, IDialogViewModel<VotingDialogResult>, ILoadable
+    public class VotingViewModel : ViewModelBase,
+        ILoadableDialogViewModel<VotingDialogResult, VotingLoadParameters>
     {
         private readonly IWalletController walletController;
         private readonly IMessagePublisher messagePublisher;
@@ -55,24 +55,18 @@ namespace Neo.Gui.ViewModels.Voting
 
         public ICommand CancelCommand => new RelayCommand(this.Cancel);
 
-        #region IDialogViewModel implementation 
+        #region ILoadableDialogViewModel Implementation 
         public event EventHandler Close;
 
         public event EventHandler<VotingDialogResult> SetDialogResultAndClose;
 
         public VotingDialogResult DialogResult { get; set; }
-        #endregion
-
-        #region ILoadable Implementation 
-        public void OnLoad(params object[] parameters)
+        
+        public void OnDialogLoad(VotingLoadParameters parameters)
         {
-            if (!parameters.Any())
-            {
-                return;
-            }
-
-            var votingLoadParameters = parameters[0] as VotingLoadParameters;
-            this.SetScriptHash(votingLoadParameters.ScriptHash);
+            if (parameters?.ScriptHash == null) return;
+            
+            this.SetScriptHash(parameters.ScriptHash);
         }
         #endregion
 

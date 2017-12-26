@@ -1,25 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows.Input;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-
-using Neo.Core;
 
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Wallets;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
-using Neo.Gui.Base.MVVM;
 using Neo.Gui.Base.Services;
 
 namespace Neo.Gui.ViewModels.Wallets
 {
-    public class TradeVerificationViewModel : ViewModelBase, IDialogViewModel<TradeVerificationDialogResult>, ILoadable
+    public class TradeVerificationViewModel : ViewModelBase,
+        ILoadableDialogViewModel<TradeVerificationDialogResult, TradeVerificationLoadParameters>
     {
         #region Private Fields 
         private readonly IWalletController walletController;
@@ -46,44 +42,21 @@ namespace Neo.Gui.ViewModels.Wallets
         }
         #endregion
 
-        #region IDialogViewModel implementation 
+        #region ILoadableDialogViewModel implementation 
         public TradeVerificationDialogResult DialogResult { get; set; }
 
         public event EventHandler Close;
 
         public event EventHandler<TradeVerificationDialogResult> SetDialogResultAndClose;
-        #endregion
 
-        #region ILoadable implementation 
-        public void OnLoad(params object[] parameters)
+        public void OnDialogLoad(TradeVerificationLoadParameters parameters)
         {
-            if (!parameters.Any())
-            {
-                return;
-            }
+            if (parameters?.TransactionOutputs == null) return;
 
-            var tradeVerificationLoadParameters = parameters[0] as TradeVerificationLoadParameters;
-
-            this.SetOutputs(tradeVerificationLoadParameters.TransactionOutputs);
-
-        }
-        #endregion
-
-        #region Private Methods 
-        private void Accept()
-        {
-            if (this.SetDialogResultAndClose == null) return;
-
-            var dialogResult = new TradeVerificationDialogResult(true);
-
-            this.SetDialogResultAndClose(this, dialogResult);
-        }
-
-        private void SetOutputs(IEnumerable<TransactionOutput> outputs)
-        {
+            // Set outputs
             this.dispatchService.InvokeOnMainUIThread(() =>
             {
-                foreach (var output in outputs)
+                foreach (var output in parameters.TransactionOutputs)
                 {
                     var asset = this.walletController.GetAssetState(output.AssetId);
 
@@ -96,6 +69,17 @@ namespace Neo.Gui.ViewModels.Wallets
                     });
                 }
             });
+        }
+        #endregion
+
+        #region Private Methods 
+        private void Accept()
+        {
+            if (this.SetDialogResultAndClose == null) return;
+
+            var dialogResult = new TradeVerificationDialogResult(true);
+
+            this.SetDialogResultAndClose(this, dialogResult);
         }
         #endregion
     }

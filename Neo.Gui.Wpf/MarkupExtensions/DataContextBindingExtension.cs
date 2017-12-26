@@ -49,8 +49,6 @@ namespace Neo.Gui.Wpf.MarkupExtensions
 
             if (viewModelInstance is ILoadable loadableViewModel)
             {
-                // TODO IDialogViewModel's have OnLoad called twice, once here, and also in DialogManager
-                // TODO Only call OnLoad once per instance
                 loadableViewModel.OnLoad();
             }
 

@@ -14,15 +14,12 @@ using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Transactions;
 using Neo.Gui.Base.Dialogs.Results.Transactions;
 using Neo.Gui.Base.Extensions;
-using Neo.Gui.Base.MVVM;
 using Neo.Gui.Base.Services;
 
 namespace Neo.Gui.ViewModels.Transactions
 {
-    public class BulkPayViewModel :
-        ViewModelBase,
-        ILoadable,
-        IDialogViewModel<BulkPayDialogResult>
+    public class BulkPayViewModel : ViewModelBase,
+        ILoadableDialogViewModel<BulkPayDialogResult, BulkPayLoadParameters>
     {
         private readonly IWalletController walletController;
         private readonly IDispatchService dispatchService;
@@ -96,29 +93,17 @@ namespace Neo.Gui.ViewModels.Transactions
         public ICommand OkCommand => new RelayCommand(this.Ok);
 
 
-        #region IDialogViewModel implementation 
+        #region ILoadableDialogViewModel implementation 
         public event EventHandler Close;
 
         public event EventHandler<BulkPayDialogResult> SetDialogResultAndClose;
 
         public BulkPayDialogResult DialogResult { get; private set; }
-        #endregion
-
-        #region ILoadable implementation 
-        public void OnLoad(params object[] parameters)
+        
+        public void OnDialogLoad(BulkPayLoadParameters parameters)
         {
-            if (!parameters.Any()) return;
+            var asset = parameters?.Asset;
 
-            var loadParameters = parameters[0] as BulkPayLoadParameters;
-
-            this.Load(loadParameters?.Asset);
-
-        }
-        #endregion
-
-        // TODO Replace with ILoadable implementation using BulkPayLoadParameters
-        private void Load(AssetDescriptor asset)
-        {
             this.dispatchService.InvokeOnMainUIThread(() =>
             {
                 this.Assets.Clear();
@@ -159,7 +144,9 @@ namespace Neo.Gui.ViewModels.Transactions
                     this.AssetSelectionEnabled = this.Assets.Any();
                 }
             });
+
         }
+        #endregion
 
         private void Ok()
         {

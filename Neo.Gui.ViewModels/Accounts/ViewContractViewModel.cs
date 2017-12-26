@@ -10,11 +10,11 @@ using Neo.SmartContract;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Accounts;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
-using Neo.Gui.Base.MVVM;
 
 namespace Neo.Gui.ViewModels.Accounts
 {
-    public class ViewContractViewModel : ViewModelBase, IDialogViewModel<ViewContractDialogResult>, ILoadable
+    public class ViewContractViewModel : ViewModelBase, 
+        ILoadableDialogViewModel<ViewContractDialogResult, ViewContractLoadParameters>
     {
         #region Public Properties 
         public string Address { get; private set; }
@@ -28,24 +28,18 @@ namespace Neo.Gui.ViewModels.Accounts
         public ICommand CloseCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
         #endregion
 
-        #region IDialogViewModel Implementation 
+        #region ILoadableDialogViewModel implementation 
         public event EventHandler Close;
 
         public event EventHandler<ViewContractDialogResult> SetDialogResultAndClose;
 
         public ViewContractDialogResult DialogResult { get; private set; }
-        #endregion
-
-        #region ILoadable implementation 
-        public void OnLoad(params object[] parameters)
+        
+        public void OnDialogLoad(ViewContractLoadParameters parameters)
         {
-            if (!parameters.Any()) return;
+            if (parameters?.Contract == null) return;
 
-            var viewContractLoadParameters = parameters[0] as ViewContractLoadParameters;
-
-            if (viewContractLoadParameters == null) return;
-
-            this.SetContract(viewContractLoadParameters.Contract);
+            this.SetContract(parameters.Contract);
         }
         #endregion
 

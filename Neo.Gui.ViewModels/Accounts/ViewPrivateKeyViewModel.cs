@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Windows.Input;
 
 using GalaSoft.MvvmLight;
@@ -11,11 +10,11 @@ using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Accounts;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
-using Neo.Gui.Base.MVVM;
 
 namespace Neo.Gui.ViewModels.Accounts
 {
-    public class ViewPrivateKeyViewModel : ViewModelBase, IDialogViewModel<ViewPrivateKeyDialogResult>, ILoadable
+    public class ViewPrivateKeyViewModel : ViewModelBase,
+        ILoadableDialogViewModel<ViewPrivateKeyDialogResult, ViewPrivateKeyLoadParameters>
     {
         #region Private fields
 
@@ -45,26 +44,18 @@ namespace Neo.Gui.ViewModels.Accounts
 
         public ICommand CloseCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
         
-        #region IDialogViewModel implementation 
+        #region ILoadableDialogViewModel implementation 
         public event EventHandler Close;
 
         public event EventHandler<ViewPrivateKeyDialogResult> SetDialogResultAndClose;
 
         public ViewPrivateKeyDialogResult DialogResult { get; private set; }
-        #endregion
 
-        #region ILoadable Methods 
-        public void OnLoad(params object[] parameters)
+        public void OnDialogLoad(ViewPrivateKeyLoadParameters parameters)
         {
-            if (!parameters.Any()) return;
+            if (parameters == null || parameters.Key == null || parameters.ScriptHash == null) return;
 
-            var viewPrivateKeyLoadParameters = (parameters[0] as LoadParameters<ViewPrivateKeyLoadParameters>)?.Parameters;
-
-            if (viewPrivateKeyLoadParameters == null) return;
-
-            if (viewPrivateKeyLoadParameters.Key == null || viewPrivateKeyLoadParameters.ScriptHash == null) return;
-
-            this.SetAccountInfo(viewPrivateKeyLoadParameters.Key, viewPrivateKeyLoadParameters.ScriptHash);
+            this.SetAccountInfo(parameters.Key, parameters.ScriptHash);
         }
         #endregion
 

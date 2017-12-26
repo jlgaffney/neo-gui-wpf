@@ -20,7 +20,10 @@ namespace Neo.Gui.Base.Messaging
         #region IMessageAggregator implementation 
         public void Subscribe(IMessageHandler messageHandler)
         {
-            this.messageHandlers.Add(messageHandler);
+            if (!this.messageHandlers.Contains(messageHandler))
+            {
+                this.messageHandlers.Add(messageHandler);
+            }
         }
 
         public void Unsubscribe(IMessageHandler messageHandler)
