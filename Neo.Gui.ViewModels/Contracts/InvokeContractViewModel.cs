@@ -14,20 +14,18 @@ using Neo.VM;
 using Neo.Gui.Base.Dialogs.Results.Contracts;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Managers;
-using Neo.Gui.Base.MVVM;
 using Neo.Gui.Base.Services;
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
+
 using Neo.Gui.Globalization.Resources;
 
 namespace Neo.Gui.ViewModels.Contracts
 {
-    public class InvokeContractViewModel :
-        ViewModelBase,
-        IDialogViewModel<InvokeContractDialogResult>,
-        ILoadable
+    public class InvokeContractViewModel : ViewModelBase,
+        ILoadableDialogViewModel<InvokeContractDialogResult, InvokeContractLoadParameters>
     {
         private static readonly Fixed8 NetworkFee = Fixed8.FromDecimal(0.001m);
 
@@ -184,36 +182,23 @@ namespace Neo.Gui.ViewModels.Contracts
         public ICommand CancelCommand => new RelayCommand(this.Cancel);
         #endregion Commands
 
-        #region IDialogViewModel implementation 
+        #region ILoadableDialogViewModel implementation 
         public event EventHandler Close;
 
         public event EventHandler<InvokeContractDialogResult> SetDialogResultAndClose;
 
         public InvokeContractDialogResult DialogResult { get; private set; }
-        #endregion
 
-        #region ILoadable implementation 
-        public void OnLoad(params object[] parameters)
+        public void OnDialogLoad(InvokeContractLoadParameters parameters)
         {
-            if (!parameters.Any())
-            {
-                return;
-            }
+            if (parameters?.Transaction == null) return;
 
-            var invokeContractLoadParameters = parameters[0] as InvokeContractLoadParameters;
-
-            this.SetBaseTransaction(invokeContractLoadParameters.Transaction);
-        }
-        #endregion
-
-        private void SetBaseTransaction(InvocationTransaction baseTransaction)
-        {
-            if (baseTransaction == null) return;
-
-            this.transaction = baseTransaction;
+            // Set base transaction
+            this.transaction = parameters.Transaction;
 
             this.CustomScript = this.transaction.Script.ToHexString();
         }
+        #endregion
 
         private InvocationTransaction MakeTransaction()
         {
@@ -265,7 +250,7 @@ namespace Neo.Gui.ViewModels.Contracts
         private void EditParameters()
         {
             this.dialogManager.ShowDialog<ContractParametersEditorDialogResult, ContractParametersEditorLoadParameters>(
-                new LoadParameters<ContractParametersEditorLoadParameters>(new ContractParametersEditorLoadParameters(this.parameters)));
+                new ContractParametersEditorLoadParameters(this.parameters));
 
             UpdateCustomScript();
         }

@@ -11,16 +11,15 @@ using Neo.Core;
 using Neo.IO.Json;
 using Neo.SmartContract;
 
+using Neo.Gui.Globalization.Resources;
+
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Wallets;
-using Neo.Gui.Base.Dialogs.Results;
-using Neo.Gui.Globalization.Resources;
-using Neo.Gui.Base.Services;
-using Neo.Gui.Base.MVVM;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.Services;
 
 namespace Neo.Gui.ViewModels.Wallets
 {
@@ -240,7 +239,7 @@ namespace Neo.Gui.ViewModels.Wallets
             outputs = outputs.Where(p => this.walletController.WalletContainsAccount(p.ScriptHash));
 
             var dialogResult = this.dialogManager.ShowDialog<TradeVerificationDialogResult, TradeVerificationLoadParameters>(
-                new LoadParameters<TradeVerificationLoadParameters>(new TradeVerificationLoadParameters(outputs)));
+                new TradeVerificationLoadParameters(outputs));
 
             this.MergeEnabled = dialogResult.TradeAccepted;
         }

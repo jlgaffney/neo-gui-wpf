@@ -222,7 +222,7 @@ namespace Neo.Gui.ViewModels.Home
         #endregion
 
         #region ILoadable Implementation 
-        public void OnLoad(params object[] parameters)
+        public void OnLoad()
         {
             this.messageSubscriber.Subscribe(this);
         }
@@ -245,7 +245,7 @@ namespace Neo.Gui.ViewModels.Home
         public void HandleMessage(InvokeContractMessage message)
         {
             this.dialogManager.ShowDialog<InvokeContractDialogResult, InvokeContractLoadParameters>(
-                new LoadParameters<InvokeContractLoadParameters>(new InvokeContractLoadParameters(message.Transaction)));
+                new InvokeContractLoadParameters(message.Transaction));
         }
 
         public void HandleMessage(UpdateApplicationMessage message)

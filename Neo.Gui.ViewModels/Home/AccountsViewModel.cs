@@ -139,7 +139,7 @@ namespace Neo.Gui.ViewModels.Home
         #endregion
 
         #region ILoadable implementation 
-        public void OnLoad(params object[] parameters)
+        public void OnLoad()
         {
             this.messageSubscriber.Subscribe(this);
         }
@@ -200,7 +200,7 @@ namespace Neo.Gui.ViewModels.Home
             var selectedAccountScriptHash = this.SelectedAccount.ScriptHash;
 
             this.dialogManager.ShowDialog<ViewPrivateKeyDialogResult, ViewPrivateKeyLoadParameters>(
-                new LoadParameters<ViewPrivateKeyLoadParameters>(new ViewPrivateKeyLoadParameters(selectedAccountScriptHash, selectedAccountKey)));
+                new ViewPrivateKeyLoadParameters(selectedAccountScriptHash, selectedAccountKey));
         }
 
         private void ViewContract()
@@ -210,7 +210,7 @@ namespace Neo.Gui.ViewModels.Home
             var selectedAccountContract = this.walletController.GetAccountContract(this.SelectedAccount.ScriptHash);
 
             this.dialogManager.ShowDialog<ViewContractDialogResult, ViewContractLoadParameters>(
-                new LoadParameters<ViewContractLoadParameters>(new ViewContractLoadParameters(selectedAccountContract)));
+                new ViewContractLoadParameters(selectedAccountContract));
         }
 
         private void ShowVotingDialog()
@@ -218,7 +218,7 @@ namespace Neo.Gui.ViewModels.Home
             if (!this.ShowVotingDialogEnabled) return;
 
             this.dialogManager.ShowDialog<VotingDialogResult, VotingLoadParameters>(
-                new LoadParameters<VotingLoadParameters>(new VotingLoadParameters(this.SelectedAccount.ScriptHash)));
+                new VotingLoadParameters(this.SelectedAccount.ScriptHash));
         }
 
         private void CopyAddressToClipboard()

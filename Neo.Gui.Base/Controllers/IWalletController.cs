@@ -29,7 +29,7 @@ namespace Neo.Gui.Base.Controllers
         /// <returns>File path of new migrated wallet</returns>
         string MigrateWallet(string walletPath, string password, string newWalletPath = null);
 
-        void CreateWallet(string walletPath, string password);
+        void CreateWallet(string walletPath, string password, bool createWithAccount = true);
 
         void OpenWallet(string walletPath, string password);
 

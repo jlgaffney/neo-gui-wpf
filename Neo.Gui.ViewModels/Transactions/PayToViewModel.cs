@@ -13,15 +13,12 @@ using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Transactions;
 using Neo.Gui.Base.Dialogs.Results.Transactions;
-using Neo.Gui.Base.MVVM;
 using Neo.Gui.Base.Services;
 
 namespace Neo.Gui.ViewModels.Transactions
 {
-    public class PayToViewModel :
-        ViewModelBase,
-        ILoadable,
-        IDialogViewModel<PayToDialogResult>
+    public class PayToViewModel : ViewModelBase,
+        ILoadableDialogViewModel<PayToDialogResult, PayToLoadParameters>
     {
         private readonly IWalletController walletController;
         private readonly IDispatchService dispatchService;
@@ -156,31 +153,20 @@ namespace Neo.Gui.ViewModels.Transactions
         }
 
         public ICommand OkCommand => new RelayCommand(this.Ok);
-        
 
-        #region IDialogViewModel implementation 
+
+        #region ILoadableDialogViewModel implementation 
         public event EventHandler Close;
 
         public event EventHandler<PayToDialogResult> SetDialogResultAndClose;
 
         public PayToDialogResult DialogResult { get; private set; }
-        #endregion
-
-        #region ILoadable implementation 
-        public void OnLoad(params object[] parameters)
+        
+        public void OnDialogLoad(PayToLoadParameters parameters)
         {
-            if (!parameters.Any()) return;
+            var asset = parameters?.Asset;
+            var scriptHash = parameters?.ScriptHash;
 
-            var loadParameters = parameters[0] as PayToLoadParameters;
-
-            this.Load(loadParameters?.Asset, loadParameters?.ScriptHash);
-
-        }
-        #endregion
-
-
-        private void Load(AssetDescriptor asset, UInt160 scriptHash)
-        {
             this.dispatchService.InvokeOnMainUIThread(() =>
             {
                 this.Assets.Clear();
@@ -226,6 +212,7 @@ namespace Neo.Gui.ViewModels.Transactions
                 }
             });
         }
+        #endregion
 
         private void Ok()
         {

@@ -66,6 +66,7 @@ namespace Neo.Gui.Base.Controllers
         private Timer refreshTimer;
 
         private Wallet currentWallet;
+        private IDisposable currentWalletLocker;
         private WalletInfo currentWalletInfo;
 
         private bool balanceChanged;
@@ -174,24 +175,31 @@ namespace Neo.Gui.Base.Controllers
             return newWalletPath;
         }
 
-        public void CreateWallet(string walletPath, string password)
+        public void CreateWallet(string walletPath, string password, bool createWithAccount = true)
         {
             var newWallet = new NEP6Wallet(walletPath);
 
-            newWallet.Unlock(password);
+            var walletLocker = newWallet.Unlock(password);
 
-            this.SetCurrentWallet(newWallet);
+            this.SetCurrentWallet(newWallet, walletLocker);
+
+            if (createWithAccount)
+            {
+                this.CreateNewAccount();
+            }
         }
 
         public void OpenWallet(string walletPath, string password)
         {
             Wallet wallet;
+            IDisposable walletLocker;
             if (Path.GetExtension(walletPath) == ".db3")
             {
                 DeprecatedWallet userWallet;
                 try
                 {
                     userWallet = DeprecatedWallet.Open(walletPath, password);
+                    walletLocker = null;
                 }
                 catch (CryptographicException)
                 {
@@ -205,7 +213,7 @@ namespace Neo.Gui.Base.Controllers
                 var nep6Wallet = new NEP6Wallet(walletPath);
                 try
                 {
-                    nep6Wallet.Unlock(password);
+                    walletLocker = nep6Wallet.Unlock(password);
                 }
                 catch (CryptographicException)
                 {
@@ -222,12 +230,12 @@ namespace Neo.Gui.Base.Controllers
                 return;
             }
             
-            this.SetCurrentWallet(wallet);
+            this.SetCurrentWallet(wallet, walletLocker);
         }
 
         public void CloseWallet()
         {
-            this.SetCurrentWallet(null);
+            this.SetCurrentWallet(null, null);
         }
 
         public bool ChangePassword(string oldPassword, string newPassword)
@@ -773,6 +781,8 @@ namespace Neo.Gui.Base.Controllers
                         var nep6Wallet = this.currentWallet as NEP6Wallet;
                         nep6Wallet?.Save();
 
+                        this.currentWalletLocker?.Dispose();
+
                         var disposableWallet = this.currentWallet as IDisposable;
                         disposableWallet?.Dispose();
                     }
@@ -827,7 +837,7 @@ namespace Neo.Gui.Base.Controllers
             }
         }
 
-        private void SetCurrentWallet(Wallet wallet)
+        private void SetCurrentWallet(Wallet wallet, IDisposable walletLocker)
         {
             if (this.WalletIsOpen)
             {
@@ -848,6 +858,7 @@ namespace Neo.Gui.Base.Controllers
             this.messagePublisher.Publish(new ClearTransactionsMessage());
 
             this.currentWallet = wallet;
+            this.currentWalletLocker = walletLocker;
             this.currentWalletInfo = new WalletInfo();
 
             // Setup wallet if required

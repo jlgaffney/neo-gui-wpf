@@ -14,7 +14,6 @@ using Neo.Gui.Base.Dialogs.Results.Home;
 using Neo.Gui.Base.Dialogs.Results.Settings;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
-using Neo.Gui.Base.MVVM;
 using Neo.Gui.Globalization.Resources;
 using Neo.Gui.Base.Helpers;
 using Neo.Gui.Base.Managers;
@@ -141,10 +140,6 @@ namespace Neo.Gui.Wpf
 
                     await dispatchService.InvokeOnMainUIThread(() =>
                     {
-                        // Load this.MainWindow.DataContext if required
-                        var loadableDataContext = window.DataContext as ILoadable;
-                        loadableDataContext?.OnLoad();
-
                         this.MainWindow = window;
                         this.MainWindow?.Show();
                         
