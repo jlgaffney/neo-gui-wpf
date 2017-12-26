@@ -27,6 +27,7 @@ using Neo.Gui.Base.Status;
 using CryptographicException = System.Security.Cryptography.CryptographicException;
 using DeprecatedWallet = Neo.Implementations.Wallets.EntityFramework.UserWallet;
 using Timer = System.Timers.Timer;
+using System.Text;
 
 namespace Neo.Gui.Base.Controllers
 {
@@ -36,7 +37,6 @@ namespace Neo.Gui.Base.Controllers
         IMessageHandler<AddContractMessage>,
         IMessageHandler<ImportPrivateKeyMessage>,
         IMessageHandler<ImportCertificateMessage>,
-        IMessageHandler<SignTransactionAndShowInformationMessage>,
         IMessageHandler<BlockAddedMessage>
     {
         #region Private Fields 
@@ -107,6 +107,8 @@ namespace Neo.Gui.Base.Controllers
         #endregion
 
         #region IWalletController implementation 
+        public Fixed8 NetworkFee => Fixed8.FromDecimal(0.001m);
+
         public void Initialize()
         {
             if (this.disposed)
@@ -325,13 +327,6 @@ namespace Neo.Gui.Base.Controllers
             this.ThrowIfWalletIsNotOpen();
 
             return this.currentWallet.GetCoins();
-        }
-
-        public IEnumerable<Coin> GetUnclaimedCoins()
-        {
-            this.ThrowIfWalletIsNotOpen();
-
-            return this.currentWallet.GetUnclaimedCoins();
         }
 
         public IEnumerable<Coin> FindUnspentCoins()
@@ -651,6 +646,174 @@ namespace Neo.Gui.Base.Controllers
             this.SignAndRelayTransaction(deleteTransaction);
 
         }
+
+        public void ClaimAssets()
+        {
+            var claims = this.GetUnclaimedCoins()
+                .Select(p => p.Reference)
+                .ToArray();
+
+            if (claims.Length == 0) return;
+
+            var clainTransaction = this.MakeClaimTransaction(claims);
+            this.SignAndRelayTransaction(clainTransaction);
+        }
+
+        public void ExecuteIssueTransaction(UInt256 assetId, IEnumerable<TransactionOutputItem> items)
+        {
+            var issueTransaction = this.MakeTransaction(new IssueTransaction
+            {
+                Version = 1,
+                Outputs = items.GroupBy(p => p.ScriptHash).Select(g => new TransactionOutput
+                {
+                    AssetId = assetId,
+                    Value = g.Sum(p => new Fixed8((long)p.Value.Value)),
+                    ScriptHash = g.Key
+                }).ToArray()
+            }, fee: Fixed8.One);
+
+            this.SignAndRelayTransaction(issueTransaction);
+        }
+
+        public void ExecuteInvocationTransaction(InvocationTransaction transaction)
+        {
+            var transactionFee = transaction.Gas.Equals(Fixed8.Zero) ? NetworkFee : Fixed8.Zero;
+
+            var transactionWithFee = this.MakeTransaction(new InvocationTransaction
+            {
+                Version = transaction.Version,
+                Script = transaction.Script,
+                Gas = transaction.Gas,
+                Attributes = transaction.Attributes,
+                Inputs = transaction.Inputs,
+                Outputs = transaction.Outputs
+            }, fee: transactionFee);
+
+            this.SignAndRelayTransaction(transactionWithFee);
+        }
+
+        public void ExecuteTransferTransaction(IEnumerable<TransactionOutputItem> items, string remark)
+        {
+            var cOutputs = items.Where(p => p.AssetId is UInt160).GroupBy(p => new
+            {
+                AssetId = (UInt160)p.AssetId,
+                Account = p.ScriptHash
+            }, (k, g) => new
+            {
+                k.AssetId,
+                Value = g.Aggregate(BigInteger.Zero, (x, y) => x + y.Value.Value),
+                k.Account
+            }).ToArray();
+            Transaction tx;
+            var attributes = new List<TransactionAttribute>();
+            if (cOutputs.Length == 0)
+            {
+                tx = new ContractTransaction();
+            }
+            else
+            {
+                var addresses = this.GetAccounts().Select(p => p.ScriptHash).ToArray();
+                var sAttributes = new HashSet<UInt160>();
+                using (var builder = new ScriptBuilder())
+                {
+                    foreach (var output in cOutputs)
+                    {
+                        byte[] script;
+                        using (var builder2 = new ScriptBuilder())
+                        {
+                            foreach (var address in addresses)
+                            {
+                                builder2.EmitAppCall(output.AssetId, "balanceOf", address);
+                            }
+
+                            builder2.Emit(OpCode.DEPTH, OpCode.PACK);
+                            script = builder2.ToArray();
+                        }
+
+                        var engine = ApplicationEngine.Run(script);
+                        if (engine.State.HasFlag(VMState.FAULT)) return;
+
+                        var balances = engine.EvaluationStack.Pop().GetArray().Reverse().Zip(addresses, (i, a) => new
+                        {
+                            Account = a,
+                            Value = i.GetBigInteger()
+                        }).ToArray();
+
+                        var sum = balances.Aggregate(BigInteger.Zero, (x, y) => x + y.Value);
+                        if (sum < output.Value) return;
+
+                        if (sum != output.Value)
+                        {
+                            balances = balances.OrderByDescending(p => p.Value).ToArray();
+                            var amount = output.Value;
+                            var i = 0;
+                            while (balances[i].Value <= amount)
+                            {
+                                amount -= balances[i++].Value;
+                            }
+
+                            balances = amount == BigInteger.Zero
+                                ? balances.Take(i).ToArray()
+                                : balances.Take(i).Concat(new[] { balances.Last(p => p.Value >= amount) }).ToArray();
+
+                            sum = balances.Aggregate(BigInteger.Zero, (x, y) => x + y.Value);
+                        }
+
+                        sAttributes.UnionWith(balances.Select(p => p.Account));
+
+                        for (int i = 0; i < balances.Length; i++)
+                        {
+                            var value = balances[i].Value;
+                            if (i == 0)
+                            {
+                                var change = sum - output.Value;
+                                if (change > 0) value -= change;
+                            }
+                            builder.EmitAppCall(output.AssetId, "transfer", balances[i].Account, output.Account, value);
+                            builder.Emit(OpCode.THROWIFNOT);
+                        }
+                    }
+
+                    tx = new InvocationTransaction
+                    {
+                        Version = 1,
+                        Script = builder.ToArray()
+                    };
+                }
+                attributes.AddRange(sAttributes.Select(p => new TransactionAttribute
+                {
+                    Usage = TransactionAttributeUsage.Script,
+                    Data = p.ToArray()
+                }));
+            }
+
+            if (!string.IsNullOrEmpty(remark))
+            {
+                attributes.Add(new TransactionAttribute
+                {
+                    Usage = TransactionAttributeUsage.Remark,
+                    Data = Encoding.UTF8.GetBytes(remark)
+                });
+            }
+
+            tx.Attributes = attributes.ToArray();
+            tx.Outputs = items.Where(p => p.AssetId is UInt256).Select(p => p.ToTxOutput()).ToArray();
+
+            if (tx is ContractTransaction ctx)
+            {
+                tx = this.MakeTransaction(ctx);
+            }
+
+            if (tx == null) return;
+            if (tx is InvocationTransaction invocationTransaction)
+            {
+                this.messagePublisher.Publish(new InvokeContractMessage(invocationTransaction));
+            }
+            else
+            {
+                this.SignAndRelayTransaction(tx);
+            }
+        }
         #endregion
 
         #region IMessageHandler implementation 
@@ -729,11 +892,6 @@ namespace Neo.Gui.Base.Controllers
 
             var nep6Wallet = this.currentWallet as NEP6Wallet;
             nep6Wallet?.Save();
-        }
-
-        public void HandleMessage(SignTransactionAndShowInformationMessage message)
-        {
-            this.SignAndRelayTransaction(message.Transaction);
         }
 
         public void HandleMessage(BlockAddedMessage message)
@@ -1212,6 +1370,13 @@ namespace Neo.Gui.Base.Controllers
             {
                 this.notificationService.ShowSuccessNotification($"{Strings.IncompletedSignatureMessage} {context}");
             }
+        }
+
+        private IEnumerable<Coin> GetUnclaimedCoins()
+        {
+            this.ThrowIfWalletIsNotOpen();
+
+            return this.currentWallet.GetUnclaimedCoins();
         }
         #endregion
     }

@@ -176,11 +176,8 @@ namespace Neo.Gui.ViewModels.Assets
 
         private void Confirm()
         {
-            var transaction = this.GenerateTransaction();
+            this.walletController.ExecuteIssueTransaction((UInt256)this.Asset.AssetId, this.Items);
 
-            if (transaction == null) return;
-
-            this.messagePublisher.Publish(new SignTransactionAndShowInformationMessage(transaction));
             this.Close(this, EventArgs.Empty);
         }
 
@@ -229,21 +226,6 @@ namespace Neo.Gui.ViewModels.Assets
             }
 
             this.dispatchService.InvokeOnMainUIThread(() => this.Items.Clear());
-        }
-
-        private IssueTransaction GenerateTransaction()
-        {
-            if (this.Asset == null) return null;
-            return this.walletController.MakeTransaction(new IssueTransaction
-            {
-                Version = 1,
-                Outputs = this.Items.GroupBy(p => p.ScriptHash).Select(g => new TransactionOutput
-                {
-                    AssetId = (UInt256) this.Asset.AssetId,
-                    Value = g.Sum(p => new Fixed8((long)p.Value.Value)),
-                    ScriptHash = g.Key
-                }).ToArray()
-            }, fee: Fixed8.One);
         }
     }
 }

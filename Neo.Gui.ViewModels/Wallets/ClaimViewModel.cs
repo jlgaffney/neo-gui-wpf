@@ -21,6 +21,7 @@ namespace Neo.Gui.ViewModels.Wallets
         IMessageHandler<WalletStatusMessage>,
         IDialogViewModel<ClaimDialogResult>
     {
+        #region Private Fields 
         private readonly IWalletController walletController;
         private readonly IMessagePublisher messagePublisher;
         private readonly IMessageSubscriber messageSubscriber;
@@ -29,21 +30,9 @@ namespace Neo.Gui.ViewModels.Wallets
         private Fixed8 unavailableGas = Fixed8.Zero;
 
         private bool claimEnabled;
-
-
-
-        public ClaimViewModel(
-            IWalletController walletController,
-            IMessagePublisher messagePublisher,
-            IMessageSubscriber messageSubscriber)
-        {
-            this.walletController = walletController;
-            this.messagePublisher = messagePublisher;
-            this.messageSubscriber = messageSubscriber;
-        }
+        #endregion
 
         #region Public Properties
-
         public Fixed8 AvailableGas
         {
             get => this.availableGas;
@@ -83,9 +72,20 @@ namespace Neo.Gui.ViewModels.Wallets
             }
         }
 
+        public RelayCommand ClaimCommand => new RelayCommand(this.Claim);
         #endregion Public Properties
 
-        public ICommand ClaimCommand => new RelayCommand(this.Claim);
+        #region Constructor 
+        public ClaimViewModel(
+            IWalletController walletController,
+            IMessagePublisher messagePublisher,
+            IMessageSubscriber messageSubscriber)
+        {
+            this.walletController = walletController;
+            this.messagePublisher = messagePublisher;
+            this.messageSubscriber = messageSubscriber;
+        }
+        #endregion
 
         #region IDialogViewModel Implementation 
         public event EventHandler Close;
@@ -111,6 +111,15 @@ namespace Neo.Gui.ViewModels.Wallets
         }
         #endregion
 
+        #region IMessageHandler implementation
+        public void HandleMessage(WalletStatusMessage message)
+        {
+            this.CalculateBonusUnavailable(message.Status.BlockchainStatus.Height + 1);
+        }
+
+        #endregion
+
+        #region Private Methods 
         private void CalculateBonusAvailable()
         {
             var bonusAvailable = this.walletController.CalculateBonus();
@@ -129,24 +138,10 @@ namespace Neo.Gui.ViewModels.Wallets
 
         private void Claim()
         {
-            var claims = this.walletController.GetUnclaimedCoins().Select(p => p.Reference).ToArray();
-
-            if (claims.Length == 0) return;
-
-            var transaction = this.walletController.MakeClaimTransaction(claims);
-
-            this.messagePublisher.Publish(new SignTransactionAndShowInformationMessage(transaction));
+            this.walletController.ClaimAssets();
 
             this.Close(this, EventArgs.Empty);
         }
-
-        #region IMessageHandler implementation
-
-        public void HandleMessage(WalletStatusMessage message)
-        {
-            this.CalculateBonusUnavailable(message.Status.BlockchainStatus.Height + 1);
-        }
-
         #endregion
     }
 }

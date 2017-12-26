@@ -13,6 +13,8 @@ namespace Neo.Gui.Base.Controllers
 {
     public interface IWalletController : IDisposable
     {
+        Fixed8 NetworkFee { get; }
+
         void Initialize();
 
         bool WalletIsOpen { get; }
@@ -65,8 +67,6 @@ namespace Neo.Gui.Base.Controllers
         IEnumerable<WalletAccount> GetStandardAccounts();
 
         IEnumerable<Coin> GetCoins();
-
-        IEnumerable<Coin> GetUnclaimedCoins();
 
         IEnumerable<Coin> FindUnspentCoins();
 
@@ -131,5 +131,13 @@ namespace Neo.Gui.Base.Controllers
         string ToAddress(UInt160 scriptHash);
 
         void DeleteFirstClassAsset(FirstClassAssetItem assetItem);
+
+        void ClaimAssets();
+
+        void ExecuteIssueTransaction(UInt256 assetId, IEnumerable<TransactionOutputItem> items);
+
+        void ExecuteInvocationTransaction(InvocationTransaction transaction);
+
+        void ExecuteTransferTransaction(IEnumerable<TransactionOutputItem> items, string remark);
     }
 }
