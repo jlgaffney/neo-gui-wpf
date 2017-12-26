@@ -1,14 +1,13 @@
-﻿using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using Moq;
-using Neo.Core;
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Data;
-using Neo.Gui.Globalization.Resources;
 using Neo.Gui.Base.Helpers;
 using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
+using Neo.Gui.Globalization.Resources;
+using Neo.Gui.TestHelpers;
 using Neo.Gui.ViewModels.Home;
 using Neo.Gui.ViewModels.Tests.Builders;
 using Xunit;

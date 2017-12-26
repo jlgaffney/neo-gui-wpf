@@ -1,7 +1,7 @@
 ﻿using Moq;
-using Neo.Gui.ViewModels.Tests.AutoMock;
+using Neo.Gui.TestHelpers.AutoMock;
 
-namespace Neo.Gui.ViewModels.Tests
+namespace Neo.Gui.TestHelpers
 {
     public abstract class TestBase
     {

@@ -1,6 +1,8 @@
 ﻿using System;
 using Xunit;
-
+using Neo.Gui.Base.Messaging.Interfaces;
+using Neo.Gui.Base.Messages;
+using Neo.Gui.Base.Controllers;
 using Moq;
 
 using Neo.Gui.Globalization.Resources;
@@ -12,6 +14,7 @@ using Neo.Gui.Base.Dialogs.Results.Contracts;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Dialogs.Results.Development;
 using Neo.Gui.Base.Dialogs.Results.Settings;
+using Neo.Gui.ViewModels.Home;
 using Neo.Gui.Base.Dialogs.Results.Assets;
 using Neo.Gui.Base.Dialogs.Results.Transactions;
 using Neo.Gui.Base.Dialogs.Results.Voting;
@@ -20,6 +23,7 @@ using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Status;
+using Neo.Gui.TestHelpers;
 
 using Neo.Gui.ViewModels.Home;
 
