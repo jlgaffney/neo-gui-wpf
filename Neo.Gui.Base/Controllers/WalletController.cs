@@ -1114,7 +1114,7 @@ namespace Neo.Gui.Base.Controllers
 
         private void AddTransaction(Transaction transaction, uint blockHeight, DateTime transactionTime)
         {
-            var transactionItem = new TransactionItem(transaction.Hash, transaction.Type, height, UnixTimeStampToDateTime(timestamp));
+            var transactionItem = new TransactionItem(transaction.Hash, transaction.Type, blockHeight, transactionTime);
 
             this.currentWalletInfo.AddTransaction(transactionItem);
 

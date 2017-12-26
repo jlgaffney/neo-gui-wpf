@@ -1,7 +1,6 @@
 ﻿using System;
 using Neo.Core;
 using Neo.Gui.Globalization.Resources;
-using Neo.Gui.Base.Globalization;
 using Neo.Gui.Base.Helpers;
 using Neo.Gui.Base.MVVM;
 
