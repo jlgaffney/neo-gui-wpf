@@ -16,7 +16,7 @@ using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Wallets;
 using Neo.Gui.Base.Dialogs.Results;
-using Neo.Gui.Base.Globalization;
+using Neo.Gui.Globalization.Resources;
 using Neo.Gui.Base.Services;
 using Neo.Gui.Base.MVVM;
 using Neo.Gui.Base.Dialogs.Results.Wallets;

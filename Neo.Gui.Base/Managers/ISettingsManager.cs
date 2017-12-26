@@ -14,7 +14,7 @@
 
         #region Local Node Settings
 
-        string LocalNodeBlockchainDataDirectoryPath { get; }
+        string BlockchainDataDirectoryPath { get; }
 
         int LocalNodePort { get; }
 

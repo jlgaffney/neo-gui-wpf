@@ -1,27 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
+
 using Neo.Core;
-using Neo.Network;
+
+using Neo.Gui.Base.Status;
 
 namespace Neo.Gui.Base.Controllers
 {
-    public interface IBlockchainController : IDisposable
+    public interface IBlockchainController : IBaseBlockchainController, IDisposable
     {
-        RegisterTransaction GoverningToken { get; }
-
-        RegisterTransaction UtilityToken { get; }
-        
         uint BlockHeight { get; }
 
         event EventHandler<Block> PersistCompleted;
 
-        void Initialize();
+        void Initialize(string blockchainDataDirectoryPath);
 
         BlockchainStatus GetStatus();
-
-        void Relay(Transaction transaction);
-
-        void Relay(IInventory inventory);
 
         Transaction GetTransaction(UInt256 hash);
 
@@ -33,8 +26,6 @@ namespace Neo.Gui.Base.Controllers
 
         AssetState GetAssetState(UInt256 assetId);
 
-        Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, bool ignoreClaimed = true);
-
-        Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, uint heightEnd);
+        DateTime GetTimeOfBlock(uint blockHeight);
     }
 }

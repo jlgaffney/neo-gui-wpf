@@ -11,7 +11,7 @@ using Neo.SmartContract;
 
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Extensions;
-using Neo.Gui.Base.Globalization;
+using Neo.Gui.Globalization.Resources;
 using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Services;
 

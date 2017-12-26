@@ -7,6 +7,7 @@ using GalaSoft.MvvmLight.Command;
 
 using Neo.Wallets;
 
+using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Accounts;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
@@ -16,6 +17,22 @@ namespace Neo.Gui.ViewModels.Accounts
 {
     public class ViewPrivateKeyViewModel : ViewModelBase, IDialogViewModel<ViewPrivateKeyDialogResult>, ILoadable
     {
+        #region Private fields
+
+        private readonly IWalletController walletController;
+
+        #endregion
+
+        #region Constructor
+
+        public ViewPrivateKeyViewModel(
+            IWalletController walletController)
+        {
+            this.walletController = walletController;
+        }
+        
+        #endregion
+
         #region Public Properties
         public string Address { get; private set; }
 
@@ -43,28 +60,26 @@ namespace Neo.Gui.ViewModels.Accounts
 
             var viewPrivateKeyLoadParameters = (parameters[0] as LoadParameters<ViewPrivateKeyLoadParameters>)?.Parameters;
 
-            if (viewPrivateKeyLoadParameters?.Account == null) return;
+            if (viewPrivateKeyLoadParameters == null) return;
 
-            this.SetAccountInfo(viewPrivateKeyLoadParameters.Account);
+            if (viewPrivateKeyLoadParameters.Key == null || viewPrivateKeyLoadParameters.ScriptHash == null) return;
+
+            this.SetAccountInfo(viewPrivateKeyLoadParameters.Key, viewPrivateKeyLoadParameters.ScriptHash);
         }
         #endregion
 
         #region Private Methods 
 
-        private void SetAccountInfo(WalletAccount account)
+        private void SetAccountInfo(KeyPair key, UInt160 scriptHash)
         {
-            if (account == null) return;
-
-            var key = account.GetKey();
-
-            this.Address = account.Address;
+            this.Address = this.walletController.ToAddress(scriptHash);
             this.PublicKeyHex = key.PublicKey.EncodePoint(true).ToHexString();
             using (key.Decrypt())
             {
                 this.PrivateKeyHex = key.PrivateKey.ToHexString();
             }
             this.PrivateKeyWif = key.Export();
-
+            
             // Update properties
             RaisePropertyChanged(nameof(this.Address));
             RaisePropertyChanged(nameof(this.PublicKeyHex));

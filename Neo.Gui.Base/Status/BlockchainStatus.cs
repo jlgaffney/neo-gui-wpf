@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace Neo.Gui.Base.Controllers
+namespace Neo.Gui.Base.Status
 {
     public class BlockchainStatus
     {
         public BlockchainStatus(uint height, uint headerHeight, bool nextBlockProgressIsIndeterminate,
-            double nextBlockProgressFraction, TimeSpan timeSinceLastBlock, uint nodeCount)
+            double nextBlockProgressFraction, TimeSpan timeSinceLastBlock)
         {
             this.Height = height;
             this.HeaderHeight = headerHeight;
@@ -14,8 +14,6 @@ namespace Neo.Gui.Base.Controllers
             this.NextBlockProgressFraction = nextBlockProgressFraction;
 
             this.TimeSinceLastBlock = timeSinceLastBlock;
-
-            this.NodeCount = nodeCount;
         }
 
         public uint Height { get; }
@@ -27,7 +25,5 @@ namespace Neo.Gui.Base.Controllers
         public double NextBlockProgressFraction { get; }
 
         public TimeSpan TimeSinceLastBlock { get; set; }
-
-        public uint NodeCount { get; set; }
     }
 }

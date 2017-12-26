@@ -297,7 +297,6 @@
     <Compile Include="Implementations\Managers\ClipboardManager.cs" />
     <Compile Include="Implementations\Managers\SettingsManager.cs" />
     <Compile Include="Implementations\Services\FileDialogService.cs" />
-    <Compile Include="RegistrationModules\ControllersRegistrationModule.cs" />
     <Compile Include="Extensions\ColorExtensions.cs" />
     <Compile Include="Implementations\Managers\DialogManager.cs" />
     <Compile Include="Implementations\Helpers\ProcessHelper.cs" />
@@ -306,7 +305,6 @@
     <Compile Include="RegistrationModules\HelpersRegistrationModule.cs" />
     <Compile Include="Implementations\Services\NotificationService.cs" />
     <Compile Include="Implementations\Services\DispatchService.cs" />
-    <Compile Include="RegistrationModules\MessagingRegistrationModule.cs" />
     <Compile Include="RegistrationModules\ViewModelsRegistrationModule.cs" />
     <Compile Include="RootCertificate.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -718,15 +716,16 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="MVVM\" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\logo_72.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Neo.Gui.Base\Neo.Gui.Base.csproj">
       <Project>{929FDF79-F89D-4B4F-BB56-DBD1D31528B4}</Project>
       <Name>Neo.Gui.Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Neo.Gui.Globalization\Neo.Gui.Globalization.csproj">
+      <Project>{34501d6d-410c-4e1e-8c47-1a2ebbfbe611}</Project>
+      <Name>Neo.Gui.Globalization</Name>
     </ProjectReference>
     <ProjectReference Include="..\Neo.Gui.ViewModels\Neo.Gui.ViewModels.csproj">
       <Project>{e7116c94-ca06-4045-9517-b4332c47fd4c}</Project>

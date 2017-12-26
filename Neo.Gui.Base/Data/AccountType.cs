@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using Neo.Gui.Base.Converters;
-using Neo.Gui.Base.Globalization;
-using Neo.Gui.Base.Localization;
+using Neo.Gui.Globalization.Resources;
+using Neo.Gui.Globalization.Localization;
 
 namespace Neo.Gui.Base.Data
 {

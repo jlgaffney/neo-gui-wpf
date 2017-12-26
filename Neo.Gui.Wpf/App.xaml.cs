@@ -15,7 +15,7 @@ using Neo.Gui.Base.Dialogs.Results.Settings;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.MVVM;
-using Neo.Gui.Base.Globalization;
+using Neo.Gui.Globalization.Resources;
 using Neo.Gui.Base.Helpers;
 using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Services;
@@ -119,7 +119,7 @@ namespace Neo.Gui.Wpf
                     // Application is starting normally
 
                     // Initialize wallet controller
-                    this.walletController.Initialize(Settings.Default.Paths.CertCache);
+                    this.walletController.Initialize();
                     this.walletController.SetNEP5WatchScriptHashes(Settings.Default.NEP5Watched.ToArray());
 
                     // Check if there a newer version is available
@@ -219,8 +219,6 @@ namespace Neo.Gui.Wpf
             autoFacContainerBuilder.RegisterModule<BaseRegistrationModule>();
             autoFacContainerBuilder.RegisterModule<WpfProjectViewModelsRegistrationModule>();
             autoFacContainerBuilder.RegisterModule<ViewModelsRegistrationModule>();
-            autoFacContainerBuilder.RegisterModule<MessagingRegistrationModule>();
-            autoFacContainerBuilder.RegisterModule<ControllersRegistrationModule>();
             autoFacContainerBuilder.RegisterModule<HelpersRegistrationModule>();
             autoFacContainerBuilder.RegisterModule<ManagersRegistrationModule>();
             autoFacContainerBuilder.RegisterModule<ServicesRegistrationModule>();

@@ -12,6 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Neo.Gui.Globalization\Neo.Gui.Globalization.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="Globalization\Strings.Designer.cs">
       <DependentUpon>Strings.resx</DependentUpon>
       <DesignTime>True</DesignTime>

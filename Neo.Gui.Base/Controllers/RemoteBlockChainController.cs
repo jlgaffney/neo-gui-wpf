@@ -1,15 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
+
 using Neo.Core;
-using Neo.Network;
+
+using Neo.Gui.Base.Messaging.Interfaces;
+using Neo.Gui.Base.Status;
 
 namespace Neo.Gui.Base.Controllers
 {
-    public class RemoteBlockchainController : IBlockchainController
+    public class RemoteBlockchainController :
+        BaseBlockchainController,
+        IBlockchainController
     {
-        public RegisterTransaction GoverningToken => throw new NotImplementedException();
-
-        public RegisterTransaction UtilityToken => throw new NotImplementedException();
+        #region Constructor
+        public RemoteBlockchainController(
+            IMessagePublisher messagePublisher)
+                : base(messagePublisher)
+        {
+        }
+        #endregion
 
         public uint BlockHeight => throw new NotImplementedException();
 
@@ -19,23 +27,13 @@ namespace Neo.Gui.Base.Controllers
             remove => throw new NotImplementedException();
         }
 
-        public void Initialize()
+        public void Initialize(string blockchainDataDirectoryPath)
         {
             // Remote nodes are not supported yet
             throw new NotImplementedException();
         }
 
         public BlockchainStatus GetStatus()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Relay(Transaction transaction)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Relay(IInventory inventory)
         {
             throw new NotImplementedException();
         }
@@ -65,12 +63,7 @@ namespace Neo.Gui.Base.Controllers
             throw new NotImplementedException();
         }
 
-        public Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, bool ignoreClaimed = true)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, uint heightEnd)
+        public DateTime GetTimeOfBlock(uint blockHeight)
         {
             throw new NotImplementedException();
         }
