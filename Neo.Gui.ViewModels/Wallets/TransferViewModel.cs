@@ -16,7 +16,9 @@ using Neo.VM;
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Base.Dialogs.Results;
+using Neo.Gui.Base.Dialogs.Results.Contracts;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
@@ -82,7 +84,8 @@ namespace Neo.Gui.ViewModels.Wallets
 
             if (invocationTransaction != null)
             {
-                this.messagePublisher.Publish(new InvokeContractMessage(invocationTransaction));
+                this.dialogManager.ShowDialog<InvokeContractDialogResult, InvokeContractLoadParameters>(
+                    new InvokeContractLoadParameters(invocationTransaction));
             }
             else
             {

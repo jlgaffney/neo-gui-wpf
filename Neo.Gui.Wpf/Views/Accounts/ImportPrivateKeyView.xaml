@@ -15,7 +15,7 @@
         </Grid.RowDefinitions>
 
         <GroupBox Header="{x:Static globalization:Strings.WifPrivateKey}" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <TextBox Text="{Binding PrivateKeyWif, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+            <TextBox Text="{Binding PrivateKeysWif, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                      HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible"/>
         </GroupBox>
 

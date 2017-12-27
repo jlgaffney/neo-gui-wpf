@@ -4,6 +4,8 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
+using Neo.Gui.Globalization.Resources;
+
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
@@ -16,12 +18,11 @@ using Neo.Gui.Base.Dialogs.Results.Development;
 using Neo.Gui.Base.Dialogs.Results.Home;
 using Neo.Gui.Base.Dialogs.Results.Transactions;
 using Neo.Gui.Base.Dialogs.Results.Voting;
+using Neo.Gui.Base.Helpers;
+using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.MVVM;
-using Neo.Gui.Globalization.Resources;
-using Neo.Gui.Base.Helpers;
-using Neo.Gui.Base.Managers;
 
 namespace Neo.Gui.ViewModels.Home
 {
@@ -31,7 +32,6 @@ namespace Neo.Gui.ViewModels.Home
         IUnloadable,
         IDialogViewModel<HomeDialogResult>,
         IMessageHandler<CurrentWalletHasChangedMessage>,
-        IMessageHandler<InvokeContractMessage>,
         IMessageHandler<NewVersionAvailableMessage>,
         IMessageHandler<UpdateApplicationMessage>,
         IMessageHandler<WalletStatusMessage>
@@ -178,7 +178,9 @@ namespace Neo.Gui.ViewModels.Home
 
         public ICommand DeployContractCommand => new RelayCommand(() => this.dialogManager.ShowDialog<DeployContractDialogResult>());
 
-        public RelayCommand InvokeContractCommand => new RelayCommand(() => this.messagePublisher.Publish(new InvokeContractMessage(null)));
+        public RelayCommand InvokeContractCommand => new RelayCommand(() => 
+            this.dialogManager.ShowDialog<InvokeContractDialogResult, InvokeContractLoadParameters>(
+                new InvokeContractLoadParameters(null)));
 
         public ICommand ShowElectionDialogCommand => new RelayCommand(() => this.dialogManager.ShowDialog<ElectionDialogResult>());
 
@@ -240,12 +242,6 @@ namespace Neo.Gui.ViewModels.Home
         public void HandleMessage(CurrentWalletHasChangedMessage message)
         {
             RaisePropertyChanged(nameof(this.WalletIsOpen));
-        }
-
-        public void HandleMessage(InvokeContractMessage message)
-        {
-            this.dialogManager.ShowDialog<InvokeContractDialogResult, InvokeContractLoadParameters>(
-                new InvokeContractLoadParameters(message.Transaction));
         }
 
         public void HandleMessage(UpdateApplicationMessage message)
