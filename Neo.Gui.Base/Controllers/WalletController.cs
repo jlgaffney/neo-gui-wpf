@@ -29,15 +29,13 @@ using CryptographicException = System.Security.Cryptography.CryptographicExcepti
 using DeprecatedWallet = Neo.Implementations.Wallets.EntityFramework.UserWallet;
 using Timer = System.Timers.Timer;
 using System.Text;
+using Neo.Gui.Base.Dialogs.Results.Contracts;
+using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
 
 namespace Neo.Gui.Base.Controllers
 {
     internal class WalletController :
         IWalletController,
-        IMessageHandler<AddContractsMessage>,
-        IMessageHandler<AddContractMessage>,
-        IMessageHandler<ImportPrivateKeyMessage>,
-        IMessageHandler<ImportCertificateMessage>,
         IMessageHandler<BlockAddedMessage>
     {
         #region Private Fields 
@@ -49,7 +47,7 @@ namespace Neo.Gui.Base.Controllers
         private readonly INotificationService notificationService;
         private readonly IMessagePublisher messagePublisher;
         private readonly IMessageSubscriber messageSubscriber;
-        
+        private readonly IDialogManager dialogManager;
         private readonly int localNodePort;
         private readonly int localWSPort;
 
@@ -85,6 +83,7 @@ namespace Neo.Gui.Base.Controllers
             INotificationService notificationService,
             IMessagePublisher messagePublisher,
             IMessageSubscriber messageSubscriber,
+            IDialogManager dialogManager,
             ISettingsManager settingsManager)
         {
             this.blockchainController = blockchainController;
@@ -93,7 +92,7 @@ namespace Neo.Gui.Base.Controllers
             this.notificationService = notificationService;
             this.messagePublisher = messagePublisher;
             this.messageSubscriber = messageSubscriber;
-
+            this.dialogManager = dialogManager;
             this.blockchainDataDirectoryPath = settingsManager.BlockchainDataDirectoryPath;
 
             this.localNodePort = settingsManager.LocalNodePort;
@@ -872,7 +871,7 @@ namespace Neo.Gui.Base.Controllers
             if (tx == null) return;
             if (tx is InvocationTransaction invocationTransaction)
             {
-                this.messagePublisher.Publish(new InvokeContractMessage(invocationTransaction));
+                this.dialogManager.ShowDialog<InvokeContractDialogResult, InvokeContractLoadParameters>(new InvokeContractLoadParameters(invocationTransaction));
             }
             else
             {
