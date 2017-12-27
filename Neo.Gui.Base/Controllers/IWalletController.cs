@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Security.Cryptography.X509Certificates;
 using Neo.Core;
 using Neo.Cryptography.ECC;
 using Neo.Network;
@@ -40,6 +40,12 @@ namespace Neo.Gui.Base.Controllers
         bool ChangePassword(string oldPassword, string newPassword);
 
         void CreateNewAccount();
+
+        void AddContract(Contract contract);
+
+        void ImportPrivateKeys(IEnumerable<string> wifStrings);
+
+        void ImportCertificate(X509Certificate2 certificate);
 
         bool Sign(ContractParametersContext context);
 

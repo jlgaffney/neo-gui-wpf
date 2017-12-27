@@ -10,30 +10,31 @@ using Neo.VM;
 
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Base.Dialogs.LoadParameters.Voting;
+using Neo.Gui.Base.Dialogs.Results.Contracts;
 using Neo.Gui.Base.Dialogs.Results.Voting;
 using Neo.Gui.Base.Extensions;
-using Neo.Gui.Base.Messages;
-using Neo.Gui.Base.Messaging.Interfaces;
+using Neo.Gui.Base.Managers;
 
 namespace Neo.Gui.ViewModels.Voting
 {
     public class VotingViewModel : ViewModelBase,
         ILoadableDialogViewModel<VotingDialogResult, VotingLoadParameters>
     {
+        private readonly IDialogManager dialogManager;
         private readonly IWalletController walletController;
-        private readonly IMessagePublisher messagePublisher;
 
         private UInt160 scriptHash;
 
         private string votes;
 
         public VotingViewModel(
-            IWalletController walletController,
-            IMessagePublisher messagePublisher)
+            IDialogManager dialogManager,
+            IWalletController walletController)
         {
+            this.dialogManager = dialogManager;
             this.walletController = walletController;
-            this.messagePublisher = messagePublisher;
         }
 
         public string Address { get; private set; }
@@ -135,7 +136,8 @@ namespace Neo.Gui.ViewModels.Voting
 
             if (transaction == null) return;
 
-            this.messagePublisher.Publish(new InvokeContractMessage(transaction));
+            this.dialogManager.ShowDialog<InvokeContractDialogResult, InvokeContractLoadParameters>(
+                new InvokeContractLoadParameters(transaction));
 
             this.Close(this, EventArgs.Empty);
         }

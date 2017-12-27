@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 
 using Neo.Core;
@@ -252,6 +253,70 @@ namespace Neo.Gui.Base.Controllers
             this.ThrowIfWalletIsNotOpen();
 
             var account = this.currentWallet.CreateAccount();
+
+            this.AddAccountItem(account);
+
+            var nep6Wallet = this.currentWallet as NEP6Wallet;
+            nep6Wallet?.Save();
+        }
+
+        public void AddContract(Contract contract)
+        {
+            this.ThrowIfWalletIsNotOpen();
+
+            if (contract == null) return;
+
+            var account = this.currentWallet.CreateAccount(contract);
+
+            this.AddAccountItem(account);
+
+            var nep6Wallet = this.currentWallet as NEP6Wallet;
+            nep6Wallet?.Save();
+        }
+
+        public void ImportPrivateKeys(IEnumerable<string> wifStrings)
+        {
+            if (wifStrings == null) return;
+
+            var wifList = wifStrings.ToList();
+
+            if (!wifList.Any()) return;
+
+            foreach (var wif in wifList)
+            {
+                WalletAccount account;
+                try
+                {
+                    account = this.currentWallet.Import(wif);
+                }
+                catch (FormatException)
+                {
+                    // Skip WIF line
+                    continue;
+                }
+
+                this.AddAccountItem(account);
+            }
+
+            var nep6Wallet = this.currentWallet as NEP6Wallet;
+            nep6Wallet?.Save();
+        }
+
+        public void ImportCertificate(X509Certificate2 certificate)
+        {
+            if (certificate == null) return;
+
+            WalletAccount account;
+            try
+            {
+                account = this.currentWallet.Import(certificate);
+            }
+            catch
+            {
+                // TODO Localise this text
+                this.notificationService.ShowErrorNotification("Certificate import failed!");
+                return;
+            }
 
             this.AddAccountItem(account);
 
@@ -816,83 +881,7 @@ namespace Neo.Gui.Base.Controllers
         }
         #endregion
 
-        #region IMessageHandler implementation 
-        public void HandleMessage(AddContractsMessage message)
-        {
-            if (message.Contracts == null || !message.Contracts.Any()) return;
-
-            foreach (var contract in message.Contracts)
-            {
-                var account = this.currentWallet.CreateAccount(contract);
-
-                this.AddAccountItem(account);
-            }
-
-            var nep6Wallet = this.currentWallet as NEP6Wallet;
-            nep6Wallet?.Save();
-        }
-
-        public void HandleMessage(AddContractMessage message)
-        {
-            this.ThrowIfWalletIsNotOpen();
-
-            if (message.Contract == null) return;
-
-            var account = this.currentWallet.CreateAccount(message.Contract);
-
-            this.AddAccountItem(account);
-
-            var nep6Wallet = this.currentWallet as NEP6Wallet;
-            nep6Wallet?.Save();
-        }
-
-        public void HandleMessage(ImportPrivateKeyMessage message)
-        {
-            if (message.WifStrings == null) return;
-
-            if (!message.WifStrings.Any()) return;
-
-            foreach (var wif in message.WifStrings)
-            {
-                WalletAccount account;
-                try
-                {
-                    account = this.currentWallet.Import(wif);
-                }
-                catch (FormatException)
-                {
-                    // Skip WIF line
-                    continue;
-                }
-
-                this.AddAccountItem(account);
-            }
-            
-            var nep6Wallet = this.currentWallet as NEP6Wallet;
-            nep6Wallet?.Save();
-        }
-
-        public void HandleMessage(ImportCertificateMessage message)
-        {
-            if (message.SelectedCertificate == null) return;
-
-            WalletAccount account;
-            try
-            {
-                account = this.currentWallet.Import(message.SelectedCertificate);
-            }
-            catch
-            {
-                // TODO Localise this text
-                this.notificationService.ShowErrorNotification("Certificate import failed!");
-                return;
-            }
-
-            this.AddAccountItem(account);
-
-            var nep6Wallet = this.currentWallet as NEP6Wallet;
-            nep6Wallet?.Save();
-        }
+        #region IMessageHandler implementation
 
         public void HandleMessage(BlockAddedMessage message)
         {

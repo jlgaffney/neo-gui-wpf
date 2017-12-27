@@ -145,22 +145,6 @@ namespace Neo.Gui.ViewModels.Tests.Home
         }
 
         [Fact]
-        public void InvokeContractMessageReceived_ShowInvokeContractDialog()
-        {
-            // Arrange
-            var dialogManagerMock = this.AutoMockContainer.GetMock<IDialogManager>();
-
-            var viewModel = this.AutoMockContainer.Create<HomeViewModel>();
-            var InvokeContractMessageHandler = viewModel as IMessageHandler<InvokeContractMessage>;
-
-            // Act
-            InvokeContractMessageHandler.HandleMessage(new InvokeContractMessage(new Core.InvocationTransaction()));
-
-            // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<InvokeContractDialogResult, InvokeContractLoadParameters>(It.IsAny<InvokeContractLoadParameters>()));
-        }
-
-        [Fact]
         public void CreateWalletCommand_ShowCreateWalletDialogAndCallWalletController()
         {
             // Arrange
@@ -412,15 +396,15 @@ namespace Neo.Gui.ViewModels.Tests.Home
         public void InvokeContractCommand_PublishInvokeContractMessage()
         {
             // Arrange
-            var messagePublisherMock = this.AutoMockContainer.GetMock<IMessagePublisher>();
+            var dialogManagerMock = this.AutoMockContainer.GetMock<IDialogManager>();
 
             var viewModel = this.AutoMockContainer.Create<HomeViewModel>();
 
             // Act
             viewModel.InvokeContractCommand.Execute(null);
-
+            
             // Assert
-            messagePublisherMock.Verify(x => x.Publish(It.IsAny<InvokeContractMessage>()));
+            dialogManagerMock.Verify(x => x.ShowDialog<InvokeContractDialogResult, InvokeContractLoadParameters>(It.IsAny<InvokeContractLoadParameters>()));
         }
 
         [Fact]

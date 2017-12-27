@@ -12,10 +12,10 @@ using Neo.Cryptography.ECC;
 
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.Results;
+using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Base.Dialogs.Results.Assets;
-using Neo.Gui.Base.Messages;
-using Neo.Gui.Base.Messaging.Interfaces;
+using Neo.Gui.Base.Dialogs.Results.Contracts;
+using Neo.Gui.Base.Managers;
 
 namespace Neo.Gui.ViewModels.Assets
 {
@@ -23,8 +23,8 @@ namespace Neo.Gui.ViewModels.Assets
     {
         private static readonly AssetType[] assetTypes = { AssetType.Share, AssetType.Token };
 
+        private readonly IDialogManager dialogManager;
         private readonly IWalletController walletController;
-        private readonly IMessagePublisher messagePublisher;
 
         private AssetType? selectedAssetType;
         private ECPoint selectedOwner;
@@ -41,11 +41,11 @@ namespace Neo.Gui.ViewModels.Assets
         private bool formValid;
 
         public AssetRegistrationViewModel(
-            IWalletController walletController,
-            IMessagePublisher messagePublisher)
+            IDialogManager dialogManager,
+            IWalletController walletController)
         {
+            this.dialogManager = dialogManager;
             this.walletController = walletController;
-            this.messagePublisher = messagePublisher;
             
             this.AssetTypes = new ObservableCollection<AssetType>(assetTypes);
 
@@ -250,7 +250,9 @@ namespace Neo.Gui.ViewModels.Assets
 
             if (transaction == null) return;
 
-            this.messagePublisher.Publish(new InvokeContractMessage(transaction));
+            this.dialogManager.ShowDialog<InvokeContractDialogResult, InvokeContractLoadParameters>(
+                new InvokeContractLoadParameters(transaction));
+
             this.Close(this, EventArgs.Empty);
         }
 

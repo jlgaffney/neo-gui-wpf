@@ -9,21 +9,21 @@ using GalaSoft.MvvmLight.Command;
 using Neo.Cryptography.ECC;
 using Neo.SmartContract;
 
-using Neo.Gui.Base.Messages;
-using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Globalization.Resources;
-using Neo.Gui.Base.Services;
+
+using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.Services;
 
 namespace Neo.Gui.ViewModels.Accounts
 {
     public class CreateMultiSigContractViewModel : ViewModelBase, IDialogViewModel<CreateMultiSigContractDialogResult>
     {
         private readonly IDialogManager dialogManager;
-        private readonly IMessagePublisher messagePublisher;
         private readonly IDispatchService dispatchService;
+        private readonly IWalletController walletController;
 
         private int minimumSignatureNumber;
         private int minimumSignatureNumberMaxValue;
@@ -34,12 +34,12 @@ namespace Neo.Gui.ViewModels.Accounts
 
         public CreateMultiSigContractViewModel(
             IDialogManager dialogManager,
-            IMessagePublisher messagePublisher,
-            IDispatchService dispatchService)
+            IDispatchService dispatchService,
+            IWalletController walletController)
         {
             this.dialogManager = dialogManager;
-            this.messagePublisher = messagePublisher;
             this.dispatchService = dispatchService;
+            this.walletController = walletController;
 
             this.PublicKeys = new ObservableCollection<string>();
         }
@@ -140,7 +140,7 @@ namespace Neo.Gui.ViewModels.Accounts
                 return;
             }
 
-            this.messagePublisher.Publish(new AddContractMessage(contract));
+            this.walletController.AddContract(contract);
 
             this.Close(this, EventArgs.Empty);
         }

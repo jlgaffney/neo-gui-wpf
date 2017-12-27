@@ -8,13 +8,11 @@ using GalaSoft.MvvmLight.Command;
 using Neo.Core;
 using Neo.Gui.Base.Controllers;
 using Neo.SmartContract;
-using Neo.VM;
 
 using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.Results;
+using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Base.Dialogs.Results.Contracts;
 using Neo.Gui.Base.Managers;
-using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.Services;
 
@@ -22,9 +20,9 @@ namespace Neo.Gui.ViewModels.Contracts
 {
     public class DeployContractViewModel : ViewModelBase, IDialogViewModel<DeployContractDialogResult>
     {
+        private readonly IDialogManager dialogManager;
         private readonly IFileManager fileManager;
         private readonly IFileDialogService fileDialogService;
-        private readonly IMessagePublisher messagePublisher;
         private readonly IWalletController walletController;
 
         private string name;
@@ -39,14 +37,14 @@ namespace Neo.Gui.ViewModels.Contracts
         private bool needsStorage;
 
         public DeployContractViewModel(
+            IDialogManager dialogManager,
             IFileManager fileManager,
             IFileDialogService fileDialogService,
-            IMessagePublisher messagePublisher,
             IWalletController walletController)
         {
+            this.dialogManager = dialogManager;
             this.fileManager = fileManager;
             this.fileDialogService = fileDialogService;
-            this.messagePublisher = messagePublisher;
             this.walletController = walletController;
         }
 
@@ -269,7 +267,9 @@ namespace Neo.Gui.ViewModels.Contracts
 
             if (transaction == null) return;
 
-            this.messagePublisher.Publish(new InvokeContractMessage(transaction));
+            this.dialogManager.ShowDialog<InvokeContractDialogResult, InvokeContractLoadParameters>(
+                new InvokeContractLoadParameters(transaction));
+
             this.Close(this, EventArgs.Empty);
         }
 
