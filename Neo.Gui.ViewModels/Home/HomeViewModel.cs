@@ -158,8 +158,6 @@ namespace Neo.Gui.ViewModels.Home
 
         public ICommand CloseWalletCommand => new RelayCommand(() => this.walletController.CloseWallet());
 
-        public ICommand ChangePasswordCommand => new RelayCommand(() => this.dialogManager.ShowDialog<ChangePasswordDialogResult>());
-
         public ICommand ExitCommand => new RelayCommand(() => this.messagePublisher.Publish(new ExitAppMessage()));
 
         public ICommand TransferCommand => new RelayCommand(() => this.dialogManager.ShowDialog<TransferDialogResult>());

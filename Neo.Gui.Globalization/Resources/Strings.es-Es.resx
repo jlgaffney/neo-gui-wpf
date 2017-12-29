@@ -156,6 +156,9 @@
   <data name="AdvancedMenuHeader" xml:space="preserve">
     <value>A_vanzado</value>
   </data>
+  <data name="Advanced" xml:space="preserve">
+    <value>Avanzado</value>
+  </data>
   <data name="Amount" xml:space="preserve">
     <value>Cantidad</value>
   </data>
@@ -849,5 +852,9 @@ Aviso: los ficheros actualizados no podran ser abiertos por clientes de versione
   </data>
   <data name="WatchOnly" xml:space="preserve">
     <value>Ver solo</value>
+  </data>
+  <data name="ChangeAddress" xml:space="preserve">
+    <!-- TODO Translate -->
+    <value>Change Address</value>
   </data>
 </root>

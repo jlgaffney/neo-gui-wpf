@@ -38,10 +38,6 @@
             <MenuItem Header="{x:Static globalization:Strings.WalletMenuHeader}">
                 <MenuItem Header="{x:Static globalization:Strings.NewWalletMenuHeader}" Command="{Binding CreateWalletCommand}" InputGestureText="Ctrl+N" />
                 <MenuItem Header="{x:Static globalization:Strings.OpenWalletMenuHeader}" Command="{Binding OpenWalletCommand}" InputGestureText="Ctrl+O" />
-                <MenuItem Header="{x:Static globalization:Strings.ChangePasswordMenuHeader}" Command="{Binding ChangePasswordCommand}" IsEnabled="{Binding WalletIsOpen}" />
-
-                <Separator />
-                
                 <MenuItem Header="{x:Static globalization:Strings.CloseWalletMenuHeader}" Command="{Binding CloseWalletCommand}" IsEnabled="{Binding WalletIsOpen}" />
                 
                 <Separator />

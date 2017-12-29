@@ -178,6 +178,15 @@ namespace Neo.Gui.Globalization.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Advanced.
+        /// </summary>
+        public static string Advanced {
+            get {
+                return ResourceManager.GetString("Advanced", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ad_vanced.
         /// </summary>
         public static string AdvancedMenuHeader {
@@ -408,6 +417,15 @@ namespace Neo.Gui.Globalization.Resources {
         public static string CertificateApplicationTitle {
             get {
                 return ResourceManager.GetString("CertificateApplicationTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change Address.
+        /// </summary>
+        public static string ChangeAddress {
+            get {
+                return ResourceManager.GetString("ChangeAddress", resourceCulture);
             }
         }
         

@@ -37,8 +37,6 @@ namespace Neo.Gui.Base.Controllers
 
         void CloseWallet();
 
-        bool ChangePassword(string oldPassword, string newPassword);
-
         void CreateNewAccount();
 
         void AddContract(Contract contract);
@@ -86,7 +84,12 @@ namespace Neo.Gui.Base.Controllers
 
         Transaction GetTransaction(UInt256 hash, out int height);
 
-        AccountState GetAccountState(UInt160 scriptHash);
+        /// <summary>
+        /// Gets the public keys that the specified script hash have voted for.
+        /// </summary>
+        /// <param name="scriptHash">Script hash of the account that voted</param>
+        /// <returns>Enumerable collection of public keys</returns>
+        IEnumerable<ECPoint> GetVotes(UInt160 scriptHash);
 
         ContractState GetContractState(UInt160 scriptHash);
 
@@ -140,10 +143,10 @@ namespace Neo.Gui.Base.Controllers
 
         void ClaimAssets();
 
-        void ExecuteIssueTransaction(UInt256 assetId, IEnumerable<TransactionOutputItem> items);
+        void IssueAsset(UInt256 assetId, IEnumerable<TransactionOutputItem> items);
 
-        void ExecuteInvocationTransaction(InvocationTransaction transaction);
+        void InvokeContract(InvocationTransaction transaction);
 
-        void ExecuteTransferTransaction(IEnumerable<TransactionOutputItem> items, string remark);
+        void Transfer(IEnumerable<TransactionOutputItem> items, string remark, UInt160 changeAddress = null, Fixed8 fee = default(Fixed8));
     }
 }

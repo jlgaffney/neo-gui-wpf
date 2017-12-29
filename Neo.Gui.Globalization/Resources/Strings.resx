@@ -156,6 +156,9 @@
   <data name="AdvancedMenuHeader" xml:space="preserve">
     <value>Ad_vanced</value>
   </data>
+  <data name="Advanced" xml:space="preserve">
+    <value>Advanced</value>
+  </data>
   <data name="Amount" xml:space="preserve">
     <value>Amount</value>
   </data>
@@ -852,5 +855,8 @@ Note: updated files cannot be openned by clients in older versions!</value>
   </data>
   <data name="WatchOnly" xml:space="preserve">
     <value>Watch Only</value>
+  </data>
+  <data name="ChangeAddress" xml:space="preserve">
+    <value>Change Address</value>
   </data>
 </root>

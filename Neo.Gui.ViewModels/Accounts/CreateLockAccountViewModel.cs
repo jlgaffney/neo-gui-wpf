@@ -11,10 +11,9 @@ using Neo.SmartContract;
 using Neo.VM;
 using Neo.Wallets;
 
-using Neo.Gui.Base.Controllers;
-using Neo.Gui.Base.Messages;
-using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Globalization.Resources;
+
+using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Managers;

@@ -237,21 +237,6 @@ namespace Neo.Gui.ViewModels.Tests.Home
         }
 
         [Fact]
-        public void ChangePasswordCommand_ShowChangePasswordDialog()
-        {
-            // Arrange
-            var dialogManagerMock = this.AutoMockContainer.GetMock<IDialogManager>();
-
-            var viewModel = this.AutoMockContainer.Create<HomeViewModel>();
-
-            // Act
-            viewModel.ChangePasswordCommand.Execute(null);
-
-            // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<ChangePasswordDialogResult>());
-        }
-
-        [Fact]
         public void ExitCommand_PublicExitAppMessage()
         {
             // Arrange

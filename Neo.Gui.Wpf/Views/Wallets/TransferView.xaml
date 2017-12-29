@@ -12,6 +12,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <GroupBox Grid.Row="0" Header="{x:Static globalization:Strings.RecipientList}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -23,8 +24,30 @@
                 </Button>
             </Grid>
         </GroupBox>
+        
+        <GroupBox Grid.Row="1" Header="{x:Static globalization:Strings.Advanced}" Visibility="{Binding ShowAdvancedSection, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Hidden}">
+            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-        <DockPanel Grid.Row="1" Margin="0 8 0 0" HorizontalAlignment="Right" VerticalAlignment="Stretch">
+                <Label Grid.Row="0" Grid.Column="0" Content="{x:Static globalization:Strings.Fee}" Margin="0 0 4 0" VerticalAlignment="Center" />
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Fee, UpdateSourceTrigger=PropertyChanged}" Margin="4" Padding="4" HorizontalAlignment="Stretch" />
+
+                <Label Grid.Row="1" Grid.Column="0" Content="{x:Static globalization:Strings.ChangeAddress}" Margin="0 0 4 0" VerticalAlignment="Center" />
+                <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Addresses}" SelectedItem="{Binding SelectedChangeAddress}" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+            </Grid>
+        </GroupBox>
+
+        <Button Grid.Row="2" Width="70" Margin="0 8 0 0" Content="{x:Static globalization:Strings.Advanced}" HorizontalAlignment="Left" Command="{Binding AdvancedCommand}" />
+
+        <DockPanel Grid.Row="2" Margin="0 8 0 0" HorizontalAlignment="Right" VerticalAlignment="Stretch">
             <Button Content="{x:Static globalization:Strings.OK}" Width="70" Margin="0 0 8 0" Command="{Binding OkCommand}" IsEnabled="{Binding OkEnabled}" />
             <Button Content="{x:Static globalization:Strings.Cancel}" Width="70" Command="{Binding CancelCommand}" />
         </DockPanel>

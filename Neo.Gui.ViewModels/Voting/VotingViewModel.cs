@@ -70,20 +70,17 @@ namespace Neo.Gui.ViewModels.Voting
             this.SetScriptHash(parameters.ScriptHash);
         }
         #endregion
-
+        
         private void SetScriptHash(UInt160 hash)
         {
             this.scriptHash = hash;
 
-            var account = this.walletController.GetAccountState(hash);
+            var voteStrings = this.walletController.GetVotes(hash).Select(p => p.ToString()).ToArray();
 
             // Set address
             this.Address = this.walletController.ToAddress(hash);
 
             // Concatenate votes into multi-line string
-            var voteStrings = account.Votes.Select(p => p.ToString()).ToArray();
-
-            // Set votes
             this.Votes = voteStrings.ToMultiLineString();
 
             // Update bindable properties

@@ -109,9 +109,6 @@ namespace Neo.Gui.Wpf.RegistrationModules
                 .RegisterType<CertificateApplicationView>()
                 .As<IDialog<CertificateApplicationDialogResult>>();
             builder
-                .RegisterType<ChangePasswordView>()
-                .As<IDialog<ChangePasswordDialogResult>>();
-            builder
                 .RegisterType<ClaimView>()
                 .As<IDialog<ClaimDialogResult>>();
             builder

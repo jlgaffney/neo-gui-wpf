@@ -334,7 +334,7 @@ namespace Neo.Gui.ViewModels.Contracts
 
             if (this.transaction == null) return;
 
-            this.walletController.ExecuteInvocationTransaction(this.transaction);
+            this.walletController.InvokeContract(this.transaction);
 
             this.Close(this, EventArgs.Empty);
         }
