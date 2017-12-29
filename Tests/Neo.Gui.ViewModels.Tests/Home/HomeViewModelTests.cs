@@ -6,7 +6,6 @@ using Neo.Gui.Base.Controllers;
 using Moq;
 
 using Neo.Gui.Globalization.Resources;
-
 using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Dialogs.Results.Contracts;

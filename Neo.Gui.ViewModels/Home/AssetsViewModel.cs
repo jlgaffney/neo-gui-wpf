@@ -1,9 +1,6 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-using Neo.Core;
-using Neo.VM;
-
 using Neo.Gui.Base.Collections;
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Data;
@@ -24,14 +21,13 @@ namespace Neo.Gui.ViewModels.Home
         IMessageHandler<AssetAddedMessage>
     {
         #region Private Fields 
-        private static readonly UInt160 RecycleScriptHash = new[] { (byte)OpCode.PUSHT }.ToScriptHash();
-
         private readonly IDialogManager dialogManager;
         private readonly IProcessHelper processHelper;
         private readonly ISettingsManager settingsManager;
         private readonly IWalletController walletController;
         private readonly IMessageSubscriber messageSubscriber;
         private readonly IMessagePublisher messagePublisher;
+
         private AssetItem selectedAsset;
         #endregion
 
