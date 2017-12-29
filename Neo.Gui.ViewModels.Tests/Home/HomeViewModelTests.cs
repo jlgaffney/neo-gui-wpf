@@ -6,8 +6,6 @@ using Neo.Gui.Base.Controllers;
 using Moq;
 
 using Neo.Gui.Globalization.Resources;
-
-using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Dialogs.Results.Contracts;
@@ -20,12 +18,8 @@ using Neo.Gui.Base.Dialogs.Results.Transactions;
 using Neo.Gui.Base.Dialogs.Results.Voting;
 using Neo.Gui.Base.Helpers;
 using Neo.Gui.Base.Managers;
-using Neo.Gui.Base.Messaging.Interfaces;
-using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Status;
 using Neo.Gui.TestHelpers;
-
-using Neo.Gui.ViewModels.Home;
 
 namespace Neo.Gui.ViewModels.Tests.Home
 {
