@@ -144,6 +144,6 @@ namespace Neo.Gui.Base.Controllers
 
         void ExecuteInvocationTransaction(InvocationTransaction transaction);
 
-        void ExecuteTransferTransaction(IEnumerable<TransactionOutputItem> items, string remark);
+        void ExecuteTransferTransaction(IEnumerable<TransactionOutputItem> items, string remark, UInt160 changeAddress = null, Fixed8 fee = default(Fixed8));
     }
 }

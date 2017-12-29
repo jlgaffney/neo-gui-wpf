@@ -756,7 +756,7 @@ namespace Neo.Gui.Base.Controllers
             this.SignAndRelayTransaction(transactionWithFee);
         }
 
-        public void ExecuteTransferTransaction(IEnumerable<TransactionOutputItem> items, string remark)
+        public void ExecuteTransferTransaction(IEnumerable<TransactionOutputItem> items, string remark, UInt160 changeAddress = null, Fixed8 fee = default(Fixed8))
         {
             var cOutputs = items.Where(p => p.AssetId is UInt160).GroupBy(p => new
             {
@@ -865,7 +865,7 @@ namespace Neo.Gui.Base.Controllers
 
             if (tx is ContractTransaction ctx)
             {
-                tx = this.MakeTransaction(ctx);
+                tx = this.MakeTransaction(ctx, changeAddress, fee);
             }
 
             if (tx == null) return;

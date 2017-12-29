@@ -156,6 +156,9 @@
   <data name="AdvancedMenuHeader" xml:space="preserve">
     <value>高级(_V)</value>
   </data>
+  <data name="Advanced" xml:space="preserve">
+    <value>高级</value>
+  </data>
   <data name="Amount" xml:space="preserve">
     <value>数额</value>
   </data>
@@ -849,5 +852,8 @@
   </data>
   <data name="WatchOnly" xml:space="preserve">
     <value>只看</value>
+  </data>
+  <data name="ChangeAddress" xml:space="preserve">
+    <value>找零地址</value>
   </data>
 </root>
