@@ -420,9 +420,6 @@
     <Compile Include="Views\Wallets\CertificateApplicationView.xaml.cs">
       <DependentUpon>CertificateApplicationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Wallets\ChangePasswordView.xaml.cs">
-      <DependentUpon>ChangePasswordView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Settings\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
@@ -688,10 +685,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Wallets\CertificateApplicationView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Wallets\ChangePasswordView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

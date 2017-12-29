@@ -240,13 +240,6 @@ namespace Neo.Gui.Base.Controllers
             this.SetCurrentWallet(null, null);
         }
 
-        public bool ChangePassword(string oldPassword, string newPassword)
-        {
-            this.ThrowIfWalletIsNotOpen();
-            
-            return false;//this.currentWallet.ChangePassword(oldPassword, newPassword);
-        }
-
         public void CreateNewAccount()
         {
             this.ThrowIfWalletIsNotOpen();
@@ -433,9 +426,18 @@ namespace Neo.Gui.Base.Controllers
             return this.blockchainController.GetTransaction(hash, out height);
         }
 
-        public AccountState GetAccountState(UInt160 scriptHash)
+        public IEnumerable<ECPoint> GetVotes(UInt160 scriptHash)
         {
-            return this.blockchainController.GetAccountState(scriptHash);
+            var accountState = this.blockchainController.GetAccountState(scriptHash);
+
+            if (accountState == null)
+            {
+                return Enumerable.Empty<ECPoint>();
+            }
+            else
+            {
+                return accountState.Votes;
+            }
         }
 
         public ContractState GetContractState(UInt160 scriptHash)
@@ -719,11 +721,11 @@ namespace Neo.Gui.Base.Controllers
 
             if (claims.Length == 0) return;
 
-            var clainTransaction = this.MakeClaimTransaction(claims);
-            this.SignAndRelayTransaction(clainTransaction);
+            var claimTransaction = this.MakeClaimTransaction(claims);
+            this.SignAndRelayTransaction(claimTransaction);
         }
 
-        public void ExecuteIssueTransaction(UInt256 assetId, IEnumerable<TransactionOutputItem> items)
+        public void IssueAsset(UInt256 assetId, IEnumerable<TransactionOutputItem> items)
         {
             var issueTransaction = this.MakeTransaction(new IssueTransaction
             {
@@ -739,7 +741,7 @@ namespace Neo.Gui.Base.Controllers
             this.SignAndRelayTransaction(issueTransaction);
         }
 
-        public void ExecuteInvocationTransaction(InvocationTransaction transaction)
+        public void InvokeContract(InvocationTransaction transaction)
         {
             var transactionFee = transaction.Gas.Equals(Fixed8.Zero) ? NetworkFee : Fixed8.Zero;
 
@@ -756,7 +758,7 @@ namespace Neo.Gui.Base.Controllers
             this.SignAndRelayTransaction(transactionWithFee);
         }
 
-        public void ExecuteTransferTransaction(IEnumerable<TransactionOutputItem> items, string remark, UInt160 changeAddress = null, Fixed8 fee = default(Fixed8))
+        public void Transfer(IEnumerable<TransactionOutputItem> items, string remark, UInt160 changeAddress = null, Fixed8 fee = default(Fixed8))
         {
             var cOutputs = items.Where(p => p.AssetId is UInt160).GroupBy(p => new
             {
@@ -869,8 +871,10 @@ namespace Neo.Gui.Base.Controllers
             }
 
             if (tx == null) return;
+
             if (tx is InvocationTransaction invocationTransaction)
             {
+                // TODO Remove IDialogManager dependency
                 this.dialogManager.ShowDialog<InvokeContractDialogResult, InvokeContractLoadParameters>(new InvokeContractLoadParameters(invocationTransaction));
             }
             else
@@ -1018,21 +1022,27 @@ namespace Neo.Gui.Base.Controllers
                 }
 
                 // Load transactions
-                var walletTransactions = this.currentWallet.GetTransactions();
+                var walletTransactionHashes = this.currentWallet.GetTransactions();
 
-                foreach (var i in walletTransactions.Select(p => new
+                // Get transaction information from transaction hashes
+                var walletTransactions = new List<TransactionItem>();
+                foreach (var transactionHash in walletTransactionHashes)
                 {
-                    Transaction = this.blockchainController.GetTransaction(p, out int height),
-                    Height = (uint)height
-                }).Where(p => p.Transaction != null).Select(p => new
+                    var transaction = this.blockchainController.GetTransaction(transactionHash, out var height);
 
+                    if (transaction == null) continue;
+
+                    var transactionTime = this.blockchainController.GetTimeOfBlock((uint) height);
+
+                    walletTransactions.Add(new TransactionItem(transactionHash, transaction.Type, (uint) height, transactionTime));
+                }
+
+                // Add transactions to wallet info, ordered by time
+                var orderedTransactions = walletTransactions.OrderBy(item => item.Time);
+
+                foreach (var transactionItem in orderedTransactions)
                 {
-                    p.Transaction,
-                    p.Height,
-                    Time = this.blockchainController.GetTimeOfBlock(p.Height)
-                }).OrderBy(p => p.Time))
-                {
-                    this.AddTransaction(i.Transaction, i.Height, i.Time);
+                    this.AddTransaction(transactionItem);
                 }
 
                 this.currentWallet.BalanceChanged += this.CurrentWalletBalanceChanged;
@@ -1046,10 +1056,14 @@ namespace Neo.Gui.Base.Controllers
 
         private void CurrentWalletBalanceChanged(object sender, BalanceEventArgs e)
         {
+            var transaction = e.Transaction;
+
             // TODO Check this logic is correct
             var transactionHeight = e.Height ?? this.blockchainController.BlockHeight;
 
-            this.AddTransaction(e.Transaction, transactionHeight, TimeHelper.UnixTimestampToDateTime(e.Time));
+            var transactionItem = new TransactionItem(transaction.Hash, transaction.Type, transactionHeight, TimeHelper.UnixTimestampToDateTime(e.Time));
+            
+            this.AddTransaction(transactionItem);
 
             this.SetWalletBalanceChangedFlag();
         }
@@ -1258,11 +1272,9 @@ namespace Neo.Gui.Base.Controllers
             checkNep5Balance = false;
         }
 
-        private void AddTransaction(Transaction transaction, uint blockHeight, DateTime transactionTime)
+        private void AddTransaction(TransactionItem transaction)
         {
-            var transactionItem = new TransactionItem(transaction.Hash, transaction.Type, blockHeight, transactionTime);
-
-            this.currentWalletInfo.AddTransaction(transactionItem);
+            this.currentWalletInfo.AddTransaction(transaction);
 
             // TODO Replace with a TransactionAddedMessage
             this.messagePublisher.Publish(new TransactionsHaveChangedMessage(this.currentWalletInfo.GetTransactions()));

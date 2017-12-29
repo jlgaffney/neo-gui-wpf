@@ -148,7 +148,7 @@ namespace Neo.Gui.ViewModels.Wallets
                 transferChangeAddress = this.walletController.ToScriptHash(this.SelectedChangeAddress);
             }
 
-            this.walletController.ExecuteTransferTransaction(this.Items, this.remark, transferChangeAddress, transferFee);
+            this.walletController.Transfer(this.Items, this.remark, transferChangeAddress, transferFee);
 
             this.Close(this, EventArgs.Empty);
         }

@@ -5,6 +5,8 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
+using Neo.Gui.Globalization.Resources;
+
 using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Dialogs.LoadParameters.Accounts;
@@ -16,8 +18,6 @@ using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.MVVM;
-
-using Neo.Gui.Globalization.Resources;
 
 namespace Neo.Gui.ViewModels.Home
 {
@@ -195,22 +195,17 @@ namespace Neo.Gui.ViewModels.Home
         private void ViewPrivateKey()
         {
             if (!this.ViewPrivateKeyEnabled) return;
-
-            var selectedAccountKey = this.walletController.GetAccountKey(this.SelectedAccount.ScriptHash);
-            var selectedAccountScriptHash = this.SelectedAccount.ScriptHash;
-
+            
             this.dialogManager.ShowDialog<ViewPrivateKeyDialogResult, ViewPrivateKeyLoadParameters>(
-                new ViewPrivateKeyLoadParameters(selectedAccountScriptHash, selectedAccountKey));
+                new ViewPrivateKeyLoadParameters(this.SelectedAccount.ScriptHash));
         }
 
         private void ViewContract()
         {
             if (!this.ViewContractEnabled) return;
 
-            var selectedAccountContract = this.walletController.GetAccountContract(this.SelectedAccount.ScriptHash);
-
             this.dialogManager.ShowDialog<ViewContractDialogResult, ViewContractLoadParameters>(
-                new ViewContractLoadParameters(selectedAccountContract));
+                new ViewContractLoadParameters(this.SelectedAccount.ScriptHash));
         }
 
         private void ShowVotingDialog()

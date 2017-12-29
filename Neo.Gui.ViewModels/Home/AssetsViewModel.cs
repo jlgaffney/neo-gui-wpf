@@ -135,8 +135,7 @@ namespace Neo.Gui.ViewModels.Home
         {
             if (this.SelectedAsset == null) return;
 
-            var assetURLFormat = this.settingsManager.AddressURLFormat;
-            var url = string.Format(assetURLFormat, this.SelectedAsset.Name.Substring(2));
+            var url = string.Format(this.settingsManager.AssetURLFormat, this.SelectedAsset.Name.Substring(2));
 
             this.processHelper.OpenInExternalBrowser(url);
         }

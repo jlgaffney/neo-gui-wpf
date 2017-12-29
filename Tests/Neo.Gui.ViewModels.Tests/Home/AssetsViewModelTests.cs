@@ -157,7 +157,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
         public void ViewSelectedAssetDetailsCommand_OpenBrowserWithAssetDetails()
         {
             // Arrange
-            var expectedAddressURLFormat = @"https://www.xpto.com/{0}";
+            var expectedAssetURLFormat = @"https://www.xpto.com/{0}";
             var tokenName = "1234";
             var tokenId = UInt256.Parse("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF");
 
@@ -170,8 +170,8 @@ namespace Neo.Gui.ViewModels.Tests.Home
 
             var settingsManagerMock = this.AutoMockContainer.GetMock<ISettingsManager>();
             settingsManagerMock
-                .SetupGet(x => x.AddressURLFormat)
-                .Returns(expectedAddressURLFormat);
+                .SetupGet(x => x.AssetURLFormat)
+                .Returns(expectedAssetURLFormat);
 
             var viewModel = this.AutoMockContainer.Create<AssetsViewModel>();
 
@@ -180,7 +180,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.ViewSelectedAssetDetailsCommand.Execute(null);
 
             // Assert
-            processHelperMock.Verify(x => x.OpenInExternalBrowser(string.Format(expectedAddressURLFormat, tokenName.Substring(2))));
+            processHelperMock.Verify(x => x.OpenInExternalBrowser(string.Format(expectedAssetURLFormat, tokenName.Substring(2))));
         }
     }
 }

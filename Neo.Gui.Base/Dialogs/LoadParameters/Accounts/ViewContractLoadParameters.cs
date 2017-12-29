@@ -1,14 +1,12 @@
-﻿using Neo.SmartContract;
-
-namespace Neo.Gui.Base.Dialogs.LoadParameters.Accounts
+﻿namespace Neo.Gui.Base.Dialogs.LoadParameters.Accounts
 {
     public class ViewContractLoadParameters
     {
-        public Contract Contract { get; }
+        public UInt160 ScriptHash { get; }
 
-        public ViewContractLoadParameters(Contract contract)
+        public ViewContractLoadParameters(UInt160 scriptHash)
         {
-            this.Contract = contract;
+            this.ScriptHash = scriptHash;
         }
     }
 }

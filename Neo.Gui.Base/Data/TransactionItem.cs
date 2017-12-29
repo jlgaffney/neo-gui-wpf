@@ -1,6 +1,9 @@
 ﻿using System;
+
 using Neo.Core;
+
 using Neo.Gui.Globalization.Resources;
+
 using Neo.Gui.Base.Helpers;
 using Neo.Gui.Base.MVVM;
 
@@ -13,13 +16,13 @@ namespace Neo.Gui.Base.Data
         #endregion
 
         #region Public Properties 
-        public UInt256 Hash { get; private set; }
+        public UInt256 Hash { get; }
 
-        public uint Height { get; private set; }
+        public uint Height { get; }
 
-        public DateTime Time { get; private set; }
+        public DateTime Time { get; }
 
-        public TransactionType Type { get; private set; }
+        public TransactionType Type { get; }
 
         public string Confirmations => this.confirmations > 0 ? this.confirmations.ToString() : Strings.Unconfirmed;
         #endregion

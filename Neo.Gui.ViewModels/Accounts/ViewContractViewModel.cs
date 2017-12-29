@@ -7,6 +7,7 @@ using GalaSoft.MvvmLight.Command;
 
 using Neo.SmartContract;
 
+using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Accounts;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
@@ -16,6 +17,19 @@ namespace Neo.Gui.ViewModels.Accounts
     public class ViewContractViewModel : ViewModelBase, 
         ILoadableDialogViewModel<ViewContractDialogResult, ViewContractLoadParameters>
     {
+        #region Private fields
+
+        private readonly IWalletController walletController;
+        #endregion
+
+        #region Constructor
+        public ViewContractViewModel(
+            IWalletController walletController)
+        {
+            this.walletController = walletController;
+        }
+        #endregion
+
         #region Public Properties 
         public string Address { get; private set; }
 
@@ -37,9 +51,11 @@ namespace Neo.Gui.ViewModels.Accounts
         
         public void OnDialogLoad(ViewContractLoadParameters parameters)
         {
-            if (parameters?.Contract == null) return;
+            if (parameters?.ScriptHash == null) return;
 
-            this.SetContract(parameters.Contract);
+            var contract = this.walletController.GetAccountContract(parameters.ScriptHash);
+
+            this.SetContract(contract);
         }
         #endregion
 

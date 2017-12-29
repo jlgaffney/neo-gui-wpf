@@ -176,7 +176,7 @@ namespace Neo.Gui.ViewModels.Assets
 
         private void Confirm()
         {
-            this.walletController.ExecuteIssueTransaction((UInt256)this.Asset.AssetId, this.Items);
+            this.walletController.IssueAsset((UInt256)this.Asset.AssetId, this.Items);
 
             this.Close(this, EventArgs.Empty);
         }

@@ -1,23 +1,23 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+VisualStudioVersion = 15.0.26730.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo.Gui.Wpf", "Neo.Gui.Wpf\Neo.Gui.Wpf.csproj", "{CFC243F0-F4E3-4754-8E21-8BA17E1C1788}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo.Gui.ViewModels.Tests", "Neo.Gui.ViewModels.Tests\Neo.Gui.ViewModels.Tests.csproj", "{B55307C0-BE48-4148-A1CD-D42ADFC360D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo.Gui.ViewModels", "Neo.Gui.ViewModels\Neo.Gui.ViewModels.csproj", "{6B4C96B5-9B1A-45A4-BB30-827768EDE82C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo.Gui.Base", "Neo.Gui.Base\Neo.Gui.Base.csproj", "{929FDF79-F89D-4B4F-BB56-DBD1D31528B4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo.Gui.ViewModels", "Neo.Gui.ViewModels\Neo.Gui.ViewModels.csproj", "{6B4C96B5-9B1A-45A4-BB30-827768EDE82C}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{74C962D4-4F1A-430B-8FAF-81974F863DA8}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo.Gui.Base.Tests", "Neo.Gui.Base.Tests\Neo.Gui.Base.Tests.csproj", "{9D18A4FD-F3A0-4E58-AC60-AF2D9DCF954A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo.Gui.TestHelpers", "Neo.Gui.TestHelpers\Neo.Gui.TestHelpers.csproj", "{E5903A9F-0804-4912-92CC-469E47FAE4F6}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo.Gui.Globalization", "Neo.Gui.Globalization\Neo.Gui.Globalization.csproj", "{34501D6D-410C-4E1E-8C47-1A2EBBFBE611}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo.Gui.ViewModels.Tests", "Tests\Neo.Gui.ViewModels.Tests\Neo.Gui.ViewModels.Tests.csproj", "{B55307C0-BE48-4148-A1CD-D42ADFC360D6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo.Gui.Base.Tests", "Tests\Neo.Gui.Base.Tests\Neo.Gui.Base.Tests.csproj", "{9D18A4FD-F3A0-4E58-AC60-AF2D9DCF954A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo.Gui.TestHelpers", "Tests\Neo.Gui.TestHelpers\Neo.Gui.TestHelpers.csproj", "{E5903A9F-0804-4912-92CC-469E47FAE4F6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{086BB6EE-E60E-45C4-8590-DF528AE96AEE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,18 +29,22 @@ Global
 		{CFC243F0-F4E3-4754-8E21-8BA17E1C1788}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CFC243F0-F4E3-4754-8E21-8BA17E1C1788}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CFC243F0-F4E3-4754-8E21-8BA17E1C1788}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B55307C0-BE48-4148-A1CD-D42ADFC360D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B55307C0-BE48-4148-A1CD-D42ADFC360D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B55307C0-BE48-4148-A1CD-D42ADFC360D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B55307C0-BE48-4148-A1CD-D42ADFC360D6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{929FDF79-F89D-4B4F-BB56-DBD1D31528B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{929FDF79-F89D-4B4F-BB56-DBD1D31528B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{929FDF79-F89D-4B4F-BB56-DBD1D31528B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{929FDF79-F89D-4B4F-BB56-DBD1D31528B4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6B4C96B5-9B1A-45A4-BB30-827768EDE82C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6B4C96B5-9B1A-45A4-BB30-827768EDE82C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B4C96B5-9B1A-45A4-BB30-827768EDE82C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B4C96B5-9B1A-45A4-BB30-827768EDE82C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{929FDF79-F89D-4B4F-BB56-DBD1D31528B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{929FDF79-F89D-4B4F-BB56-DBD1D31528B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{929FDF79-F89D-4B4F-BB56-DBD1D31528B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{929FDF79-F89D-4B4F-BB56-DBD1D31528B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34501D6D-410C-4E1E-8C47-1A2EBBFBE611}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34501D6D-410C-4E1E-8C47-1A2EBBFBE611}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34501D6D-410C-4E1E-8C47-1A2EBBFBE611}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34501D6D-410C-4E1E-8C47-1A2EBBFBE611}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B55307C0-BE48-4148-A1CD-D42ADFC360D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B55307C0-BE48-4148-A1CD-D42ADFC360D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B55307C0-BE48-4148-A1CD-D42ADFC360D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B55307C0-BE48-4148-A1CD-D42ADFC360D6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9D18A4FD-F3A0-4E58-AC60-AF2D9DCF954A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9D18A4FD-F3A0-4E58-AC60-AF2D9DCF954A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D18A4FD-F3A0-4E58-AC60-AF2D9DCF954A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -49,18 +53,14 @@ Global
 		{E5903A9F-0804-4912-92CC-469E47FAE4F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E5903A9F-0804-4912-92CC-469E47FAE4F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E5903A9F-0804-4912-92CC-469E47FAE4F6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{34501D6D-410C-4E1E-8C47-1A2EBBFBE611}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{34501D6D-410C-4E1E-8C47-1A2EBBFBE611}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{34501D6D-410C-4E1E-8C47-1A2EBBFBE611}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{34501D6D-410C-4E1E-8C47-1A2EBBFBE611}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{B55307C0-BE48-4148-A1CD-D42ADFC360D6} = {74C962D4-4F1A-430B-8FAF-81974F863DA8}
-		{9D18A4FD-F3A0-4E58-AC60-AF2D9DCF954A} = {74C962D4-4F1A-430B-8FAF-81974F863DA8}
-		{E5903A9F-0804-4912-92CC-469E47FAE4F6} = {74C962D4-4F1A-430B-8FAF-81974F863DA8}
+		{B55307C0-BE48-4148-A1CD-D42ADFC360D6} = {086BB6EE-E60E-45C4-8590-DF528AE96AEE}
+		{9D18A4FD-F3A0-4E58-AC60-AF2D9DCF954A} = {086BB6EE-E60E-45C4-8590-DF528AE96AEE}
+		{E5903A9F-0804-4912-92CC-469E47FAE4F6} = {086BB6EE-E60E-45C4-8590-DF528AE96AEE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A50C016C-BC54-4D2B-A8CE-7CFDDB84FCAA}
