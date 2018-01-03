@@ -39,8 +39,6 @@ namespace Neo.Gui.ViewModels.Home
         #endregion
 
         #region Public Properties
-        //public Action NotifyBalanceChangedAction { get; set; }
-
         public ObservableCollection<AccountItem> Accounts { get; }
 
         public AccountItem SelectedAccount
