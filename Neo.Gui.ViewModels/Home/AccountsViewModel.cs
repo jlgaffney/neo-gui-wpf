@@ -242,7 +242,7 @@ namespace Neo.Gui.ViewModels.Home
 
             if (!deletedSuccessfully)
             {
-                // TODO Show error message
+                // TODO Show error message and create UnitTest for this feature.
 
                 return;
             }
