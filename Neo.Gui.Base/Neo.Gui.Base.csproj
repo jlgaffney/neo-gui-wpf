@@ -12,18 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Globalization\Strings.Designer.cs">
-      <DependentUpon>Strings.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Globalization\Strings.resx">
-      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
-      <Generator>PublicResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
+    <ProjectReference Include="..\Neo.Gui.Globalization\Neo.Gui.Globalization.csproj" />
   </ItemGroup>
 
 </Project>

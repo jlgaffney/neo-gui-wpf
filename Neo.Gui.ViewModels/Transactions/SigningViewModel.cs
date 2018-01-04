@@ -6,13 +6,13 @@ using GalaSoft.MvvmLight.Command;
 using Neo.Network;
 using Neo.SmartContract;
 
-using Neo.Gui.Base.Controllers;
+using Neo.Gui.Globalization.Resources;
+
+using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Dialogs.Results.Transactions;
-using Neo.Gui.Base.Globalization;
-using Neo.Gui.Base.Managers;
-using Neo.Gui.Base.Services;
+using Neo.Gui.Base.Managers.Interfaces;
+using Neo.Gui.Base.Services.Interfaces;
 
 namespace Neo.Gui.ViewModels.Transactions
 {

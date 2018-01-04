@@ -3,7 +3,9 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Markup;
+
 using Autofac;
+
 using Neo.Gui.Base.MVVM;
 
 namespace Neo.Gui.Wpf.MarkupExtensions
@@ -49,8 +51,6 @@ namespace Neo.Gui.Wpf.MarkupExtensions
 
             if (viewModelInstance is ILoadable loadableViewModel)
             {
-                // TODO IDialogViewModel's have OnLoad called twice, once here, and also in DialogManager
-                // TODO Only call OnLoad once per instance
                 loadableViewModel.OnLoad();
             }
 

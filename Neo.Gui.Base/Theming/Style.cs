@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel;
+
+using Neo.Gui.Globalization.Resources;
+using Neo.Gui.Globalization.Localization;
+
 using Neo.Gui.Base.Converters;
-using Neo.Gui.Base.Globalization;
-using Neo.Gui.Base.Localization;
 
 namespace Neo.Gui.Base.Theming
 {

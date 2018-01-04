@@ -3,26 +3,26 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Windows.Input;
+
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
+using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
-using Neo.Gui.Base.Messages;
-using Neo.Gui.Base.Messaging.Interfaces;
 
 namespace Neo.Gui.ViewModels.Accounts
 {
     public class ImportCertificateViewModel : ViewModelBase, IDialogViewModel<ImportCertificateDialogResult>
     {
-        private readonly IMessagePublisher messagePublisher;
+        private readonly IWalletController walletController;
 
         private X509Certificate2 selectedCertificate;
 
         public ImportCertificateViewModel(
-            IMessagePublisher messagePublisher)
+            IWalletController walletController)
         {
-            this.messagePublisher = messagePublisher;
+            this.walletController = walletController;
 
             // Load certificates
             using (var store = new X509Store())
@@ -68,7 +68,7 @@ namespace Neo.Gui.ViewModels.Accounts
         {
             if (this.SelectedCertificate == null) return;
 
-            this.messagePublisher.Publish(new ImportCertificateMessage(this.SelectedCertificate));
+            this.walletController.ImportCertificate(this.SelectedCertificate);
 
             this.Close(this, EventArgs.Empty);
         }

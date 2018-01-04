@@ -8,21 +8,18 @@ using GalaSoft.MvvmLight.Command;
 
 using Neo.Wallets;
 
-using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Transactions;
 using Neo.Gui.Base.Dialogs.Results.Transactions;
 using Neo.Gui.Base.Extensions;
-using Neo.Gui.Base.MVVM;
-using Neo.Gui.Base.Services;
+using Neo.Gui.Base.Services.Interfaces;
 
 namespace Neo.Gui.ViewModels.Transactions
 {
-    public class BulkPayViewModel :
-        ViewModelBase,
-        ILoadable,
-        IDialogViewModel<BulkPayDialogResult>
+    public class BulkPayViewModel : ViewModelBase,
+        ILoadableDialogViewModel<BulkPayDialogResult, BulkPayLoadParameters>
     {
         private readonly IWalletController walletController;
         private readonly IDispatchService dispatchService;
@@ -96,29 +93,17 @@ namespace Neo.Gui.ViewModels.Transactions
         public ICommand OkCommand => new RelayCommand(this.Ok);
 
 
-        #region IDialogViewModel implementation 
+        #region ILoadableDialogViewModel implementation 
         public event EventHandler Close;
 
         public event EventHandler<BulkPayDialogResult> SetDialogResultAndClose;
 
         public BulkPayDialogResult DialogResult { get; private set; }
-        #endregion
-
-        #region ILoadable implementation 
-        public void OnLoad(params object[] parameters)
+        
+        public void OnDialogLoad(BulkPayLoadParameters parameters)
         {
-            if (!parameters.Any()) return;
+            var asset = parameters?.Asset;
 
-            var loadParameters = parameters[0] as BulkPayLoadParameters;
-
-            this.Load(loadParameters?.Asset);
-
-        }
-        #endregion
-
-        // TODO Replace with ILoadable implementation using BulkPayLoadParameters
-        private void Load(AssetDescriptor asset)
-        {
             this.dispatchService.InvokeOnMainUIThread(() =>
             {
                 this.Assets.Clear();
@@ -159,7 +144,9 @@ namespace Neo.Gui.ViewModels.Transactions
                     this.AssetSelectionEnabled = this.Assets.Any();
                 }
             });
+
         }
+        #endregion
 
         private void Ok()
         {
@@ -189,7 +176,7 @@ namespace Neo.Gui.ViewModels.Transactions
                     AssetName = this.SelectedAsset.AssetName,
                     AssetId = this.SelectedAsset.AssetId,
                     Value = new BigDecimal(Fixed8.Parse(lineElements[1]).GetData(), 8),
-                    ScriptHash = this.walletController.ToScriptHash(lineElements[0])
+                    ScriptHash = this.walletController.AddressToScriptHash(lineElements[0])
                 };
             }).Where(p => p.Value.Value != 0).ToArray();
         }

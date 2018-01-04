@@ -10,12 +10,12 @@ using GalaSoft.MvvmLight.Command;
 using Neo.Core;
 using Neo.Cryptography.ECC;
 
-using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.Results;
+using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Base.Dialogs.Results.Assets;
-using Neo.Gui.Base.Messages;
-using Neo.Gui.Base.Messaging.Interfaces;
+using Neo.Gui.Base.Dialogs.Results.Contracts;
+using Neo.Gui.Base.Managers.Interfaces;
 
 namespace Neo.Gui.ViewModels.Assets
 {
@@ -23,8 +23,8 @@ namespace Neo.Gui.ViewModels.Assets
     {
         private static readonly AssetType[] assetTypes = { AssetType.Share, AssetType.Token };
 
+        private readonly IDialogManager dialogManager;
         private readonly IWalletController walletController;
-        private readonly IMessagePublisher messagePublisher;
 
         private AssetType? selectedAssetType;
         private ECPoint selectedOwner;
@@ -41,17 +41,20 @@ namespace Neo.Gui.ViewModels.Assets
         private bool formValid;
 
         public AssetRegistrationViewModel(
-            IWalletController walletController,
-            IMessagePublisher messagePublisher)
+            IDialogManager dialogManager,
+            IWalletController walletController)
         {
+            this.dialogManager = dialogManager;
             this.walletController = walletController;
-            this.messagePublisher = messagePublisher;
             
             this.AssetTypes = new ObservableCollection<AssetType>(assetTypes);
 
-            this.Owners = new ObservableCollection<ECPoint>(this.walletController.GetStandardAccounts().Select(p => p.GetKey().PublicKey));
-            this.Admins = new ObservableCollection<string>(this.walletController.GetNonWatchOnlyAccounts().Select(p => p.Address));
-            this.Issuers = new ObservableCollection<string>(this.walletController.GetNonWatchOnlyAccounts().Select(p => p.Address));
+            var nonWatchOnlyAccounts = this.walletController.GetNonWatchOnlyAccounts().ToList();
+            var standardAccounts = nonWatchOnlyAccounts.Where(account => account.Contract.IsStandard);
+
+            this.Owners = new ObservableCollection<ECPoint>(standardAccounts.Select(p => p.GetKey().PublicKey));
+            this.Admins = new ObservableCollection<string>(nonWatchOnlyAccounts.Select(p => p.Address));
+            this.Issuers = new ObservableCollection<string>(nonWatchOnlyAccounts.Select(p => p.Address));
         }
 
         public ObservableCollection<AssetType> AssetTypes { get; }
@@ -227,17 +230,10 @@ namespace Neo.Gui.ViewModels.Assets
         {
             if (!this.OkEnabled) return;
 
-            try
-            {
-                this.walletController.ToScriptHash(this.SelectedAdmin);
-                this.walletController.ToScriptHash(this.SelectedIssuer);
+            var adminAddressIsValid = this.walletController.AddressIsValid(this.SelectedAdmin);
+            var issuerAddressIsValid = this.walletController.AddressIsValid(this.SelectedIssuer);
 
-                this.formValid = true;
-            }
-            catch (FormatException)
-            {
-                this.formValid = false;
-            }
+            this.formValid = adminAddressIsValid && issuerAddressIsValid;
         }
 
         private void Ok()
@@ -250,7 +246,9 @@ namespace Neo.Gui.ViewModels.Assets
 
             if (transaction == null) return;
 
-            this.messagePublisher.Publish(new InvokeContractMessage(transaction));
+            this.dialogManager.ShowDialog<InvokeContractDialogResult, InvokeContractLoadParameters>(
+                new InvokeContractLoadParameters(transaction));
+
             this.Close(this, EventArgs.Empty);
         }
 
@@ -263,8 +261,8 @@ namespace Neo.Gui.ViewModels.Assets
             var amount = this.TotalIsLimited ? Fixed8.Parse(this.TotalLimit) : -Fixed8.Satoshi;
             var precisionByte = (byte)this.Precision;
             var owner = this.SelectedOwner;
-            var admin = this.walletController.ToScriptHash(this.SelectedAdmin);
-            var issuer = this.walletController.ToScriptHash(this.SelectedIssuer);
+            var admin = this.walletController.AddressToScriptHash(this.SelectedAdmin);
+            var issuer = this.walletController.AddressToScriptHash(this.SelectedIssuer);
 
             return this.walletController.MakeAssetCreationTransaction(assetType, formattedName, amount, precisionByte, owner, admin, issuer);
         }

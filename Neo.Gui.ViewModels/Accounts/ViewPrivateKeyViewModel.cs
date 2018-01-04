@@ -1,21 +1,35 @@
 ﻿using System;
-using System.Linq;
 using System.Windows.Input;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-using Neo.Wallets;
-
+using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Accounts;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
-using Neo.Gui.Base.MVVM;
 
 namespace Neo.Gui.ViewModels.Accounts
 {
-    public class ViewPrivateKeyViewModel : ViewModelBase, IDialogViewModel<ViewPrivateKeyDialogResult>, ILoadable
+    public class ViewPrivateKeyViewModel : ViewModelBase,
+        ILoadableDialogViewModel<ViewPrivateKeyDialogResult, ViewPrivateKeyLoadParameters>
     {
+        #region Private fields
+
+        private readonly IWalletController walletController;
+
+        #endregion
+
+        #region Constructor
+
+        public ViewPrivateKeyViewModel(
+            IWalletController walletController)
+        {
+            this.walletController = walletController;
+        }
+        
+        #endregion
+
         #region Public Properties
         public string Address { get; private set; }
 
@@ -28,36 +42,20 @@ namespace Neo.Gui.ViewModels.Accounts
 
         public ICommand CloseCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
         
-        #region IDialogViewModel implementation 
+        #region ILoadableDialogViewModel implementation 
         public event EventHandler Close;
 
         public event EventHandler<ViewPrivateKeyDialogResult> SetDialogResultAndClose;
 
         public ViewPrivateKeyDialogResult DialogResult { get; private set; }
-        #endregion
 
-        #region ILoadable Methods 
-        public void OnLoad(params object[] parameters)
+        public void OnDialogLoad(ViewPrivateKeyLoadParameters parameters)
         {
-            if (!parameters.Any()) return;
+            if (parameters == null || parameters.ScriptHash == null) return;
 
-            var viewPrivateKeyLoadParameters = (parameters[0] as LoadParameters<ViewPrivateKeyLoadParameters>)?.Parameters;
+            var key = this.walletController.GetAccountKey(parameters.ScriptHash);
 
-            if (viewPrivateKeyLoadParameters?.Account == null) return;
-
-            this.SetAccountInfo(viewPrivateKeyLoadParameters.Account);
-        }
-        #endregion
-
-        #region Private Methods 
-
-        private void SetAccountInfo(WalletAccount account)
-        {
-            if (account == null) return;
-
-            var key = account.GetKey();
-
-            this.Address = account.Address;
+            this.Address = this.walletController.ScriptHashToAddress(parameters.ScriptHash);
             this.PublicKeyHex = key.PublicKey.EncodePoint(true).ToHexString();
             using (key.Decrypt())
             {
@@ -71,7 +69,6 @@ namespace Neo.Gui.ViewModels.Accounts
             RaisePropertyChanged(nameof(this.PrivateKeyHex));
             RaisePropertyChanged(nameof(this.PrivateKeyWif));
         }
-        
         #endregion
     }
 }

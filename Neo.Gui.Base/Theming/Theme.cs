@@ -1,6 +1,8 @@
 ﻿using System.Drawing;
-using Neo.Gui.Base.Extensions;
+
 using Newtonsoft.Json;
+
+using Neo.Gui.Base.Extensions;
 
 namespace Neo.Gui.Base.Theming
 {

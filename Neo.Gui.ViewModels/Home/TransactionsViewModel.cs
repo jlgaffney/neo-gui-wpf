@@ -1,12 +1,9 @@
-﻿using System.Windows.Input;
-
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
 using Neo.Gui.Base.Collections;
 using Neo.Gui.Base.Data;
-using Neo.Gui.Base.Helpers;
-using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.MVVM;
@@ -23,7 +20,7 @@ namespace Neo.Gui.ViewModels.Home
         #region Private Fields 
         private readonly IMessageSubscriber messageSubscriber;
         private readonly IClipboardManager clipboardManager;
-        private readonly IProcessHelper processHelper;
+        private readonly IProcessManager processManager;
         private readonly ISettingsManager settingsManager;
 
         private TransactionItem selectedTransaction;
@@ -50,21 +47,21 @@ namespace Neo.Gui.ViewModels.Home
 
         public bool CopyTransactionIdEnabled => this.SelectedTransaction != null;
 
-        public ICommand CopyTransactionIdCommand => new RelayCommand(this.CopyTransactionId);
+        public RelayCommand CopyTransactionIdCommand => new RelayCommand(this.CopyTransactionId);
 
-        public ICommand ViewSelectedTransactionDetailsCommand => new RelayCommand(this.ViewSelectedTransactionDetails);
+        public RelayCommand ViewSelectedTransactionDetailsCommand => new RelayCommand(this.ViewSelectedTransactionDetails);
         #endregion
 
         #region Constructor 
         public TransactionsViewModel(
             IMessageSubscriber messageSubscriber,
             IClipboardManager clipboardManager,
-            IProcessHelper processHelper,
+            IProcessManager processManager,
             ISettingsManager settingsManager)
         {
             this.messageSubscriber = messageSubscriber;
             this.clipboardManager = clipboardManager;
-            this.processHelper = processHelper;
+            this.processManager = processManager;
             this.settingsManager = settingsManager;
 
             this.Transactions = new ConcurrentObservableCollection<TransactionItem>();
@@ -72,7 +69,7 @@ namespace Neo.Gui.ViewModels.Home
         #endregion
 
         #region ILoadable implementation
-        public void OnLoad(params object[] parameters)
+        public void OnLoad()
         {
             this.messageSubscriber.Subscribe(this);
         }
@@ -82,26 +79,6 @@ namespace Neo.Gui.ViewModels.Home
         public void OnUnload()
         {
             this.messageSubscriber.Unsubscribe(this);
-        }
-        #endregion
-
-        #region Private Methods 
-        private void CopyTransactionId()
-        {
-            if (this.SelectedTransaction == null) return;
-
-            this.clipboardManager.SetText(this.SelectedTransaction.Id);
-        }
-
-        private void ViewSelectedTransactionDetails()
-        {
-            if (this.SelectedTransaction == null) return;
-
-            if (string.IsNullOrEmpty(this.SelectedTransaction.Id)) return;
-
-            var url = string.Format(this.settingsManager.TransactionURLFormat, this.SelectedTransaction.Id.Substring(2));
-
-            this.processHelper.OpenInExternalBrowser(url);
         }
         #endregion
 
@@ -119,6 +96,26 @@ namespace Neo.Gui.ViewModels.Home
             {
                 this.Transactions.Add(transaction);
             }
+        }
+        #endregion
+
+        #region Private Methods 
+        private void CopyTransactionId()
+        {
+            if (this.SelectedTransaction == null) return;
+
+            this.clipboardManager.SetText(this.SelectedTransaction.Hash.ToString());
+        }
+
+        private void ViewSelectedTransactionDetails()
+        {
+            if (this.SelectedTransaction == null) return;
+
+            if (string.IsNullOrEmpty(this.SelectedTransaction.Hash.ToString())) return;
+
+            var url = string.Format(this.settingsManager.TransactionURLFormat, this.SelectedTransaction.Hash.ToString().Substring(2));
+
+            this.processManager.OpenInExternalBrowser(url);
         }
         #endregion
     }

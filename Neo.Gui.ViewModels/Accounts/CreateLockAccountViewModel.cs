@@ -11,13 +11,12 @@ using Neo.SmartContract;
 using Neo.VM;
 using Neo.Wallets;
 
-using Neo.Gui.Base.Controllers;
-using Neo.Gui.Base.Messages;
-using Neo.Gui.Base.Messaging.Interfaces;
-using Neo.Gui.Base.Globalization;
+using Neo.Gui.Globalization.Resources;
+
+using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
-using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.Managers.Interfaces;
 
 namespace Neo.Gui.ViewModels.Accounts
 {
@@ -27,7 +26,7 @@ namespace Neo.Gui.ViewModels.Accounts
         private const int MinutesInHour = 60;
 
         private readonly IDialogManager dialogManager;
-        private readonly IMessagePublisher messagePublisher;
+        private readonly IWalletController walletController;
 
         private KeyPair selectedKeyPair;
         private DateTime unlockDate;
@@ -36,11 +35,10 @@ namespace Neo.Gui.ViewModels.Accounts
 
         public CreateLockAccountViewModel(
             IDialogManager dialogManager,
-            IWalletController walletController,
-            IMessagePublisher messagePublisher)
+            IWalletController walletController)
         {
             this.dialogManager = dialogManager;
-            this.messagePublisher = messagePublisher;
+            this.walletController = walletController;
 
             this.KeyPairs = new ObservableCollection<KeyPair>(
                 walletController.GetStandardAccounts()
@@ -147,7 +145,7 @@ namespace Neo.Gui.ViewModels.Accounts
 
             if (contract == null) return;
 
-            this.messagePublisher.Publish(new AddContractMessage(contract));
+            this.walletController.AddContract(contract);
 
             this.Close(this, EventArgs.Empty);
         }

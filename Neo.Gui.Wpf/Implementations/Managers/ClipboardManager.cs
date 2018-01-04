@@ -1,5 +1,6 @@
 ﻿using System.Windows;
-using Neo.Gui.Base.Managers;
+
+using Neo.Gui.Base.Managers.Interfaces;
 
 namespace Neo.Gui.Wpf.Implementations.Managers
 {

@@ -8,32 +8,33 @@ using GalaSoft.MvvmLight.Command;
 using Neo.Core;
 using Neo.VM;
 
-using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Base.Dialogs.LoadParameters.Voting;
+using Neo.Gui.Base.Dialogs.Results.Contracts;
 using Neo.Gui.Base.Dialogs.Results.Voting;
 using Neo.Gui.Base.Extensions;
-using Neo.Gui.Base.Messages;
-using Neo.Gui.Base.Messaging.Interfaces;
-using Neo.Gui.Base.MVVM;
+using Neo.Gui.Base.Managers.Interfaces;
 
 namespace Neo.Gui.ViewModels.Voting
 {
-    public class VotingViewModel : ViewModelBase, IDialogViewModel<VotingDialogResult>, ILoadable
+    public class VotingViewModel : ViewModelBase,
+        ILoadableDialogViewModel<VotingDialogResult, VotingLoadParameters>
     {
+        private readonly IDialogManager dialogManager;
         private readonly IWalletController walletController;
-        private readonly IMessagePublisher messagePublisher;
 
         private UInt160 scriptHash;
 
         private string votes;
 
         public VotingViewModel(
-            IWalletController walletController,
-            IMessagePublisher messagePublisher)
+            IDialogManager dialogManager,
+            IWalletController walletController)
         {
+            this.dialogManager = dialogManager;
             this.walletController = walletController;
-            this.messagePublisher = messagePublisher;
         }
 
         public string Address { get; private set; }
@@ -55,40 +56,31 @@ namespace Neo.Gui.ViewModels.Voting
 
         public ICommand CancelCommand => new RelayCommand(this.Cancel);
 
-        #region IDialogViewModel implementation 
+        #region ILoadableDialogViewModel Implementation 
         public event EventHandler Close;
 
         public event EventHandler<VotingDialogResult> SetDialogResultAndClose;
 
         public VotingDialogResult DialogResult { get; set; }
-        #endregion
-
-        #region ILoadable Implementation 
-        public void OnLoad(params object[] parameters)
+        
+        public void OnDialogLoad(VotingLoadParameters parameters)
         {
-            if (!parameters.Any())
-            {
-                return;
-            }
-
-            var votingLoadParameters = parameters[0] as VotingLoadParameters;
-            this.SetScriptHash(votingLoadParameters.ScriptHash);
+            if (parameters?.ScriptHash == null) return;
+            
+            this.SetScriptHash(parameters.ScriptHash);
         }
         #endregion
-
+        
         private void SetScriptHash(UInt160 hash)
         {
             this.scriptHash = hash;
 
-            var account = this.walletController.GetAccountState(hash);
+            var voteStrings = this.walletController.GetVotes(hash).Select(p => p.ToString()).ToArray();
 
             // Set address
-            this.Address = this.walletController.ToAddress(hash);
+            this.Address = this.walletController.ScriptHashToAddress(hash);
 
             // Concatenate votes into multi-line string
-            var voteStrings = account.Votes.Select(p => p.ToString()).ToArray();
-
-            // Set votes
             this.Votes = voteStrings.ToMultiLineString();
 
             // Update bindable properties
@@ -141,7 +133,8 @@ namespace Neo.Gui.ViewModels.Voting
 
             if (transaction == null) return;
 
-            this.messagePublisher.Publish(new InvokeContractMessage(transaction));
+            this.dialogManager.ShowDialog<InvokeContractDialogResult, InvokeContractLoadParameters>(
+                new InvokeContractLoadParameters(transaction));
 
             this.Close(this, EventArgs.Empty);
         }

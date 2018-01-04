@@ -297,16 +297,14 @@
     <Compile Include="Implementations\Managers\ClipboardManager.cs" />
     <Compile Include="Implementations\Managers\SettingsManager.cs" />
     <Compile Include="Implementations\Services\FileDialogService.cs" />
-    <Compile Include="RegistrationModules\ControllersRegistrationModule.cs" />
     <Compile Include="Extensions\ColorExtensions.cs" />
     <Compile Include="Implementations\Managers\DialogManager.cs" />
-    <Compile Include="Implementations\Helpers\ProcessHelper.cs" />
+    <Compile Include="Implementations\Managers\ProcessManager.cs" />
     <Compile Include="RegistrationModules\ServicesRegistrationModule.cs" />
     <Compile Include="RegistrationModules\ManagersRegistrationModule.cs" />
     <Compile Include="RegistrationModules\HelpersRegistrationModule.cs" />
     <Compile Include="Implementations\Services\NotificationService.cs" />
     <Compile Include="Implementations\Services\DispatchService.cs" />
-    <Compile Include="RegistrationModules\MessagingRegistrationModule.cs" />
     <Compile Include="RegistrationModules\ViewModelsRegistrationModule.cs" />
     <Compile Include="RootCertificate.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -422,9 +420,6 @@
     <Compile Include="Views\Wallets\CertificateApplicationView.xaml.cs">
       <DependentUpon>CertificateApplicationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Wallets\ChangePasswordView.xaml.cs">
-      <DependentUpon>ChangePasswordView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Settings\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
@@ -460,7 +455,7 @@
     <Compile Include="Views\Wallets\TransferView.xaml.cs">
       <DependentUpon>TransferView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Implementations\Helpers\VersionHelper.cs" />
+    <Compile Include="Implementations\Services\VersionService.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -693,10 +688,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Wallets\ChangePasswordView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\Settings\SettingsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -718,9 +709,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="MVVM\" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\logo_72.png" />
   </ItemGroup>
   <ItemGroup>
@@ -728,11 +716,16 @@
       <Project>{929FDF79-F89D-4B4F-BB56-DBD1D31528B4}</Project>
       <Name>Neo.Gui.Base</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Neo.Gui.Globalization\Neo.Gui.Globalization.csproj">
+      <Project>{34501d6d-410c-4e1e-8c47-1a2ebbfbe611}</Project>
+      <Name>Neo.Gui.Globalization</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Neo.Gui.ViewModels\Neo.Gui.ViewModels.csproj">
       <Project>{e7116c94-ca06-4045-9517-b4332c47fd4c}</Project>
       <Name>Neo.Gui.ViewModels</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.7\build\net35\SQLitePCLRaw.lib.e_sqlite3.linux.targets" Condition="Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.7\build\net35\SQLitePCLRaw.lib.e_sqlite3.linux.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

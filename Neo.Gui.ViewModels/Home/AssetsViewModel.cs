@@ -1,20 +1,16 @@
-using System.Windows.Input;
-
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-using Neo.Core;
-using Neo.VM;
+using Neo.Gui.Globalization.Resources;
 
 using Neo.Gui.Base.Collections;
-using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Data;
+using Neo.Gui.Base.Dialogs;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.MVVM;
-using Neo.Gui.Base.Globalization;
-using Neo.Gui.Base.Helpers;
-using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.Managers.Interfaces;
 
 namespace Neo.Gui.ViewModels.Home
 {
@@ -26,19 +22,17 @@ namespace Neo.Gui.ViewModels.Home
         IMessageHandler<AssetAddedMessage>
     {
         #region Private Fields 
-        private static readonly UInt160 RecycleScriptHash = new[] { (byte)OpCode.PUSHT }.ToScriptHash();
-
         private readonly IDialogManager dialogManager;
-        private readonly IProcessHelper processHelper;
+        private readonly IMessageSubscriber messageSubscriber;
+        private readonly IProcessManager processManager;
         private readonly ISettingsManager settingsManager;
         private readonly IWalletController walletController;
-        private readonly IMessageSubscriber messageSubscriber;
-        private readonly IMessagePublisher messagePublisher;
+
         private AssetItem selectedAsset;
         #endregion
 
         #region Public Properties
-        public ConcurrentObservableCollection<AssetItem> Assets { get; private set; }
+        public ConcurrentObservableCollection<AssetItem> Assets { get; }
 
         public AssetItem SelectedAsset
         {
@@ -61,21 +55,23 @@ namespace Neo.Gui.ViewModels.Home
         {
             get
             {
-                if (this.SelectedAsset == null) return false;
+                var selectedFirstClassAsset = this.SelectedAsset as FirstClassAssetItem;
 
-                if (this.SelectedAsset.IsSystemAsset) return false;
+                if (selectedFirstClassAsset == null) return false;
 
-                if (this.SelectedAsset.State?.Owner == null) return false;
+                if (selectedFirstClassAsset.IsSystemAsset) return false;
 
-                return this.walletController.CanViewCertificate(this.SelectedAsset.State.Owner);
+                if (selectedFirstClassAsset.AssetOwner == null) return false;
+
+                return this.walletController.CanViewCertificate(selectedFirstClassAsset);
             }
         }
 
+        // TODO Should this also check if the user issued the asset?
         public bool DeleteAssetEnabled => 
             this.SelectedAsset != null &&
-            (this.SelectedAsset.State == null ||
-            (this.SelectedAsset.State.AssetType != AssetType.GoverningToken &&
-            this.SelectedAsset.State.AssetType != AssetType.UtilityToken));
+            this.SelectedAsset is FirstClassAssetItem &&
+            !((FirstClassAssetItem)this.SelectedAsset).IsSystemAsset;
 
         public RelayCommand ViewCertificateCommand => new RelayCommand(this.ViewCertificate);
 
@@ -87,25 +83,23 @@ namespace Neo.Gui.ViewModels.Home
         #region Constructor 
         public AssetsViewModel(
             IDialogManager dialogManager,
-            IProcessHelper processHelper,
-            ISettingsManager settingsManager,
-            IWalletController walletController,
             IMessageSubscriber messageSubscriber,
-            IMessagePublisher messagePublisher)
+            IProcessManager processManager,
+            ISettingsManager settingsManager,
+            IWalletController walletController)
         {
             this.dialogManager = dialogManager;
-            this.processHelper = processHelper;
+            this.messageSubscriber = messageSubscriber;
+            this.processManager = processManager;
             this.settingsManager = settingsManager;
             this.walletController = walletController;
-            this.messageSubscriber = messageSubscriber;
-            this.messagePublisher = messagePublisher;
 
             this.Assets = new ConcurrentObservableCollection<AssetItem>();
         }
         #endregion
 
         #region ILoadable implementation
-        public void OnLoad(params object[] parameters)
+        public void OnLoad()
         {
             this.messageSubscriber.Subscribe(this);
         }
@@ -137,49 +131,42 @@ namespace Neo.Gui.ViewModels.Home
 
             var url = string.Format(this.settingsManager.AssetURLFormat, this.SelectedAsset.Name.Substring(2));
 
-            this.processHelper.OpenInExternalBrowser(url);
+            this.processManager.OpenInExternalBrowser(url);
         }
 
         private void ViewCertificate()
         {
             if (!this.ViewCertificateEnabled) return;
             
-            var success = this.walletController.ViewCertificate(this.SelectedAsset.State.Owner);
+            var certificatePath = this.walletController.ViewCertificate(this.SelectedAsset as FirstClassAssetItem);
 
-            if (!success)
+            if (string.IsNullOrEmpty(certificatePath))
             {
                 // TODO Show error message
+            }
+            else
+            {
+                this.processManager.Run(certificatePath);
             }
         }
 
         private void DeleteAsset()
         {
-            if (this.SelectedAsset?.State == null) return;
+            var firstClassAssetItem = this.SelectedAsset as FirstClassAssetItem;
 
-            var value = this.walletController.GetAvailable(this.SelectedAsset.State.AssetId);
+            if (firstClassAssetItem == null) return;
+
+            var value = this.walletController.GetAvailable(firstClassAssetItem.AssetId);
 
             var result = this.dialogManager.ShowMessageDialog(
                 Strings.DeleteConfirmation,
-                $"{Strings.DeleteAssetConfirmationMessage}\n{string.Join("\n", $"{this.SelectedAsset.State.GetName()}:{value}")}",
+                $"{Strings.DeleteAssetConfirmationMessage}\n{string.Join("\n", $"{firstClassAssetItem.Name}:{value}")}",
                 MessageDialogType.YesNo,
                 MessageDialogResult.No);
 
             if (result != MessageDialogResult.Yes) return;
 
-            var transaction = this.walletController.MakeTransaction(new ContractTransaction
-            {
-                Outputs = new[]
-                {
-                    new TransactionOutput
-                    {
-                        AssetId = this.SelectedAsset.State.AssetId,
-                        Value = value,
-                        ScriptHash = RecycleScriptHash
-                    }
-                }
-            }, fee: Fixed8.Zero);
-
-            this.messagePublisher.Publish(new SignTransactionAndShowInformationMessage(transaction));
+            this.walletController.DeleteFirstClassAsset(firstClassAssetItem);
         }
         #endregion
     }

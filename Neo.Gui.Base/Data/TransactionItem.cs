@@ -1,33 +1,49 @@
 ﻿using System;
+
 using Neo.Core;
-using Neo.Gui.Base.Globalization;
+
+using Neo.Gui.Globalization.Resources;
+
+using Neo.Gui.Base.Helpers;
 using Neo.Gui.Base.MVVM;
 
 namespace Neo.Gui.Base.Data
 {
     public class TransactionItem : BindableClass
     {
-        private readonly Transaction transaction;
-
+        #region Private Fields 
         private int confirmations;
+        #endregion
 
-        public TransactionItem(Transaction transaction, uint height, DateTime time)
-        {
-            this.transaction = transaction ?? throw new ArgumentNullException(nameof(transaction));
-            this.Height = height;
-            this.Time = time;
-        }
-        
-        public string Id => this.transaction.Hash.ToString();
+        #region Public Properties 
+        public UInt256 Hash { get; }
 
         public uint Height { get; }
 
         public DateTime Time { get; }
 
-        public TransactionType Type => this.transaction.Type;
+        public TransactionType Type { get; }
 
         public string Confirmations => this.confirmations > 0 ? this.confirmations.ToString() : Strings.Unconfirmed;
+        #endregion
 
+        #region Constructor 
+        public TransactionItem(
+            UInt256 transactionHash, 
+            TransactionType transactionType, 
+            uint height, 
+            DateTime time)
+        {
+            Guard.ArgumentIsNotNull(transactionHash, () => transactionHash);
+
+            this.Hash = transactionHash;
+            this.Type = transactionType;
+            this.Height = height;
+            this.Time = time;
+        }
+        #endregion
+
+        #region Public Methods 
         public void SetConfirmations(int value)
         {
             if (this.confirmations == value) return;
@@ -41,7 +57,7 @@ namespace Neo.Gui.Base.Data
 
         public override int GetHashCode()
         {
-            return this.transaction.GetHashCode();
+            return this.Hash.GetHashCode();
         }
 
         public override bool Equals(object obj)
@@ -50,7 +66,8 @@ namespace Neo.Gui.Base.Data
             
             if (transactionItem == null) return false;
 
-            return this.transaction.Hash.Equals(transactionItem.transaction.Hash);
+            return this.Hash.Equals(transactionItem.Hash);
         }
+        #endregion
     }
 }

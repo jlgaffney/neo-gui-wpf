@@ -1,38 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Input;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
+using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Extensions;
-using Neo.Gui.Base.Messages;
-using Neo.Gui.Base.Messaging.Interfaces;
 
 namespace Neo.Gui.ViewModels.Accounts
 {
     public class ImportPrivateKeyViewModel : ViewModelBase, IDialogViewModel<ImportPrivateKeyDialogResult>
     {
         #region Private Fields 
-        private readonly IMessagePublisher messagePublisher;
+        private readonly IWalletController walletController;
 
-        private string privateKeyWif;
+        private string privateKeysWif;
         #endregion
 
         #region Public Properties 
-        public bool OkEnabled => !string.IsNullOrEmpty(this.PrivateKeyWif);
+        public bool OkEnabled => !string.IsNullOrEmpty(this.PrivateKeysWif);
 
-        public string PrivateKeyWif
+        public string PrivateKeysWif
         {
-            get => this.privateKeyWif;
+            get => this.privateKeysWif;
             set
             {
-                if (this.privateKeyWif == value) return;
+                if (this.privateKeysWif == value) return;
 
-                this.privateKeyWif = value;
+                this.privateKeysWif = value;
                 RaisePropertyChanged();
 
                 // Update dependent properties
@@ -44,9 +42,9 @@ namespace Neo.Gui.ViewModels.Accounts
         {
             get
             {
-                if (string.IsNullOrEmpty(this.PrivateKeyWif)) return new string[0];
+                if (string.IsNullOrEmpty(this.PrivateKeysWif)) return new string[0];
 
-                return this.PrivateKeyWif.ToLines();
+                return this.PrivateKeysWif.ToLines();
             }
         }
 
@@ -57,9 +55,9 @@ namespace Neo.Gui.ViewModels.Accounts
 
         #region Constructor 
         public ImportPrivateKeyViewModel(
-            IMessagePublisher messagePublisher)
+            IWalletController walletController)
         {
-            this.messagePublisher = messagePublisher;
+            this.walletController = walletController;
         }
         #endregion
 
@@ -76,7 +74,7 @@ namespace Neo.Gui.ViewModels.Accounts
         {
             if (!this.OkEnabled) return;
 
-            this.messagePublisher.Publish(new ImportPrivateKeyMessage(this.WifStrings.ToList()));
+            this.walletController.ImportPrivateKeys(this.WifStrings);
 
             this.Close(this, EventArgs.Empty);
         }

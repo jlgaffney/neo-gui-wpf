@@ -1,4 +1,4 @@
-﻿using Neo.Gui.Base.Controllers;
+﻿using Neo.Gui.Base.Status;
 
 namespace Neo.Gui.Base.Messages
 {

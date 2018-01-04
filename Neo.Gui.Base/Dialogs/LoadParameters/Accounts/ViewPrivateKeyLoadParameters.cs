@@ -1,14 +1,12 @@
-﻿using Neo.Wallets;
-
-namespace Neo.Gui.Base.Dialogs.LoadParameters.Accounts
+﻿namespace Neo.Gui.Base.Dialogs.LoadParameters.Accounts
 {
     public class ViewPrivateKeyLoadParameters
     {
-        public WalletAccount Account { get; }
-
-        public ViewPrivateKeyLoadParameters(WalletAccount account)
+        public UInt160 ScriptHash { get; }
+        
+        public ViewPrivateKeyLoadParameters(UInt160 scriptHash)
         {
-            this.Account = account;
+            this.ScriptHash = scriptHash;
         }
     }
 }

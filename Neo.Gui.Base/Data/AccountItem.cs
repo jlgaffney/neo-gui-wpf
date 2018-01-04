@@ -9,22 +9,23 @@ namespace Neo.Gui.Base.Data
         private Fixed8 neo;
         private Fixed8 gas;
 
-        public string Address => this.Account.Address;
-
-        public AccountType Type
+        public AccountItem(string label, UInt160 scriptHash, AccountType accountType)
         {
-            get
-            {
-                if (this.Account.WatchOnly)
-                {
-                    return AccountType.WatchOnly;
-                }
+            this.Label = label;
+            this.ScriptHash = scriptHash;
+            this.Type = accountType;
 
-                return this.Account.Contract.IsStandard
-                    ? AccountType.Standard
-                    : AccountType.NonStandard;
-            }
+            this.neo = Fixed8.Zero;
+            this.gas = Fixed8.Zero;
         }
+        
+        public string Label { get; }
+
+        public UInt160 ScriptHash { get; }
+
+        public string Address => Wallet.ToAddress(this.ScriptHash);
+
+        public AccountType Type { get; }
 
         public Fixed8 Neo
         {
@@ -51,7 +52,5 @@ namespace Neo.Gui.Base.Data
                 NotifyPropertyChanged();
             }
         }
-
-        public WalletAccount Account { get; set; }
     }
 }

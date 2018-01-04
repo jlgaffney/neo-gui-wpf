@@ -1,35 +1,29 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-using Neo.Core;
-using Neo.Cryptography.ECC;
 using Neo.SmartContract;
-using Neo.Wallets;
 
-using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
-using Neo.Gui.Base.Messages;
-using Neo.Gui.Base.Messaging.Interfaces;
 
 namespace Neo.Gui.ViewModels.Accounts
 {
     public class ImportCustomContractViewModel : ViewModelBase, IDialogViewModel<ImportCustomContractDialogResult>
     {
-        private readonly IMessagePublisher messagePublisher;
+        private readonly IWalletController walletController;
         
         private string parameterList;
         private string script;
 
         public ImportCustomContractViewModel(
-            IMessagePublisher messagePublisher)
+            IWalletController walletController)
         {
-            this.messagePublisher = messagePublisher;
+            this.walletController = walletController;
         }
 
         public string ParameterList
@@ -86,7 +80,7 @@ namespace Neo.Gui.ViewModels.Accounts
 
             if (contract == null) return;
 
-            this.messagePublisher.Publish(new AddContractMessage(contract));
+            this.walletController.AddContract(contract);
 
             this.Close(this, EventArgs.Empty);
         }

@@ -4,11 +4,11 @@ using System.Windows;
 
 using Autofac;
 
+using Neo.Gui.Base.Dialogs;
 using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Managers;
-using Neo.Gui.Base.MVVM;
+using Neo.Gui.Base.Managers.Interfaces;
 
-using Neo.Gui.WPF.Controls;
+using Neo.Gui.Wpf.Controls;
 
 namespace Neo.Gui.Wpf.Implementations.Managers
 {
@@ -20,12 +20,12 @@ namespace Neo.Gui.Wpf.Implementations.Managers
 
         #region IDialogManager implementation
         
-        public IDialog<TDialogResult> CreateDialog<TDialogResult, TLoadParameters>(ILoadParameters<TLoadParameters> parameters, Action<TDialogResult> resultSetter)
+        public IDialog<TDialogResult> CreateDialog<TDialogResult, TLoadParameters>(Action<TDialogResult> resultSetter, TLoadParameters parameters)
         {
             var view = ResolveDialogInstance<TDialogResult>();
 
-            var loadable = view.DataContext as ILoadable;
-            loadable?.OnLoad(parameters);
+            var loadable = view.DataContext as ILoadableDialogViewModel<TDialogResult, TLoadParameters>;
+            loadable?.OnDialogLoad(parameters);
 
             InitializeDialogViewModel(view, resultSetter);
 
@@ -36,9 +36,6 @@ namespace Neo.Gui.Wpf.Implementations.Managers
         {
             var view = ResolveDialogInstance<TDialogResult>();
 
-            var loadable = view.DataContext as ILoadable;
-            loadable?.OnLoad();
-
             InitializeDialogViewModel(view, resultSetter);
 
             return view;
@@ -48,24 +45,18 @@ namespace Neo.Gui.Wpf.Implementations.Managers
         {
             var dialogResult = default(TDialogResult);
 
-            var view = CreateDialog<TDialogResult>(result =>
-            {
-                dialogResult = result;
-            });
+            var view = CreateDialog<TDialogResult>(result => { dialogResult = result; });
             
             view.ShowDialog();
 
             return dialogResult;
         }
 
-        public TDialogResult ShowDialog<TDialogResult, TLoadParameters>(ILoadParameters<TLoadParameters> parameters)
+        public TDialogResult ShowDialog<TDialogResult, TLoadParameters>(TLoadParameters parameters)
         {
             var dialogResult = default(TDialogResult);
 
-            var view = CreateDialog<TDialogResult, TLoadParameters>(parameters, result =>
-            {
-                dialogResult = result;
-            });
+            var view = CreateDialog<TDialogResult, TLoadParameters>(result => { dialogResult = result; }, parameters);
             
             view.ShowDialog();
 

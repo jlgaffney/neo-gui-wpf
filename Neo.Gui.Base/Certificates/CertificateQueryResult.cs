@@ -3,7 +3,7 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace Neo.Gui.Base.Certificates
 {
-    public class CertificateQueryResult : IDisposable
+    internal class CertificateQueryResult : IDisposable
     {
         public CertificateQueryResultType Type { get; set; }
 

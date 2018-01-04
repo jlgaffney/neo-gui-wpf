@@ -1,4 +1,4 @@
-﻿namespace Neo.Gui.Base.Managers
+﻿namespace Neo.Gui.Base.Dialogs
 {
     public enum MessageDialogResult
     {

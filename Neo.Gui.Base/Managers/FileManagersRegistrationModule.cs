@@ -1,8 +1,11 @@
 ﻿using Autofac;
 
+using Neo.Gui.Base.Managers.Implementations;
+using Neo.Gui.Base.Managers.Interfaces;
+
 namespace Neo.Gui.Base.Managers
 {
-    public class FileManagersRegistrationModule : Module
+    internal class FileManagersRegistrationModule : Module
     {
         protected override void Load(ContainerBuilder builder)
         {

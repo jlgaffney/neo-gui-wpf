@@ -4,7 +4,10 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-using Neo.Gui.Base.Controllers;
+using Neo.Gui.Globalization.Resources;
+
+using Neo.Gui.Base.Controllers.Interfaces;
+using Neo.Gui.Base.Dialogs;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Base.Dialogs.Results;
@@ -16,12 +19,11 @@ using Neo.Gui.Base.Dialogs.Results.Development;
 using Neo.Gui.Base.Dialogs.Results.Home;
 using Neo.Gui.Base.Dialogs.Results.Transactions;
 using Neo.Gui.Base.Dialogs.Results.Voting;
+using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.MVVM;
-using Neo.Gui.Base.Globalization;
-using Neo.Gui.Base.Helpers;
-using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.Services.Interfaces;
 
 namespace Neo.Gui.ViewModels.Home
 {
@@ -31,9 +33,6 @@ namespace Neo.Gui.ViewModels.Home
         IUnloadable,
         IDialogViewModel<HomeDialogResult>,
         IMessageHandler<CurrentWalletHasChangedMessage>,
-        IMessageHandler<InvokeContractMessage>,
-        IMessageHandler<NewVersionAvailableMessage>,
-        IMessageHandler<UpdateApplicationMessage>,
         IMessageHandler<WalletStatusMessage>
     {
         #region Private Fields
@@ -41,8 +40,9 @@ namespace Neo.Gui.ViewModels.Home
 
         private readonly IWalletController walletController;
         private readonly IDialogManager dialogManager;
-        private readonly IProcessHelper processHelper;
+        private readonly IProcessManager processManager;
         private readonly ISettingsManager settingsManager;
+        private readonly IVersionService versionService;
         private readonly IMessagePublisher messagePublisher;
         private readonly IMessageSubscriber messageSubscriber;
 
@@ -53,7 +53,7 @@ namespace Neo.Gui.ViewModels.Home
         private bool newVersionVisible;
 
         private string heightStatus;
-        private uint nodeCount;
+        private int nodeCount;
         private string blockStatus;
         #endregion
         
@@ -73,7 +73,7 @@ namespace Neo.Gui.ViewModels.Home
             }
         }
 
-        public uint NodeCount
+        public int NodeCount
         {
             get => this.nodeCount;
             set
@@ -158,8 +158,6 @@ namespace Neo.Gui.ViewModels.Home
 
         public ICommand CloseWalletCommand => new RelayCommand(() => this.walletController.CloseWallet());
 
-        public ICommand ChangePasswordCommand => new RelayCommand(() => this.dialogManager.ShowDialog<ChangePasswordDialogResult>());
-
         public ICommand ExitCommand => new RelayCommand(() => this.messagePublisher.Publish(new ExitAppMessage()));
 
         public ICommand TransferCommand => new RelayCommand(() => this.dialogManager.ShowDialog<TransferDialogResult>());
@@ -178,7 +176,9 @@ namespace Neo.Gui.ViewModels.Home
 
         public ICommand DeployContractCommand => new RelayCommand(() => this.dialogManager.ShowDialog<DeployContractDialogResult>());
 
-        public RelayCommand InvokeContractCommand => new RelayCommand(() => this.messagePublisher.Publish(new InvokeContractMessage(null)));
+        public RelayCommand InvokeContractCommand => new RelayCommand(() => 
+            this.dialogManager.ShowDialog<InvokeContractDialogResult, InvokeContractLoadParameters>(
+                new InvokeContractLoadParameters(null)));
 
         public ICommand ShowElectionDialogCommand => new RelayCommand(() => this.dialogManager.ShowDialog<ElectionDialogResult>());
 
@@ -186,7 +186,7 @@ namespace Neo.Gui.ViewModels.Home
 
         public ICommand CheckForHelpCommand => new RelayCommand(() => { });
 
-        public ICommand ShowOfficialWebsiteCommand => new RelayCommand(() => this.processHelper.OpenInExternalBrowser(OfficialWebsiteUrl));
+        public ICommand ShowOfficialWebsiteCommand => new RelayCommand(() => this.processManager.OpenInExternalBrowser(OfficialWebsiteUrl));
 
         public RelayCommand ShowDeveloperToolsCommand => new RelayCommand(() => this.dialogManager.ShowDialog<DeveloperToolsDialogResult>());
 
@@ -199,15 +199,17 @@ namespace Neo.Gui.ViewModels.Home
         public HomeViewModel(
             IWalletController walletController,
             IDialogManager dialogManager,
-            IProcessHelper processHelper,
+            IProcessManager processManager,
             ISettingsManager settingsManager,
+            IVersionService versionService,
             IMessagePublisher messagePublisher,
             IMessageSubscriber messageSubscriber)
         {
             this.walletController = walletController;
             this.dialogManager = dialogManager;
-            this.processHelper = processHelper;
+            this.processManager = processManager;
             this.settingsManager = settingsManager;
+            this.versionService = versionService;
             this.messagePublisher = messagePublisher;
             this.messageSubscriber = messageSubscriber;
         }
@@ -222,9 +224,11 @@ namespace Neo.Gui.ViewModels.Home
         #endregion
 
         #region ILoadable Implementation 
-        public void OnLoad(params object[] parameters)
+        public void OnLoad()
         {
             this.messageSubscriber.Subscribe(this);
+
+            this.CheckForNewerApplicationVersion();
         }
         #endregion
 
@@ -242,41 +246,33 @@ namespace Neo.Gui.ViewModels.Home
             RaisePropertyChanged(nameof(this.WalletIsOpen));
         }
 
-        public void HandleMessage(InvokeContractMessage message)
-        {
-            this.dialogManager.ShowDialog<InvokeContractDialogResult, InvokeContractLoadParameters>(
-                new LoadParameters<InvokeContractLoadParameters>(new InvokeContractLoadParameters(message.Transaction)));
-        }
-
-        public void HandleMessage(UpdateApplicationMessage message)
-        {
-            // Start update
-            this.processHelper.Run(message.UpdateScriptPath);
-
-            this.messagePublisher.Publish(new ExitAppMessage());
-        }
-
-        public void HandleMessage(NewVersionAvailableMessage message)
-        {
-            this.NewVersionLabel = $"{Strings.DownloadNewVersion}: {message.NewVersion}";
-            this.NewVersionVisible = true;
-        }
-
         public void HandleMessage(WalletStatusMessage message)
         {
             var status = message.Status;
 
             // TODO
-            this.HeightStatus = $"{status.WalletHeight}/{status.BlockChainHeight}/{status.BlockChainHeaderHeight}";
-            this.NextBlockProgressIsIndeterminate = status.NextBlockProgressIsIndeterminate;
-            this.NextBlockProgressFraction = status.NextBlockProgressFraction;
+            this.HeightStatus = $"{status.WalletHeight}/{status.BlockchainStatus.Height}/{status.BlockchainStatus.HeaderHeight}";
+            this.NextBlockProgressIsIndeterminate = status.BlockchainStatus.NextBlockProgressIsIndeterminate;
+            this.NextBlockProgressFraction = status.BlockchainStatus.NextBlockProgressFraction;
 
-            this.NodeCount = status.NodeCount;
+            this.NodeCount = status.NetworkStatus.NodeCount;
             this.BlockStatus = $"{Strings.WaitingForNextBlock}:"; // TODO Update property to return actual status
         }
         #endregion
 
         #region Private Methods 
+        private void CheckForNewerApplicationVersion()
+        {
+            var latestVersion = this.versionService.LatestVersion;
+            var currentVersion = this.versionService.CurrentVersion;
+            if (latestVersion != null && currentVersion != null && latestVersion > currentVersion)
+            {
+                // Newer version is available
+                this.NewVersionLabel = $"{Strings.DownloadNewVersion}: {latestVersion}";
+                this.NewVersionVisible = true;
+            }
+        }
+
         private void CreateWallet()
         {
             var result = this.dialogManager.ShowDialog<CreateWalletDialogResult>();

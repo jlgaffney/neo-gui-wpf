@@ -5,18 +5,19 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-using Neo.Gui.Base.Controllers;
+using Neo.Gui.Globalization.Resources;
+
+using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Data;
+using Neo.Gui.Base.Dialogs;
 using Neo.Gui.Base.Dialogs.LoadParameters.Accounts;
-using Neo.Gui.Base.Messages;
-using Neo.Gui.Base.Messaging.Interfaces;
-using Neo.Gui.Base.MVVM;
-using Neo.Gui.Base.Globalization;
-using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Dialogs.LoadParameters.Voting;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Dialogs.Results.Voting;
-using Neo.Gui.Base.Helpers;
+using Neo.Gui.Base.Managers.Interfaces;
+using Neo.Gui.Base.Messages;
+using Neo.Gui.Base.Messaging.Interfaces;
+using Neo.Gui.Base.MVVM;
 
 namespace Neo.Gui.ViewModels.Home
 {
@@ -32,7 +33,7 @@ namespace Neo.Gui.ViewModels.Home
         private readonly IWalletController walletController;
         private readonly IMessageSubscriber messageSubscriber;
         private readonly IClipboardManager clipboardManager;
-        private readonly IProcessHelper processHelper;
+        private readonly IProcessManager processManager;
         private readonly IDialogManager dialogManager;
         private readonly ISettingsManager settingsManager;
 
@@ -66,11 +67,11 @@ namespace Neo.Gui.ViewModels.Home
 
         public bool WalletIsOpen => this.walletController.WalletIsOpen;
 
-        public bool ViewPrivateKeyEnabled => this.SelectedAccount?.Account.Contract != null && this.SelectedAccount.Account.Contract.IsStandard;
+        public bool ViewPrivateKeyEnabled => this.SelectedAccount != null && this.SelectedAccount.Type == AccountType.Standard;
 
-        public bool ViewContractEnabled => this.SelectedAccount?.Account.Contract != null;
+        public bool ViewContractEnabled => this.SelectedAccount != null && this.SelectedAccount.Type != AccountType.WatchOnly;
 
-        public bool ShowVotingDialogEnabled => this.SelectedAccount?.Account.Contract != null && this.SelectedAccount.Neo > Fixed8.Zero;
+        public bool ShowVotingDialogEnabled => this.SelectedAccount != null && this.SelectedAccount.Type != AccountType.WatchOnly && this.SelectedAccount.Neo > Fixed8.Zero;
 
         public bool CopyAddressToClipboardEnabled => this.SelectedAccount != null;
 
@@ -106,14 +107,14 @@ namespace Neo.Gui.ViewModels.Home
             IMessageSubscriber messageSubscriber, 
             IDialogManager dialogManager,
             IClipboardManager clipboardManager,
-            IProcessHelper processHelper,
+            IProcessManager processManager,
             ISettingsManager settingsManager)
         {
             this.walletController = walletController;
             this.messageSubscriber = messageSubscriber;
             this.dialogManager = dialogManager;
             this.clipboardManager = clipboardManager;
-            this.processHelper = processHelper;
+            this.processManager = processManager;
             this.settingsManager = settingsManager;
 
             this.Accounts = new ObservableCollection<AccountItem>();
@@ -138,7 +139,7 @@ namespace Neo.Gui.ViewModels.Home
         #endregion
 
         #region ILoadable implementation 
-        public void OnLoad(params object[] parameters)
+        public void OnLoad()
         {
             this.messageSubscriber.Subscribe(this);
         }
@@ -194,9 +195,9 @@ namespace Neo.Gui.ViewModels.Home
         private void ViewPrivateKey()
         {
             if (!this.ViewPrivateKeyEnabled) return;
-
+            
             this.dialogManager.ShowDialog<ViewPrivateKeyDialogResult, ViewPrivateKeyLoadParameters>(
-                new LoadParameters<ViewPrivateKeyLoadParameters>(new ViewPrivateKeyLoadParameters(this.SelectedAccount.Account)));
+                new ViewPrivateKeyLoadParameters(this.SelectedAccount.ScriptHash));
         }
 
         private void ViewContract()
@@ -204,7 +205,7 @@ namespace Neo.Gui.ViewModels.Home
             if (!this.ViewContractEnabled) return;
 
             this.dialogManager.ShowDialog<ViewContractDialogResult, ViewContractLoadParameters>(
-                new LoadParameters<ViewContractLoadParameters>(new ViewContractLoadParameters(this.SelectedAccount.Account.Contract)));
+                new ViewContractLoadParameters(this.SelectedAccount.ScriptHash));
         }
 
         private void ShowVotingDialog()
@@ -212,14 +213,16 @@ namespace Neo.Gui.ViewModels.Home
             if (!this.ShowVotingDialogEnabled) return;
 
             this.dialogManager.ShowDialog<VotingDialogResult, VotingLoadParameters>(
-                new LoadParameters<VotingLoadParameters>(new VotingLoadParameters(this.SelectedAccount.Account.Contract.ScriptHash)));
+                new VotingLoadParameters(this.SelectedAccount.ScriptHash));
         }
 
         private void CopyAddressToClipboard()
         {
             if (this.SelectedAccount == null) return;
 
-            this.clipboardManager.SetText(this.SelectedAccount.Address);
+            var selectedAccountAddress = this.walletController.ScriptHashToAddress(this.SelectedAccount.ScriptHash);
+
+            this.clipboardManager.SetText(selectedAccountAddress);
         }
 
         private void DeleteAccount()
@@ -251,10 +254,12 @@ namespace Neo.Gui.ViewModels.Home
         private void ViewSelectedAccountDetails()
         {
             if (this.SelectedAccount == null) return;
+
+            var selectedAccountAddress = this.walletController.ScriptHashToAddress(this.SelectedAccount.ScriptHash);
+
+            var url = string.Format(this.settingsManager.AddressURLFormat, selectedAccountAddress);
             
-            var url = string.Format(this.settingsManager.AddressURLFormat, this.SelectedAccount.Address);
-            
-            this.processHelper.OpenInExternalBrowser(url);
+            this.processManager.OpenInExternalBrowser(url);
         }
         #endregion Account Menu Command Methods
     }

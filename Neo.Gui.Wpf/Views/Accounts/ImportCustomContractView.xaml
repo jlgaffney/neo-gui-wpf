@@ -1,7 +1,7 @@
 ﻿<controls:NeoWindow x:Class="Neo.Gui.Wpf.Views.Accounts.ImportCustomContractView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:globalization="clr-namespace:Neo.Gui.Base.Globalization;assembly=Neo.Gui.Base"
+        xmlns:globalization="clr-namespace:Neo.Gui.Globalization.Resources;assembly=Neo.Gui.Globalization"
         xmlns:accounts="clr-namespace:Neo.Gui.ViewModels.Accounts;assembly=Neo.Gui.ViewModels"
         xmlns:controls="clr-namespace:Neo.Gui.Wpf.Controls"
         xmlns:markupExtensions="clr-namespace:Neo.Gui.Wpf.MarkupExtensions"
@@ -10,7 +10,6 @@
         Width="600" Height="520" ResizeMode="NoResize">
     <Grid Margin="12">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
@@ -21,17 +20,14 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Label Grid.Row="0" Grid.Column="0" Content="{x:Static globalization:Strings.RelatedAccount}" HorizontalAlignment="Right" VerticalAlignment="Center" />
-        <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding RelatedAccounts}" SelectedItem="{Binding SelectedRelatedAccount}" Margin="0 4" HorizontalAlignment="Stretch" />
+        <Label Grid.Row="0" Grid.Column="0" Content="{x:Static globalization:Strings.ParameterList}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding ParameterList, UpdateSourceTrigger=PropertyChanged}" Margin="0 4" Padding="4" HorizontalAlignment="Stretch" />
 
-        <Label Grid.Row="1" Grid.Column="0" Content="{x:Static globalization:Strings.ParameterList}" HorizontalAlignment="Right" VerticalAlignment="Center" />
-        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ParameterList, UpdateSourceTrigger=PropertyChanged}" Margin="0 4" Padding="4" HorizontalAlignment="Stretch" />
-
-        <GroupBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Header="{x:Static globalization:Strings.Script}">
+        <GroupBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Header="{x:Static globalization:Strings.Script}">
             <TextBox Text="{Binding Script, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" />
         </GroupBox>
 
-        <DockPanel Grid.Row="3" Grid.ColumnSpan="2" Margin="0 8 0 0" HorizontalAlignment="Right">
+        <DockPanel Grid.Row="2" Grid.ColumnSpan="2" Margin="0 8 0 0" HorizontalAlignment="Right">
             <Button Content="{x:Static globalization:Strings.Confirm}" Width="60" Margin="0 0 8 0" Command="{Binding ConfirmCommand}" IsEnabled="{Binding ConfirmEnabled}" />
             <Button Content="{x:Static globalization:Strings.Cancel}" Width="60" Command="{Binding CancelCommand}" />
         </DockPanel>

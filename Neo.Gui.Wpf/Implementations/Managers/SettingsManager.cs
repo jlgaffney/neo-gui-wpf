@@ -1,4 +1,5 @@
-﻿using Neo.Gui.Base.Managers;
+﻿using Neo.Gui.Base.Managers.Interfaces;
+
 using Neo.Gui.Wpf.Extensions;
 using Neo.Gui.Wpf.Properties;
 
@@ -34,7 +35,7 @@ namespace Neo.Gui.Wpf.Implementations.Managers
 
         #region Local Node Settings
 
-        public string LocalNodeBlockchainDataDirectoryPath => Settings.Default.Paths.Chain;
+        public string BlockchainDataDirectoryPath => Settings.Default.Paths.Chain;
 
         public int LocalNodePort => Settings.Default.P2P.Port;
 

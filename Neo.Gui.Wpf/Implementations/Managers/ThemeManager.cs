@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Windows;
+
 using Neo.Gui.Base.Extensions;
-using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Base.Theming;
+
 using Neo.Gui.Wpf.Extensions;
+
 using MahAppsThemeManager = MahApps.Metro.ThemeManager;
 using Style = Neo.Gui.Base.Theming.Style;
 

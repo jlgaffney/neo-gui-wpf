@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+
 using Neo.Core;
 
-namespace Neo.UI.Base.Wrappers
+namespace Neo.Gui.Wpf.Wrappers
 {
     internal abstract class TransactionWrapper
     {

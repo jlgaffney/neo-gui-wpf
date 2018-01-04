@@ -1,6 +1,6 @@
 ﻿namespace Neo.Gui.Base.Certificates
 {
-    public enum CertificateQueryResultType
+    internal enum CertificateQueryResultType
     {
         Querying,
         QueryFailed,

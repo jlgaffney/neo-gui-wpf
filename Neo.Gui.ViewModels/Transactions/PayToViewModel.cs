@@ -8,20 +8,17 @@ using GalaSoft.MvvmLight.Command;
 
 using Neo.Wallets;
 
-using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Transactions;
 using Neo.Gui.Base.Dialogs.Results.Transactions;
-using Neo.Gui.Base.MVVM;
-using Neo.Gui.Base.Services;
+using Neo.Gui.Base.Services.Interfaces;
 
 namespace Neo.Gui.ViewModels.Transactions
 {
-    public class PayToViewModel :
-        ViewModelBase,
-        ILoadable,
-        IDialogViewModel<PayToDialogResult>
+    public class PayToViewModel : ViewModelBase,
+        ILoadableDialogViewModel<PayToDialogResult, PayToLoadParameters>
     {
         private readonly IWalletController walletController;
         private readonly IDispatchService dispatchService;
@@ -134,7 +131,7 @@ namespace Neo.Gui.ViewModels.Transactions
                 
                 try
                 {
-                    this.walletController.ToScriptHash(this.PayToAddress);
+                    this.walletController.AddressToScriptHash(this.PayToAddress);
                 }
                 catch (FormatException)
                 {
@@ -156,31 +153,20 @@ namespace Neo.Gui.ViewModels.Transactions
         }
 
         public ICommand OkCommand => new RelayCommand(this.Ok);
-        
 
-        #region IDialogViewModel implementation 
+
+        #region ILoadableDialogViewModel implementation 
         public event EventHandler Close;
 
         public event EventHandler<PayToDialogResult> SetDialogResultAndClose;
 
         public PayToDialogResult DialogResult { get; private set; }
-        #endregion
-
-        #region ILoadable implementation 
-        public void OnLoad(params object[] parameters)
+        
+        public void OnDialogLoad(PayToLoadParameters parameters)
         {
-            if (!parameters.Any()) return;
+            var asset = parameters?.Asset;
+            var scriptHash = parameters?.ScriptHash;
 
-            var loadParameters = parameters[0] as PayToLoadParameters;
-
-            this.Load(loadParameters?.Asset, loadParameters?.ScriptHash);
-
-        }
-        #endregion
-
-
-        private void Load(AssetDescriptor asset, UInt160 scriptHash)
-        {
             this.dispatchService.InvokeOnMainUIThread(() =>
             {
                 this.Assets.Clear();
@@ -221,11 +207,12 @@ namespace Neo.Gui.ViewModels.Transactions
 
                 if (scriptHash != null)
                 {
-                    this.PayToAddress = this.walletController.ToAddress(scriptHash);
+                    this.PayToAddress = this.walletController.ScriptHashToAddress(scriptHash);
                     this.PayToAddressReadOnly = true;
                 }
             });
         }
+        #endregion
 
         private void Ok()
         {
@@ -249,7 +236,7 @@ namespace Neo.Gui.ViewModels.Transactions
                 AssetName = asset.AssetName,
                 AssetId = asset.AssetId,
                 Value = new BigDecimal(Fixed8.Parse(this.Amount).GetData(), 8),
-                ScriptHash = this.walletController.ToScriptHash(this.PayToAddress)
+                ScriptHash = this.walletController.AddressToScriptHash(this.PayToAddress)
             };
         }
     }

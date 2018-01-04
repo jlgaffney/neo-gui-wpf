@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Windows;
-using Neo.Gui.Base.Services;
+
 using ToastNotifications;
 using ToastNotifications.Lifetime;
 using ToastNotifications.Messages;
 using ToastNotifications.Position;
+
+using Neo.Gui.Base.Services.Interfaces;
 
 namespace Neo.Gui.Wpf.Implementations.Services
 {
@@ -35,24 +37,24 @@ namespace Neo.Gui.Wpf.Implementations.Services
         #endregion
 
         #region INotificationService implementation 
-        public void ShowErrorNotification(string notificationMessage)
+        public void ShowErrorNotification(string message)
         {
-            this.notifier.ShowError(notificationMessage);
+            this.notifier.ShowError(message);
         }
 
-        public void ShowInformationNotification(string notificationMessage)
+        public void ShowInformationNotification(string message)
         {
-            this.notifier.ShowInformation(notificationMessage);
+            this.notifier.ShowInformation(message);
         }
 
-        public void ShowSuccessNotification(string notificationMessage)
+        public void ShowSuccessNotification(string message)
         {
-            this.notifier.ShowSuccess(notificationMessage);
+            this.notifier.ShowSuccess(message);
         }
 
-        public void ShowWarningNotification(string notificationMessage)
+        public void ShowWarningNotification(string message)
         {
-            this.notifier.ShowWarning(notificationMessage);
+            this.notifier.ShowWarning(message);
         }
         #endregion
     }
