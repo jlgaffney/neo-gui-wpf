@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Windows.Input;
+﻿using System.Collections.ObjectModel;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -40,9 +38,7 @@ namespace Neo.Gui.ViewModels.Home
         private AccountItem selectedAccount;
         #endregion
 
-        #region Properties
-        public Action NotifyBalanceChangedAction { get; set; }
-
+        #region Public Properties
         public ObservableCollection<AccountItem> Accounts { get; }
 
         public AccountItem SelectedAccount
@@ -77,28 +73,31 @@ namespace Neo.Gui.ViewModels.Home
 
         public bool DeleteAccountEnabled => this.SelectedAccount != null;
 
-        #endregion Properties
+        public RelayCommand CreateNewAddressCommand => new RelayCommand(this.CreateNewAccount);
 
-        #region Commands
-        public ICommand CreateNewAddressCommand => new RelayCommand(this.CreateNewAccount);
+        public RelayCommand ImportWifPrivateKeyCommand => new RelayCommand(this.ImportWifPrivateKey);
 
-        public ICommand ImportWifPrivateKeyCommand => new RelayCommand(this.ImportWifPrivateKey);
-        public ICommand ImportFromCertificateCommand => new RelayCommand(this.ImportCertificate);
+        public RelayCommand ImportFromCertificateCommand => new RelayCommand(this.ImportCertificate);
 
-        public ICommand ImportWatchOnlyAddressCommand => new RelayCommand(this.ImportWatchOnlyAddress);
+        public RelayCommand ImportWatchOnlyAddressCommand => new RelayCommand(this.ImportWatchOnlyAddress);
 
-        public ICommand CreateMultiSignatureContractAddressCommand => new RelayCommand(this.CreateMultiSignatureContract);
-        public ICommand CreateLockContractAddressCommand => new RelayCommand(this.CreateLockAddress);
+        public RelayCommand CreateMultiSignatureContractAddressCommand => new RelayCommand(this.CreateMultiSignatureContract);
 
-        public ICommand CreateCustomContractAddressCommand => new RelayCommand(this.ImportCustomContract);
+        public RelayCommand CreateLockContractAddressCommand => new RelayCommand(this.CreateLockAddress);
 
-        public ICommand ViewPrivateKeyCommand => new RelayCommand(this.ViewPrivateKey);
-        public ICommand ViewContractCommand => new RelayCommand(this.ViewContract);
-        public ICommand ShowVotingDialogCommand => new RelayCommand(this.ShowVotingDialog);
-        public ICommand CopyAddressToClipboardCommand => new RelayCommand(this.CopyAddressToClipboard);
-        public ICommand DeleteAccountCommand => new RelayCommand(this.DeleteAccount);
+        public RelayCommand CreateCustomContractAddressCommand => new RelayCommand(this.ImportCustomContract);
 
-        public ICommand ViewSelectedAccountDetailsCommand => new RelayCommand(this.ViewSelectedAccountDetails);
+        public RelayCommand ViewPrivateKeyCommand => new RelayCommand(this.ViewPrivateKey);
+
+        public RelayCommand ViewContractCommand => new RelayCommand(this.ViewContract);
+
+        public RelayCommand ShowVotingDialogCommand => new RelayCommand(this.ShowVotingDialog);
+
+        public RelayCommand CopyAddressToClipboardCommand => new RelayCommand(this.CopyAddressToClipboard);
+
+        public RelayCommand DeleteAccountCommand => new RelayCommand(this.DeleteAccount);
+
+        public RelayCommand ViewSelectedAccountDetailsCommand => new RelayCommand(this.ViewSelectedAccountDetails);
         #endregion Command
         
         #region Constructor 
@@ -243,7 +242,7 @@ namespace Neo.Gui.ViewModels.Home
 
             if (!deletedSuccessfully)
             {
-                // TODO Show error message
+                // TODO Show error message and create UnitTest for this feature.
 
                 return;
             }
@@ -261,6 +260,6 @@ namespace Neo.Gui.ViewModels.Home
             
             this.processManager.OpenInExternalBrowser(url);
         }
-        #endregion Account Menu Command Methods
+        #endregion 
     }
 }
