@@ -4,33 +4,33 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Threading;
 
 using Neo.Core;
 using Neo.Cryptography.ECC;
-using Neo.Implementations.Wallets.NEP6;
-using Neo.Network;
-using Neo.SmartContract;
-using Neo.VM;
-using Neo.Wallets;
 
 using Neo.Gui.Base.Certificates;
 using Neo.Gui.Base.Data;
+using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
+using Neo.Gui.Base.Dialogs.Results.Contracts;
 using Neo.Gui.Base.Exceptions;
-using Neo.Gui.Globalization.Resources;
 using Neo.Gui.Base.Helpers;
 using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.Services;
 using Neo.Gui.Base.Status;
+using Neo.Gui.Globalization.Resources;
+using Neo.Implementations.Wallets.NEP6;
+using Neo.Network;
+using Neo.SmartContract;
+using Neo.VM;
+using Neo.Wallets;
 
 using CryptographicException = System.Security.Cryptography.CryptographicException;
 using DeprecatedWallet = Neo.Implementations.Wallets.EntityFramework.UserWallet;
 using Timer = System.Timers.Timer;
-using System.Text;
-using Neo.Gui.Base.Dialogs.Results.Contracts;
-using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
 
 namespace Neo.Gui.Base.Controllers
 {
