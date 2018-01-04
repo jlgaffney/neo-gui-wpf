@@ -2,16 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows.Input;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-using Neo.SmartContract;
-using Neo.VM;
-using Neo.Wallets;
-
-using Neo.Gui.Globalization.Resources;
+using Neo.Cryptography.ECC;
 
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Interfaces;
@@ -22,49 +17,23 @@ namespace Neo.Gui.ViewModels.Accounts
 {
     public class CreateLockAccountViewModel : ViewModelBase, IDialogViewModel<CreateLockAccountDialogResult>
     {
+        #region Private Fields 
         private const int HoursInDay = 24;
         private const int MinutesInHour = 60;
 
         private readonly IDialogManager dialogManager;
         private readonly IWalletController walletController;
 
-        private KeyPair selectedKeyPair;
+        private ECPoint selectedKeyPair;
         private DateTime unlockDate;
         private int unlockHour;
         private int unlockMinute;
+        #endregion
 
-        public CreateLockAccountViewModel(
-            IDialogManager dialogManager,
-            IWalletController walletController)
-        {
-            this.dialogManager = dialogManager;
-            this.walletController = walletController;
+        #region Public Properties 
+        public ObservableCollection<ECPoint> KeyPairs { get; }      // TODO: this is not KeyPairs anymore but a list of PublicKeys. Need to be checked with jlgaffney
 
-            this.KeyPairs = new ObservableCollection<KeyPair>(
-                walletController.GetStandardAccounts()
-                    .Select(p => p.GetKey()).ToArray());
-
-            this.Hours = new List<int>();
-
-            this.Hours = Enumerable.Range(0, HoursInDay).ToList();
-
-            this.Minutes = Enumerable.Range(0, MinutesInHour).ToList();
-
-            var now = DateTime.UtcNow;
-
-            this.MinimumDate = now.Date;
-            this.UnlockDate = now;
-
-            // Set unlock time
-            var time = now.TimeOfDay;
-
-            this.UnlockHour = time.Hours;
-            this.UnlockMinute = time.Minutes;
-        }
-
-        public ObservableCollection<KeyPair> KeyPairs { get; }
-
-        public KeyPair SelectedKeyPair
+        public ECPoint SelectedKeyPair
         {
             get => this.selectedKeyPair;
             set
@@ -127,9 +96,42 @@ namespace Neo.Gui.ViewModels.Accounts
 
         public bool CreateEnabled => this.SelectedKeyPair != null;
 
-        public ICommand CreateCommand => new RelayCommand(this.Create);
+        public RelayCommand CreateCommand => new RelayCommand(this.HandleCreateAccount);
 
-        public ICommand CancelCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
+        public RelayCommand CancelCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
+        #endregion
+
+        #region Constructor 
+        public CreateLockAccountViewModel(
+            IDialogManager dialogManager,
+            IWalletController walletController)
+        {
+            this.dialogManager = dialogManager;
+            this.walletController = walletController;
+
+            // TODO: All the calls to objects should be in the Loaded method.
+            this.KeyPairs = new ObservableCollection<ECPoint>(
+                walletController.GetStandardAccounts()
+                    .Select(p => p.GetKey().PublicKey).ToArray());
+
+            this.Hours = new List<int>();
+
+            this.Hours = Enumerable.Range(0, HoursInDay).ToList();
+
+            this.Minutes = Enumerable.Range(0, MinutesInHour).ToList();
+
+            var now = DateTime.UtcNow;
+
+            this.MinimumDate = now.Date;
+            this.UnlockDate = now;
+
+            // Set unlock time
+            var time = now.TimeOfDay;
+
+            this.UnlockHour = time.Hours;
+            this.UnlockMinute = time.Minutes;
+        }
+        #endregion
 
         #region IDialogViewModel implementation 
         public event EventHandler Close;
@@ -139,47 +141,20 @@ namespace Neo.Gui.ViewModels.Accounts
         public CreateLockAccountDialogResult DialogResult { get; private set; }
         #endregion
 
-        private void Create()
+        #region Private Methods
+        private void HandleCreateAccount()
         {
-            var contract = this.GenerateContract();
+            if (this.SelectedKeyPair == null) return;
 
-            if (contract == null) return;
+            var unlockDateTime = this.UnlockDate.Date
+                .AddHours(this.UnlockHour)
+                .AddMinutes(this.UnlockMinute)
+                .ToTimestamp();
 
-            this.walletController.AddContract(contract);
+            this.walletController.AddAccountContract(this.SelectedKeyPair, unlockDateTime);
 
             this.Close(this, EventArgs.Empty);
         }
-
-        private Contract GenerateContract()
-        {
-            if (this.SelectedKeyPair == null) return null;
-
-            var publicKey = this.SelectedKeyPair.PublicKey;
-
-            // Combine unlock date and time
-            var unlockDateTime = this.UnlockDate.Date
-                .AddHours(this.UnlockHour)
-                .AddMinutes(this.UnlockMinute);
-
-            var timestamp = unlockDateTime.ToTimestamp();
-
-            using (var sb = new ScriptBuilder())
-            {
-                sb.EmitPush(publicKey);
-                sb.EmitPush(timestamp);
-                // Lock 2.0 in mainnet tx:4e84015258880ced0387f34842b1d96f605b9cc78b308e1f0d876933c2c9134b
-                sb.EmitAppCall(UInt160.Parse("d3cce84d0800172d09c88ccad61130611bd047a4"));
-
-                try
-                {
-                    return Contract.Create(new[] {ContractParameterType.Signature}, sb.ToArray());
-                }
-                catch
-                {
-                    this.dialogManager.ShowMessageDialog(string.Empty, Strings.AddContractFailedMessage);
-                    return null;
-                }
-            }
-        }
+        #endregion
     }
 }
