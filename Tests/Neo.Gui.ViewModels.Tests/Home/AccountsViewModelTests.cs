@@ -1,12 +1,12 @@
 ﻿using Moq;
-using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Data;
+using Neo.Gui.Base.Dialogs;
 using Neo.Gui.Base.Dialogs.LoadParameters.Accounts;
 using Neo.Gui.Base.Dialogs.LoadParameters.Voting;
 using Neo.Gui.Base.Dialogs.Results.Voting;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
-using Neo.Gui.Base.Helpers;
-using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Globalization.Resources;
@@ -417,7 +417,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
 
             var walletControllerMock = this.AutoMockContainer.GetMock<IWalletController>();
             walletControllerMock
-                .Setup(x => x.ToAddress(selectedAccount.ScriptHash))
+                .Setup(x => x.ScriptHashToAddress(selectedAccount.ScriptHash))
                 .Returns(walletAddress);
 
             var viewModel = this.AutoMockContainer.Create<AccountsViewModel>();
@@ -515,7 +515,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
                 .SetupGet(x => x.AddressURLFormat)
                 .Returns(urlFormat);
 
-            var processHelperMock = this.AutoMockContainer.GetMock<IProcessHelper>();
+            var processManagerMock = this.AutoMockContainer.GetMock<IProcessManager>();
 
             var selectedAccount = new AccountItemBuilder()
                 .StandardAccount()
@@ -524,7 +524,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
 
             var walletControllerMock = this.AutoMockContainer.GetMock<IWalletController>();
             walletControllerMock
-                .Setup(x => x.ToAddress(selectedAccount.ScriptHash))
+                .Setup(x => x.ScriptHashToAddress(selectedAccount.ScriptHash))
                 .Returns(walletAddress);
 
             var viewModel = this.AutoMockContainer.Create<AccountsViewModel>();
@@ -534,7 +534,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.ViewSelectedAccountDetailsCommand.Execute(null);
 
             // Assert
-            processHelperMock.Verify(x => x.OpenInExternalBrowser(expectedUrl));
+            processManagerMock.Verify(x => x.OpenInExternalBrowser(expectedUrl));
         }
     }
 }
