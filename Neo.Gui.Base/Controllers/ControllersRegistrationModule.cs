@@ -1,8 +1,11 @@
 ﻿using Autofac;
 
+using Neo.Gui.Base.Controllers.Implementations;
+using Neo.Gui.Base.Controllers.Interfaces;
+
 namespace Neo.Gui.Base.Controllers
 {
-    public class ControllersRegistrationModule : Module
+    internal class ControllersRegistrationModule : Module
     {
         protected override void Load(ContainerBuilder builder)
         {

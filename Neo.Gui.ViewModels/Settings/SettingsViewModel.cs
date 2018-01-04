@@ -7,13 +7,12 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Controllers.Interfaces;
+using Neo.Gui.Base.Dialogs;
 using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Dialogs.Results.Settings;
 using Neo.Gui.Base.Extensions;
-using Neo.Gui.Base.Helpers;
-using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Base.Theming;
 
 namespace Neo.Gui.ViewModels.Settings
@@ -22,7 +21,7 @@ namespace Neo.Gui.ViewModels.Settings
     {
         private readonly IDialogManager dialogManager;
         private readonly IWalletController walletController;
-        private readonly IProcessHelper processHelper;
+        private readonly IProcessManager processManager;
         private readonly ISettingsManager settingsManager;
         private readonly IThemeManager themeManager;
 
@@ -45,13 +44,13 @@ namespace Neo.Gui.ViewModels.Settings
         public SettingsViewModel(
             IDialogManager dialogManager,
             IWalletController walletController,
-            IProcessHelper processHelper,
+            IProcessManager processManager,
             ISettingsManager settingsManager,
             IThemeManager themeManager)
         {
             this.dialogManager = dialogManager;
             this.walletController = walletController;
-            this.processHelper = processHelper;
+            this.processManager = processManager;
             this.settingsManager = settingsManager;
             this.themeManager = themeManager;
 
@@ -338,7 +337,7 @@ namespace Neo.Gui.ViewModels.Settings
             this.SaveAppearanceSettings();
 
             // Restart application
-            this.processHelper.Restart();
+            this.processManager.Restart();
         }
 
         private void ResetAppearanceSettingsToDefault()

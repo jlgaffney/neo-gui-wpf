@@ -3,7 +3,9 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Markup;
+
 using Autofac;
+
 using Neo.Gui.Base.MVVM;
 
 namespace Neo.Gui.Wpf.MarkupExtensions

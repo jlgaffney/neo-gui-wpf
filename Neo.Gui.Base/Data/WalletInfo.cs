@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Neo.Gui.Base.Data
 {
-    public class WalletInfo
+    internal class WalletInfo
     {
         private readonly IDictionary<UInt160, AccountItem> accounts;
         private readonly IList<AssetItem> assets;

@@ -5,14 +5,14 @@ using GalaSoft.MvvmLight.Command;
 
 using Neo.Gui.Globalization.Resources;
 
-using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Data;
+using Neo.Gui.Base.Dialogs;
 using Neo.Gui.Base.Dialogs.LoadParameters.Accounts;
 using Neo.Gui.Base.Dialogs.LoadParameters.Voting;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Dialogs.Results.Voting;
-using Neo.Gui.Base.Helpers;
-using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.MVVM;
@@ -31,7 +31,7 @@ namespace Neo.Gui.ViewModels.Home
         private readonly IWalletController walletController;
         private readonly IMessageSubscriber messageSubscriber;
         private readonly IClipboardManager clipboardManager;
-        private readonly IProcessHelper processHelper;
+        private readonly IProcessManager processManager;
         private readonly IDialogManager dialogManager;
         private readonly ISettingsManager settingsManager;
 
@@ -106,14 +106,14 @@ namespace Neo.Gui.ViewModels.Home
             IMessageSubscriber messageSubscriber, 
             IDialogManager dialogManager,
             IClipboardManager clipboardManager,
-            IProcessHelper processHelper,
+            IProcessManager processManager,
             ISettingsManager settingsManager)
         {
             this.walletController = walletController;
             this.messageSubscriber = messageSubscriber;
             this.dialogManager = dialogManager;
             this.clipboardManager = clipboardManager;
-            this.processHelper = processHelper;
+            this.processManager = processManager;
             this.settingsManager = settingsManager;
 
             this.Accounts = new ObservableCollection<AccountItem>();
@@ -219,7 +219,7 @@ namespace Neo.Gui.ViewModels.Home
         {
             if (this.SelectedAccount == null) return;
 
-            var selectedAccountAddress = this.walletController.ToAddress(this.SelectedAccount.ScriptHash);
+            var selectedAccountAddress = this.walletController.ScriptHashToAddress(this.SelectedAccount.ScriptHash);
 
             this.clipboardManager.SetText(selectedAccountAddress);
         }
@@ -254,11 +254,11 @@ namespace Neo.Gui.ViewModels.Home
         {
             if (this.SelectedAccount == null) return;
 
-            var selectedAccountAddress = this.walletController.ToAddress(this.SelectedAccount.ScriptHash);
+            var selectedAccountAddress = this.walletController.ScriptHashToAddress(this.SelectedAccount.ScriptHash);
 
             var url = string.Format(this.settingsManager.AddressURLFormat, selectedAccountAddress);
             
-            this.processHelper.OpenInExternalBrowser(url);
+            this.processManager.OpenInExternalBrowser(url);
         }
         #endregion 
     }

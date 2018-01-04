@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
-using Neo.Gui.Base.Services;
+
+using Neo.Gui.Base.Services.Interfaces;
 
 namespace Neo.Gui.Wpf.Implementations.Services
 {

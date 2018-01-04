@@ -1,9 +1,12 @@
 ﻿using System.Linq;
 using Moq;
 using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Data;
+using Neo.Gui.Base.Dialogs;
 using Neo.Gui.Base.Helpers;
 using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Globalization.Resources;
@@ -102,7 +105,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
                 .WithCustomToken()
                 .Build();
 
-            var processHelperMock = this.AutoMockContainer.GetMock<IProcessHelper>();
+            var processHelperMock = this.AutoMockContainer.GetMock<IProcessManager>();
 
             var walletControllerMock = this.AutoMockContainer.GetMock<IWalletController>();
             walletControllerMock
@@ -166,7 +169,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
                 .WithName(tokenName)
                 .Build();
 
-            var processHelperMock = this.AutoMockContainer.GetMock<IProcessHelper>();
+            var processHelperMock = this.AutoMockContainer.GetMock<IProcessManager>();
 
             var settingsManagerMock = this.AutoMockContainer.GetMock<ISettingsManager>();
             settingsManagerMock

@@ -15,8 +15,8 @@ using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Base.Dialogs.Results.Contracts;
-using Neo.Gui.Base.Managers;
-using Neo.Gui.Base.Services;
+using Neo.Gui.Base.Managers.Interfaces;
+using Neo.Gui.Base.Services.Interfaces;
 
 namespace Neo.Gui.ViewModels.Contracts
 {

@@ -9,12 +9,12 @@ using GalaSoft.MvvmLight.Command;
 using Neo.Core;
 using Neo.Cryptography.ECC;
 
-using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Base.Dialogs.Results.Contracts;
 using Neo.Gui.Base.Dialogs.Results.Voting;
-using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.Managers.Interfaces;
 
 namespace Neo.Gui.ViewModels.Voting
 {

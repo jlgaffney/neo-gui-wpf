@@ -4,9 +4,7 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-using Neo.Wallets;
-
-using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Accounts;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
@@ -57,7 +55,7 @@ namespace Neo.Gui.ViewModels.Accounts
 
             var key = this.walletController.GetAccountKey(parameters.ScriptHash);
 
-            this.Address = this.walletController.ToAddress(parameters.ScriptHash);
+            this.Address = this.walletController.ScriptHashToAddress(parameters.ScriptHash);
             this.PublicKeyHex = key.PublicKey.EncodePoint(true).ToHexString();
             using (key.Decrypt())
             {

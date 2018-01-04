@@ -1,7 +1,9 @@
 ﻿using Autofac;
-using Neo.Gui.Base.Certificates;
+
 using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Messaging;
+using Neo.Gui.Base.Services;
 
 namespace Neo.Gui.Base
 {
@@ -11,13 +13,9 @@ namespace Neo.Gui.Base
         {
             // Register modules
             builder.RegisterModule<ControllersRegistrationModule>();
+            builder.RegisterModule<ManagersRegistrationModule>();
             builder.RegisterModule<MessagingRegistrationModule>();
-
-            // Register types
-            builder
-                .RegisterType<CertificateService>()
-                .As<ICertificateService>()
-                .SingleInstance();
+            builder.RegisterModule<ServicesRegistrationModule>();
 
             base.Load(builder);
         }

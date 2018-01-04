@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Neo.Gui.WPF.Controls
+namespace Neo.Gui.Wpf.Controls
 {
     /// <summary>
     /// Interaction logic for InformationBox.xaml

@@ -4,10 +4,11 @@ using System.Windows;
 
 using Autofac;
 
+using Neo.Gui.Base.Dialogs;
 using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.Managers.Interfaces;
 
-using Neo.Gui.WPF.Controls;
+using Neo.Gui.Wpf.Controls;
 
 namespace Neo.Gui.Wpf.Implementations.Managers
 {

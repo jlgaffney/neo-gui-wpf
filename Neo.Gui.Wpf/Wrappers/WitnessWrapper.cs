@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel;
 using System.Drawing.Design;
+
 using Neo.Core;
+
 using Neo.Gui.Base.Converters;
 
-namespace Neo.UI.Base.Wrappers
+namespace Neo.Gui.Wpf.Wrappers
 {
     internal class WitnessWrapper
     {

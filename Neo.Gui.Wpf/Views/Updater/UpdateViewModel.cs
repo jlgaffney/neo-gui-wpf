@@ -10,9 +10,10 @@ using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results.Settings;
 using Neo.Gui.Base.Helpers;
 using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
-
+using Neo.Gui.Base.Services.Interfaces;
 using Neo.Gui.Wpf.Properties;
 
 namespace Neo.Gui.Wpf.Views.Updater
@@ -37,7 +38,7 @@ namespace Neo.Gui.Wpf.Views.Updater
         private readonly ICompressedFileManager compressedFileManager;
         private readonly IDirectoryManager directoryManager;
         private readonly IFileManager fileManager;
-        private readonly IProcessHelper processHelper;
+        private readonly IProcessManager processManager;
         private readonly IMessagePublisher messagePublisher;
 
         private readonly Version latestVersion;
@@ -51,20 +52,20 @@ namespace Neo.Gui.Wpf.Views.Updater
             ICompressedFileManager compressedFileManager,
             IDirectoryManager directoryManager,
             IFileManager fileManager,
-            IProcessHelper processHelper,
-            IVersionHelper versionHelper,
+            IProcessManager processManager,
+            IVersionService versionService,
             IMessagePublisher messagePublisher)
         {
             this.compressedFileManager = compressedFileManager;
             this.directoryManager = directoryManager;
             this.fileManager = fileManager;
-            this.processHelper = processHelper;
+            this.processManager = processManager;
             this.messagePublisher = messagePublisher;
 
             // Setup update information
-            this.latestVersion = versionHelper.LatestVersion;
+            this.latestVersion = versionService.LatestVersion;
 
-            var latestReleaseInfo = versionHelper.GetLatestReleaseInfo();
+            var latestReleaseInfo = versionService.GetLatestReleaseInfo();
 
             if (latestReleaseInfo == null) return;
 
@@ -125,12 +126,12 @@ namespace Neo.Gui.Wpf.Views.Updater
 
         private void GoToOfficialWebsite()
         {
-            this.processHelper.OpenInExternalBrowser(OfficialWebsiteUrl);
+            this.processManager.OpenInExternalBrowser(OfficialWebsiteUrl);
         }
 
         private void GoToDownloadPage()
         {
-            this.processHelper.OpenInExternalBrowser(this.downloadUrl);
+            this.processManager.OpenInExternalBrowser(this.downloadUrl);
         }
 
         #region Update Downloader Methods
@@ -180,7 +181,9 @@ namespace Neo.Gui.Wpf.Views.Updater
             this.fileManager.WriteAllBytes(UpdateFileName, Resources.UpdateBat);
 
             // Update application
-            this.messagePublisher.Publish(new UpdateApplicationMessage(UpdateFileName));
+            this.processManager.Run(UpdateFileName);
+
+            this.messagePublisher.Publish(new ExitAppMessage());
 
             this.Close(this, EventArgs.Empty);
         }

@@ -8,14 +8,14 @@ using GalaSoft.MvvmLight.Command;
 using Neo.Core;
 using Neo.VM;
 
-using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Base.Dialogs.LoadParameters.Voting;
 using Neo.Gui.Base.Dialogs.Results.Contracts;
 using Neo.Gui.Base.Dialogs.Results.Voting;
 using Neo.Gui.Base.Extensions;
-using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.Managers.Interfaces;
 
 namespace Neo.Gui.ViewModels.Voting
 {
@@ -78,7 +78,7 @@ namespace Neo.Gui.ViewModels.Voting
             var voteStrings = this.walletController.GetVotes(hash).Select(p => p.ToString()).ToArray();
 
             // Set address
-            this.Address = this.walletController.ToAddress(hash);
+            this.Address = this.walletController.ScriptHashToAddress(hash);
 
             // Concatenate votes into multi-line string
             this.Votes = voteStrings.ToMultiLineString();

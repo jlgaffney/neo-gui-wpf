@@ -1,6 +1,10 @@
 ﻿using Autofac;
-using Neo.Gui.Base.Helpers;
-using Neo.Gui.Wpf.Implementations.Helpers;
+
+using Neo.Gui.Base.Managers.Interfaces;
+using Neo.Gui.Base.Services.Interfaces;
+
+using Neo.Gui.Wpf.Implementations.Managers;
+using Neo.Gui.Wpf.Implementations.Services;
 
 namespace Neo.Gui.Wpf.RegistrationModules
 {
@@ -9,13 +13,13 @@ namespace Neo.Gui.Wpf.RegistrationModules
         protected override void Load(ContainerBuilder builder)
         {
             builder
-                .RegisterType<ProcessHelper>()
-                .As<IProcessHelper>()
+                .RegisterType<ProcessManager>()
+                .As<IProcessManager>()
                 .SingleInstance();
 
             builder
-                .RegisterType<VersionHelper>()
-                .As<IVersionHelper>()
+                .RegisterType<VersionService>()
+                .As<IVersionService>()
                 .SingleInstance();
 
             base.Load(builder);

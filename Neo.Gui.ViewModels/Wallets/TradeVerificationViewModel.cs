@@ -5,12 +5,12 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Wallets;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
-using Neo.Gui.Base.Services;
+using Neo.Gui.Base.Services.Interfaces;
 
 namespace Neo.Gui.ViewModels.Wallets
 {

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+
 using Autofac;
+
 using GalaSoft.MvvmLight;
+
 using Module = Autofac.Module;
 
 namespace Neo.Gui.ViewModels

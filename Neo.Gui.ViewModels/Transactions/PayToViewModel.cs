@@ -8,12 +8,12 @@ using GalaSoft.MvvmLight.Command;
 
 using Neo.Wallets;
 
-using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Transactions;
 using Neo.Gui.Base.Dialogs.Results.Transactions;
-using Neo.Gui.Base.Services;
+using Neo.Gui.Base.Services.Interfaces;
 
 namespace Neo.Gui.ViewModels.Transactions
 {
@@ -131,7 +131,7 @@ namespace Neo.Gui.ViewModels.Transactions
                 
                 try
                 {
-                    this.walletController.ToScriptHash(this.PayToAddress);
+                    this.walletController.AddressToScriptHash(this.PayToAddress);
                 }
                 catch (FormatException)
                 {
@@ -207,7 +207,7 @@ namespace Neo.Gui.ViewModels.Transactions
 
                 if (scriptHash != null)
                 {
-                    this.PayToAddress = this.walletController.ToAddress(scriptHash);
+                    this.PayToAddress = this.walletController.ScriptHashToAddress(scriptHash);
                     this.PayToAddressReadOnly = true;
                 }
             });
@@ -236,7 +236,7 @@ namespace Neo.Gui.ViewModels.Transactions
                 AssetName = asset.AssetName,
                 AssetId = asset.AssetId,
                 Value = new BigDecimal(Fixed8.Parse(this.Amount).GetData(), 8),
-                ScriptHash = this.walletController.ToScriptHash(this.PayToAddress)
+                ScriptHash = this.walletController.AddressToScriptHash(this.PayToAddress)
             };
         }
     }

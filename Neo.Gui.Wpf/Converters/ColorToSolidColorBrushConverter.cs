@@ -2,7 +2,9 @@
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
+
 using Neo.Gui.Wpf.Extensions;
+
 using DrawingColor = System.Drawing.Color;
 using MediaColor = System.Windows.Media.Color;
 

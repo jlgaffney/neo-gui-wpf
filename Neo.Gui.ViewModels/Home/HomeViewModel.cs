@@ -6,7 +6,8 @@ using GalaSoft.MvvmLight.Command;
 
 using Neo.Gui.Globalization.Resources;
 
-using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Controllers.Interfaces;
+using Neo.Gui.Base.Dialogs;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Base.Dialogs.Results;
@@ -18,11 +19,11 @@ using Neo.Gui.Base.Dialogs.Results.Development;
 using Neo.Gui.Base.Dialogs.Results.Home;
 using Neo.Gui.Base.Dialogs.Results.Transactions;
 using Neo.Gui.Base.Dialogs.Results.Voting;
-using Neo.Gui.Base.Helpers;
-using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.MVVM;
+using Neo.Gui.Base.Services.Interfaces;
 
 namespace Neo.Gui.ViewModels.Home
 {
@@ -32,8 +33,6 @@ namespace Neo.Gui.ViewModels.Home
         IUnloadable,
         IDialogViewModel<HomeDialogResult>,
         IMessageHandler<CurrentWalletHasChangedMessage>,
-        IMessageHandler<NewVersionAvailableMessage>,
-        IMessageHandler<UpdateApplicationMessage>,
         IMessageHandler<WalletStatusMessage>
     {
         #region Private Fields
@@ -41,8 +40,9 @@ namespace Neo.Gui.ViewModels.Home
 
         private readonly IWalletController walletController;
         private readonly IDialogManager dialogManager;
-        private readonly IProcessHelper processHelper;
+        private readonly IProcessManager processManager;
         private readonly ISettingsManager settingsManager;
+        private readonly IVersionService versionService;
         private readonly IMessagePublisher messagePublisher;
         private readonly IMessageSubscriber messageSubscriber;
 
@@ -186,7 +186,7 @@ namespace Neo.Gui.ViewModels.Home
 
         public ICommand CheckForHelpCommand => new RelayCommand(() => { });
 
-        public ICommand ShowOfficialWebsiteCommand => new RelayCommand(() => this.processHelper.OpenInExternalBrowser(OfficialWebsiteUrl));
+        public ICommand ShowOfficialWebsiteCommand => new RelayCommand(() => this.processManager.OpenInExternalBrowser(OfficialWebsiteUrl));
 
         public RelayCommand ShowDeveloperToolsCommand => new RelayCommand(() => this.dialogManager.ShowDialog<DeveloperToolsDialogResult>());
 
@@ -199,15 +199,17 @@ namespace Neo.Gui.ViewModels.Home
         public HomeViewModel(
             IWalletController walletController,
             IDialogManager dialogManager,
-            IProcessHelper processHelper,
+            IProcessManager processManager,
             ISettingsManager settingsManager,
+            IVersionService versionService,
             IMessagePublisher messagePublisher,
             IMessageSubscriber messageSubscriber)
         {
             this.walletController = walletController;
             this.dialogManager = dialogManager;
-            this.processHelper = processHelper;
+            this.processManager = processManager;
             this.settingsManager = settingsManager;
+            this.versionService = versionService;
             this.messagePublisher = messagePublisher;
             this.messageSubscriber = messageSubscriber;
         }
@@ -225,6 +227,8 @@ namespace Neo.Gui.ViewModels.Home
         public void OnLoad()
         {
             this.messageSubscriber.Subscribe(this);
+
+            this.CheckForNewerApplicationVersion();
         }
         #endregion
 
@@ -242,20 +246,6 @@ namespace Neo.Gui.ViewModels.Home
             RaisePropertyChanged(nameof(this.WalletIsOpen));
         }
 
-        public void HandleMessage(UpdateApplicationMessage message)
-        {
-            // Start update
-            this.processHelper.Run(message.UpdateScriptPath);
-
-            this.messagePublisher.Publish(new ExitAppMessage());
-        }
-
-        public void HandleMessage(NewVersionAvailableMessage message)
-        {
-            this.NewVersionLabel = $"{Strings.DownloadNewVersion}: {message.NewVersion}";
-            this.NewVersionVisible = true;
-        }
-
         public void HandleMessage(WalletStatusMessage message)
         {
             var status = message.Status;
@@ -271,6 +261,18 @@ namespace Neo.Gui.ViewModels.Home
         #endregion
 
         #region Private Methods 
+        private void CheckForNewerApplicationVersion()
+        {
+            var latestVersion = this.versionService.LatestVersion;
+            var currentVersion = this.versionService.CurrentVersion;
+            if (latestVersion != null && currentVersion != null && latestVersion > currentVersion)
+            {
+                // Newer version is available
+                this.NewVersionLabel = $"{Strings.DownloadNewVersion}: {latestVersion}";
+                this.NewVersionVisible = true;
+            }
+        }
+
         private void CreateWallet()
         {
             var result = this.dialogManager.ShowDialog<CreateWalletDialogResult>();
