@@ -11,6 +11,7 @@ using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Dialogs.LoadParameters.Transactions;
 using Neo.Gui.Base.Dialogs.Results.Transactions;
 using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.Managers.Interfaces;
 
 namespace Neo.Gui.Wpf.Controls
 {

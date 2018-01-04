@@ -59,10 +59,9 @@ namespace Neo.Gui.ViewModels.Tests.Builders
 
         public AssetItem Build()
         {
-            return new FirstClassAssetItem(this.internalAssetId, this.internalAssetOwner, this.internalAssetType)
+            return new FirstClassAssetItem(this.internalAssetId, this.internalAssetOwner, this.internalAssetType, this.internalValue)
             {
                 Name = this.internalName,
-                Value = this.internalValue,
                 Issuer = this.internalIssuer
             };
         }

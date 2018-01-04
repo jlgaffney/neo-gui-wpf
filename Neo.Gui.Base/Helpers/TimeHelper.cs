@@ -2,7 +2,7 @@
 
 namespace Neo.Gui.Base.Helpers
 {
-    public static class TimeHelper
+    internal static class TimeHelper
     {
         public static DateTime UnixTimestampToDateTime(uint timeStamp)
         {

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+
 using Neo.Gui.Base.Data;
 
 namespace Neo.Gui.Base.Messages

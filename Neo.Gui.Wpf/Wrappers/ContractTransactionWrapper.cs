@@ -1,4 +1,4 @@
-﻿namespace Neo.UI.Base.Wrappers
+﻿namespace Neo.Gui.Wpf.Wrappers
 {
     internal class ContractTransactionWrapper : TransactionWrapper
     {

@@ -3,8 +3,7 @@ using GalaSoft.MvvmLight.Command;
 
 using Neo.Gui.Base.Collections;
 using Neo.Gui.Base.Data;
-using Neo.Gui.Base.Helpers;
-using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.MVVM;
@@ -21,14 +20,14 @@ namespace Neo.Gui.ViewModels.Home
         #region Private Fields 
         private readonly IMessageSubscriber messageSubscriber;
         private readonly IClipboardManager clipboardManager;
-        private readonly IProcessHelper processHelper;
+        private readonly IProcessManager processManager;
         private readonly ISettingsManager settingsManager;
 
         private TransactionItem selectedTransaction;
         #endregion
 
         #region Public Properties 
-        public ConcurrentObservableCollection<TransactionItem> Transactions { get; private set; }
+        public ConcurrentObservableCollection<TransactionItem> Transactions { get; }
 
         public TransactionItem SelectedTransaction
         {
@@ -57,12 +56,12 @@ namespace Neo.Gui.ViewModels.Home
         public TransactionsViewModel(
             IMessageSubscriber messageSubscriber,
             IClipboardManager clipboardManager,
-            IProcessHelper processHelper,
+            IProcessManager processManager,
             ISettingsManager settingsManager)
         {
             this.messageSubscriber = messageSubscriber;
             this.clipboardManager = clipboardManager;
-            this.processHelper = processHelper;
+            this.processManager = processManager;
             this.settingsManager = settingsManager;
 
             this.Transactions = new ConcurrentObservableCollection<TransactionItem>();
@@ -116,7 +115,7 @@ namespace Neo.Gui.ViewModels.Home
 
             var url = string.Format(this.settingsManager.TransactionURLFormat, this.SelectedTransaction.Hash.ToString().Substring(2));
 
-            this.processHelper.OpenInExternalBrowser(url);
+            this.processManager.OpenInExternalBrowser(url);
         }
         #endregion
     }

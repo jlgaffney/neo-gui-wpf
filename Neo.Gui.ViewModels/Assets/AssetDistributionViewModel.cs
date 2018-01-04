@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows.Input;
 
 using GalaSoft.MvvmLight;
@@ -9,22 +8,18 @@ using GalaSoft.MvvmLight.Command;
 using Neo.Core;
 using Neo.Wallets;
 
-using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Dialogs.Results.Assets;
-using Neo.Gui.Base.Messages;
-using Neo.Gui.Base.Messaging.Interfaces;
-using Neo.Gui.Base.Services;
+using Neo.Gui.Base.Services.Interfaces;
 
 namespace Neo.Gui.ViewModels.Assets
 {
     public class AssetDistributionViewModel : ViewModelBase, IDialogViewModel<AssetDistributionDialogResult>
     {
-        private readonly IWalletController walletController;
-        private readonly IMessagePublisher messagePublisher;
         private readonly IDispatchService dispatchService;
+        private readonly IWalletController walletController;
 
         private AssetDescriptor asset;
 
@@ -40,13 +35,11 @@ namespace Neo.Gui.ViewModels.Assets
         private bool distributionEnabled;
 
         public AssetDistributionViewModel(
-            IWalletController walletController,
-            IMessagePublisher messagePublisher,
-            IDispatchService dispatchService)
+            IDispatchService dispatchService,
+            IWalletController walletController)
         {
-            this.walletController = walletController;
-            this.messagePublisher = messagePublisher;
             this.dispatchService = dispatchService;
+            this.walletController = walletController;
 
             this.Items = new ObservableCollection<TransactionOutputItem>();
         }
@@ -219,7 +212,7 @@ namespace Neo.Gui.ViewModels.Assets
             else
             {
                 this.Owner = assetState.Owner.ToString();
-                this.Admin = this.walletController.ToAddress(assetState.Admin);
+                this.Admin = this.walletController.ScriptHashToAddress(assetState.Admin);
                 this.Total = assetState.Amount == -Fixed8.Satoshi ? "+\u221e" : assetState.Amount.ToString();
                 this.Issued = assetState.Available.ToString();
                 this.DistributionEnabled = true;

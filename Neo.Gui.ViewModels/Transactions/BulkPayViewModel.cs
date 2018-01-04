@@ -8,13 +8,13 @@ using GalaSoft.MvvmLight.Command;
 
 using Neo.Wallets;
 
-using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Transactions;
 using Neo.Gui.Base.Dialogs.Results.Transactions;
 using Neo.Gui.Base.Extensions;
-using Neo.Gui.Base.Services;
+using Neo.Gui.Base.Services.Interfaces;
 
 namespace Neo.Gui.ViewModels.Transactions
 {
@@ -176,7 +176,7 @@ namespace Neo.Gui.ViewModels.Transactions
                     AssetName = this.SelectedAsset.AssetName,
                     AssetId = this.SelectedAsset.AssetId,
                     Value = new BigDecimal(Fixed8.Parse(lineElements[1]).GetData(), 8),
-                    ScriptHash = this.walletController.ToScriptHash(lineElements[0])
+                    ScriptHash = this.walletController.AddressToScriptHash(lineElements[0])
                 };
             }).Where(p => p.Value.Value != 0).ToArray();
         }

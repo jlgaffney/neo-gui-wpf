@@ -11,7 +11,7 @@ namespace Neo.Gui.Wpf.Extensions
             {
                 array[i] = collection[i];
             }
-
+            
             return array;
         }
     }

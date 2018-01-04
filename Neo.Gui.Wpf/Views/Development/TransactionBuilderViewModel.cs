@@ -10,12 +10,14 @@ using GalaSoft.MvvmLight.Command;
 using Neo.Core;
 using Neo.SmartContract;
 
-using Neo.Gui.Base.Controllers;
-using Neo.Gui.Base.Dialogs.Results.Transactions;
 using Neo.Gui.Globalization.Resources;
-using Neo.Gui.Base.Managers;
 
-using Neo.UI.Base.Wrappers;
+using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Controllers.Interfaces;
+using Neo.Gui.Base.Dialogs.Results.Transactions;
+using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.Managers.Interfaces;
+using Neo.Gui.Wpf.Wrappers;
 
 namespace Neo.Gui.Wpf.Views.Development
 {

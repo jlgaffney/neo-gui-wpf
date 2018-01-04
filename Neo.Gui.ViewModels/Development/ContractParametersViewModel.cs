@@ -9,11 +9,10 @@ using GalaSoft.MvvmLight.Command;
 using Neo.Network;
 using Neo.SmartContract;
 
-using Neo.Gui.Base.Controllers;
-using Neo.Gui.Base.Extensions;
+using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Globalization.Resources;
-using Neo.Gui.Base.Managers;
-using Neo.Gui.Base.Services;
+using Neo.Gui.Base.Managers.Interfaces;
+using Neo.Gui.Base.Services.Interfaces;
 
 namespace Neo.Gui.ViewModels.Development
 {
@@ -58,7 +57,7 @@ namespace Neo.Gui.ViewModels.Development
 
                 if (string.IsNullOrEmpty(this.SelectedScriptHashAddress)) return emptyCollection;
 
-                var scriptHash = this.walletController.ToScriptHash(this.SelectedScriptHashAddress);
+                var scriptHash = this.walletController.AddressToScriptHash(this.SelectedScriptHashAddress);
 
                 if (scriptHash == null) return emptyCollection;
 
@@ -185,7 +184,11 @@ namespace Neo.Gui.ViewModels.Development
                 this.CurrentValue = string.Empty;
                 this.NewValue = string.Empty;
 
-                this.ScriptHashAddresses.AddRange(context.ScriptHashes.Select(this.walletController.ToAddress));
+                foreach (var item in context.ScriptHashes.Select(
+                    this.walletController.ScriptHashToAddress))
+                {
+                    this.ScriptHashAddresses.Add(item);
+                }
             });
 
             this.SelectedScriptHashAddress = null;

@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+
 using Neo.Core;
 
-namespace Neo.UI.Base.Wrappers
+namespace Neo.Gui.Wpf.Wrappers
 {
     internal class ClaimTransactionWrapper : TransactionWrapper
     {

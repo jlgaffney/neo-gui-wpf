@@ -10,15 +10,14 @@ using Neo.IO.Json;
 using Neo.SmartContract;
 using Neo.VM;
 
-using Neo.Gui.Base.Dialogs.Results.Contracts;
-using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Managers;
-using Neo.Gui.Base.Services;
-using Neo.Gui.Base.Controllers;
-using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
-using Neo.Gui.Base.Messaging.Interfaces;
-
 using Neo.Gui.Globalization.Resources;
+
+using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
+using Neo.Gui.Base.Dialogs.Results.Contracts;
+using Neo.Gui.Base.Controllers.Interfaces;
+using Neo.Gui.Base.Managers.Interfaces;
+using Neo.Gui.Base.Services.Interfaces;
 
 namespace Neo.Gui.ViewModels.Contracts
 {
@@ -31,7 +30,6 @@ namespace Neo.Gui.ViewModels.Contracts
         private readonly IFileManager fileManager;
         private readonly IFileDialogService fileDialogService;
         private readonly IWalletController walletController;
-        private readonly IMessagePublisher messagePublisher;
 
         private InvocationTransaction transaction;
 
@@ -167,14 +165,12 @@ namespace Neo.Gui.ViewModels.Contracts
             IDialogManager dialogManager,
             IFileManager fileManager,
             IFileDialogService fileDialogService,
-            IWalletController walletController,
-            IMessagePublisher messagePublisher)
+            IWalletController walletController)
         {
             this.dialogManager = dialogManager;
             this.fileManager = fileManager;
             this.fileDialogService = fileDialogService;
             this.walletController = walletController;
-            this.messagePublisher = messagePublisher;
         }
         #endregion
 

@@ -1,11 +1,13 @@
 ﻿using System;
+
 using Xunit;
-using Neo.Gui.Base.Messaging.Interfaces;
-using Neo.Gui.Base.Messages;
-using Neo.Gui.Base.Controllers;
+
 using Moq;
 
 using Neo.Gui.Globalization.Resources;
+
+using Neo.Gui.Base.Controllers.Interfaces;
+using Neo.Gui.Base.Dialogs;
 using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Base.Dialogs.Results;
 using Neo.Gui.Base.Dialogs.Results.Contracts;
@@ -16,8 +18,9 @@ using Neo.Gui.ViewModels.Home;
 using Neo.Gui.Base.Dialogs.Results.Assets;
 using Neo.Gui.Base.Dialogs.Results.Transactions;
 using Neo.Gui.Base.Dialogs.Results.Voting;
-using Neo.Gui.Base.Helpers;
-using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.Managers.Interfaces;
+using Neo.Gui.Base.Messaging.Interfaces;
+using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Status;
 using Neo.Gui.TestHelpers;
 
@@ -99,43 +102,6 @@ namespace Neo.Gui.ViewModels.Tests.Home
             Assert.Equal(nextBlockProgressFraction, viewModel.NextBlockProgressFraction);
             Assert.Equal(nodeCount, viewModel.NodeCount);
             Assert.Equal($"{Strings.WaitingForNextBlock}:", viewModel.BlockStatus);
-        }
-
-        [Fact]
-        public void NewVersionAvailableMessageReceived_CorrectLabelsUpdated()
-        {
-            // Arrange
-            var viewModel = this.AutoMockContainer.Create<HomeViewModel>();
-            var newVersionAvailableMessageHandler = viewModel as IMessageHandler<NewVersionAvailableMessage>;
-
-            var expectedVersion = new System.Version(1, 0);
-
-            // Act
-            newVersionAvailableMessageHandler.HandleMessage(new NewVersionAvailableMessage(expectedVersion));
-
-            // Assert
-            Assert.Equal($"{Strings.DownloadNewVersion}: {expectedVersion}", viewModel.NewVersionLabel);
-            Assert.True(viewModel.NewVersionVisible);
-        }
-
-        [Fact]
-        public void UpdateApplicationMessageReceived_ExitAppMessagePublished()
-        {
-            // Arrange
-            var processHelperMock = this.AutoMockContainer.GetMock<IProcessHelper>();
-            var messagePublisherMock = this.AutoMockContainer.GetMock<IMessagePublisher>();
-
-            var expectedScriptPath = "scriptPath";
-
-            var viewModel = this.AutoMockContainer.Create<HomeViewModel>();
-            var updateApplicationMessageHandler = viewModel as IMessageHandler<UpdateApplicationMessage>;
-
-            // Act
-            updateApplicationMessageHandler.HandleMessage(new UpdateApplicationMessage(expectedScriptPath));
-
-            // Assert
-            processHelperMock.Verify(x => x.Run(expectedScriptPath));
-            messagePublisherMock.Verify(x => x.Publish(It.IsAny<ExitAppMessage>()));
         }
 
         [Fact]
@@ -421,7 +387,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
         {
             // Arrange
             const string officialWebsiteUrl = "https://neo.org/";
-            var processHelperMock = this.AutoMockContainer.GetMock<IProcessHelper>();
+            var processHelperMock = this.AutoMockContainer.GetMock<IProcessManager>();
 
             var viewModel = this.AutoMockContainer.Create<HomeViewModel>();
 

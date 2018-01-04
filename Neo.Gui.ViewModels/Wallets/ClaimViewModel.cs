@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Linq;
-using System.Windows.Input;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Messages;
@@ -22,9 +20,8 @@ namespace Neo.Gui.ViewModels.Wallets
         IDialogViewModel<ClaimDialogResult>
     {
         #region Private Fields 
-        private readonly IWalletController walletController;
-        private readonly IMessagePublisher messagePublisher;
         private readonly IMessageSubscriber messageSubscriber;
+        private readonly IWalletController walletController;
 
         private Fixed8 availableGas = Fixed8.Zero;
         private Fixed8 unavailableGas = Fixed8.Zero;
@@ -77,13 +74,11 @@ namespace Neo.Gui.ViewModels.Wallets
 
         #region Constructor 
         public ClaimViewModel(
-            IWalletController walletController,
-            IMessagePublisher messagePublisher,
-            IMessageSubscriber messageSubscriber)
+            IMessageSubscriber messageSubscriber,
+            IWalletController walletController)
         {
-            this.walletController = walletController;
-            this.messagePublisher = messagePublisher;
             this.messageSubscriber = messageSubscriber;
+            this.walletController = walletController;
         }
         #endregion
 
@@ -138,7 +133,7 @@ namespace Neo.Gui.ViewModels.Wallets
 
         private void Claim()
         {
-            this.walletController.ClaimAssets();
+            this.walletController.ClaimUtilityTokenAsset();
 
             this.Close(this, EventArgs.Empty);
         }

@@ -8,16 +8,17 @@ using System.Windows;
 
 using Autofac;
 
+using Neo.Gui.Globalization.Resources;
+
 using Neo.Gui.Base;
-using Neo.Gui.Base.Controllers;
+using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Results.Home;
 using Neo.Gui.Base.Dialogs.Results.Settings;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
-using Neo.Gui.Globalization.Resources;
-using Neo.Gui.Base.Helpers;
-using Neo.Gui.Base.Managers;
-using Neo.Gui.Base.Services;
+using Neo.Gui.Base.Managers.Interfaces;
+using Neo.Gui.Base.Services.Interfaces;
+
 using Neo.Gui.Wpf.Controls;
 using Neo.Gui.Wpf.Extensions;
 using Neo.Gui.Wpf.Implementations.Managers;
@@ -71,7 +72,7 @@ namespace Neo.Gui.Wpf
             var messagePublisher = containerLifetimeScope.Resolve<IMessagePublisher>();
             var messageSubscriber = containerLifetimeScope.Resolve<IMessageSubscriber>();
             var themeManager = containerLifetimeScope.Resolve<IThemeManager>();
-            var versionHelper = containerLifetimeScope.Resolve<IVersionHelper>();
+            var versionHelper = containerLifetimeScope.Resolve<IVersionService>();
             this.walletController = containerLifetimeScope.Resolve<IWalletController>();
 
             Debug.Assert(
@@ -102,7 +103,6 @@ namespace Neo.Gui.Wpf
                 });
 
                 Window window = null;
-                Version newerVersion = null;
                 try
                 {
                     if (versionHelper.UpdateIsRequired)
@@ -121,14 +121,6 @@ namespace Neo.Gui.Wpf
                     this.walletController.Initialize();
                     this.walletController.SetNEP5WatchScriptHashes(Settings.Default.NEP5Watched.ToArray());
 
-                    // Check if there a newer version is available
-                    var latestVersion = versionHelper.LatestVersion;
-                    var currentVersion = versionHelper.CurrentVersion;
-                    if (latestVersion != null && currentVersion != null && latestVersion > currentVersion)
-                    {
-                        newerVersion = latestVersion;
-                    }
-
                     await dispatchService.InvokeOnMainUIThread(() =>
                     {
                         window = dialogManager.CreateDialog<HomeDialogResult>(result => { }) as Window;
@@ -142,11 +134,6 @@ namespace Neo.Gui.Wpf
                     {
                         this.MainWindow = window;
                         this.MainWindow?.Show();
-                        
-                        if (newerVersion != null)
-                        {
-                            messagePublisher.Publish(new NewVersionAvailableMessage(newerVersion));
-                        }
                         
                         // Close splash screen
                         splashScreen.Close();
@@ -191,8 +178,6 @@ namespace Neo.Gui.Wpf
             // Try running application as administrator to install root certificate
             try
             {
-                // TODO Stop this application instance
-
                 Process.Start(new ProcessStartInfo
                 {
                     FileName = Assembly.GetExecutingAssembly().Location,
@@ -200,6 +185,9 @@ namespace Neo.Gui.Wpf
                     Verb = "runas",
                     WorkingDirectory = Environment.CurrentDirectory
                 });
+
+                // Stop this application instance
+                Current.Shutdown();
             }
             catch (Win32Exception)
             {

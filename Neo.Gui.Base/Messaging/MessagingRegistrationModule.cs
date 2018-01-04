@@ -1,9 +1,11 @@
 ﻿using Autofac;
+
+using Neo.Gui.Base.Messaging.Implementations;
 using Neo.Gui.Base.Messaging.Interfaces;
 
 namespace Neo.Gui.Base.Messaging
 {
-    public class MessagingRegistrationModule : Module
+    internal class MessagingRegistrationModule : Module
     {
         protected override void Load(ContainerBuilder builder)
         {

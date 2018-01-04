@@ -1,19 +1,21 @@
 ﻿using Neo.Core;
 using Neo.Cryptography.ECC;
 
-using Neo.Gui.Base.Certificates;
-
 using Neo.Gui.Globalization.Resources;
+
+using Neo.Gui.Base.Certificates;
 
 namespace Neo.Gui.Base.Data
 {
     public class FirstClassAssetItem : AssetItem
     {
-        public FirstClassAssetItem(UInt256 assetId, ECPoint assetOwner, AssetType assetType)
+        public FirstClassAssetItem(UInt256 assetId, ECPoint assetOwner, AssetType assetType, string value)
         {
             this.AssetId = assetId;
             this.AssetOwner = assetOwner;
             this.AssetType = assetType;
+
+            this.Value = value;
         }
 
         public bool IssuerCertificateChecked { get; private set; }
@@ -24,13 +26,15 @@ namespace Neo.Gui.Base.Data
 
         public override string Type => this.AssetType.ToString();
 
+        public override string Value { get; }
+
         public UInt256 AssetId { get; }
 
         public ECPoint AssetOwner { get; }
 
         public AssetType AssetType { get; }
 
-        public void SetIssuerCertificateQueryResult(CertificateQueryResult queryResult)
+        internal void SetIssuerCertificateQueryResult(CertificateQueryResult queryResult)
         {
             if (queryResult == null) return;
 

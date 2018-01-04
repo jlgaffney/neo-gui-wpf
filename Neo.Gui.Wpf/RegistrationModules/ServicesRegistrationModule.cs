@@ -1,5 +1,7 @@
 ﻿using Autofac;
-using Neo.Gui.Base.Services;
+
+using Neo.Gui.Base.Services.Interfaces;
+
 using Neo.Gui.Wpf.Implementations.Services;
 
 namespace Neo.Gui.Wpf.RegistrationModules

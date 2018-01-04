@@ -5,7 +5,6 @@ namespace Neo.Gui.Base.Data
     public abstract class AssetItem : BindableClass
     {
         private string name;
-        private string value;
         private string issuer;
 
         public string Name
@@ -16,19 +15,6 @@ namespace Neo.Gui.Base.Data
                 if (this.name == value) return;
 
                 this.name = value;
-
-                NotifyPropertyChanged();
-            }
-        }
-
-        public string Value
-        {
-            get => this.value;
-            set
-            {
-                if (this.value == value) return;
-
-                this.value = value;
 
                 NotifyPropertyChanged();
             }
@@ -46,6 +32,8 @@ namespace Neo.Gui.Base.Data
                 NotifyPropertyChanged();
             }
         }
+
+        public abstract string Value { get; }
 
         public abstract string Type { get; }
     }

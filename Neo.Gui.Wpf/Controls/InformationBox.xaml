@@ -1,4 +1,4 @@
-﻿<controls:NeoWindow x:Class="Neo.Gui.WPF.Controls.InformationBox"
+﻿<controls:NeoWindow x:Class="Neo.Gui.Wpf.Controls.InformationBox"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:Neo.Gui.Wpf.Controls"
