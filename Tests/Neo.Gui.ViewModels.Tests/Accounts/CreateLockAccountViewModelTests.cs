@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Moq;
 using Neo.Cryptography.ECC;
@@ -20,6 +22,31 @@ namespace Neo.Gui.ViewModels.Tests.Accounts
 
             //Assert
             Assert.IsType<CreateLockAccountViewModel>(viewModel);
+        }
+
+        [Fact]
+        public void OnLoad_PublicKeysAreLoaded()
+        {
+            // Arrange
+            var firstPublicKey = new ECPoint();
+            var publicKeys = new List<ECPoint>
+            {
+                firstPublicKey
+            };
+
+            var walletControlerMock = this.AutoMockContainer.GetMock<IWalletController>();
+            walletControlerMock
+                .Setup(x => x.GetPublicKeysFromStandardAccounts())
+                .Returns(publicKeys);
+
+            var viewModel = this.AutoMockContainer.Create<CreateLockAccountViewModel>();
+
+            // Act
+            viewModel.OnLoad();
+
+            // Assert
+            Assert.Single(viewModel.KeyPairs);
+            Assert.Equal(firstPublicKey, viewModel.KeyPairs.Single());
         }
 
         [Fact]

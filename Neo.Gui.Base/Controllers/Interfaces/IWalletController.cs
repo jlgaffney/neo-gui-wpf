@@ -165,5 +165,7 @@ namespace Neo.Gui.Base.Controllers.Interfaces
             Fixed8 fee = default(Fixed8));
 
         void AddAccountContract(ECPoint PublicKey, uint unlockDateTime);
+
+        IEnumerable<ECPoint> GetPublicKeysFromStandardAccounts();
     }
 }

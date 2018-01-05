@@ -800,6 +800,14 @@ namespace Neo.Gui.Base.Controllers.Implementations
                 }
             }
         }
+
+        public IEnumerable<ECPoint> GetPublicKeysFromStandardAccounts()
+        {
+            return this
+                .GetStandardAccounts()
+                .Select(x => x.GetKey().PublicKey)
+                .ToList();
+        }
         #endregion
 
         #region IMessageHandler implementation

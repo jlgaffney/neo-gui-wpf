@@ -128,9 +128,7 @@ namespace Neo.Gui.ViewModels.Accounts
         #region ILoadableImplementation
         public void OnLoad()
         {
-            var accountPublicKeys = walletController
-                .GetStandardAccounts()
-                .Select(p => p.GetKey().PublicKey);
+            var accountPublicKeys = walletController.GetPublicKeysFromStandardAccounts();
 
             this.KeyPairs.Clear();
             foreach(var publicKey in accountPublicKeys)
@@ -139,7 +137,6 @@ namespace Neo.Gui.ViewModels.Accounts
             }
 
             this.Hours = Enumerable.Range(0, HoursInDay).ToList();
-
             this.Minutes = Enumerable.Range(0, MinutesInHour).ToList();
 
             var now = DateTime.UtcNow;
