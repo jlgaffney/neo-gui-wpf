@@ -12,10 +12,11 @@ using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Managers.Interfaces;
+using Neo.Gui.Base.MVVM;
 
 namespace Neo.Gui.ViewModels.Accounts
 {
-    public class CreateLockAccountViewModel : ViewModelBase, IDialogViewModel<CreateLockAccountDialogResult>
+    public class CreateLockAccountViewModel : ViewModelBase, IDialogViewModel<CreateLockAccountDialogResult>, ILoadable
     {
         #region Private Fields 
         private const int HoursInDay = 24;
@@ -49,11 +50,11 @@ namespace Neo.Gui.ViewModels.Accounts
             }
         }
 
-        public List<int> Hours { get; }
+        public List<int> Hours { get; private set; }
 
-        public List<int> Minutes { get; }
+        public List<int> Minutes { get; private set; }
 
-        public DateTime MinimumDate { get; }
+        public DateTime MinimumDate { get; private set; }
 
         public DateTime UnlockDate
         {
@@ -109,12 +110,33 @@ namespace Neo.Gui.ViewModels.Accounts
             this.dialogManager = dialogManager;
             this.walletController = walletController;
 
-            // TODO: All the calls to objects should be in the Loaded method.
-            this.KeyPairs = new ObservableCollection<ECPoint>(
-                walletController.GetStandardAccounts()
-                    .Select(p => p.GetKey().PublicKey).ToArray());
+            this.KeyPairs = new ObservableCollection<ECPoint>();
 
             this.Hours = new List<int>();
+            this.Minutes = new List<int>();
+        }
+        #endregion
+
+        #region IDialogViewModel implementation 
+        public event EventHandler Close;
+
+        public event EventHandler<CreateLockAccountDialogResult> SetDialogResultAndClose;
+
+        public CreateLockAccountDialogResult DialogResult { get; private set; }
+        #endregion
+
+        #region ILoadableImplementation
+        public void OnLoad()
+        {
+            var accountPublicKeys = walletController
+                .GetStandardAccounts()
+                .Select(p => p.GetKey().PublicKey);
+
+            this.KeyPairs.Clear();
+            foreach(var publicKey in accountPublicKeys)
+            {
+                this.KeyPairs.Add(publicKey);
+            }
 
             this.Hours = Enumerable.Range(0, HoursInDay).ToList();
 
@@ -131,14 +153,6 @@ namespace Neo.Gui.ViewModels.Accounts
             this.UnlockHour = time.Hours;
             this.UnlockMinute = time.Minutes;
         }
-        #endregion
-
-        #region IDialogViewModel implementation 
-        public event EventHandler Close;
-
-        public event EventHandler<CreateLockAccountDialogResult> SetDialogResultAndClose;
-
-        public CreateLockAccountDialogResult DialogResult { get; private set; }
         #endregion
 
         #region Private Methods
