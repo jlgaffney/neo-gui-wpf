@@ -49,9 +49,33 @@ namespace Neo.Gui.ViewModels.Tests.Accounts
             };
 
             viewModel.CreateCommand.Execute(null);
+            closeAutoResetEvent.WaitOne();
 
-            // Arrange
+            // Assert
             walletControllerMock.Verify(x => x.AddAccountContract(viewModel.SelectedKeyPair, It.IsAny<uint>()));
+            Assert.True(expectedCloseEventRaised);
+        }
+
+        [Fact]
+        public void CancelCommand_CloseDialog()
+        {
+            // Arrange
+            var closeAutoResetEvent = new AutoResetEvent(false);
+            var expectedCloseEventRaised = false;
+
+            var walletControllerMock = this.AutoMockContainer.GetMock<IWalletController>();
+
+            // Act
+            var viewModel = this.AutoMockContainer.Create<CreateLockAccountViewModel>();
+
+            viewModel.Close += (sender, args) =>
+            {
+                expectedCloseEventRaised = true;
+                closeAutoResetEvent.Set();
+            };
+
+            viewModel.CancelCommand.Execute(null);
+            closeAutoResetEvent.WaitOne();
 
             // Assert
             Assert.True(expectedCloseEventRaised);
