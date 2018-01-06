@@ -1,0 +1,10 @@
+language: csharp
+dist: trusty
+mono: none
+dotnet: 2.0.0
+install:
+- dotnet restore
+script:
+- cd Tests
+- dotnet test Neo.Gui.Base.Tests
+- dotnet test Neo.Gui.ViewModels.Tests
