@@ -11,6 +11,12 @@
   Full wallet for the <b>NEO</b> blockchain.
 </p>
 
+<p align="center">
+  <a href="https://travis-ci.org/CityOfZion/neo-gui-wpf">
+    <img src="https://travis-ci.org/CityOfZion/neo-gui-wpf.svg?branch=master">
+  </a>
+</p>
+
 ## What?
 
 - Full node wallet for interacting with the [NEO](http://neo.org/) blockchain.
