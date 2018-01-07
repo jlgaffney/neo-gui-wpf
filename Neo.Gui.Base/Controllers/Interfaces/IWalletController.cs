@@ -38,9 +38,7 @@ namespace Neo.Gui.Base.Controllers.Interfaces
 
         void CloseWallet();
 
-        void CreateNewAccount();
-
-        void AddContract(Contract contract);
+        void CreateAccount(Contract contract = null);
 
         void ImportPrivateKeys(IEnumerable<string> wifPrivateKeys);
 
@@ -112,11 +110,17 @@ namespace Neo.Gui.Base.Controllers.Interfaces
 
         bool WalletContainsAccount(UInt160 scriptHash);
 
-        BigDecimal GetAvailable(UIntBase assetId);
+        /// <summary>
+        /// NEP-5 assets
+        /// </summary>
+        BigDecimal GetAvailable(UInt160 assetId);
 
+        /// <summary>
+        /// First class assets
+        /// </summary>
         Fixed8 GetAvailable(UInt256 assetId);
 
-        void ImportWatchOnlyAddress(string addressToImport);
+        void ImportWatchOnlyAddress(string[] addressesToWatch);
 
         bool DeleteAccount(AccountItem account);
 

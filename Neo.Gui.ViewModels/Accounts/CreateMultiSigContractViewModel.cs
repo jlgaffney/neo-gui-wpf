@@ -140,7 +140,7 @@ namespace Neo.Gui.ViewModels.Accounts
                 return;
             }
 
-            this.walletController.AddContract(contract);
+            this.walletController.CreateAccount(contract);
 
             this.Close(this, EventArgs.Empty);
         }

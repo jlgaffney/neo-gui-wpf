@@ -72,8 +72,7 @@ namespace Neo.Gui.ViewModels.Transactions
             }
         }
 
-        public string AssetBalance => this.SelectedAsset == null ? string.Empty
-            : this.walletController.GetAvailable(this.SelectedAsset.AssetId).ToString();
+        public string AssetBalance => this.GetSelectedAssetBalance();
 
         public string AddressesAndAmounts
         {
@@ -157,6 +156,20 @@ namespace Neo.Gui.ViewModels.Transactions
             var result = new BulkPayDialogResult(outputs);
 
             this.SetDialogResultAndClose?.Invoke(this, result);
+        }
+
+        private string GetSelectedAssetBalance()
+        {
+            if (this.SelectedAsset == null) return null;
+
+            if (this.SelectedAsset.AssetId is UInt160 scriptHash)
+            {
+                return this.walletController.GetAvailable(scriptHash).ToString();
+            }
+            else
+            {
+                return this.walletController.GetAvailable((UInt256)this.SelectedAsset.AssetId).ToString();
+            }
         }
 
         private TransactionOutputItem[] GenerateOutputs()

@@ -80,7 +80,7 @@ namespace Neo.Gui.ViewModels.Accounts
 
             if (contract == null) return;
 
-            this.walletController.AddContract(contract);
+            this.walletController.CreateAccount(contract);
 
             this.Close(this, EventArgs.Empty);
         }

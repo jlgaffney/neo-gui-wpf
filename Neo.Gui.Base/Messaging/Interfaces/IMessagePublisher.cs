@@ -1,6 +1,6 @@
 ﻿namespace Neo.Gui.Base.Messaging.Interfaces
 {
-    public interface IMessagePublisher
+    internal interface IMessagePublisher
     {
         void Publish<T>(T message);
     }

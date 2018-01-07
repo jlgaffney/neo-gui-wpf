@@ -12,6 +12,7 @@ using Neo.Gui.Base.Dialogs.LoadParameters.Accounts;
 using Neo.Gui.Base.Dialogs.LoadParameters.Voting;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Dialogs.Results.Voting;
+using Neo.Gui.Base.Extensions;
 using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
@@ -150,7 +151,7 @@ namespace Neo.Gui.ViewModels.Home
         #region Private Methods 
         private void CreateNewAccount()
         {
-            this.walletController.CreateNewAccount();
+            this.walletController.CreateAccount();
         }
 
         private void ImportWifPrivateKey()
@@ -165,11 +166,13 @@ namespace Neo.Gui.ViewModels.Home
 
         private void ImportWatchOnlyAddress()
         {
-            var address = this.dialogManager.ShowInputDialog(Strings.ImportWatchOnlyAddress, Strings.Address);
+            var addresses = this.dialogManager.ShowInputDialog(Strings.ImportWatchOnlyAddress, Strings.Address);
 
-            if (string.IsNullOrEmpty(address)) return;
+            if (string.IsNullOrEmpty(addresses)) return;
 
-            this.walletController.ImportWatchOnlyAddress(address);
+            var addressArray = addresses.ToLines();
+
+            this.walletController.ImportWatchOnlyAddress(addressArray);
         }
 
         private void CreateMultiSignatureContract()

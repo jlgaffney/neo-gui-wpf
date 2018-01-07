@@ -182,7 +182,7 @@ namespace Neo.Gui.Base.Controllers.Implementations
 
             if (createWithAccount)
             {
-                this.CreateNewAccount();
+                this.CreateAccount();
             }
         }
 
@@ -235,30 +235,23 @@ namespace Neo.Gui.Base.Controllers.Implementations
             this.SetCurrentWallet(null, null);
         }
 
-        public void CreateNewAccount()
+        public void CreateAccount(Contract contract = null)
         {
             this.ThrowIfWalletIsNotOpen();
 
-            var account = this.currentWallet.CreateAccount();
+            WalletAccount account;
+            if (contract == null)
+            {
+                account = this.currentWallet.CreateAccount();
+            }
+            else
+            {
+                account = this.currentWallet.CreateAccount(contract);
+            }
 
             this.AddAccountItem(account);
 
-            var nep6Wallet = this.currentWallet as NEP6Wallet;
-            nep6Wallet?.Save();
-        }
-
-        public void AddContract(Contract contract)
-        {
-            this.ThrowIfWalletIsNotOpen();
-
-            if (contract == null) return;
-
-            var account = this.currentWallet.CreateAccount(contract);
-
-            this.AddAccountItem(account);
-
-            var nep6Wallet = this.currentWallet as NEP6Wallet;
-            nep6Wallet?.Save();
+            this.TrySaveWallet();
         }
 
         public void ImportPrivateKeys(IEnumerable<string> wifPrivateKeys)
@@ -285,8 +278,7 @@ namespace Neo.Gui.Base.Controllers.Implementations
                 this.AddAccountItem(account);
             }
 
-            var nep6Wallet = this.currentWallet as NEP6Wallet;
-            nep6Wallet?.Save();
+            this.TrySaveWallet();
         }
 
         public void ImportCertificate(X509Certificate2 certificate)
@@ -307,8 +299,7 @@ namespace Neo.Gui.Base.Controllers.Implementations
 
             this.AddAccountItem(account);
 
-            var nep6Wallet = this.currentWallet as NEP6Wallet;
-            nep6Wallet?.Save();
+            this.TrySaveWallet();
         }
 
         public bool Sign(ContractParametersContext context)
@@ -326,10 +317,9 @@ namespace Neo.Gui.Base.Controllers.Implementations
 
             this.networkController.Relay(transaction);
 
-            if (saveTransaction)
-            {
-                this.currentWallet.ApplyTransaction(transaction);
-            }
+            if (!saveTransaction) return;
+
+            this.currentWallet.ApplyTransaction(transaction);
         }
 
         public void Relay(IInventory inventory)
@@ -468,10 +458,8 @@ namespace Neo.Gui.Base.Controllers.Implementations
             {
                 return Enumerable.Empty<ECPoint>();
             }
-            else
-            {
-                return accountState.Votes;
-            }
+
+            return accountState.Votes;
         }
 
         public ContractState GetContractState(UInt160 scriptHash)
@@ -547,7 +535,7 @@ namespace Neo.Gui.Base.Controllers.Implementations
             return this.currentWallet.Contains(scriptHash);
         }
 
-        public BigDecimal GetAvailable(UIntBase assetId)
+        public BigDecimal GetAvailable(UInt160 assetId)
         {
             if (!this.WalletIsOpen)
             {
@@ -567,38 +555,32 @@ namespace Neo.Gui.Base.Controllers.Implementations
             return this.currentWallet.GetAvailable(assetId);
         }
 
-        public void ImportWatchOnlyAddress(string addressToImport)
+        public void ImportWatchOnlyAddress(string[] addressesToWatch)
         {
-            using (var reader = new StringReader(addressToImport))
+            foreach (var address in addressesToWatch)
             {
-                while (true)
+                if (address == null) continue;
+
+                var trimmedAddress = address.Trim();
+
+                if (string.IsNullOrEmpty(trimmedAddress)) continue;
+
+                UInt160 scriptHash;
+                try
                 {
-                    var address = reader.ReadLine();
-
-                    if (address == null) break;
-
-                    address = address.Trim();
-
-                    if (string.IsNullOrEmpty(address)) continue;
-
-                    UInt160 scriptHash;
-                    try
-                    {
-                        scriptHash = this.AddressToScriptHash(address);
-                    }
-                    catch (FormatException)
-                    {
-                        continue;
-                    }
-
-                    var account = this.currentWallet.CreateAccount(scriptHash);
-
-                    this.AddAccountItem(account);
+                    scriptHash = this.AddressToScriptHash(trimmedAddress);
+                }
+                catch (FormatException)
+                {
+                    continue;
                 }
 
-                var nep6Wallet = this.currentWallet as NEP6Wallet;
-                nep6Wallet?.Save();
+                var account = this.currentWallet.CreateAccount(scriptHash);
+
+                this.AddAccountItem(account);
             }
+
+            this.TrySaveWallet();
         }
 
         public bool DeleteAccount(AccountItem account)
@@ -619,6 +601,8 @@ namespace Neo.Gui.Base.Controllers.Implementations
             if (!deletedSuccessfully) return false;
 
             this.currentWalletInfo.RemoveAccount(accountScriptHash);
+
+            this.TrySaveWallet();
 
             this.SetWalletBalanceChangedFlag();
 
@@ -821,13 +805,9 @@ namespace Neo.Gui.Base.Controllers.Implementations
                     {
                         this.currentWallet.BalanceChanged -= this.CurrentWalletBalanceChanged;
 
-                        var nep6Wallet = this.currentWallet as NEP6Wallet;
-                        nep6Wallet?.Save();
+                        this.TrySaveWallet();
 
-                        this.currentWalletLocker?.Dispose();
-
-                        var disposableWallet = this.currentWallet as IDisposable;
-                        disposableWallet?.Dispose();
+                        this.WalletDispose();
                     }
 
                     // Dispose of blockchain controller
@@ -848,6 +828,16 @@ namespace Neo.Gui.Base.Controllers.Implementations
             if (this.WalletIsOpen) return;
 
             throw new WalletIsNotOpenException();
+        }
+
+        private void WalletDispose()
+        {
+            this.currentWalletLocker?.Dispose();
+            this.currentWalletLocker = null;
+
+            var disposableWallet = this.currentWallet as IDisposable;
+            disposableWallet?.Dispose();
+            this.currentWallet = null;
         }
 
         private void Refresh()
@@ -887,13 +877,11 @@ namespace Neo.Gui.Base.Controllers.Implementations
                 // Dispose current wallet
                 this.currentWallet.BalanceChanged -= this.CurrentWalletBalanceChanged;
 
-                // Save NEP-6 wallet just in case something was not saved
-                var nep6Wallet = this.currentWallet as NEP6Wallet;
-                nep6Wallet?.Save();
+                // Try save wallet in case something was not saved
+                this.TrySaveWallet();
 
                 // Dispose of wallet if required
-                var disposableWallet = this.currentWallet as IDisposable;
-                disposableWallet?.Dispose();
+                this.WalletDispose();
             }
             
             this.currentWallet = wallet;
@@ -941,6 +929,12 @@ namespace Neo.Gui.Base.Controllers.Implementations
                 this.SetWalletBalanceChangedFlag();
                 this.checkNep5Balance = true;
             }
+        }
+
+        private void TrySaveWallet()
+        {
+            var nep6Wallet = this.currentWallet as NEP6Wallet;
+            nep6Wallet?.Save();
         }
 
         private void CurrentWalletBalanceChanged(object sender, BalanceEventArgs e)

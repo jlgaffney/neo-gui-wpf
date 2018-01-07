@@ -6,6 +6,7 @@ using Neo.Gui.Base.Dialogs.LoadParameters.Accounts;
 using Neo.Gui.Base.Dialogs.LoadParameters.Voting;
 using Neo.Gui.Base.Dialogs.Results.Voting;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
+using Neo.Gui.Base.Extensions;
 using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
@@ -106,7 +107,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.CreateNewAddressCommand.Execute(null);
 
             // Assert
-            walletControllerMock.Verify(x => x.CreateNewAccount());
+            walletControllerMock.Verify(x => x.CreateAccount(null));
         }
 
         [Fact]
@@ -143,12 +144,14 @@ namespace Neo.Gui.ViewModels.Tests.Home
         public void ImportWatchOnlyAddressCommand_ShowInputDialogReturnNotNullString_ShowImportPrivateKeyDialog()
         {
             // Arrange
-            var expectedReturnedAddress = "address";
+            var expectedReturnedAddresses = @"address1
+address2";
+            var expectedReturnedAddressArray = expectedReturnedAddresses.ToLines();
 
             var dialogManagerMock = this.AutoMockContainer.GetMock<IDialogManager>();
             dialogManagerMock
                 .Setup(x => x.ShowInputDialog(Strings.ImportWatchOnlyAddress, Strings.Address, It.IsAny<string>()))
-                .Returns(expectedReturnedAddress);
+                .Returns(expectedReturnedAddresses);
 
             var walletControllerMock = this.AutoMockContainer.GetMock<IWalletController>();
         
@@ -158,7 +161,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.ImportWatchOnlyAddressCommand.Execute(null);
 
             // Assert
-            walletControllerMock.Verify(x => x.ImportWatchOnlyAddress(expectedReturnedAddress));
+            walletControllerMock.Verify(x => x.ImportWatchOnlyAddress(expectedReturnedAddressArray));
         }
 
         [Fact]
@@ -180,7 +183,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.ImportWatchOnlyAddressCommand.Execute(null);
 
             // Assert
-            walletControllerMock.Verify(x => x.ImportWatchOnlyAddress(It.IsAny<string>()), Times.Never);
+            walletControllerMock.Verify(x => x.ImportWatchOnlyAddress(It.IsAny<string[]>()), Times.Never);
         }
 
         [Fact]
