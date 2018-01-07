@@ -30,7 +30,7 @@ namespace Neo.Gui.Base.Controllers.Interfaces
         /// Migrates to newer wallet format. This method does not open the migrated wallet.
         /// </summary>
         /// <returns>File path of new migrated wallet</returns>
-        string MigrateWallet(string walletPath, string password, string newWalletPath = null);
+        string MigrateWallet(string walletPath, string password);
 
         void CreateWallet(string walletPath, string password, bool createWithAccount = true);
 

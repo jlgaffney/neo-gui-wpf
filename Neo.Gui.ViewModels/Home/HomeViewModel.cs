@@ -304,10 +304,9 @@ namespace Neo.Gui.ViewModels.Home
                     // Try migrate wallet
                     var newWalletPath = this.walletController.MigrateWallet(walletPath, password);
 
-                    if (!string.IsNullOrEmpty(newWalletPath))
-                    {
-                        walletPath = newWalletPath;
-                    }
+                    if (string.IsNullOrEmpty(newWalletPath)) return;
+                    
+                    walletPath = newWalletPath;
                 }
             }
 

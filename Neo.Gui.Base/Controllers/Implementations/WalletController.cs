@@ -147,13 +147,10 @@ namespace Neo.Gui.Base.Controllers.Implementations
             return Path.GetExtension(walletPath) == ".db3";
         }
 
-        public string MigrateWallet(string walletPath, string password, string newWalletPath = null)
+        public string MigrateWallet(string walletPath, string password)
         {
-            if (string.IsNullOrEmpty(newWalletPath))
-            {
-                newWalletPath = Path.ChangeExtension(walletPath, ".json");
-                newWalletPath = PathHelper.GetAvailableFilePath(newWalletPath);
-            }
+            var newWalletPath = Path.ChangeExtension(walletPath, ".json");
+            newWalletPath = PathHelper.GetAvailableFilePath(newWalletPath);
 
             NEP6Wallet nep6Wallet;
             try

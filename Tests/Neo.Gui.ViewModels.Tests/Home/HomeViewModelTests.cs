@@ -172,12 +172,16 @@ namespace Neo.Gui.ViewModels.Tests.Home
             // Arrange
             var walletPath = "walletPath";
             var walletPassword = "walletPassword";
+            var newWalletPath = "newWalletPath";
             var openWalletDialogResult = new OpenWalletDialogResult(walletPath, walletPassword);
 
             var walletControllerMock = this.AutoMockContainer.GetMock<IWalletController>();
             walletControllerMock
                 .Setup(x => x.WalletCanBeMigrated(walletPath))
                 .Returns(true);
+            walletControllerMock
+                .Setup(x => x.MigrateWallet(walletPath, walletPassword))
+                .Returns(newWalletPath);
 
             var settingsManagerMock = this.AutoMockContainer.GetMock<ISettingsManager>();
 
@@ -196,9 +200,9 @@ namespace Neo.Gui.ViewModels.Tests.Home
 
             // Assert
             dialogManagerMock.Verify(x => x.ShowDialog<OpenWalletDialogResult>());
-            walletControllerMock.Verify(x => x.OpenWallet(walletPath, walletPassword));
-            walletControllerMock.Verify(x => x.MigrateWallet(walletPath, walletPassword, null));
-            settingsManagerMock.VerifySet(x => x.LastWalletPath = walletPath);
+            walletControllerMock.Verify(x => x.MigrateWallet(walletPath, walletPassword));
+            walletControllerMock.Verify(x => x.OpenWallet(newWalletPath, walletPassword));
+            settingsManagerMock.VerifySet(x => x.LastWalletPath = newWalletPath);
             settingsManagerMock.Verify(x => x.Save(), Times.Once);
         }
 
