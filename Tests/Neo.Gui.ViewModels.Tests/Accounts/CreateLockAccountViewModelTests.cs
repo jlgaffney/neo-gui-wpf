@@ -79,7 +79,7 @@ namespace Neo.Gui.ViewModels.Tests.Accounts
             closeAutoResetEvent.WaitOne();
 
             // Assert
-            walletControllerMock.Verify(x => x.AddAccountContract(viewModel.SelectedKeyPair, It.IsAny<uint>()));
+            walletControllerMock.Verify(x => x.AddLockContractAccount(viewModel.SelectedKeyPair, It.IsAny<uint>()));
             Assert.True(expectedCloseEventRaised);
         }
 

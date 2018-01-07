@@ -761,7 +761,7 @@ namespace Neo.Gui.Base.Controllers.Implementations
             this.SignAndRelay(transactionWithFee);
         }
 
-        public void AddAccountContract(ECPoint publicKey, uint unlockDateTime)
+        public void AddLockContractAccount(ECPoint publicKey, uint unlockDateTime)
         {
             using (var sb = new ScriptBuilder())
             {
@@ -773,7 +773,7 @@ namespace Neo.Gui.Base.Controllers.Implementations
                 try
                 {
                     var contract = Contract.Create(new[] { ContractParameterType.Signature }, sb.ToArray());
-                    this.AddContract(contract);
+                    this.CreateAccount(contract);
                 }
                 catch
                 {

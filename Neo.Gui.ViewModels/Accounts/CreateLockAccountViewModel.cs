@@ -162,7 +162,7 @@ namespace Neo.Gui.ViewModels.Accounts
                 .AddMinutes(this.UnlockMinute)
                 .ToTimestamp();
 
-            this.walletController.AddAccountContract(this.SelectedKeyPair, unlockDateTime);
+            this.walletController.AddLockContractAccount(this.SelectedKeyPair, unlockDateTime);
 
             this.Close(this, EventArgs.Empty);
         }
