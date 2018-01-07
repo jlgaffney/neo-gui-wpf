@@ -7,7 +7,7 @@ using Autofac;
 using Neo.Gui.Base.Dialogs;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Managers.Interfaces;
-
+using Neo.Gui.Base.MVVM;
 using Neo.Gui.Wpf.Controls;
 
 namespace Neo.Gui.Wpf.Implementations.Managers
@@ -46,7 +46,12 @@ namespace Neo.Gui.Wpf.Implementations.Managers
             var dialogResult = default(TDialogResult);
 
             var view = CreateDialog<TDialogResult>(result => { dialogResult = result; });
-            
+
+            if (view.DataContext is ILoadable loadableViewModel)
+            {
+                loadableViewModel.OnLoad();
+            }
+
             view.ShowDialog();
 
             return dialogResult;
@@ -57,7 +62,12 @@ namespace Neo.Gui.Wpf.Implementations.Managers
             var dialogResult = default(TDialogResult);
 
             var view = CreateDialog<TDialogResult, TLoadParameters>(result => { dialogResult = result; }, parameters);
-            
+
+            if (view.DataContext is ILoadable loadableViewModel)
+            {
+                loadableViewModel.OnLoad();
+            }
+
             view.ShowDialog();
 
             return dialogResult;
@@ -122,12 +132,14 @@ namespace Neo.Gui.Wpf.Implementations.Managers
 
         #endregion
 
-        #region Static methods
+        #region Public static methods
         public static void SetLifetimeScope(ILifetimeScope lifetimeScope)
         {
             containerLifetimeScope = lifetimeScope;
         }
+        #endregion
 
+        #region Private Methods 
         private static IDialog<TDialogResult> ResolveDialogInstance<TDialogResult>()
         {
             var view = containerLifetimeScope?.Resolve<IDialog<TDialogResult>>();
