@@ -6,8 +6,6 @@ using System.Linq;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-using Neo.Cryptography.ECC;
-
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
@@ -25,23 +23,23 @@ namespace Neo.Gui.ViewModels.Accounts
         private readonly IDialogManager dialogManager;
         private readonly IWalletController walletController;
 
-        private ECPoint selectedKeyPair;
+        private string selectedPublicKey;
         private DateTime unlockDate;
         private int unlockHour;
         private int unlockMinute;
         #endregion
 
         #region Public Properties 
-        public ObservableCollection<ECPoint> KeyPairs { get; }      // TODO: this is not KeyPairs anymore but a list of PublicKeys. Need to be checked with jlgaffney
+        public ObservableCollection<string> PublicKeys { get; }      // TODO: this is not KeyPairs anymore but a list of PublicKeys. Need to be checked with jlgaffney
 
-        public ECPoint SelectedKeyPair
+        public string SelectedPublicKey
         {
-            get => this.selectedKeyPair;
+            get => this.selectedPublicKey;
             set
             {
-                if (Equals(this.selectedKeyPair, value)) return;
+                if (Equals(this.selectedPublicKey, value)) return;
 
-                this.selectedKeyPair = value;
+                this.selectedPublicKey = value;
 
                 RaisePropertyChanged();
 
@@ -95,7 +93,7 @@ namespace Neo.Gui.ViewModels.Accounts
             }
         }
 
-        public bool CreateEnabled => this.SelectedKeyPair != null;
+        public bool CreateEnabled => this.SelectedPublicKey != null;
 
         public RelayCommand CreateCommand => new RelayCommand(this.HandleCreateAccount);
 
@@ -110,7 +108,7 @@ namespace Neo.Gui.ViewModels.Accounts
             this.dialogManager = dialogManager;
             this.walletController = walletController;
 
-            this.KeyPairs = new ObservableCollection<ECPoint>();
+            this.PublicKeys = new ObservableCollection<string>();
 
             this.Hours = new List<int>();
             this.Minutes = new List<int>();
@@ -130,10 +128,10 @@ namespace Neo.Gui.ViewModels.Accounts
         {
             var accountPublicKeys = walletController.GetPublicKeysFromStandardAccounts();
 
-            this.KeyPairs.Clear();
+            this.PublicKeys.Clear();
             foreach(var publicKey in accountPublicKeys)
             {
-                this.KeyPairs.Add(publicKey);
+                this.PublicKeys.Add(publicKey);
             }
 
             this.Hours = Enumerable.Range(0, HoursInDay).ToList();
@@ -155,14 +153,14 @@ namespace Neo.Gui.ViewModels.Accounts
         #region Private Methods
         private void HandleCreateAccount()
         {
-            if (this.SelectedKeyPair == null) return;
+            if (this.SelectedPublicKey == null) return;
 
             var unlockDateTime = this.UnlockDate.Date
                 .AddHours(this.UnlockHour)
                 .AddMinutes(this.UnlockMinute)
                 .ToTimestamp();
 
-            this.walletController.AddLockContractAccount(this.SelectedKeyPair, unlockDateTime);
+            this.walletController.AddLockContractAccount(this.SelectedPublicKey, unlockDateTime);
 
             this.Close(this, EventArgs.Empty);
         }

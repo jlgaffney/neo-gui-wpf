@@ -761,7 +761,7 @@ namespace Neo.Gui.Base.Controllers.Implementations
             this.SignAndRelay(transactionWithFee);
         }
 
-        public void AddLockContractAccount(ECPoint publicKey, uint unlockDateTime)
+        public void AddLockContractAccount(string publicKey, uint unlockDateTime)
         {
             using (var sb = new ScriptBuilder())
             {
@@ -782,11 +782,11 @@ namespace Neo.Gui.Base.Controllers.Implementations
             }
         }
 
-        public IEnumerable<ECPoint> GetPublicKeysFromStandardAccounts()
+        public IEnumerable<string> GetPublicKeysFromStandardAccounts()
         {
             return this
                 .GetStandardAccounts()
-                .Select(x => x.GetKey().PublicKey)
+                .Select(x => x.GetKey().PublicKey.ToString())
                 .ToList();
         }
         #endregion

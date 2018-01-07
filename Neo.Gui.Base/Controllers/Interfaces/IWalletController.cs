@@ -168,8 +168,8 @@ namespace Neo.Gui.Base.Controllers.Interfaces
             UInt160 changeAddress = null, 
             Fixed8 fee = default(Fixed8));
 
-        void AddLockContractAccount(ECPoint PublicKey, uint unlockDateTime);
+        void AddLockContractAccount(string publicKey, uint unlockDateTime);
 
-        IEnumerable<ECPoint> GetPublicKeysFromStandardAccounts();
+        IEnumerable<string> GetPublicKeysFromStandardAccounts();
     }
 }

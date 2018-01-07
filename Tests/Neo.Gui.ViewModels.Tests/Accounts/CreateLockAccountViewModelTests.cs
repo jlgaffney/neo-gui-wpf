@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Moq;
-using Neo.Cryptography.ECC;
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.TestHelpers;
 using Neo.Gui.ViewModels.Accounts;
@@ -28,8 +27,8 @@ namespace Neo.Gui.ViewModels.Tests.Accounts
         public void OnLoad_PublicKeysAreLoaded()
         {
             // Arrange
-            var firstPublicKey = new ECPoint();
-            var publicKeys = new List<ECPoint>
+            var firstPublicKey = "000";
+            var publicKeys = new List<string>
             {
                 firstPublicKey
             };
@@ -45,8 +44,8 @@ namespace Neo.Gui.ViewModels.Tests.Accounts
             viewModel.OnLoad();
 
             // Assert
-            Assert.Single(viewModel.KeyPairs);
-            Assert.Equal(firstPublicKey, viewModel.KeyPairs.Single());
+            Assert.Single(viewModel.PublicKeys);
+            Assert.Equal(firstPublicKey, viewModel.PublicKeys.Single());
         }
 
         [Fact]
@@ -67,7 +66,7 @@ namespace Neo.Gui.ViewModels.Tests.Accounts
             viewModel.UnlockDate = unlockTimeStamp;
             viewModel.UnlockHour = unlockHour;
             viewModel.UnlockMinute = unlockMinute;
-            viewModel.SelectedKeyPair = new ECPoint();
+            viewModel.SelectedPublicKey = "0000";
 
             viewModel.Close += (sender, args) =>
             {
@@ -79,7 +78,7 @@ namespace Neo.Gui.ViewModels.Tests.Accounts
             closeAutoResetEvent.WaitOne();
 
             // Assert
-            walletControllerMock.Verify(x => x.AddLockContractAccount(viewModel.SelectedKeyPair, It.IsAny<uint>()));
+            walletControllerMock.Verify(x => x.AddLockContractAccount(viewModel.SelectedPublicKey, It.IsAny<uint>()));
             Assert.True(expectedCloseEventRaised);
         }
 
