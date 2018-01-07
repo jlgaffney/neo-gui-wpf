@@ -24,7 +24,6 @@ namespace Neo.Gui.ViewModels.Home
         ILoadable,
         IUnloadable,
         IMessageHandler<CurrentWalletHasChangedMessage>,
-        IMessageHandler<ClearAccountsMessage>,
         IMessageHandler<AccountAddedMessage>
     {
         #region Private Fields 
@@ -123,12 +122,9 @@ namespace Neo.Gui.ViewModels.Home
         #region IMessageHandler implementation 
         public void HandleMessage(CurrentWalletHasChangedMessage message)
         {
-            RaisePropertyChanged(nameof(this.WalletIsOpen));
-        }
-
-        public void HandleMessage(ClearAccountsMessage message)
-        {
             this.Accounts.Clear();
+
+            RaisePropertyChanged(nameof(this.WalletIsOpen));
         }
 
         public void HandleMessage(AccountAddedMessage message)

@@ -38,13 +38,12 @@ namespace Neo.Gui.ViewModels.Home
         #region Private Fields
         private const string OfficialWebsiteUrl = "https://neo.org/";
 
-        private readonly IWalletController walletController;
         private readonly IDialogManager dialogManager;
+        private readonly IMessageSubscriber messageSubscriber;
         private readonly IProcessManager processManager;
         private readonly ISettingsManager settingsManager;
         private readonly IVersionService versionService;
-        private readonly IMessagePublisher messagePublisher;
-        private readonly IMessageSubscriber messageSubscriber;
+        private readonly IWalletController walletController;
 
         private bool nextBlockProgressIsIndeterminate;
         private double nextBlockProgressFraction;
@@ -158,7 +157,7 @@ namespace Neo.Gui.ViewModels.Home
 
         public ICommand CloseWalletCommand => new RelayCommand(() => this.walletController.CloseWallet());
 
-        public ICommand ExitCommand => new RelayCommand(() => this.messagePublisher.Publish(new ExitAppMessage()));
+        public ICommand ExitCommand => new RelayCommand(() => this.processManager.Exit());
 
         public ICommand TransferCommand => new RelayCommand(() => this.dialogManager.ShowDialog<TransferDialogResult>());
 
@@ -197,21 +196,19 @@ namespace Neo.Gui.ViewModels.Home
 
         #region Constructor
         public HomeViewModel(
-            IWalletController walletController,
             IDialogManager dialogManager,
+            IMessageSubscriber messageSubscriber,
             IProcessManager processManager,
             ISettingsManager settingsManager,
             IVersionService versionService,
-            IMessagePublisher messagePublisher,
-            IMessageSubscriber messageSubscriber)
+            IWalletController walletController)
         {
-            this.walletController = walletController;
             this.dialogManager = dialogManager;
+            this.messageSubscriber = messageSubscriber;
             this.processManager = processManager;
             this.settingsManager = settingsManager;
             this.versionService = versionService;
-            this.messagePublisher = messagePublisher;
-            this.messageSubscriber = messageSubscriber;
+            this.walletController = walletController;
         }
         #endregion
 

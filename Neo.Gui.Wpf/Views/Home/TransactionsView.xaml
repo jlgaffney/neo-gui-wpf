@@ -13,7 +13,7 @@
         <GridView>
             <GridViewColumn Header="{x:Static globalization:Strings.Time}" Width="140" DisplayMemberBinding="{Binding Time}" />
             <GridViewColumn Header="{x:Static globalization:Strings.TransactionId}" Width="300" DisplayMemberBinding="{Binding Id}" />
-            <GridViewColumn Header="{x:Static globalization:Strings.Confirm}" Width="Auto" DisplayMemberBinding="{Binding Confirmations}" />
+            <GridViewColumn Header="{x:Static globalization:Strings.Confirm}" Width="Auto" DisplayMemberBinding="{Binding ConfirmationsText}" />
             <GridViewColumn Header="{x:Static globalization:Strings.TransactionType}" Width="Auto" DisplayMemberBinding="{Binding Type}" />
         </GridView>
     </ListView.View>

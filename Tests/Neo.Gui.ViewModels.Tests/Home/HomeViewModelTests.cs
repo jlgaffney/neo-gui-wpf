@@ -203,21 +203,6 @@ namespace Neo.Gui.ViewModels.Tests.Home
         }
 
         [Fact]
-        public void ExitCommand_PublicExitAppMessage()
-        {
-            // Arrange
-            var messagePublisherMock = this.AutoMockContainer.GetMock<IMessagePublisher>();
-
-            var viewModel = this.AutoMockContainer.Create<HomeViewModel>();
-
-            // Act
-            viewModel.ExitCommand.Execute(null);
-
-            // Assert
-            messagePublisherMock.Verify(x => x.Publish(It.IsAny<ExitAppMessage>()));
-        }
-
-        [Fact]
         public void TransferCommand_TransferDialog()
         {
             // Arrange

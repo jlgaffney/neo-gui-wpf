@@ -8,12 +8,9 @@ using GalaSoft.MvvmLight.Command;
 
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results.Settings;
-using Neo.Gui.Base.Helpers;
-using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Managers.Interfaces;
-using Neo.Gui.Base.Messages;
-using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.Services.Interfaces;
+
 using Neo.Gui.Wpf.Properties;
 
 namespace Neo.Gui.Wpf.Views.Updater
@@ -39,7 +36,6 @@ namespace Neo.Gui.Wpf.Views.Updater
         private readonly IDirectoryManager directoryManager;
         private readonly IFileManager fileManager;
         private readonly IProcessManager processManager;
-        private readonly IMessagePublisher messagePublisher;
 
         private readonly Version latestVersion;
         private readonly string downloadUrl;
@@ -53,14 +49,12 @@ namespace Neo.Gui.Wpf.Views.Updater
             IDirectoryManager directoryManager,
             IFileManager fileManager,
             IProcessManager processManager,
-            IVersionService versionService,
-            IMessagePublisher messagePublisher)
+            IVersionService versionService)
         {
             this.compressedFileManager = compressedFileManager;
             this.directoryManager = directoryManager;
             this.fileManager = fileManager;
             this.processManager = processManager;
-            this.messagePublisher = messagePublisher;
 
             // Setup update information
             this.latestVersion = versionService.LatestVersion;
@@ -183,7 +177,7 @@ namespace Neo.Gui.Wpf.Views.Updater
             // Update application
             this.processManager.Run(UpdateFileName);
 
-            this.messagePublisher.Publish(new ExitAppMessage());
+            this.processManager.Exit();
 
             this.Close(this, EventArgs.Empty);
         }

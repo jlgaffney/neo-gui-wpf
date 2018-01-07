@@ -6,6 +6,8 @@
 
         void OpenInExternalBrowser(string url);
 
+        void Exit();
+
         void Restart();
     }
 }

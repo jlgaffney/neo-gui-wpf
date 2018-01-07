@@ -89,7 +89,7 @@ namespace Neo.Gui.Base.Data
             {
                 var confirmations = blockHeight - transactionItem.Height + 1;
 
-                transactionItem.SetConfirmations((int) confirmations);
+                transactionItem.Confirmations = confirmations;
             }
         }
 

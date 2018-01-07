@@ -898,14 +898,12 @@ namespace Neo.Gui.Base.Controllers.Implementations
                 var disposableWallet = this.currentWallet as IDisposable;
                 disposableWallet?.Dispose();
             }
-
-            this.messagePublisher.Publish(new ClearAccountsMessage());
-            this.messagePublisher.Publish(new ClearAssetsMessage());
-            this.messagePublisher.Publish(new ClearTransactionsMessage());
-
+            
             this.currentWallet = wallet;
             this.currentWalletLocker = walletLocker;
             this.currentWalletInfo = new WalletInfo();
+
+            this.messagePublisher.Publish(new CurrentWalletHasChangedMessage());
 
             // Setup wallet if required
             if (this.WalletIsOpen)
@@ -946,8 +944,6 @@ namespace Neo.Gui.Base.Controllers.Implementations
                 this.SetWalletBalanceChangedFlag();
                 this.checkNep5Balance = true;
             }
-
-            this.messagePublisher.Publish(new CurrentWalletHasChangedMessage());
         }
 
         private void CurrentWalletBalanceChanged(object sender, BalanceEventArgs e)
@@ -1164,9 +1160,8 @@ namespace Neo.Gui.Base.Controllers.Implementations
         private void AddTransaction(TransactionItem transaction)
         {
             this.currentWalletInfo.AddTransaction(transaction);
-
-            // TODO Replace with a TransactionAddedMessage
-            this.messagePublisher.Publish(new TransactionsHaveChangedMessage(this.currentWalletInfo.GetTransactions()));
+            
+            this.messagePublisher.Publish(new TransactionAddedMessage(transaction));
         }
 
         private void CheckFirstClassAssetIssuerCertificates()
@@ -1186,10 +1181,11 @@ namespace Neo.Gui.Base.Controllers.Implementations
 
         private void RefreshTransactionConfirmations()
         {
-            this.currentWalletInfo.UpdateTransactionConfirmations(this.blockchainController.BlockHeight);
+            var blockHeight = this.blockchainController.BlockHeight;
 
-            // TODO Replace with a TransactionConfirmationsUpdatedMessage
-            this.messagePublisher.Publish(new TransactionsHaveChangedMessage(this.currentWalletInfo.GetTransactions()));
+            this.currentWalletInfo.UpdateTransactionConfirmations(blockHeight);
+            
+            this.messagePublisher.Publish(new TransactionConfirmationsUpdatedMessage(blockHeight));
         }
 
         private bool GetWalletBalanceChangedFlag()

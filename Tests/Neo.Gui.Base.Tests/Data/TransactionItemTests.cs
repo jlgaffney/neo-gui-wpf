@@ -19,7 +19,7 @@ namespace Neo.Gui.Base.Tests.Data
 
             // Assert
             Assert.IsType<TransactionItem>(transactionItem);
-            Assert.Equal(Strings.Unconfirmed, transactionItem.Confirmations);
+            Assert.Equal(Strings.Unconfirmed, transactionItem.ConfirmationsText);
         }
 
         [Fact]
@@ -35,15 +35,15 @@ namespace Neo.Gui.Base.Tests.Data
         public void SetConfirmations_SetOneConfirmation_OneConfirmationIsSetToConfirmationField()
         {
             // Arrange
-            var expectedConfirmations = 1;
+            uint expectedConfirmations = 1;
             var hash = UInt256.Parse("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF");
 
             // Act
             var transactionItem = new TransactionItem(hash, TransactionType.ContractTransaction, uint.MinValue, DateTime.Now);
-            transactionItem.SetConfirmations(expectedConfirmations);
+            transactionItem.Confirmations = expectedConfirmations;
 
             // Assert
-            Assert.Equal(expectedConfirmations.ToString(), transactionItem.Confirmations);
+            Assert.Equal(expectedConfirmations.ToString(), transactionItem.ConfirmationsText);
         }
     }
 }

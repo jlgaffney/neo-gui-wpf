@@ -18,6 +18,11 @@ namespace Neo.Gui.Wpf.Implementations.Managers
             Process.Start(url);
         }
 
+        public void Exit()
+        {
+            Application.Current.Shutdown();
+        }
+
         public void Restart()
         {
             Process.Start(Application.ResourceAssembly.Location);

@@ -1,9 +1,10 @@
+using System.Collections.ObjectModel;
+
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
 using Neo.Gui.Globalization.Resources;
 
-using Neo.Gui.Base.Collections;
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Dialogs;
@@ -18,7 +19,7 @@ namespace Neo.Gui.ViewModels.Home
         ViewModelBase,
         ILoadable,
         IUnloadable,
-        IMessageHandler<ClearAssetsMessage>,
+        IMessageHandler<CurrentWalletHasChangedMessage>,
         IMessageHandler<AssetAddedMessage>
     {
         #region Private Fields 
@@ -32,7 +33,7 @@ namespace Neo.Gui.ViewModels.Home
         #endregion
 
         #region Public Properties
-        public ConcurrentObservableCollection<AssetItem> Assets { get; }
+        public ObservableCollection<AssetItem> Assets { get; }
 
         public AssetItem SelectedAsset
         {
@@ -94,7 +95,7 @@ namespace Neo.Gui.ViewModels.Home
             this.settingsManager = settingsManager;
             this.walletController = walletController;
 
-            this.Assets = new ConcurrentObservableCollection<AssetItem>();
+            this.Assets = new ObservableCollection<AssetItem>();
         }
         #endregion
 
@@ -113,7 +114,7 @@ namespace Neo.Gui.ViewModels.Home
         #endregion
 
         #region IMessageHandler implementation
-        public void HandleMessage(ClearAssetsMessage message)
+        public void HandleMessage(CurrentWalletHasChangedMessage message)
         {
             this.Assets.Clear();
         }

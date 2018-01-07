@@ -52,21 +52,18 @@ namespace Neo.Gui.ViewModels.Tests.Home
         }
 
         [Fact]
-        public void TransactionsHaveChangedMessageReceived_TransactionsAdded()
+        public void TransactionAddedMessageReceived_TransactionsAdded()
         {
             // Arrange
             var viewModel = this.AutoMockContainer.Create<TransactionsViewModel>();
-            var transactionsHaveChangedMessageHandler = viewModel as IMessageHandler<TransactionsHaveChangedMessage>;
+            var transactionAddedMessageHandler = viewModel as IMessageHandler<TransactionAddedMessage>;
 
             var hash = UInt256.Parse("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF");
-            var transactions = new List<TransactionItem>
-            {
-                new TransactionItem(hash, TransactionType.ContractTransaction, uint.MinValue, DateTime.Now)
-            };
+            var transaction = new TransactionItem(hash, TransactionType.ContractTransaction, uint.MinValue, DateTime.Now);
 
             // Act
             var transactionsCount = viewModel.Transactions.Count;
-            transactionsHaveChangedMessageHandler.HandleMessage(new TransactionsHaveChangedMessage(transactions));
+            transactionAddedMessageHandler.HandleMessage(new TransactionAddedMessage(transaction));
 
             // Assert
             Assert.Equal(0, transactionsCount);
@@ -74,23 +71,42 @@ namespace Neo.Gui.ViewModels.Tests.Home
         }
 
         [Fact]
+        public void TransactionConfirmationsUpdatedMessageReceived_TransactionsAdded()
+        {
+            // Arrange
+            var viewModel = this.AutoMockContainer.Create<TransactionsViewModel>();
+            var transactionAddedMessageHandler = viewModel as IMessageHandler<TransactionAddedMessage>;
+            var transactionConfirmationsUpdatedMessageHandler = viewModel as IMessageHandler<TransactionConfirmationsUpdatedMessage>;
+
+            var hash = UInt256.Parse("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF");
+            var transaction = new TransactionItem(hash, TransactionType.ContractTransaction, uint.MinValue, DateTime.Now);
+
+            // Act
+            transactionAddedMessageHandler.HandleMessage(new TransactionAddedMessage(transaction));
+
+            var transactionConfirmations = viewModel.Transactions[0].Confirmations;
+
+            transactionConfirmationsUpdatedMessageHandler.HandleMessage(new TransactionConfirmationsUpdatedMessage(10));
+
+            // Assert
+            Assert.True(transactionConfirmations < viewModel.Transactions[0].Confirmations);
+        }
+
+        [Fact]
         public void ClearTransactionsMessageReceived_TransactionsAreClear()
         {
             // Arrange
             var viewModel = this.AutoMockContainer.Create<TransactionsViewModel>();
-            var transactionsHaveChangedMessageHandler = viewModel as IMessageHandler<TransactionsHaveChangedMessage>;
-            var clearTransactionsMessageHandler = viewModel as IMessageHandler<ClearTransactionsMessage>;
+            var transactionAddedMessageHandler = viewModel as IMessageHandler<TransactionAddedMessage>;
+            var currentWalletHasChangedMessageHandler = viewModel as IMessageHandler<CurrentWalletHasChangedMessage>;
 
             var hash = UInt256.Parse("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF");
-            var transactions = new List<TransactionItem>
-            {
-                new TransactionItem(hash, TransactionType.ContractTransaction, uint.MinValue, DateTime.Now)
-            };
-
+            var transaction = new TransactionItem(hash, TransactionType.ContractTransaction, uint.MinValue, DateTime.Now);
+            
             // Act
-            transactionsHaveChangedMessageHandler.HandleMessage(new TransactionsHaveChangedMessage(transactions));
+            transactionAddedMessageHandler.HandleMessage(new TransactionAddedMessage(transaction));
             var afterAddTransactionsCount = viewModel.Transactions.Count;
-            clearTransactionsMessageHandler.HandleMessage(new ClearTransactionsMessage());
+            currentWalletHasChangedMessageHandler.HandleMessage(new CurrentWalletHasChangedMessage());
 
             // Assert
             Assert.Equal(1, afterAddTransactionsCount);

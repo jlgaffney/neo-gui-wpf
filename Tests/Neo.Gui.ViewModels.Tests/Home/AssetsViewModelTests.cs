@@ -85,13 +85,15 @@ namespace Neo.Gui.ViewModels.Tests.Home
 
             var viewModel = this.AutoMockContainer.Create<AssetsViewModel>();
             var assetAddedMessageHandler = viewModel as IMessageHandler<AssetAddedMessage>;
-            var clearAssetsMessageHandler = viewModel as IMessageHandler<ClearAssetsMessage>;
+            var currentWalletHasChangedMessageHandler = viewModel as IMessageHandler<CurrentWalletHasChangedMessage>;
 
             // Act
             assetAddedMessageHandler.HandleMessage(new AssetAddedMessage(expectedAssetItem));
-            clearAssetsMessageHandler.HandleMessage(new ClearAssetsMessage());
+            var afterAddAssetsCount = viewModel.Assets.Count;
+            currentWalletHasChangedMessageHandler.HandleMessage(new CurrentWalletHasChangedMessage());
 
             // Assert
+            Assert.Equal(1, afterAddAssetsCount);
             Assert.Empty(viewModel.Assets);
         }
 

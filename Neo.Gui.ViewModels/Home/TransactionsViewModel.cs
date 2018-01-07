@@ -1,7 +1,8 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System.Collections.ObjectModel;
+
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-using Neo.Gui.Base.Collections;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Base.Messages;
@@ -14,8 +15,9 @@ namespace Neo.Gui.ViewModels.Home
         ViewModelBase,
         ILoadable,
         IUnloadable,
-        IMessageHandler<ClearTransactionsMessage>,
-        IMessageHandler<TransactionsHaveChangedMessage>
+        IMessageHandler<CurrentWalletHasChangedMessage>,
+        IMessageHandler<TransactionAddedMessage>,
+        IMessageHandler<TransactionConfirmationsUpdatedMessage>
     {
         #region Private Fields 
         private readonly IMessageSubscriber messageSubscriber;
@@ -27,7 +29,7 @@ namespace Neo.Gui.ViewModels.Home
         #endregion
 
         #region Public Properties 
-        public ConcurrentObservableCollection<TransactionItem> Transactions { get; }
+        public ObservableCollection<TransactionItem> Transactions { get; }
 
         public TransactionItem SelectedTransaction
         {
@@ -64,7 +66,7 @@ namespace Neo.Gui.ViewModels.Home
             this.processManager = processManager;
             this.settingsManager = settingsManager;
 
-            this.Transactions = new ConcurrentObservableCollection<TransactionItem>();
+            this.Transactions = new ObservableCollection<TransactionItem>();
         }
         #endregion
 
@@ -83,19 +85,24 @@ namespace Neo.Gui.ViewModels.Home
         #endregion
 
         #region IMessageHandler Implementation 
-        public void HandleMessage(ClearTransactionsMessage message)
+        public void HandleMessage(CurrentWalletHasChangedMessage message)
         {
             this.Transactions.Clear();
         }
 
-        public void HandleMessage(TransactionsHaveChangedMessage message)
+        public void HandleMessage(TransactionConfirmationsUpdatedMessage message)
         {
-            this.Transactions.Clear();
+            var blockHeight = message.BlockHeight;
 
-            foreach (var transaction in message.Transactions)
+            foreach (var transactionItem in this.Transactions)
             {
-                this.Transactions.Add(transaction);
+                transactionItem.Confirmations = blockHeight - transactionItem.Height + 1;
             }
+        }
+
+        public void HandleMessage(TransactionAddedMessage message)
+        {
+            this.Transactions.Insert(0, message.Transaction);
         }
         #endregion
 

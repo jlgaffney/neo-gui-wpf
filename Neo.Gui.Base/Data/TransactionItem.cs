@@ -12,7 +12,7 @@ namespace Neo.Gui.Base.Data
     public class TransactionItem : BindableClass
     {
         #region Private Fields 
-        private int confirmations;
+        private uint confirmations;
         #endregion
 
         #region Public Properties 
@@ -24,7 +24,20 @@ namespace Neo.Gui.Base.Data
 
         public TransactionType Type { get; }
 
-        public string Confirmations => this.confirmations > 0 ? this.confirmations.ToString() : Strings.Unconfirmed;
+        public uint Confirmations
+        {
+            get => this.confirmations;
+            set
+            {
+                if (this.confirmations == value) return;
+
+                this.confirmations = value;
+
+                NotifyPropertyChanged();
+            }
+        }
+
+        public string ConfirmationsText => this.Confirmations > 0 ? this.Confirmations.ToString() : Strings.Unconfirmed;
         #endregion
 
         #region Constructor 
@@ -44,16 +57,6 @@ namespace Neo.Gui.Base.Data
         #endregion
 
         #region Public Methods 
-        public void SetConfirmations(int value)
-        {
-            if (this.confirmations == value) return;
-
-            if (this.confirmations < 0) value = 0;
-
-            this.confirmations = value;
-
-            NotifyPropertyChanged(nameof(this.Confirmations));
-        }
 
         public override int GetHashCode()
         {

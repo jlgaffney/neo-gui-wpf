@@ -14,8 +14,6 @@ using Neo.Gui.Base;
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Results.Home;
 using Neo.Gui.Base.Dialogs.Results.Settings;
-using Neo.Gui.Base.Messages;
-using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Base.Services.Interfaces;
 
@@ -35,7 +33,7 @@ namespace Neo.Gui.Wpf
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : IMessageHandler<ExitAppMessage>
+    public partial class App
     {
         private IWalletController walletController;
         
@@ -69,8 +67,6 @@ namespace Neo.Gui.Wpf
 
             var dialogManager = containerLifetimeScope.Resolve<IDialogManager>() as DialogManager;
             var dispatchService = containerLifetimeScope.Resolve<IDispatchService>();
-            var messagePublisher = containerLifetimeScope.Resolve<IMessagePublisher>();
-            var messageSubscriber = containerLifetimeScope.Resolve<IMessageSubscriber>();
             var themeManager = containerLifetimeScope.Resolve<IThemeManager>();
             var versionHelper = containerLifetimeScope.Resolve<IVersionService>();
             this.walletController = containerLifetimeScope.Resolve<IWalletController>();
@@ -78,13 +74,9 @@ namespace Neo.Gui.Wpf
             Debug.Assert(
                 dialogManager != null &&
                 dispatchService != null &&
-                messagePublisher != null &&
-                messageSubscriber != null &&
                 themeManager != null &&
                 versionHelper != null &&
                 this.walletController != null);
-
-            messageSubscriber.Subscribe(this);
 
             TransactionOutputListBox.SetDialogManager(dialogManager);
 
@@ -244,13 +236,6 @@ namespace Neo.Gui.Wpf
                 writer.WriteLine();
                 PrintErrorLogs(writer, ex.InnerException);
             }
-        }
-        #endregion
-
-        #region MessageHandler implementation 
-        public void HandleMessage(ExitAppMessage message)
-        {
-            Current.Shutdown();
         }
         #endregion
     }

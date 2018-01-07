@@ -65,8 +65,6 @@ namespace Neo.Gui.ViewModels.Tests.Home
             var viewModel = this.AutoMockContainer.Create<AccountsViewModel>();
             var accountAddedMessageHandler = viewModel as IMessageHandler<AccountAddedMessage>;
 
-            var expectedVersion = new System.Version(1, 0);
-
             // Act
             var initialAccountsCount = viewModel.Accounts.Count;
             accountAddedMessageHandler.HandleMessage(new AccountAddedMessage(new AccountItem("AccountLabel", null, AccountType.Standard)));
@@ -77,20 +75,18 @@ namespace Neo.Gui.ViewModels.Tests.Home
         }
 
         [Fact]
-        public void ClearAccountsMessageReceived_AfterAccountAddedAccountIsClear()
+        public void CurrentWalletHasChangedMessageReceived_AfterAccountAddedAccountIsClear()
         {
             // Arrange
             var viewModel = this.AutoMockContainer.Create<AccountsViewModel>();
             var accountAddedMessageHandler = viewModel as IMessageHandler<AccountAddedMessage>;
-            var clearAccountsMessageHandler = viewModel as IMessageHandler<ClearAccountsMessage>;
-
-            var expectedVersion = new System.Version(1, 0);
-
+            var currentWalletHasChangedMessageHandler = viewModel as IMessageHandler<CurrentWalletHasChangedMessage>;
+            
             // Act
             var initialAccountsCount = viewModel.Accounts.Count;
             accountAddedMessageHandler.HandleMessage(new AccountAddedMessage(new AccountItem("AccountLabel", null, AccountType.Standard)));
             var accountWithOneRecord = viewModel.Accounts.Count;
-            clearAccountsMessageHandler.HandleMessage(new ClearAccountsMessage());
+            currentWalletHasChangedMessageHandler.HandleMessage(new CurrentWalletHasChangedMessage());
 ;
             // Assert
             Assert.Equal(0, initialAccountsCount);
