@@ -128,11 +128,25 @@ namespace Neo.Gui.Base.Controllers.Interfaces
 
         InvocationTransaction MakeValidatorRegistrationTransaction(ECPoint publicKey);
 
-        InvocationTransaction MakeAssetCreationTransaction(AssetType? assetType, string assetName,
-            Fixed8 amount, byte precision, ECPoint assetOwner, UInt160 assetAdmin, UInt160 assetIssuer);
+        InvocationTransaction MakeAssetCreationTransaction(
+            AssetType? assetType, 
+            string assetName,
+            Fixed8 amount, 
+            byte precision, 
+            ECPoint assetOwner, 
+            UInt160 assetAdmin, 
+            UInt160 assetIssuer);
 
-        InvocationTransaction MakeContractCreationTransaction(byte[] script, byte[] parameterList, ContractParameterType returnType,
-            bool needsStorage, string name, string version, string author, string email, string description);
+        InvocationTransaction MakeContractCreationTransaction(
+            byte[] script, 
+            byte[] parameterList, 
+            ContractParameterType returnType,
+            bool needsStorage, 
+            string name, 
+            string version, 
+            string author, 
+            string email, 
+            string description);
 
         UInt160 AddressToScriptHash(string address);
 
@@ -148,6 +162,14 @@ namespace Neo.Gui.Base.Controllers.Interfaces
 
         void InvokeContract(InvocationTransaction transaction);
 
-        Transaction MakeTransferTransaction(IEnumerable<TransferOutput> items, string remark, UInt160 changeAddress = null, Fixed8 fee = default(Fixed8));
+        Transaction MakeTransferTransaction(
+            IEnumerable<TransferOutput> items, 
+            string remark, 
+            UInt160 changeAddress = null, 
+            Fixed8 fee = default(Fixed8));
+
+        void AddLockContractAccount(string publicKey, uint unlockDateTime);
+
+        IEnumerable<string> GetPublicKeysFromStandardAccounts();
     }
 }

@@ -760,6 +760,35 @@ namespace Neo.Gui.Base.Controllers.Implementations
 
             this.SignAndRelay(transactionWithFee);
         }
+
+        public void AddLockContractAccount(string publicKey, uint unlockDateTime)
+        {
+            using (var sb = new ScriptBuilder())
+            {
+                sb.EmitPush(publicKey);
+                sb.EmitPush(unlockDateTime);
+                // Lock 2.0 in mainnet tx:4e84015258880ced0387f34842b1d96f605b9cc78b308e1f0d876933c2c9134b
+                sb.EmitAppCall(UInt160.Parse("d3cce84d0800172d09c88ccad61130611bd047a4"));
+
+                try
+                {
+                    var contract = Contract.Create(new[] { ContractParameterType.Signature }, sb.ToArray());
+                    this.CreateAccount(contract);
+                }
+                catch
+                {
+                    this.notificationService.ShowErrorNotification(Strings.AddContractFailedMessage);
+                }
+            }
+        }
+
+        public IEnumerable<string> GetPublicKeysFromStandardAccounts()
+        {
+            return this
+                .GetStandardAccounts()
+                .Select(x => x.GetKey().PublicKey.ToString())
+                .ToList();
+        }
         #endregion
 
         #region IMessageHandler implementation
