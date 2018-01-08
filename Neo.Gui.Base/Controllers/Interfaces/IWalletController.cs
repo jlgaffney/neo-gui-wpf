@@ -171,5 +171,7 @@ namespace Neo.Gui.Base.Controllers.Interfaces
         void AddLockContractAccount(string publicKey, uint unlockDateTime);
 
         IEnumerable<string> GetPublicKeysFromStandardAccounts();
+
+        void AddMultiSignatureContract(int minimunSignatureNumber, IEnumerable<string> publicKeys);
     }
 }

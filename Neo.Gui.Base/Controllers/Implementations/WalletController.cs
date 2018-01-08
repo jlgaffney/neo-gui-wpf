@@ -30,6 +30,7 @@ using Neo.Gui.Base.Status;
 using DeprecatedWallet = Neo.Implementations.Wallets.EntityFramework.UserWallet;
 using ECPoint = Neo.Cryptography.ECC.ECPoint;
 using Timer = System.Timers.Timer;
+using Neo.Gui.Base.ExtensionMethods;
 
 namespace Neo.Gui.Base.Controllers.Implementations
 {
@@ -765,7 +766,7 @@ namespace Neo.Gui.Base.Controllers.Implementations
         {
             using (var sb = new ScriptBuilder())
             {
-                sb.EmitPush(publicKey);
+                sb.EmitPush(publicKey.ToECPoint());
                 sb.EmitPush(unlockDateTime);
                 // Lock 2.0 in mainnet tx:4e84015258880ced0387f34842b1d96f605b9cc78b308e1f0d876933c2c9134b
                 sb.EmitAppCall(UInt160.Parse("d3cce84d0800172d09c88ccad61130611bd047a4"));
@@ -788,6 +789,18 @@ namespace Neo.Gui.Base.Controllers.Implementations
                 .GetStandardAccounts()
                 .Select(x => x.GetKey().PublicKey.ToString())
                 .ToList();
+        }
+
+        public void AddMultiSignatureContract(int minimunSignatureNumber, IEnumerable<string> publicKeys)
+        {
+            var ecPoints = publicKeys
+                .Select(p => p.ToECPoint())
+                .ToArray();
+
+            var contract = Contract.CreateMultiSigContract(minimunSignatureNumber, ecPoints);
+
+            if (contract == null) return;
+            this.CreateAccount(contract);
         }
         #endregion
 

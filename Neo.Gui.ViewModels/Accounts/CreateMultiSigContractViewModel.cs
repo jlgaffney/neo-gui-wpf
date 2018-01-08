@@ -1,20 +1,13 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows.Input;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-using Neo.Cryptography.ECC;
-using Neo.SmartContract;
-
-using Neo.Gui.Globalization.Resources;
-
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Base.Services.Interfaces;
 
 namespace Neo.Gui.ViewModels.Accounts
@@ -22,7 +15,7 @@ namespace Neo.Gui.ViewModels.Accounts
     public class CreateMultiSigContractViewModel : ViewModelBase, IDialogViewModel<CreateMultiSigContractDialogResult>
     {
         #region Private Fields 
-        private readonly IDialogManager dialogManager;
+        private readonly INotificationService notificationService;
         private readonly IWalletController walletController;
 
         private int minimumSignatureNumber;
@@ -114,10 +107,10 @@ namespace Neo.Gui.ViewModels.Accounts
 
         #region Constructor 
         public CreateMultiSigContractViewModel(
-            IDialogManager dialogManager,
+            INotificationService notificationService,
             IWalletController walletController)
         {
-            this.dialogManager = dialogManager;
+            this.notificationService = notificationService;
             this.walletController = walletController;
 
             this.PublicKeys = new ObservableCollection<string>();
@@ -135,15 +128,7 @@ namespace Neo.Gui.ViewModels.Accounts
         #region Private Methods 
         private void Confirm()
         {
-            var contract = this.GenerateContract();
-
-            if (contract == null)
-            {
-                this.dialogManager.ShowMessageDialog(string.Empty, Strings.AddContractFailedMessage);
-                return;
-            }
-
-            this.walletController.CreateAccount(contract);
+            this.walletController.AddMultiSignatureContract(this.minimumSignatureNumber, this.PublicKeys);
 
             this.Close(this, EventArgs.Empty);
         }
@@ -155,7 +140,7 @@ namespace Neo.Gui.ViewModels.Accounts
             // Check if public key has already been added
             if (this.PublicKeys.Any(publicKey => publicKey.Equals(this.NewPublicKey, StringComparison.InvariantCultureIgnoreCase)))
             {
-                this.dialogManager.ShowMessageDialog(string.Empty, "Public key has already been added.");
+                this.notificationService.ShowInformationNotification("Public key has already been added.");     // TODO - Issue #130: Add this string to Resources
                 return;
             }
 
@@ -171,13 +156,6 @@ namespace Neo.Gui.ViewModels.Accounts
 
             this.PublicKeys.Remove(this.SelectedPublicKey);
             this.MinimumSignatureNumberMaxValue = this.PublicKeys.Count;
-        }
-
-        private Contract GenerateContract()
-        {
-            var publicKeys = this.PublicKeys.Select(p => ECPoint.DecodePoint(p.HexToBytes(), ECCurve.Secp256r1)).ToArray();
-
-            return Contract.CreateMultiSigContract(this.MinimumSignatureNumber, publicKeys);
         }
         #endregion
     }
