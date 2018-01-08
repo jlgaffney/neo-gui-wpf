@@ -21,8 +21,8 @@ namespace Neo.Gui.ViewModels.Accounts
 {
     public class CreateMultiSigContractViewModel : ViewModelBase, IDialogViewModel<CreateMultiSigContractDialogResult>
     {
+        #region Private Fields 
         private readonly IDialogManager dialogManager;
-        private readonly IDispatchService dispatchService;
         private readonly IWalletController walletController;
 
         private int minimumSignatureNumber;
@@ -31,27 +31,9 @@ namespace Neo.Gui.ViewModels.Accounts
         private string selectedPublicKey;
 
         private string newPublicKey;
-
-        public CreateMultiSigContractViewModel(
-            IDialogManager dialogManager,
-            IDispatchService dispatchService,
-            IWalletController walletController)
-        {
-            this.dialogManager = dialogManager;
-            this.dispatchService = dispatchService;
-            this.walletController = walletController;
-
-            this.PublicKeys = new ObservableCollection<string>();
-        }
-
-        #region DialogViewModel implementation 
-        public event EventHandler Close;
-
-        public event EventHandler<CreateMultiSigContractDialogResult> SetDialogResultAndClose;
-
-        public CreateMultiSigContractDialogResult DialogResult { get; private set; }
         #endregion
 
+        #region Public Properties 
         public int MinimumSignatureNumber
         {
             get => this.minimumSignatureNumber;
@@ -119,17 +101,38 @@ namespace Neo.Gui.ViewModels.Accounts
 
         public bool RemovePublicKeyEnabled => this.SelectedPublicKey != null;
 
-
         public bool ConfirmEnabled => this.MinimumSignatureNumber > 0;
 
-        public ICommand AddPublicKeyCommand => new RelayCommand(this.AddPublicKey);
+        public RelayCommand AddPublicKeyCommand => new RelayCommand(this.AddPublicKey);
 
-        public ICommand RemovePublicKeyCommand => new RelayCommand(this.RemovePublicKey);
+        public RelayCommand RemovePublicKeyCommand => new RelayCommand(this.RemovePublicKey);
 
-        public ICommand ConfirmCommand => new RelayCommand(this.Confirm);
+        public RelayCommand ConfirmCommand => new RelayCommand(this.Confirm);
 
-        public ICommand CancelCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
+        public RelayCommand CancelCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
+        #endregion
 
+        #region Constructor 
+        public CreateMultiSigContractViewModel(
+            IDialogManager dialogManager,
+            IWalletController walletController)
+        {
+            this.dialogManager = dialogManager;
+            this.walletController = walletController;
+
+            this.PublicKeys = new ObservableCollection<string>();
+        }
+        #endregion
+
+        #region DialogViewModel implementation 
+        public event EventHandler Close;
+
+        public event EventHandler<CreateMultiSigContractDialogResult> SetDialogResultAndClose;
+
+        public CreateMultiSigContractDialogResult DialogResult { get; private set; }
+        #endregion
+
+        #region Private Methods 
         private void Confirm()
         {
             var contract = this.GenerateContract();
@@ -145,7 +148,7 @@ namespace Neo.Gui.ViewModels.Accounts
             this.Close(this, EventArgs.Empty);
         }
 
-        private async void AddPublicKey()
+        private void AddPublicKey()
         {
             if (!this.AddPublicKeyEnabled) return;
 
@@ -156,21 +159,18 @@ namespace Neo.Gui.ViewModels.Accounts
                 return;
             }
 
-            await this.dispatchService.InvokeOnMainUIThread(() => this.PublicKeys.Add(this.NewPublicKey));
+            this.PublicKeys.Add(this.NewPublicKey);
 
             this.NewPublicKey = string.Empty;
             this.MinimumSignatureNumberMaxValue = this.PublicKeys.Count;
         }
 
-        private async void RemovePublicKey()
+        private void RemovePublicKey()
         {
             if (!this.RemovePublicKeyEnabled) return;
 
-            await this.dispatchService.InvokeOnMainUIThread(() =>
-            {
-                this.PublicKeys.Remove(this.SelectedPublicKey);
-                this.MinimumSignatureNumberMaxValue = this.PublicKeys.Count;
-            });
+            this.PublicKeys.Remove(this.SelectedPublicKey);
+            this.MinimumSignatureNumberMaxValue = this.PublicKeys.Count;
         }
 
         private Contract GenerateContract()
@@ -179,5 +179,6 @@ namespace Neo.Gui.ViewModels.Accounts
 
             return Contract.CreateMultiSigContract(this.MinimumSignatureNumber, publicKeys);
         }
+        #endregion
     }
 }
