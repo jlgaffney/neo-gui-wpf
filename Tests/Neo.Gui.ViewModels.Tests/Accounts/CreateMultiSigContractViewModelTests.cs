@@ -1,5 +1,7 @@
 ﻿using System.Linq;
+using System.Threading;
 using Moq;
+using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Services.Interfaces;
 using Neo.Gui.TestHelpers;
 using Neo.Gui.ViewModels.Accounts;
@@ -92,6 +94,61 @@ namespace Neo.Gui.ViewModels.Tests.Accounts
             //Assert
             Assert.Empty(viewModel.PublicKeys);
             Assert.Equal(0, viewModel.MinimumSignatureNumberMaxValue);
+        }
+
+        [Fact]
+        public void ConfirmCommand_AddMultiSignatureContractMethodInWalletControllerIsCalledAndDialogClose()
+        {
+            // Arrange
+            var closeAutoResetEvent = new AutoResetEvent(false);
+            var expectedCloseEventRaised = false;
+
+            var newPublicKey = "newPublicKey";
+
+            var walletControllerMock = this.AutoMockContainer.GetMock<IWalletController>();
+
+            var viewModel = this.AutoMockContainer.Create<CreateMultiSigContractViewModel>();
+            viewModel.NewPublicKey = newPublicKey;
+
+            viewModel.Close += (sender, args) =>
+            {
+                expectedCloseEventRaised = true;
+                closeAutoResetEvent.Set();
+            };
+
+            // Act
+            viewModel.AddPublicKeyCommand.Execute(null);
+            viewModel.MinimumSignatureNumber = viewModel.PublicKeys.Count;
+            viewModel.ConfirmCommand.Execute(null);
+            closeAutoResetEvent.WaitOne();
+
+            // Assert
+            walletControllerMock.Verify(x => x.AddMultiSignatureContract(viewModel.PublicKeys.Count, viewModel.PublicKeys));
+            Assert.True(expectedCloseEventRaised);
+        }
+
+        [Fact]
+        public void CancelCommand_CloseDialog()
+        {
+            // Arrange
+            var closeAutoResetEvent = new AutoResetEvent(false);
+            var expectedCloseEventRaised = false;
+
+
+            var viewModel = this.AutoMockContainer.Create<CreateMultiSigContractViewModel>();
+
+            viewModel.Close += (sender, args) =>
+            {
+                expectedCloseEventRaised = true;
+                closeAutoResetEvent.Set();
+            };
+
+            // Act
+            viewModel.CancelCommand.Execute(null);
+            closeAutoResetEvent.WaitOne();
+
+            // Assert
+            Assert.True(expectedCloseEventRaised);
         }
     }
 }
