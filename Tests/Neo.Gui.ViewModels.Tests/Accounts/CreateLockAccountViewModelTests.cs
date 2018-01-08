@@ -13,7 +13,7 @@ namespace Neo.Gui.ViewModels.Tests.Accounts
     public class CreateLockAccountViewModelTests : TestBase
     {
         [Fact]
-        public void Ctr_CreateValidHomeViewModel()
+        public void Ctr_CreateValidCreateLockAccountViewModel()
         {
             // Arrange
             // Act
