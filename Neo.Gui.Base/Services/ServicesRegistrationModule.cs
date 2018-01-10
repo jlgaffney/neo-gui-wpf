@@ -13,6 +13,10 @@ namespace Neo.Gui.Base.Services
                 .RegisterType<CertificateService>()
                 .As<ICertificateService>();
 
+            builder
+                .RegisterType<StoreCertificateService>()
+                .As<IStoreCertificateService>();
+
             base.Load(builder);
         }
     }

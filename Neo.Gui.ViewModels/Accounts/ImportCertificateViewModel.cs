@@ -10,6 +10,7 @@ using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.MVVM;
+    using Neo.Gui.Base.Services.Interfaces;
 
 namespace Neo.Gui.ViewModels.Accounts
 {
@@ -19,6 +20,7 @@ namespace Neo.Gui.ViewModels.Accounts
         ILoadable
     {
         #region Private Fields
+        private readonly IStoreCertificateService storeCertificateService;
         private readonly IWalletController walletController;
 
         private X509Certificate2 selectedCertificate;
@@ -51,8 +53,10 @@ namespace Neo.Gui.ViewModels.Accounts
 
         #region Constructor 
         public ImportCertificateViewModel(
+            IStoreCertificateService storeCertificateService,
             IWalletController walletController)
         {
+            this.storeCertificateService = storeCertificateService;
             this.walletController = walletController;
         }
         #endregion
@@ -68,14 +72,8 @@ namespace Neo.Gui.ViewModels.Accounts
         #region ILoadable implementation 
         public void OnLoad()
         {
-            // Load certificates
-            using (var store = new X509Store())
-            {
-                store.Open(OpenFlags.ReadOnly);
-
-                this.Certificates = new ObservableCollection<X509Certificate2>(
-                    store.Certificates.Cast<X509Certificate2>());
-            }
+            var storeCertificates = this.storeCertificateService.GetStoreCertificates();
+            this.Certificates = new ObservableCollection<X509Certificate2>(storeCertificates);
         }
         #endregion
 
