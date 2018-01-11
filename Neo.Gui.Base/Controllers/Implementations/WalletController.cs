@@ -802,6 +802,16 @@ namespace Neo.Gui.Base.Controllers.Implementations
             if (contract == null) return;
             this.CreateAccount(contract);
         }
+
+        public void AddContractWithParameters(string reedemScript, string parameterList)
+        {
+            var parameters = parameterList.HexToBytes().Select(p => (ContractParameterType)p).ToArray();
+            var scriptHash = reedemScript.HexToBytes();
+
+            var contract = Contract.Create(parameters, scriptHash);
+
+            this.CreateAccount(contract);
+        }
         #endregion
 
         #region IMessageHandler implementation

@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Linq;
-using System.Windows.Input;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-
-using Neo.SmartContract;
 
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Interfaces;
@@ -59,9 +55,9 @@ namespace Neo.Gui.ViewModels.Accounts
             !string.IsNullOrEmpty(this.ParameterList) &&
             !string.IsNullOrEmpty(this.Script);
 
-        public ICommand ConfirmCommand => new RelayCommand(this.Confirm);
+        public RelayCommand ConfirmCommand => new RelayCommand(this.Confirm);
 
-        public ICommand CancelCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
+        public RelayCommand CancelCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
         #endregion
 
         #region Constructor 
@@ -83,23 +79,11 @@ namespace Neo.Gui.ViewModels.Accounts
         #region Private Methods 
         private void Confirm()
         {
-            var contract = this.GenerateContract();
+            if (!this.ConfirmEnabled) return;
 
-            if (contract == null) return;
-
-            this.walletController.CreateAccount(contract);
+            this.walletController.AddContractWithParameters(this.Script, this.ParameterList);
 
             this.Close(this, EventArgs.Empty);
-        }
-
-        private Contract GenerateContract()
-        {
-            if (!this.ConfirmEnabled) return null;
-
-            var parameters = this.ParameterList.HexToBytes().Select(p => (ContractParameterType)p).ToArray();
-            var redeemScript = this.Script.HexToBytes();
-
-            return Contract.Create(parameters, redeemScript);
         }
         #endregion
     }
