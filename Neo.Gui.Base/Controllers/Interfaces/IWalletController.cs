@@ -173,5 +173,7 @@ namespace Neo.Gui.Base.Controllers.Interfaces
         IEnumerable<string> GetPublicKeysFromStandardAccounts();
 
         void AddMultiSignatureContract(int minimunSignatureNumber, IEnumerable<string> publicKeys);
+
+        void AddContractWithParameters(string reedemScript, string parameterList);
     }
 }
