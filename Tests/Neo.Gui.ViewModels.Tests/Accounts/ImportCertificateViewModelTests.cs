@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading;
+using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Services.Interfaces;
 using Neo.Gui.TestHelpers;
 using Neo.Gui.ViewModels.Accounts;
@@ -44,6 +46,34 @@ namespace Neo.Gui.ViewModels.Tests.Accounts
             // Assert
             Assert.Single(viewModel.Certificates);
             Assert.True(viewModel.Certificates.Single().Equals(firstCertificate));
+        }
+
+        [Fact]
+        public void OkCommand_CertificateIsSelected_CertificateIsImportedAndDialogIsClosed()
+        {
+            // Arrange
+            var closeAutoResetEvent = new AutoResetEvent(false);
+            var expectedCloseEventRaised = false;
+            var expectsSelectedCertificate = new X509Certificate2();
+
+            var walletControllerMock = this.AutoMockContainer.GetMock<IWalletController>();
+
+            var viewModel = this.AutoMockContainer.Create<ImportCertificateViewModel>();
+            viewModel.SelectedCertificate = expectsSelectedCertificate;
+
+            viewModel.Close += (sender, args) =>
+            {
+                expectedCloseEventRaised = true;
+                closeAutoResetEvent.Set();
+            };
+
+            // Act
+            viewModel.OkCommand.Execute(null);
+            closeAutoResetEvent.WaitOne();
+
+            // Assert
+            walletControllerMock.Verify(x => x.ImportCertificate(expectsSelectedCertificate));
+            Assert.True(expectedCloseEventRaised);
         }
     }
 }
