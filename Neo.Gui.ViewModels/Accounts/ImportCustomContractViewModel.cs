@@ -15,17 +15,14 @@ namespace Neo.Gui.ViewModels.Accounts
 {
     public class ImportCustomContractViewModel : ViewModelBase, IDialogViewModel<ImportCustomContractDialogResult>
     {
+        #region Private Fields 
         private readonly IWalletController walletController;
         
         private string parameterList;
         private string script;
+        #endregion
 
-        public ImportCustomContractViewModel(
-            IWalletController walletController)
-        {
-            this.walletController = walletController;
-        }
-
+        #region Public Properties 
         public string ParameterList
         {
             get => this.parameterList;
@@ -65,6 +62,15 @@ namespace Neo.Gui.ViewModels.Accounts
         public ICommand ConfirmCommand => new RelayCommand(this.Confirm);
 
         public ICommand CancelCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
+        #endregion
+
+        #region Constructor 
+        public ImportCustomContractViewModel(
+            IWalletController walletController)
+        {
+            this.walletController = walletController;
+        }
+        #endregion
 
         #region IDialogViewModel implementation 
         public event EventHandler Close;
@@ -74,6 +80,7 @@ namespace Neo.Gui.ViewModels.Accounts
         public ImportCustomContractDialogResult DialogResult { get; private set; }
         #endregion
 
+        #region Private Methods 
         private void Confirm()
         {
             var contract = this.GenerateContract();
@@ -94,5 +101,6 @@ namespace Neo.Gui.ViewModels.Accounts
 
             return Contract.Create(parameters, redeemScript);
         }
+        #endregion
     }
 }
