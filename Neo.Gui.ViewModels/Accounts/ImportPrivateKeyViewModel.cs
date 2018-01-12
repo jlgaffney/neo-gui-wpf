@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Windows.Input;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -38,19 +36,9 @@ namespace Neo.Gui.ViewModels.Accounts
             }
         }
 
-        public IEnumerable<string> WifStrings
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(this.PrivateKeysWif)) return new string[0];
+        public RelayCommand OkCommand => new RelayCommand(this.Ok);
 
-                return this.PrivateKeysWif.ToLines();
-            }
-        }
-
-        public ICommand OkCommand => new RelayCommand(this.Ok);
-
-        public ICommand CancelCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
+        public RelayCommand CancelCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
         #endregion
 
         #region Constructor 
@@ -74,7 +62,10 @@ namespace Neo.Gui.ViewModels.Accounts
         {
             if (!this.OkEnabled) return;
 
-            this.walletController.ImportPrivateKeys(this.WifStrings);
+            if (string.IsNullOrEmpty(this.PrivateKeysWif)) return;
+
+            var wifStrings = this.PrivateKeysWif.ToLines();
+            this.walletController.ImportPrivateKeys(wifStrings);
 
             this.Close(this, EventArgs.Empty);
         }
