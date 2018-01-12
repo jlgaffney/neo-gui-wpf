@@ -89,8 +89,6 @@ namespace Neo.Gui.ViewModels.Tests.Accounts
             var closeAutoResetEvent = new AutoResetEvent(false);
             var expectedCloseEventRaised = false;
 
-            var walletControllerMock = this.AutoMockContainer.GetMock<IWalletController>();
-
             // Act
             var viewModel = this.AutoMockContainer.Create<CreateLockAccountViewModel>();
 
