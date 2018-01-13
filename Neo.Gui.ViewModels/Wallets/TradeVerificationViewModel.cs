@@ -19,7 +19,6 @@ namespace Neo.Gui.ViewModels.Wallets
     {
         #region Private Fields 
         private readonly IWalletController walletController;
-        private readonly IDispatchService dispatchService;
         #endregion
 
         #region Public Properties 
@@ -32,11 +31,9 @@ namespace Neo.Gui.ViewModels.Wallets
 
         #region Constructor 
         public TradeVerificationViewModel(
-            IWalletController walletController,
-            IDispatchService dispatchService)
+            IWalletController walletController)
         {
             this.walletController = walletController;
-            this.dispatchService = dispatchService;
 
             this.Items = new ObservableCollection<TransactionOutputItem>();
         }
@@ -54,21 +51,18 @@ namespace Neo.Gui.ViewModels.Wallets
             if (parameters?.TransactionOutputs == null) return;
 
             // Set outputs
-            this.dispatchService.InvokeOnMainUIThread(() =>
+            foreach (var output in parameters.TransactionOutputs)
             {
-                foreach (var output in parameters.TransactionOutputs)
-                {
-                    var asset = this.walletController.GetAssetState(output.AssetId);
+                var asset = this.walletController.GetAssetState(output.AssetId);
 
-                    this.Items.Add(new TransactionOutputItem
-                    {
-                        AssetName = $"{asset.GetName()} ({asset.Owner})",
-                        AssetId = output.AssetId,
-                        Value = new BigDecimal(output.Value.GetData(), 8),
-                        ScriptHash = output.ScriptHash
-                    });
-                }
-            });
+                this.Items.Add(new TransactionOutputItem
+                {
+                    AssetName = $"{asset.GetName()} ({asset.Owner})",
+                    AssetId = output.AssetId,
+                    Value = new BigDecimal(output.Value.GetData(), 8),
+                    ScriptHash = output.ScriptHash
+                });
+            }
         }
         #endregion
 

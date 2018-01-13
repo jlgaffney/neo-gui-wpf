@@ -22,7 +22,6 @@ namespace Neo.Gui.ViewModels.Transactions
         ILoadableDialogViewModel<BulkPayDialogResult, BulkPayLoadParameters>
     {
         private readonly IWalletController walletController;
-        private readonly IDispatchService dispatchService;
 
         private bool assetSelectionEnabled;
 
@@ -31,11 +30,9 @@ namespace Neo.Gui.ViewModels.Transactions
         private string addressesAndAmounts;
         
         public BulkPayViewModel(
-            IWalletController walletController,
-            IDispatchService dispatchService)
+            IWalletController walletController)
         {
             this.walletController = walletController;
-            this.dispatchService = dispatchService;
 
             this.Assets = new ObservableCollection<AssetDescriptor>();
         }
@@ -98,53 +95,50 @@ namespace Neo.Gui.ViewModels.Transactions
         public event EventHandler<BulkPayDialogResult> SetDialogResultAndClose;
 
         public BulkPayDialogResult DialogResult { get; private set; }
-        
+
         public void OnDialogLoad(BulkPayLoadParameters parameters)
         {
             var asset = parameters?.Asset;
 
-            this.dispatchService.InvokeOnMainUIThread(() =>
+            this.Assets.Clear();
+
+            if (asset != null)
             {
-                this.Assets.Clear();
-
-                if (asset != null)
+                this.Assets.Add(asset);
+                this.SelectedAsset = asset;
+                this.AssetSelectionEnabled = false;
+            }
+            else
+            {
+                // Add first-class assets to list
+                foreach (var assetId in this.walletController.FindUnspentCoins()
+                    .Select(p => p.Output.AssetId).Distinct())
                 {
-                    this.Assets.Add(asset);
-                    this.SelectedAsset = asset;
-                    this.AssetSelectionEnabled = false;
+                    this.Assets.Add(new AssetDescriptor(assetId));
                 }
-                else
+
+                // Add NEP-5 assets to list
+                var nep5WatchScriptHashes = this.walletController.GetNEP5WatchScriptHashes();
+
+                foreach (var assetId in nep5WatchScriptHashes)
                 {
-                    // Add first-class assets to list
-                    foreach (var assetId in this.walletController.FindUnspentCoins()
-                        .Select(p => p.Output.AssetId).Distinct())
+                    AssetDescriptor nep5Asset;
+                    try
                     {
-                        this.Assets.Add(new AssetDescriptor(assetId));
+                        nep5Asset = new AssetDescriptor(assetId);
+                    }
+                    catch (ArgumentException)
+                    {
+                        continue;
                     }
 
-                    // Add NEP-5 assets to list
-                    var nep5WatchScriptHashes = this.walletController.GetNEP5WatchScriptHashes();
-
-                    foreach (var assetId in nep5WatchScriptHashes)
-                    {
-                        AssetDescriptor nep5Asset;
-                        try
-                        {
-                            nep5Asset = new AssetDescriptor(assetId);
-                        }
-                        catch (ArgumentException)
-                        {
-                            continue;
-                        }
-
-                        this.Assets.Add(nep5Asset);
-                    }
-
-                    this.AssetSelectionEnabled = this.Assets.Any();
+                    this.Assets.Add(nep5Asset);
                 }
-            });
 
+                this.AssetSelectionEnabled = this.Assets.Any();
+            }
         }
+
         #endregion
 
         private void Ok()

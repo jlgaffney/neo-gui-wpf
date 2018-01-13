@@ -30,7 +30,6 @@ namespace Neo.Gui.ViewModels.Wallets
     {
         private readonly IDialogManager dialogManager;
         private readonly IWalletController walletController;
-        private readonly IDispatchService dispatchService;
 
         private string payToAddress;
         private string myRequest;
@@ -44,12 +43,10 @@ namespace Neo.Gui.ViewModels.Wallets
 
         public TradeViewModel(
             IDialogManager dialogManager,
-            IWalletController walletController,
-            IDispatchService dispatchService)
+            IWalletController walletController)
         {
             this.dialogManager = dialogManager;
             this.walletController = walletController;
-            this.dispatchService = dispatchService;
 
             this.Items = new ObservableCollection<TransactionOutputItem>();
         }
@@ -79,7 +76,7 @@ namespace Neo.Gui.ViewModels.Wallets
                     this.ScriptHash = null;
                 }
 
-                this.dispatchService.InvokeOnMainUIThread(() => this.Items.Clear());
+                this.Items.Clear();
             }
         }
 

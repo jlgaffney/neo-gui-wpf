@@ -18,7 +18,6 @@ namespace Neo.Gui.ViewModels.Assets
 {
     public class AssetDistributionViewModel : ViewModelBase, IDialogViewModel<AssetDistributionDialogResult>
     {
-        private readonly IDispatchService dispatchService;
         private readonly IWalletController walletController;
 
         private AssetDescriptor asset;
@@ -35,10 +34,8 @@ namespace Neo.Gui.ViewModels.Assets
         private bool distributionEnabled;
 
         public AssetDistributionViewModel(
-            IDispatchService dispatchService,
             IWalletController walletController)
         {
-            this.dispatchService = dispatchService;
             this.walletController = walletController;
 
             this.Items = new ObservableCollection<TransactionOutputItem>();
@@ -218,7 +215,7 @@ namespace Neo.Gui.ViewModels.Assets
                 this.DistributionEnabled = true;
             }
 
-            this.dispatchService.InvokeOnMainUIThread(() => this.Items.Clear());
+            this.Items.Clear();
         }
     }
 }

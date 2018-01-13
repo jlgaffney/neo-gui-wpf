@@ -25,7 +25,6 @@ namespace Neo.Gui.ViewModels.Contracts
         ILoadableDialogViewModel<ContractParametersEditorDialogResult, ContractParametersEditorLoadParameters>
     {
         private readonly IDialogManager dialogManager;
-        private readonly IDispatchService dispatchService;
 
         /// <summary>
         /// NOTE: Make sure this and the ObservableCollection are kept in sync.
@@ -39,11 +38,9 @@ namespace Neo.Gui.ViewModels.Contracts
         private string newValue;
 
         public ContractParametersEditorViewModel(
-            IDialogManager dialogManager,
-            IDispatchService dispatchService)
+            IDialogManager dialogManager)
         {
             this.dialogManager = dialogManager;
-            this.dispatchService = dispatchService;
 
             this.Parameters = new ObservableCollection<DisplayContractParameter>();
         }
@@ -134,32 +131,25 @@ namespace Neo.Gui.ViewModels.Contracts
         public void OnDialogLoad(ContractParametersEditorLoadParameters parameters)
         {
             if (parameters == null) return;
+            
+            this.parameters = parameters.ContractParameters;
 
-            this.Load(parameters.ContractParameters);
+            this.Parameters.Clear();
+
+            if (this.parameters == null) return;
+
+            for (int i = 0; i < this.parameters.Count; i++)
+            {
+                this.Parameters.Add(new DisplayContractParameter(i, this.parameters[i]));
+            }
+
+            // Update dependent property
+            RaisePropertyChanged(nameof(this.ParameterListEditingEnabled));
+            RaisePropertyChanged(nameof(this.AddEnabled));
+            RaisePropertyChanged(nameof(this.RemoveEnabled));
+
         }
         #endregion
-
-        private void Load(IList<ContractParameter> parameterList)
-        {
-            this.parameters = parameterList;
-
-            this.dispatchService.InvokeOnMainUIThread(() =>
-            {
-                this.Parameters.Clear();
-
-                if (this.parameters == null) return;
-
-                for (int i = 0; i < this.parameters.Count; i++)
-                {
-                    this.Parameters.Add(new DisplayContractParameter(i, this.parameters[i]));
-                }
-
-                // Update dependent property
-                RaisePropertyChanged(nameof(this.ParameterListEditingEnabled));
-                RaisePropertyChanged(nameof(this.AddEnabled));
-                RaisePropertyChanged(nameof(this.RemoveEnabled));
-            });
-        }
 
         private void Add()
         {
@@ -167,28 +157,22 @@ namespace Neo.Gui.ViewModels.Contracts
 
             var parameter = ParseParameter(this.NewValue);
 
-            this.dispatchService.InvokeOnMainUIThread(() =>
-            {
-                var newIndex = this.Parameters.Count;
+            var newIndex = this.Parameters.Count;
 
-                var newDisplayParameter = new DisplayContractParameter(newIndex, parameter);
+            var newDisplayParameter = new DisplayContractParameter(newIndex, parameter);
 
-                this.parameters.Add(parameter);
-                this.Parameters.Add(newDisplayParameter);
+            this.parameters.Add(parameter);
+            this.Parameters.Add(newDisplayParameter);
 
-                this.SelectedParameter = newDisplayParameter;
-            });
+            this.SelectedParameter = newDisplayParameter;
         }
 
         private void Remove()
         {
             if (this.SelectedParameter == null) return;
 
-            this.dispatchService.InvokeOnMainUIThread(() =>
-            {
-                this.parameters.RemoveAt(this.SelectedParameter.Index);
-                this.Parameters.RemoveAt(this.SelectedParameter.Index);
-            });
+            this.parameters.RemoveAt(this.SelectedParameter.Index);
+            this.Parameters.RemoveAt(this.SelectedParameter.Index);
         }
 
         private void EditArray()

@@ -21,7 +21,6 @@ namespace Neo.Gui.ViewModels.Transactions
         ILoadableDialogViewModel<PayToDialogResult, PayToLoadParameters>
     {
         private readonly IWalletController walletController;
-        private readonly IDispatchService dispatchService;
 
         private bool assetSelectionEnabled;
         private AssetDescriptor selectedAsset;
@@ -32,11 +31,9 @@ namespace Neo.Gui.ViewModels.Transactions
         private string amount;
 
         public PayToViewModel(
-            IWalletController walletController,
-            IDispatchService dispatchService)
+            IWalletController walletController)
         {
             this.walletController = walletController;
-            this.dispatchService = dispatchService;
 
             this.Assets = new ObservableCollection<AssetDescriptor>();
         }
@@ -160,56 +157,53 @@ namespace Neo.Gui.ViewModels.Transactions
         public event EventHandler<PayToDialogResult> SetDialogResultAndClose;
 
         public PayToDialogResult DialogResult { get; private set; }
-        
+
         public void OnDialogLoad(PayToLoadParameters parameters)
         {
             var asset = parameters?.Asset;
             var scriptHash = parameters?.ScriptHash;
 
-            this.dispatchService.InvokeOnMainUIThread(() =>
+            this.Assets.Clear();
+
+            if (asset != null)
             {
-                this.Assets.Clear();
-
-                if (asset != null)
+                this.Assets.Add(asset);
+                this.SelectedAsset = asset;
+                this.AssetSelectionEnabled = false;
+            }
+            else
+            {
+                // Add first-class assets to list
+                foreach (var assetId in this.walletController.FindUnspentCoins()
+                    .Select(p => p.Output.AssetId).Distinct())
                 {
-                    this.Assets.Add(asset);
-                    this.SelectedAsset = asset;
-                    this.AssetSelectionEnabled = false;
+                    this.Assets.Add(new AssetDescriptor(assetId));
                 }
-                else
+
+                // Add NEP-5 assets to list
+                foreach (var assetId in this.walletController.GetNEP5WatchScriptHashes())
                 {
-                    // Add first-class assets to list
-                    foreach (var assetId in this.walletController.FindUnspentCoins()
-                        .Select(p => p.Output.AssetId).Distinct())
+                    AssetDescriptor nep5Asset;
+                    try
                     {
-                        this.Assets.Add(new AssetDescriptor(assetId));
+                        nep5Asset = new AssetDescriptor(assetId);
+                    }
+                    catch (ArgumentException)
+                    {
+                        continue;
                     }
 
-                    // Add NEP-5 assets to list
-                    foreach (var assetId in this.walletController.GetNEP5WatchScriptHashes())
-                    {
-                        AssetDescriptor nep5Asset;
-                        try
-                        {
-                            nep5Asset = new AssetDescriptor(assetId);
-                        }
-                        catch (ArgumentException)
-                        {
-                            continue;
-                        }
-
-                        this.Assets.Add(nep5Asset);
-                    }
-
-                    this.AssetSelectionEnabled = this.Assets.Any();
+                    this.Assets.Add(nep5Asset);
                 }
 
-                if (scriptHash != null)
-                {
-                    this.PayToAddress = this.walletController.ScriptHashToAddress(scriptHash);
-                    this.PayToAddressReadOnly = true;
-                }
-            });
+                this.AssetSelectionEnabled = this.Assets.Any();
+            }
+
+            if (scriptHash != null)
+            {
+                this.PayToAddress = this.walletController.ScriptHashToAddress(scriptHash);
+                this.PayToAddressReadOnly = true;
+            }
         }
         #endregion
 

@@ -20,7 +20,6 @@ namespace Neo.Gui.ViewModels.Development
     {
         private readonly IDialogManager dialogManager;
         private readonly IWalletController walletController;
-        private readonly IDispatchService dispatchService;
 
         private ContractParametersContext context;
 
@@ -35,12 +34,10 @@ namespace Neo.Gui.ViewModels.Development
 
         public ContractParametersViewModel(
             IDialogManager dialogManager,
-            IWalletController walletController,
-            IDispatchService dispatchService)
+            IWalletController walletController)
         {
             this.dialogManager = dialogManager;
             this.walletController = walletController;
-            this.dispatchService = dispatchService;
 
             this.ScriptHashAddresses = new ObservableCollection<string>();
         }
@@ -178,18 +175,15 @@ namespace Neo.Gui.ViewModels.Development
                 return;
             }
 
-            await this.dispatchService.InvokeOnMainUIThread(() =>
-            {
-                this.ScriptHashAddresses.Clear();
-                this.CurrentValue = string.Empty;
-                this.NewValue = string.Empty;
+            this.ScriptHashAddresses.Clear();
+            this.CurrentValue = string.Empty;
+            this.NewValue = string.Empty;
 
-                foreach (var item in context.ScriptHashes.Select(
-                    this.walletController.ScriptHashToAddress))
-                {
-                    this.ScriptHashAddresses.Add(item);
-                }
-            });
+            foreach (var item in context.ScriptHashes.Select(
+                this.walletController.ScriptHashToAddress))
+            {
+                this.ScriptHashAddresses.Add(item);
+            }
 
             this.SelectedScriptHashAddress = null;
 
