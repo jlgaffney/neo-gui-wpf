@@ -5,12 +5,12 @@ using GalaSoft.MvvmLight.Command;
 
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.Results.Wallets;
+using Neo.Gui.Base.Dialogs.LoadParameters.Accounts;
 using Neo.Gui.Base.Extensions;
 
 namespace Neo.Gui.ViewModels.Accounts
 {
-    public class ImportPrivateKeyViewModel : ViewModelBase, IDialogViewModel<ImportPrivateKeyDialogResult>
+    public class ImportPrivateKeyViewModel : ViewModelBase, IDialogViewModel<ImportPrivateKeyLoadParameters>
     {
         #region Private Fields 
         private readonly IWalletController walletController;
@@ -52,9 +52,9 @@ namespace Neo.Gui.ViewModels.Accounts
         #region IDialogViewModel implementation 
         public event EventHandler Close;
 
-        public event EventHandler<ImportPrivateKeyDialogResult> SetDialogResultAndClose;
-
-        public ImportPrivateKeyDialogResult DialogResult { get; private set; }
+        public void OnDialogLoad(ImportPrivateKeyLoadParameters parameters)
+        {
+        }
         #endregion
 
         #region Private Methods 

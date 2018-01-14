@@ -10,13 +10,13 @@ using Neo.Gui.Globalization.Resources;
 
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.Results.Transactions;
+using Neo.Gui.Base.Dialogs.LoadParameters.Transactions;
 using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Base.Services.Interfaces;
 
 namespace Neo.Gui.ViewModels.Transactions
 {
-    public class SigningViewModel : ViewModelBase, IDialogViewModel<SigningDialogResult>
+    public class SigningViewModel : ViewModelBase, IDialogViewModel<SigningLoadParameters>
     {
         private readonly IClipboardManager clipboardManager;
         private readonly IDialogManager dialogManager;
@@ -78,9 +78,9 @@ namespace Neo.Gui.ViewModels.Transactions
         #region IDialogViewModel implementation 
         public event EventHandler Close;
 
-        public event EventHandler<SigningDialogResult> SetDialogResultAndClose;
-
-        public SigningDialogResult DialogResult { get; private set; }
+        public void OnDialogLoad(SigningLoadParameters parameters)
+        {
+        }
         #endregion
 
         private void Sign()

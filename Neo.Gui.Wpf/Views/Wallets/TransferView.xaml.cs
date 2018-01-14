@@ -1,12 +1,11 @@
 ﻿using System;
 using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.Results;
-using Neo.Gui.Base.Dialogs.Results.Wallets;
+using Neo.Gui.Base.Dialogs.LoadParameters.Wallets;
 using Neo.Gui.ViewModels.Wallets;
 
 namespace Neo.Gui.Wpf.Views.Wallets
 {
-    public partial class TransferView : IDialog<TransferDialogResult>
+    public partial class TransferView : IDialog<TransferLoadParameters>
     {
         private readonly TransferViewModel viewModel;
 

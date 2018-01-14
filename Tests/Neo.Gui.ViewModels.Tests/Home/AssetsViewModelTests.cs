@@ -1,11 +1,8 @@
 ﻿using System.Linq;
 using Moq;
-using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Dialogs;
-using Neo.Gui.Base.Helpers;
-using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;

@@ -1,8 +1,6 @@
 ﻿using System.Windows;
 using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.Results;
-using Neo.Gui.Base.Dialogs.Results.Wallets;
-using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.Dialogs.LoadParameters.Wallets;
 using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.ViewModels.Wallets;
 
@@ -11,7 +9,7 @@ namespace Neo.Gui.Wpf.Views.Wallets
     /// <summary>
     /// Interaction logic for OpenWalletView.xaml
     /// </summary>
-    public partial class OpenWalletView : IDialog<OpenWalletDialogResult>
+    public partial class OpenWalletView : IDialog<OpenWalletLoadParameters>
     {
         private readonly OpenWalletViewModel viewModel;
 

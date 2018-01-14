@@ -12,8 +12,8 @@ using Neo.Gui.Globalization.Resources;
 
 using Neo.Gui.Base;
 using Neo.Gui.Base.Controllers.Interfaces;
-using Neo.Gui.Base.Dialogs.Results.Home;
-using Neo.Gui.Base.Dialogs.Results.Settings;
+using Neo.Gui.Base.Dialogs.LoadParameters.Home;
+using Neo.Gui.Base.Dialogs.LoadParameters.Updater;
 using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Base.Services.Interfaces;
 
@@ -102,7 +102,7 @@ namespace Neo.Gui.Wpf
                         // Display update window
                         await dispatchService.InvokeOnMainUIThread(() =>
                         {
-                            window = dialogManager.CreateDialog<UpdateDialogResult>(result => {  }) as Window;
+                            window = dialogManager.CreateDialog<UpdateLoadParameters>(null) as Window;
                         });
                         return;
                     }
@@ -115,7 +115,7 @@ namespace Neo.Gui.Wpf
 
                     await dispatchService.InvokeOnMainUIThread(() =>
                     {
-                        window = dialogManager.CreateDialog<HomeDialogResult>(result => { }) as Window;
+                        window = dialogManager.CreateDialog<HomeLoadParameters>(null) as Window;
                     });
                 }
                 finally

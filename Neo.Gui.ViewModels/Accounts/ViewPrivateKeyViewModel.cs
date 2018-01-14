@@ -7,12 +7,11 @@ using GalaSoft.MvvmLight.Command;
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Accounts;
-using Neo.Gui.Base.Dialogs.Results.Wallets;
 
 namespace Neo.Gui.ViewModels.Accounts
 {
     public class ViewPrivateKeyViewModel : ViewModelBase,
-        ILoadableDialogViewModel<ViewPrivateKeyDialogResult, ViewPrivateKeyLoadParameters>
+        IDialogViewModel<ViewPrivateKeyLoadParameters>
     {
         #region Private fields
 
@@ -44,10 +43,6 @@ namespace Neo.Gui.ViewModels.Accounts
         
         #region ILoadableDialogViewModel implementation 
         public event EventHandler Close;
-
-        public event EventHandler<ViewPrivateKeyDialogResult> SetDialogResultAndClose;
-
-        public ViewPrivateKeyDialogResult DialogResult { get; private set; }
 
         public void OnDialogLoad(ViewPrivateKeyLoadParameters parameters)
         {

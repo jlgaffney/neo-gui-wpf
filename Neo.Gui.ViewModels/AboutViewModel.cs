@@ -6,11 +6,11 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
 using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.Results;
+using Neo.Gui.Base.Dialogs.LoadParameters;
 
 namespace Neo.Gui.ViewModels
 {
-    public class AboutViewModel : ViewModelBase, IDialogViewModel<AboutDialogResult>
+    public class AboutViewModel : ViewModelBase, IDialogViewModel<AboutLoadParameters>
     {
         #region Private Fields 
         private Version assemblyVersion;
@@ -43,9 +43,9 @@ namespace Neo.Gui.ViewModels
         #region IDialogViewModel implementation 
         public event EventHandler Close;
 
-        public event EventHandler<AboutDialogResult> SetDialogResultAndClose;
-
-        public AboutDialogResult DialogResult { get; private set; }
+        public void OnDialogLoad(AboutLoadParameters parameters)
+        {
+        }
         #endregion
     }
 }

@@ -16,14 +16,14 @@ namespace Neo.Gui.Wpf.Converters
         {
             if (null == value) return null;
 
-            if (value is DrawingColor)
+            if (value is DrawingColor drawingColor)
             {
-                return new SolidColorBrush(((DrawingColor) value).ToMediaColor());
+                return new SolidColorBrush(drawingColor.ToMediaColor());
             }
 
-            if (value is MediaColor)
+            if (value is MediaColor mediaColor)
             {
-                return new SolidColorBrush((MediaColor) value);
+                return new SolidColorBrush(mediaColor);
             }
 
             var type = value.GetType();

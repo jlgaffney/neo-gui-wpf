@@ -36,7 +36,7 @@ namespace Neo.Gui.ViewModels.Home
             get => this.selectedTransaction;
             set
             {
-                if (this.selectedTransaction == value) return;
+                if (Equals(this.selectedTransaction, value)) return;
 
                 this.selectedTransaction = value;
 

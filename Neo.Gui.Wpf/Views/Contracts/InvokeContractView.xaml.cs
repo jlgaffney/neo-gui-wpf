@@ -1,13 +1,13 @@
 ﻿using System;
 using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.Results.Contracts;
+using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
 
 namespace Neo.Gui.Wpf.Views.Contracts
 {
     /// <summary>
     /// Interaction logic for InvokeContractView.xaml
     /// </summary>
-    public partial class InvokeContractView : IDialog<InvokeContractDialogResult>
+    public partial class InvokeContractView : IDialog<InvokeContractLoadParameters>
     {
         public InvokeContractView()
         {

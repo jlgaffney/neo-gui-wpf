@@ -1,6 +1,4 @@
-﻿using System;
-
-using Neo.Gui.Base.Dialogs;
+﻿using Neo.Gui.Base.Dialogs;
 using Neo.Gui.Base.Dialogs.Interfaces;
 
 namespace Neo.Gui.Base.Managers.Interfaces
@@ -10,13 +8,11 @@ namespace Neo.Gui.Base.Managers.Interfaces
     /// </summary>
     public interface IDialogManager
     {
-        IDialog<TDialogResult> CreateDialog<TDialogResult, TLoadParameters>(Action<TDialogResult> resultSetter, TLoadParameters parameters);
-        
-        IDialog<TDialogResult> CreateDialog<TDialogResult>(Action<TDialogResult> resultSetter);
+        IDialog<TLoadParameters> CreateDialog<TLoadParameters>(TLoadParameters parameters);
 
-        TDialogResult ShowDialog<TDialogResult>();
+        void ShowDialog<TLoadParameters>(TLoadParameters parameters = default(TLoadParameters));
 
-        TDialogResult ShowDialog<TDialogResult, TLoadParameters>(TLoadParameters parameters);
+        TDialogResult ShowDialog<TLoadParameters, TDialogResult>(TLoadParameters parameters = default(TLoadParameters));
 
         string ShowInputDialog(string title, string message, string input = "");
         

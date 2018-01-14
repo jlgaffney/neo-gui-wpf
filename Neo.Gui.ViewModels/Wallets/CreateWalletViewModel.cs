@@ -5,12 +5,13 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
 using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.LoadParameters.Wallets;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Services.Interfaces;
 
 namespace Neo.Gui.ViewModels.Wallets
 {
-    public class CreateWalletViewModel : ViewModelBase, IDialogViewModel<CreateWalletDialogResult>
+    public class CreateWalletViewModel : ViewModelBase, IResultDialogViewModel<CreateWalletLoadParameters, CreateWalletDialogResult>
     {
         private readonly IFileDialogService fileDialogService;
 
@@ -71,7 +72,9 @@ namespace Neo.Gui.ViewModels.Wallets
 
         public event EventHandler<CreateWalletDialogResult> SetDialogResultAndClose;
 
-        public CreateWalletDialogResult DialogResult { get; private set; }
+        public void OnDialogLoad(CreateWalletLoadParameters parameters)
+        {
+        }
         #endregion
 
         public void UpdatePassword(string updatedPassword)

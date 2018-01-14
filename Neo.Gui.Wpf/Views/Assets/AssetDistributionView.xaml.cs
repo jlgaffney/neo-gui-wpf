@@ -1,13 +1,12 @@
 ﻿using System;
 using Neo.Core;
 using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.Results;
-using Neo.Gui.Base.Dialogs.Results.Assets;
+using Neo.Gui.Base.Dialogs.LoadParameters.Assets;
 using Neo.Gui.ViewModels.Assets;
 
 namespace Neo.Gui.Wpf.Views.Assets
 {
-    public partial class AssetDistributionView : IDialog<AssetDistributionDialogResult>
+    public partial class AssetDistributionView : IDialog<AssetDistributionLoadParameters>
     {
         private readonly AssetDistributionViewModel viewModel;
 

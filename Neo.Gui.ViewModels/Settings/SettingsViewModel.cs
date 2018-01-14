@@ -10,14 +10,14 @@ using GalaSoft.MvvmLight.Command;
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs;
 using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.Results.Settings;
+using Neo.Gui.Base.Dialogs.LoadParameters.Settings;
 using Neo.Gui.Base.Extensions;
 using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Base.Theming;
 
 namespace Neo.Gui.ViewModels.Settings
 {
-    public class SettingsViewModel : ViewModelBase, IDialogViewModel<SettingsDialogResult>
+    public class SettingsViewModel : ViewModelBase, IDialogViewModel<SettingsLoadParameters>
     {
         private readonly IDialogManager dialogManager;
         private readonly IWalletController walletController;
@@ -276,9 +276,9 @@ namespace Neo.Gui.ViewModels.Settings
         #region IDialogViewModel implementation 
         public event EventHandler Close;
 
-        public event EventHandler<SettingsDialogResult> SetDialogResultAndClose;
-
-        public SettingsDialogResult DialogResult { get; private set; }
+        public void OnDialogLoad(SettingsLoadParameters parameters)
+        {
+        }
         #endregion
 
         private void Ok()

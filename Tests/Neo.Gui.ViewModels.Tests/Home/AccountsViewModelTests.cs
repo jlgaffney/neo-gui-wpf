@@ -4,8 +4,6 @@ using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Dialogs;
 using Neo.Gui.Base.Dialogs.LoadParameters.Accounts;
 using Neo.Gui.Base.Dialogs.LoadParameters.Voting;
-using Neo.Gui.Base.Dialogs.Results.Voting;
-using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Extensions;
 using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Base.Messages;
@@ -122,7 +120,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.ImportWifPrivateKeyCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<ImportPrivateKeyDialogResult>());
+            dialogManagerMock.Verify(x => x.ShowDialog<ImportPrivateKeyLoadParameters>(null));
         }
 
         [Fact]
@@ -137,7 +135,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.ImportFromCertificateCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<ImportCertificateDialogResult>());
+            dialogManagerMock.Verify(x => x.ShowDialog<ImportCertificateLoadParameters>(null));
         }
 
         [Fact]
@@ -198,7 +196,7 @@ address2";
             viewModel.CreateMultiSignatureContractAddressCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<CreateMultiSigContractDialogResult>());
+            dialogManagerMock.Verify(x => x.ShowDialog<CreateMultiSigContractLoadParameters>(null));
         }
 
         [Fact]
@@ -213,7 +211,7 @@ address2";
             viewModel.CreateLockContractAddressCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<CreateLockAccountDialogResult>());
+            dialogManagerMock.Verify(x => x.ShowDialog<CreateLockAccountLoadParameters>(null));
         }
 
         [Fact]
@@ -228,7 +226,7 @@ address2";
             viewModel.CreateCustomContractAddressCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<ImportCustomContractDialogResult>());
+            dialogManagerMock.Verify(x => x.ShowDialog<ImportCustomContractLoadParameters>(null));
         }
 
         [Fact]
@@ -249,7 +247,7 @@ address2";
             viewModel.ViewPrivateKeyCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<ViewPrivateKeyDialogResult, ViewPrivateKeyLoadParameters>(It.Is<ViewPrivateKeyLoadParameters>(p => p.ScriptHash == selectedAccount.ScriptHash)));
+            dialogManagerMock.Verify(x => x.ShowDialog(It.Is<ViewPrivateKeyLoadParameters>(p => p.ScriptHash == selectedAccount.ScriptHash)));
         }
 
         [Fact]
@@ -270,11 +268,11 @@ address2";
             viewModel.ViewPrivateKeyCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<ViewPrivateKeyDialogResult, ViewPrivateKeyLoadParameters>(It.Is<ViewPrivateKeyLoadParameters>(p => p.ScriptHash == selectedAccount.ScriptHash)), Times.Never);
+            dialogManagerMock.Verify(x => x.ShowDialog(It.Is<ViewPrivateKeyLoadParameters>(p => p.ScriptHash == selectedAccount.ScriptHash)), Times.Never);
         }
 
         [Fact]
-        public void ViewContractCommand_ViewContractIsEnabled_ViewPrivateKeyIsNotEnabled_ShowViewContractDialog()
+        public void ViewContractCommand_ViewContractIsEnabled_ShowViewContractDialog()
         {
             // Arrange
             var dialogManagerMock = this.AutoMockContainer.GetMock<IDialogManager>();
@@ -291,11 +289,11 @@ address2";
             viewModel.ViewContractCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<ViewContractDialogResult, ViewContractLoadParameters>(It.Is<ViewContractLoadParameters>(p => p.ScriptHash == selectedAccount.ScriptHash)));
+            dialogManagerMock.Verify(x => x.ShowDialog(It.Is<ViewContractLoadParameters>(p => p.ScriptHash == selectedAccount.ScriptHash)), Times.Once);
         }
 
         [Fact]
-        public void ViewContractCommand_ViewContractIsNotEnabled_ViewPrivateKeyIsNotEnabled_ShowNothing()
+        public void ViewContractCommand_ViewContractIsNotEnabled_ShowNothing()
         {
             // Arrange
             var dialogManagerMock = this.AutoMockContainer.GetMock<IDialogManager>();
@@ -312,7 +310,7 @@ address2";
             viewModel.ViewContractCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<ViewContractDialogResult, ViewContractLoadParameters>(It.Is<ViewContractLoadParameters>(p => p.ScriptHash == selectedAccount.ScriptHash)), Times.Never);
+            dialogManagerMock.Verify(x => x.ShowDialog(It.Is<ViewContractLoadParameters>(p => p.ScriptHash == selectedAccount.ScriptHash)), Times.Never);
         }
 
         [Fact]
@@ -334,7 +332,7 @@ address2";
             viewModel.ShowVotingDialogCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<VotingDialogResult, VotingLoadParameters>(It.Is<VotingLoadParameters>(p => p.ScriptHash == selectedAccount.ScriptHash)));
+            dialogManagerMock.Verify(x => x.ShowDialog(It.Is<VotingLoadParameters>(p => p.ScriptHash == selectedAccount.ScriptHash)));
         }
 
         [Fact]
@@ -355,7 +353,7 @@ address2";
             viewModel.ShowVotingDialogCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<VotingDialogResult, VotingLoadParameters>(It.Is<VotingLoadParameters>(p => p.ScriptHash == selectedAccount.ScriptHash)), Times.Never);
+            dialogManagerMock.Verify(x => x.ShowDialog(new VotingLoadParameters(selectedAccount.ScriptHash)), Times.Never);
         }
 
         [Fact]
@@ -376,7 +374,7 @@ address2";
             viewModel.ShowVotingDialogCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<VotingDialogResult, VotingLoadParameters>(It.Is<VotingLoadParameters>(p => p.ScriptHash == selectedAccount.ScriptHash)), Times.Never);
+            dialogManagerMock.Verify(x => x.ShowDialog<VotingLoadParameters>(null), Times.Never);
         }
 
         [Fact]
@@ -398,7 +396,7 @@ address2";
             viewModel.ShowVotingDialogCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<VotingDialogResult, VotingLoadParameters>(It.Is<VotingLoadParameters>(p => p.ScriptHash == selectedAccount.ScriptHash)), Times.Never);
+            dialogManagerMock.Verify(x => x.ShowDialog(new VotingLoadParameters(selectedAccount.ScriptHash)), Times.Never);
         }
 
         [Fact]

@@ -12,14 +12,13 @@ using Neo.Cryptography.ECC;
 
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.LoadParameters.Assets;
 using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
-using Neo.Gui.Base.Dialogs.Results.Assets;
-using Neo.Gui.Base.Dialogs.Results.Contracts;
 using Neo.Gui.Base.Managers.Interfaces;
 
 namespace Neo.Gui.ViewModels.Assets
 {
-    public class AssetRegistrationViewModel : ViewModelBase, IDialogViewModel<AssetRegistrationDialogResult>
+    public class AssetRegistrationViewModel : ViewModelBase, IDialogViewModel<AssetRegistrationLoadParameters>
     {
         private static readonly AssetType[] assetTypes = { AssetType.Share, AssetType.Token };
 
@@ -219,9 +218,9 @@ namespace Neo.Gui.ViewModels.Assets
         #region IDialogViewModel implementation 
         public event EventHandler Close;
 
-        public event EventHandler<AssetRegistrationDialogResult> SetDialogResultAndClose;
-
-        public AssetRegistrationDialogResult DialogResult { get; private set; }
+        public void OnDialogLoad(AssetRegistrationLoadParameters parameters)
+        {
+        }
         #endregion
 
         #region Private methods
@@ -246,8 +245,7 @@ namespace Neo.Gui.ViewModels.Assets
 
             if (transaction == null) return;
 
-            this.dialogManager.ShowDialog<InvokeContractDialogResult, InvokeContractLoadParameters>(
-                new InvokeContractLoadParameters(transaction));
+            this.dialogManager.ShowDialog(new InvokeContractLoadParameters(transaction));
 
             this.Close(this, EventArgs.Empty);
         }

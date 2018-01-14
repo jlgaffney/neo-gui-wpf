@@ -8,16 +8,17 @@ using Neo.Gui.Globalization.Resources;
 
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs;
+using Neo.Gui.Base.Dialogs.LoadParameters;
+using Neo.Gui.Base.Dialogs.LoadParameters.Assets;
 using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
-using Neo.Gui.Base.Dialogs.Results;
-using Neo.Gui.Base.Dialogs.Results.Contracts;
+using Neo.Gui.Base.Dialogs.LoadParameters.Development;
+using Neo.Gui.Base.Dialogs.LoadParameters.Settings;
+using Neo.Gui.Base.Dialogs.LoadParameters.Transactions;
+using Neo.Gui.Base.Dialogs.LoadParameters.Updater;
+using Neo.Gui.Base.Dialogs.LoadParameters.Voting;
+using Neo.Gui.Base.Dialogs.LoadParameters.Wallets;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
-using Neo.Gui.Base.Dialogs.Results.Development;
-using Neo.Gui.Base.Dialogs.Results.Settings;
 using Neo.Gui.ViewModels.Home;
-using Neo.Gui.Base.Dialogs.Results.Assets;
-using Neo.Gui.Base.Dialogs.Results.Transactions;
-using Neo.Gui.Base.Dialogs.Results.Voting;
 using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.Messages;
@@ -119,7 +120,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
 
             var dialogManagerMock = this.AutoMockContainer.GetMock<IDialogManager>();
             dialogManagerMock
-                .Setup(x => x.ShowDialog<CreateWalletDialogResult>())
+                .Setup(x => x.ShowDialog<CreateWalletLoadParameters, CreateWalletDialogResult>(null))
                 .Returns(createWalletDialogResult);
 
             var viewModel = this.AutoMockContainer.Create<HomeViewModel>();
@@ -128,7 +129,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.CreateWalletCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<CreateWalletDialogResult>());
+            dialogManagerMock.Verify(x => x.ShowDialog<CreateWalletLoadParameters, CreateWalletDialogResult>(null));
             walletControllerMock.Verify(x => x.CreateWallet(walletPath, walletPassword, createWalletWithAccount));
             settingsManagerMock.VerifySet(x => x.LastWalletPath = walletPath);
             settingsManagerMock.Verify(x => x.Save(), Times.Once);
@@ -151,7 +152,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
 
             var dialogManagerMock = this.AutoMockContainer.GetMock<IDialogManager>();
             dialogManagerMock
-                .Setup(x => x.ShowDialog<OpenWalletDialogResult>())
+                .Setup(x => x.ShowDialog<OpenWalletLoadParameters, OpenWalletDialogResult>(null))
                 .Returns(openWalletDialogResult);
 
             var viewModel = this.AutoMockContainer.Create<HomeViewModel>();
@@ -160,7 +161,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.OpenWalletCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<OpenWalletDialogResult>());
+            dialogManagerMock.Verify(x => x.ShowDialog<OpenWalletLoadParameters, OpenWalletDialogResult>(null));
             walletControllerMock.Verify(x => x.OpenWallet(walletPath, walletPassword));
             settingsManagerMock.VerifySet(x => x.LastWalletPath = walletPath);
             settingsManagerMock.Verify(x => x.Save(), Times.Once);
@@ -187,7 +188,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
 
             var dialogManagerMock = this.AutoMockContainer.GetMock<IDialogManager>();
             dialogManagerMock
-                .Setup(x => x.ShowDialog<OpenWalletDialogResult>())
+                .Setup(x => x.ShowDialog<OpenWalletLoadParameters, OpenWalletDialogResult>(null))
                 .Returns(openWalletDialogResult);
             dialogManagerMock
                 .Setup(x => x.ShowMessageDialog(Strings.MigrateWalletCaption, Strings.MigrateWalletMessage, MessageDialogType.YesNo, MessageDialogResult.Ok))
@@ -199,7 +200,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.OpenWalletCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<OpenWalletDialogResult>());
+            dialogManagerMock.Verify(x => x.ShowDialog<OpenWalletLoadParameters, OpenWalletDialogResult>(null));
             walletControllerMock.Verify(x => x.MigrateWallet(walletPath, walletPassword));
             walletControllerMock.Verify(x => x.OpenWallet(newWalletPath, walletPassword));
             settingsManagerMock.VerifySet(x => x.LastWalletPath = newWalletPath);
@@ -218,7 +219,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.TransferCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<TransferDialogResult>());
+            dialogManagerMock.Verify(x => x.ShowDialog<TransferLoadParameters>(null));
         }
 
         [Fact]
@@ -233,7 +234,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.ShowTransactionDialogCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<TradeDialogResult>());
+            dialogManagerMock.Verify(x => x.ShowDialog<TradeLoadParameters>(null));
         }
 
         [Fact]
@@ -248,7 +249,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.ShowSigningDialogCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<SigningDialogResult>());
+            dialogManagerMock.Verify(x => x.ShowDialog<SigningLoadParameters>(null));
         }
 
         [Fact]
@@ -263,7 +264,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.ClaimCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<ClaimDialogResult>());
+            dialogManagerMock.Verify(x => x.ShowDialog<ClaimLoadParameters>(null));
         }
 
         [Fact]
@@ -278,7 +279,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.RequestCertificateCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<CertificateApplicationDialogResult>());
+            dialogManagerMock.Verify(x => x.ShowDialog<CertificateApplicationLoadParameters>(null));
         }
 
         [Fact]
@@ -293,7 +294,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.AssetRegistrationCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<AssetRegistrationDialogResult>());
+            dialogManagerMock.Verify(x => x.ShowDialog<AssetRegistrationLoadParameters>(null));
         }
 
         [Fact]
@@ -308,7 +309,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.DistributeAssetCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<AssetDistributionDialogResult>());
+            dialogManagerMock.Verify(x => x.ShowDialog<AssetDistributionLoadParameters>(null));
         }
 
         [Fact]
@@ -323,7 +324,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.DeployContractCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<DeployContractDialogResult>());
+            dialogManagerMock.Verify(x => x.ShowDialog<DeployContractLoadParameters>(null));
         }
 
         [Fact]
@@ -338,7 +339,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.InvokeContractCommand.Execute(null);
             
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<InvokeContractDialogResult, InvokeContractLoadParameters>(It.IsAny<InvokeContractLoadParameters>()));
+            dialogManagerMock.Verify(x => x.ShowDialog<InvokeContractLoadParameters>(null));
         }
 
         [Fact]
@@ -353,7 +354,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.ShowElectionDialogCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<ElectionDialogResult>());
+            dialogManagerMock.Verify(x => x.ShowDialog<ElectionLoadParameters>(null));
         }
 
         [Fact]
@@ -368,7 +369,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.ShowSettingsCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<SettingsDialogResult>());
+            dialogManagerMock.Verify(x => x.ShowDialog<SettingsLoadParameters>(null));
         }
 
         [Fact]
@@ -399,7 +400,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.ShowDeveloperToolsCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<DeveloperToolsDialogResult>());
+            dialogManagerMock.Verify(x => x.ShowDialog<DeveloperToolsLoadParameters>(null));
         }
 
         [Fact]
@@ -414,7 +415,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.AboutNeoCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<AboutDialogResult>());
+            dialogManagerMock.Verify(x => x.ShowDialog<AboutLoadParameters>(null));
         }
 
         [Fact]
@@ -429,7 +430,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.ShowUpdateDialogCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<UpdateDialogResult>());
+            dialogManagerMock.Verify(x => x.ShowDialog<UpdateLoadParameters>(null));
         }
     }
 }

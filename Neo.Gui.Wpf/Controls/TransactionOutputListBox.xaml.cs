@@ -10,7 +10,6 @@ using Neo.Wallets;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Dialogs.LoadParameters.Transactions;
 using Neo.Gui.Base.Dialogs.Results.Transactions;
-using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Managers.Interfaces;
 
 namespace Neo.Gui.Wpf.Controls
@@ -122,7 +121,7 @@ namespace Neo.Gui.Wpf.Controls
 
         private void AddButton_Click(object sender, EventArgs e)
         {
-            var result = dialogManager.ShowDialog<PayToDialogResult, PayToLoadParameters>(
+            var result = dialogManager.ShowDialog<PayToLoadParameters, PayToDialogResult>(
                 new PayToLoadParameters(this.Asset, this.ScriptHash));
 
             if (result?.Output == null) return;
@@ -158,7 +157,7 @@ namespace Neo.Gui.Wpf.Controls
 
         private void BulkPayButton_Click(object sender, EventArgs e)
         {
-            var result = dialogManager.ShowDialog<BulkPayDialogResult, BulkPayLoadParameters>(
+            var result = dialogManager.ShowDialog<BulkPayLoadParameters, BulkPayDialogResult>(
                 new BulkPayLoadParameters(this.Asset));
 
             if (result.Outputs == null || !result.Outputs.Any()) return;

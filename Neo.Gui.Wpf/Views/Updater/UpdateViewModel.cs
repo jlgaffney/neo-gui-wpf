@@ -7,7 +7,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
 using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.Results.Settings;
+using Neo.Gui.Base.Dialogs.LoadParameters.Updater;
 using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Base.Services.Interfaces;
 
@@ -23,7 +23,7 @@ namespace Neo.Gui.Wpf.Views.Updater
     /// DO NOT move this view model out of the WPF project unless the Windows-specific
     /// application updating logic has been abstracted out of this view model.
     /// </remarks>
-    public class UpdateViewModel : ViewModelBase, IDialogViewModel<UpdateDialogResult>
+    public class UpdateViewModel : ViewModelBase, IDialogViewModel<UpdateLoadParameters>
     {
         private const string OfficialWebsiteUrl = "https://neo.org/";
 
@@ -113,9 +113,9 @@ namespace Neo.Gui.Wpf.Views.Updater
         #region IDialogViewModel implementation 
         public event EventHandler Close;
 
-        public event EventHandler<UpdateDialogResult> SetDialogResultAndClose;
-
-        public UpdateDialogResult DialogResult { get; set; }
+        public void OnDialogLoad(UpdateLoadParameters parameters)
+        {
+        }
         #endregion
 
         private void GoToOfficialWebsite()

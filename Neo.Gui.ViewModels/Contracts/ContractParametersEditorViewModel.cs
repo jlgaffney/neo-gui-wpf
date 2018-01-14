@@ -14,15 +14,13 @@ using Neo.SmartContract;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
-using Neo.Gui.Base.Dialogs.Results.Contracts;
 using Neo.Gui.Base.Managers.Interfaces;
-using Neo.Gui.Base.Services.Interfaces;
 
 namespace Neo.Gui.ViewModels.Contracts
 {
     public class ContractParametersEditorViewModel :
         ViewModelBase,
-        ILoadableDialogViewModel<ContractParametersEditorDialogResult, ContractParametersEditorLoadParameters>
+        IDialogViewModel<ContractParametersEditorLoadParameters>
     {
         private readonly IDialogManager dialogManager;
 
@@ -30,7 +28,7 @@ namespace Neo.Gui.ViewModels.Contracts
         /// NOTE: Make sure this and the ObservableCollection are kept in sync.
         /// This list has been passed to the view model by reference
         /// </summary>
-        private IList<ContractParameter> parameters;
+        private IList<ContractParameter> contractParameters;
 
         private DisplayContractParameter selectedParameter;
 
@@ -103,7 +101,7 @@ namespace Neo.Gui.ViewModels.Contracts
 
         public bool NewValueEnabled => this.SelectedParameter == null || this.SelectedParameter.Parameter.Type != ContractParameterType.Array;
         
-        public bool ParameterListEditingEnabled => this.parameters != null && !this.parameters.IsReadOnly;
+        public bool ParameterListEditingEnabled => this.contractParameters != null && !this.contractParameters.IsReadOnly;
 
         public bool AddEnabled => !string.IsNullOrEmpty(this.NewValue) && this.ParameterListEditingEnabled;
 
@@ -123,24 +121,20 @@ namespace Neo.Gui.ViewModels.Contracts
 
         #region ILoadableDialogViewModel implementation 
         public event EventHandler Close;
-
-        public event EventHandler<ContractParametersEditorDialogResult> SetDialogResultAndClose;
-
-        public ContractParametersEditorDialogResult DialogResult { get; private set; }
         
         public void OnDialogLoad(ContractParametersEditorLoadParameters parameters)
         {
             if (parameters == null) return;
             
-            this.parameters = parameters.ContractParameters;
+            this.contractParameters = parameters.ContractParameters;
 
             this.Parameters.Clear();
 
-            if (this.parameters == null) return;
+            if (this.contractParameters == null) return;
 
-            for (int i = 0; i < this.parameters.Count; i++)
+            for (int i = 0; i < this.contractParameters.Count; i++)
             {
-                this.Parameters.Add(new DisplayContractParameter(i, this.parameters[i]));
+                this.Parameters.Add(new DisplayContractParameter(i, this.contractParameters[i]));
             }
 
             // Update dependent property
@@ -161,7 +155,7 @@ namespace Neo.Gui.ViewModels.Contracts
 
             var newDisplayParameter = new DisplayContractParameter(newIndex, parameter);
 
-            this.parameters.Add(parameter);
+            this.contractParameters.Add(parameter);
             this.Parameters.Add(newDisplayParameter);
 
             this.SelectedParameter = newDisplayParameter;
@@ -171,7 +165,7 @@ namespace Neo.Gui.ViewModels.Contracts
         {
             if (this.SelectedParameter == null) return;
 
-            this.parameters.RemoveAt(this.SelectedParameter.Index);
+            this.contractParameters.RemoveAt(this.SelectedParameter.Index);
             this.Parameters.RemoveAt(this.SelectedParameter.Index);
         }
 
@@ -181,8 +175,7 @@ namespace Neo.Gui.ViewModels.Contracts
 
             var parameter = this.SelectedParameter.Parameter;
 
-            this.dialogManager.ShowDialog<ContractParametersEditorDialogResult, ContractParametersEditorLoadParameters>(
-                new ContractParametersEditorLoadParameters((IList<ContractParameter>) parameter.Value));
+            this.dialogManager.ShowDialog(new ContractParametersEditorLoadParameters((IList<ContractParameter>) parameter.Value));
 
             // TODO Ensure listview updates with the this Value property's new value
             //listView1.SelectedItems[0].SubItems["value"].Text = parameter.ToString();

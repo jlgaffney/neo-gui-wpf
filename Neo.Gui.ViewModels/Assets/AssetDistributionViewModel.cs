@@ -11,12 +11,11 @@ using Neo.Wallets;
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.Results.Assets;
-using Neo.Gui.Base.Services.Interfaces;
+using Neo.Gui.Base.Dialogs.LoadParameters.Assets;
 
 namespace Neo.Gui.ViewModels.Assets
 {
-    public class AssetDistributionViewModel : ViewModelBase, IDialogViewModel<AssetDistributionDialogResult>
+    public class AssetDistributionViewModel : ViewModelBase, IDialogViewModel<AssetDistributionLoadParameters>
     {
         private readonly IWalletController walletController;
 
@@ -159,9 +158,9 @@ namespace Neo.Gui.ViewModels.Assets
         #region IDialogViewModel implementation 
         public event EventHandler Close;
 
-        public event EventHandler<AssetDistributionDialogResult> SetDialogResultAndClose;
-
-        public AssetDistributionDialogResult DialogResult { get; private set; }
+        public void OnDialogLoad(AssetDistributionLoadParameters parameters)
+        {
+        }
         #endregion
 
         private void Confirm()

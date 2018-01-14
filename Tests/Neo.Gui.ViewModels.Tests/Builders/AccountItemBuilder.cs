@@ -20,7 +20,7 @@ namespace Neo.Gui.ViewModels.Tests.Builders
             this.hashInternal = UInt160.Parse(hash);
             return this;
         }
-
+        
         public AccountItemBuilder StandardAccount()
         {
             this.accountType = AccountType.Standard;

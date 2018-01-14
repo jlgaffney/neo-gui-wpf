@@ -10,8 +10,6 @@ using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Dialogs;
 using Neo.Gui.Base.Dialogs.LoadParameters.Accounts;
 using Neo.Gui.Base.Dialogs.LoadParameters.Voting;
-using Neo.Gui.Base.Dialogs.Results.Wallets;
-using Neo.Gui.Base.Dialogs.Results.Voting;
 using Neo.Gui.Base.Extensions;
 using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Base.Messages;
@@ -156,12 +154,12 @@ namespace Neo.Gui.ViewModels.Home
 
         private void ImportWifPrivateKey()
         {
-            this.dialogManager.ShowDialog<ImportPrivateKeyDialogResult>();
+            this.dialogManager.ShowDialog<ImportPrivateKeyLoadParameters>();
         }
 
         private void ImportCertificate()
         {
-            this.dialogManager.ShowDialog<ImportCertificateDialogResult>();
+            this.dialogManager.ShowDialog<ImportCertificateLoadParameters>();
         }
 
         private void ImportWatchOnlyAddress()
@@ -177,41 +175,38 @@ namespace Neo.Gui.ViewModels.Home
 
         private void CreateMultiSignatureContract()
         {
-            this.dialogManager.ShowDialog<CreateMultiSigContractDialogResult>();
+            this.dialogManager.ShowDialog<CreateMultiSigContractLoadParameters>();
         }
 
         private void CreateLockAddress()
         {
-            this.dialogManager.ShowDialog<CreateLockAccountDialogResult>();
+            this.dialogManager.ShowDialog<CreateLockAccountLoadParameters>();
         }
 
         private void ImportCustomContract()
         {
-            this.dialogManager.ShowDialog<ImportCustomContractDialogResult>();
+            this.dialogManager.ShowDialog<ImportCustomContractLoadParameters>();
         }
 
         private void ViewPrivateKey()
         {
             if (!this.ViewPrivateKeyEnabled) return;
             
-            this.dialogManager.ShowDialog<ViewPrivateKeyDialogResult, ViewPrivateKeyLoadParameters>(
-                new ViewPrivateKeyLoadParameters(this.SelectedAccount.ScriptHash));
+            this.dialogManager.ShowDialog(new ViewPrivateKeyLoadParameters(this.SelectedAccount.ScriptHash));
         }
 
         private void ViewContract()
         {
             if (!this.ViewContractEnabled) return;
 
-            this.dialogManager.ShowDialog<ViewContractDialogResult, ViewContractLoadParameters>(
-                new ViewContractLoadParameters(this.SelectedAccount.ScriptHash));
+            this.dialogManager.ShowDialog(new ViewContractLoadParameters(this.SelectedAccount.ScriptHash));
         }
 
         private void ShowVotingDialog()
         {
             if (!this.ShowVotingDialogEnabled) return;
 
-            this.dialogManager.ShowDialog<VotingDialogResult, VotingLoadParameters>(
-                new VotingLoadParameters(this.SelectedAccount.ScriptHash));
+            this.dialogManager.ShowDialog(new VotingLoadParameters(this.SelectedAccount.ScriptHash));
         }
 
         private void CopyAddressToClipboard()

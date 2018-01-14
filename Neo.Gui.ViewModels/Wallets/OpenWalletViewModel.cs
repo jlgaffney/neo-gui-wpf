@@ -3,15 +3,15 @@ using System.Windows.Input;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-
 using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.LoadParameters.Wallets;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Base.Services.Interfaces;
 
 namespace Neo.Gui.ViewModels.Wallets
 {
-    public class OpenWalletViewModel : ViewModelBase, IDialogViewModel<OpenWalletDialogResult>
+    public class OpenWalletViewModel : ViewModelBase, IResultDialogViewModel<OpenWalletLoadParameters, OpenWalletDialogResult>
     {
         #region Private Fields
         private readonly IFileDialogService fileDialogService;
@@ -76,7 +76,9 @@ namespace Neo.Gui.ViewModels.Wallets
 
         public event EventHandler<OpenWalletDialogResult> SetDialogResultAndClose;
 
-        public OpenWalletDialogResult DialogResult { get; private set; }
+        public void OnDialogLoad(OpenWalletLoadParameters parameters)
+        {
+        }
         #endregion
 
         #region Public Methods 

@@ -7,7 +7,7 @@ using GalaSoft.MvvmLight.Command;
 
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.Results.Wallets;
+using Neo.Gui.Base.Dialogs.LoadParameters.Accounts;
 using Neo.Gui.Base.MVVM;
 using Neo.Gui.Base.Services.Interfaces;
 
@@ -15,7 +15,7 @@ namespace Neo.Gui.ViewModels.Accounts
 {
     public class ImportCertificateViewModel : 
         ViewModelBase, 
-        IDialogViewModel<ImportCertificateDialogResult>,
+        IDialogViewModel<ImportCertificateLoadParameters>,
         ILoadable
     {
         #region Private Fields
@@ -63,9 +63,9 @@ namespace Neo.Gui.ViewModels.Accounts
         #region IDialogViewModel implementation 
         public event EventHandler Close;
 
-        public event EventHandler<ImportCertificateDialogResult> SetDialogResultAndClose;
-
-        public ImportCertificateDialogResult DialogResult { get; private set; }
+        public void OnDialogLoad(ImportCertificateLoadParameters parameters)
+        {
+        }
         #endregion
 
         #region ILoadable implementation 

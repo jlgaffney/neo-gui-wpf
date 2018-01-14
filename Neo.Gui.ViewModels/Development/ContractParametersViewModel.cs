@@ -12,7 +12,6 @@ using Neo.SmartContract;
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Globalization.Resources;
 using Neo.Gui.Base.Managers.Interfaces;
-using Neo.Gui.Base.Services.Interfaces;
 
 namespace Neo.Gui.ViewModels.Development
 {
@@ -159,7 +158,7 @@ namespace Neo.Gui.ViewModels.Development
 
         public ICommand UpdateCommand => new RelayCommand(this.Update);
 
-        private async void Load()
+        private void Load()
         {
             var input = this.dialogManager.ShowInputDialog("ParametersContext", "ParametersContext");
 

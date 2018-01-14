@@ -10,12 +10,11 @@ using Neo.SmartContract;
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Accounts;
-using Neo.Gui.Base.Dialogs.Results.Wallets;
 
 namespace Neo.Gui.ViewModels.Accounts
 {
     public class ViewContractViewModel : ViewModelBase, 
-        ILoadableDialogViewModel<ViewContractDialogResult, ViewContractLoadParameters>
+        IDialogViewModel<ViewContractLoadParameters>
     {
         #region Private fields
 
@@ -45,10 +44,6 @@ namespace Neo.Gui.ViewModels.Accounts
         #region ILoadableDialogViewModel implementation 
         public event EventHandler Close;
 
-        public event EventHandler<ViewContractDialogResult> SetDialogResultAndClose;
-
-        public ViewContractDialogResult DialogResult { get; private set; }
-        
         public void OnDialogLoad(ViewContractLoadParameters parameters)
         {
             if (parameters?.ScriptHash == null) return;

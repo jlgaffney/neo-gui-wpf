@@ -11,13 +11,12 @@ using Neo.SmartContract;
 
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
-using Neo.Gui.Base.Dialogs.Results.Contracts;
 using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Base.Services.Interfaces;
 
 namespace Neo.Gui.ViewModels.Contracts
 {
-    public class DeployContractViewModel : ViewModelBase, IDialogViewModel<DeployContractDialogResult>
+    public class DeployContractViewModel : ViewModelBase, IDialogViewModel<DeployContractLoadParameters>
     {
         private readonly IDialogManager dialogManager;
         private readonly IFileManager fileManager;
@@ -228,9 +227,9 @@ namespace Neo.Gui.ViewModels.Contracts
         #region IDialogViewModel implementation 
         public event EventHandler Close;
 
-        public event EventHandler<DeployContractDialogResult> SetDialogResultAndClose;
-
-        public DeployContractDialogResult DialogResult { get; private set; }
+        public void OnDialogLoad(DeployContractLoadParameters parameters)
+        {
+        }
         #endregion
 
         private void Load()
@@ -266,8 +265,7 @@ namespace Neo.Gui.ViewModels.Contracts
 
             if (transaction == null) return;
 
-            this.dialogManager.ShowDialog<InvokeContractDialogResult, InvokeContractLoadParameters>(
-                new InvokeContractLoadParameters(transaction));
+            this.dialogManager.ShowDialog(new InvokeContractLoadParameters(transaction));
 
             this.Close(this, EventArgs.Empty);
         }

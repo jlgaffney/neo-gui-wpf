@@ -12,13 +12,12 @@ using Neo.Cryptography.ECC;
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
-using Neo.Gui.Base.Dialogs.Results.Contracts;
-using Neo.Gui.Base.Dialogs.Results.Voting;
+using Neo.Gui.Base.Dialogs.LoadParameters.Voting;
 using Neo.Gui.Base.Managers.Interfaces;
 
 namespace Neo.Gui.ViewModels.Voting
 {
-    public class ElectionViewModel : ViewModelBase, IDialogViewModel<ElectionDialogResult>
+    public class ElectionViewModel : ViewModelBase, IDialogViewModel<ElectionLoadParameters>
     {
         private readonly IDialogManager dialogManager;
         private readonly IWalletController walletController;
@@ -64,9 +63,9 @@ namespace Neo.Gui.ViewModels.Voting
         #region IDialogViewModel implementation 
         public event EventHandler Close;
 
-        public event EventHandler<ElectionDialogResult> SetDialogResultAndClose;
-
-        public ElectionDialogResult DialogResult { get; private set; }
+        public void OnDialogLoad(ElectionLoadParameters parameters)
+        {
+        }
         #endregion
 
         private void Ok()
@@ -77,8 +76,7 @@ namespace Neo.Gui.ViewModels.Voting
 
             if (transaction == null) return;
 
-            this.dialogManager.ShowDialog<InvokeContractDialogResult, InvokeContractLoadParameters>(
-                new InvokeContractLoadParameters(transaction));
+            this.dialogManager.ShowDialog(new InvokeContractLoadParameters(transaction));
 
             this.Close(this, EventArgs.Empty);
         }

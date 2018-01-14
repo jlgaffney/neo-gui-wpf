@@ -8,19 +8,18 @@ using GalaSoft.MvvmLight.Command;
 
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.Results.Wallets;
+using Neo.Gui.Base.Dialogs.LoadParameters.Accounts;
 using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Base.MVVM;
 
 namespace Neo.Gui.ViewModels.Accounts
 {
-    public class CreateLockAccountViewModel : ViewModelBase, IDialogViewModel<CreateLockAccountDialogResult>, ILoadable
+    public class CreateLockAccountViewModel : ViewModelBase, IDialogViewModel<CreateLockAccountLoadParameters>, ILoadable
     {
         #region Private Fields 
         private const int HoursInDay = 24;
         private const int MinutesInHour = 60;
-
-        private readonly IDialogManager dialogManager;
+        
         private readonly IWalletController walletController;
 
         private string selectedPublicKey;
@@ -102,10 +101,8 @@ namespace Neo.Gui.ViewModels.Accounts
 
         #region Constructor 
         public CreateLockAccountViewModel(
-            IDialogManager dialogManager,
             IWalletController walletController)
         {
-            this.dialogManager = dialogManager;
             this.walletController = walletController;
 
             this.PublicKeys = new ObservableCollection<string>();
@@ -118,9 +115,9 @@ namespace Neo.Gui.ViewModels.Accounts
         #region IDialogViewModel implementation 
         public event EventHandler Close;
 
-        public event EventHandler<CreateLockAccountDialogResult> SetDialogResultAndClose;
-
-        public CreateLockAccountDialogResult DialogResult { get; private set; }
+        public void OnDialogLoad(CreateLockAccountLoadParameters parameters)
+        {
+        }
         #endregion
 
         #region ILoadableImplementation

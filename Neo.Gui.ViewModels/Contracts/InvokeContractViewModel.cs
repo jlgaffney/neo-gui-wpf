@@ -12,10 +12,9 @@ using Neo.VM;
 
 using Neo.Gui.Globalization.Resources;
 
-using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
-using Neo.Gui.Base.Dialogs.Results.Contracts;
 using Neo.Gui.Base.Controllers.Interfaces;
+using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Base.Services.Interfaces;
 
@@ -23,7 +22,7 @@ namespace Neo.Gui.ViewModels.Contracts
 {
     public class InvokeContractViewModel : 
         ViewModelBase,
-        ILoadableDialogViewModel<InvokeContractDialogResult, InvokeContractLoadParameters>
+        IDialogViewModel<InvokeContractLoadParameters>
     {
         #region Private Fields 
         private readonly IDialogManager dialogManager;
@@ -34,7 +33,7 @@ namespace Neo.Gui.ViewModels.Contracts
         private InvocationTransaction transaction;
 
         private UInt160 scriptHash;
-        private ContractParameter[] parameters;
+        private ContractParameter[] contractParameters;
 
         private string scriptHashStr;
 
@@ -177,10 +176,6 @@ namespace Neo.Gui.ViewModels.Contracts
         #region ILoadableDialogViewModel implementation 
         public event EventHandler Close;
 
-        public event EventHandler<InvokeContractDialogResult> SetDialogResultAndClose;
-
-        public InvokeContractDialogResult DialogResult { get; private set; }
-
         public void OnDialogLoad(InvokeContractLoadParameters parameters)
         {
             if (parameters?.Transaction == null) return;
@@ -205,7 +200,7 @@ namespace Neo.Gui.ViewModels.Contracts
                 return;
             }
 
-            this.parameters = contractState.ParameterList.Select(p => new ContractParameter(p)).ToArray();
+            this.contractParameters = contractState.ParameterList.Select(p => new ContractParameter(p)).ToArray();
             this.ContractName = contractState.Name;
             this.ContractVersion = contractState.CodeVersion;
             this.ContractAuthor = contractState.Author;
@@ -217,26 +212,25 @@ namespace Neo.Gui.ViewModels.Contracts
             RaisePropertyChanged(nameof(this.ContractAuthor));
             RaisePropertyChanged(nameof(this.ContractParameters));
 
-            this.EditParametersEnabled = this.parameters.Length > 0;
+            this.EditParametersEnabled = this.contractParameters.Length > 0;
 
             UpdateCustomScript();
         }
 
         private void EditParameters()
         {
-            this.dialogManager.ShowDialog<ContractParametersEditorDialogResult, ContractParametersEditorLoadParameters>(
-                new ContractParametersEditorLoadParameters(this.parameters));
+            this.dialogManager.ShowDialog(new ContractParametersEditorLoadParameters(this.contractParameters));
 
             UpdateCustomScript();
         }
 
         private void UpdateCustomScript()
         {
-            if (this.parameters.Any(p => p.Value == null)) return;
+            if (this.contractParameters.Any(p => p.Value == null)) return;
 
             using (var builder = new ScriptBuilder())
             {
-                builder.EmitAppCall(this.scriptHash, this.parameters);
+                builder.EmitAppCall(this.scriptHash, this.contractParameters);
                 this.CustomScript = builder.ToArray().ToHexString();
             }
         }

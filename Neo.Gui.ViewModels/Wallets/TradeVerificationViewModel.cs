@@ -10,12 +10,11 @@ using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Wallets;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
-using Neo.Gui.Base.Services.Interfaces;
 
 namespace Neo.Gui.ViewModels.Wallets
 {
     public class TradeVerificationViewModel : ViewModelBase,
-        ILoadableDialogViewModel<TradeVerificationDialogResult, TradeVerificationLoadParameters>
+        IResultDialogViewModel<TradeVerificationLoadParameters, TradeVerificationDialogResult>
     {
         #region Private Fields 
         private readonly IWalletController walletController;
@@ -39,8 +38,7 @@ namespace Neo.Gui.ViewModels.Wallets
         }
         #endregion
 
-        #region ILoadableDialogViewModel implementation 
-        public TradeVerificationDialogResult DialogResult { get; set; }
+        #region ILoadableDialogViewModel implementation
 
         public event EventHandler Close;
 

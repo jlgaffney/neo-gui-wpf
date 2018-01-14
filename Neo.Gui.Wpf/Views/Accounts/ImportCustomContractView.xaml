@@ -27,7 +27,7 @@
             <TextBox Text="{Binding Script, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" />
         </GroupBox>
 
-        <DockPanel Grid.Row="2" Grid.ColumnSpan="2" Margin="0 8 0 0" HorizontalAlignment="Right">
+        <DockPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 8 0 0" HorizontalAlignment="Right">
             <Button Content="{x:Static globalization:Strings.Confirm}" Width="60" Margin="0 0 8 0" Command="{Binding ConfirmCommand}" IsEnabled="{Binding ConfirmEnabled}" />
             <Button Content="{x:Static globalization:Strings.Cancel}" Width="60" Command="{Binding CancelCommand}" />
         </DockPanel>

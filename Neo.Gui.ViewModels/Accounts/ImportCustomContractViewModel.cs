@@ -5,11 +5,11 @@ using GalaSoft.MvvmLight.Command;
 
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.Results.Wallets;
+using Neo.Gui.Base.Dialogs.LoadParameters.Accounts;
 
 namespace Neo.Gui.ViewModels.Accounts
 {
-    public class ImportCustomContractViewModel : ViewModelBase, IDialogViewModel<ImportCustomContractDialogResult>
+    public class ImportCustomContractViewModel : ViewModelBase, IDialogViewModel<ImportCustomContractLoadParameters>
     {
         #region Private Fields 
         private readonly IWalletController walletController;
@@ -71,9 +71,9 @@ namespace Neo.Gui.ViewModels.Accounts
         #region IDialogViewModel implementation 
         public event EventHandler Close;
 
-        public event EventHandler<ImportCustomContractDialogResult> SetDialogResultAndClose;
-
-        public ImportCustomContractDialogResult DialogResult { get; private set; }
+        public void OnDialogLoad(ImportCustomContractLoadParameters parameters)
+        {
+        }
         #endregion
 
         #region Private Methods 

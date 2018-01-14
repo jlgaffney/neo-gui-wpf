@@ -65,9 +65,7 @@ namespace Neo.Gui.ViewModels.Tests.Accounts
         [Fact]
         public void AddPublicKeyCommand_AddPublicKeyIsNotEnable_NoKeyIsAdded()
         {
-            // Arrance
-            var notificationServiceMock = this.AutoMockContainer.GetMock<INotificationService>();
-
+            // Arrange
             var viewModel = this.AutoMockContainer.Create<CreateMultiSigContractViewModel>();
 
             // Act

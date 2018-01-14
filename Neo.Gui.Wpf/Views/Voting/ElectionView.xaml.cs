@@ -1,10 +1,9 @@
 ﻿using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.Results;
-using Neo.Gui.Base.Dialogs.Results.Voting;
+using Neo.Gui.Base.Dialogs.LoadParameters.Voting;
 
 namespace Neo.Gui.Wpf.Views.Voting
 {
-    public partial class ElectionView : IDialog<ElectionDialogResult>
+    public partial class ElectionView : IDialog<ElectionLoadParameters>
     {
         public ElectionView()
         {

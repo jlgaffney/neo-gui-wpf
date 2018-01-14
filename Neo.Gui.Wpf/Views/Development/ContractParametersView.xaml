@@ -46,7 +46,7 @@
         </GroupBox>
     </Grid>
 
-    <DockPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="0 8 0 0" HorizontalAlignment="Stretch">
+    <DockPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="0 8 0 0" HorizontalAlignment="Stretch">
         <Button Content="{x:Static globalization:Strings.Load}" Width="68" Margin="0 0 8 0"  HorizontalAlignment="Left" Command="{Binding LoadCommand}" />
         <Button Content="{x:Static globalization:Strings.Show}" Width="68" HorizontalAlignment="Left" Command="{Binding ShowCommand}" IsEnabled="{Binding ShowEnabled}" />
         <Button Content="{x:Static globalization:Strings.Broadcast}" Width="68" HorizontalAlignment="Left" Command="{Binding BroadcastCommand}" Visibility="{Binding Path=BroadcastVisible, Converter={StaticResource BoolToVisibilityConverter}}" />

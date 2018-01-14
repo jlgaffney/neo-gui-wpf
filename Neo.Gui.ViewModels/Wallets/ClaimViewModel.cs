@@ -5,7 +5,7 @@ using GalaSoft.MvvmLight.Command;
 
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.Results.Wallets;
+using Neo.Gui.Base.Dialogs.LoadParameters.Wallets;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.Base.MVVM;
@@ -17,7 +17,7 @@ namespace Neo.Gui.ViewModels.Wallets
         ILoadable,
         IUnloadable,
         IMessageHandler<WalletStatusMessage>,
-        IDialogViewModel<ClaimDialogResult>
+        IDialogViewModel<ClaimLoadParameters>
     {
         #region Private Fields 
         private readonly IMessageSubscriber messageSubscriber;
@@ -85,9 +85,9 @@ namespace Neo.Gui.ViewModels.Wallets
         #region IDialogViewModel Implementation 
         public event EventHandler Close;
 
-        public event EventHandler<ClaimDialogResult> SetDialogResultAndClose;
-
-        public ClaimDialogResult DialogResult { get; set; }
+        public void OnDialogLoad(ClaimLoadParameters parameters)
+        {
+        }
         #endregion
 
         #region ILoadable implementation

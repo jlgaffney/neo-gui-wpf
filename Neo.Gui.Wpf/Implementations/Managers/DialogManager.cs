@@ -7,7 +7,7 @@ using Autofac;
 using Neo.Gui.Base.Dialogs;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Managers.Interfaces;
-using Neo.Gui.Base.MVVM;
+
 using Neo.Gui.Wpf.Controls;
 
 namespace Neo.Gui.Wpf.Implementations.Managers
@@ -19,54 +19,37 @@ namespace Neo.Gui.Wpf.Implementations.Managers
         #endregion
 
         #region IDialogManager implementation
-        
-        public IDialog<TDialogResult> CreateDialog<TDialogResult, TLoadParameters>(Action<TDialogResult> resultSetter, TLoadParameters parameters)
+        public IDialog<TLoadParameters> CreateDialog<TLoadParameters>(TLoadParameters parameters)
         {
-            var view = ResolveDialogInstance<TDialogResult>();
+            var view = ResolveDialogInstance<TLoadParameters>();
 
-            var loadable = view.DataContext as ILoadableDialogViewModel<TDialogResult, TLoadParameters>;
-            loadable?.OnDialogLoad(parameters);
-
-            InitializeDialogViewModel(view, resultSetter);
-
-            return view;
-        }
-
-        public IDialog<TDialogResult> CreateDialog<TDialogResult>(Action<TDialogResult> resultSetter)
-        {
-            var view = ResolveDialogInstance<TDialogResult>();
-
-            InitializeDialogViewModel(view, resultSetter);
-
-            return view;
-        }
-
-        public TDialogResult ShowDialog<TDialogResult>()
-        {
-            var dialogResult = default(TDialogResult);
-
-            var view = CreateDialog<TDialogResult>(result => { dialogResult = result; });
-
-            if (view.DataContext is ILoadable loadableViewModel)
+            if (view.DataContext is IDialogViewModel<TLoadParameters> viewModel)
             {
-                loadableViewModel.OnLoad();
+                viewModel.OnDialogLoad(parameters);
+
+                var viewWindow = view as Window;
+
+                viewModel.Close += (sender, e) =>
+                {
+                    viewWindow?.Close();
+                };
             }
+
+            return view;
+        }
+
+        public void ShowDialog<TLoadParameters>(TLoadParameters parameters)
+        {
+            var view = this.CreateDialog(parameters);
 
             view.ShowDialog();
-
-            return dialogResult;
         }
 
-        public TDialogResult ShowDialog<TDialogResult, TLoadParameters>(TLoadParameters parameters)
+        public TDialogResult ShowDialog<TLoadParameters, TDialogResult>(TLoadParameters parameters)
         {
             var dialogResult = default(TDialogResult);
 
-            var view = CreateDialog<TDialogResult, TLoadParameters>(result => { dialogResult = result; }, parameters);
-
-            if (view.DataContext is ILoadable loadableViewModel)
-            {
-                loadableViewModel.OnLoad();
-            }
+            var view = this.CreateDialog<TLoadParameters, TDialogResult>(parameters, result => { dialogResult = result; });
 
             view.ShowDialog();
 
@@ -139,7 +122,26 @@ namespace Neo.Gui.Wpf.Implementations.Managers
         }
         #endregion
 
-        #region Private Methods 
+        #region Private Methods
+        private IDialog<TLoadParameters> CreateDialog<TLoadParameters, TDialogResult>(TLoadParameters parameters, Action<TDialogResult> resultSetter)
+        {
+            var view = this.CreateDialog(parameters);
+
+            if (view.DataContext is IResultDialogViewModel<TLoadParameters, TDialogResult> viewModel)
+            {
+                var viewWindow = view as Window;
+
+                viewModel.SetDialogResultAndClose += (sender, e) =>
+                {
+                    resultSetter?.Invoke(e);
+
+                    viewWindow?.Close();
+                };
+            }
+
+            return view;
+        }
+
         private static IDialog<TDialogResult> ResolveDialogInstance<TDialogResult>()
         {
             var view = containerLifetimeScope?.Resolve<IDialog<TDialogResult>>();
@@ -149,27 +151,7 @@ namespace Neo.Gui.Wpf.Implementations.Managers
 
             return view;
         }
-
-        private static void InitializeDialogViewModel<TDialogResult>(IDialog<TDialogResult> view, Action<TDialogResult> resultSetter)
-        {
-            var viewWindow = view as Window;
-
-            var viewModel = view.DataContext as IDialogViewModel<TDialogResult>;
-
-            if (viewModel == null) return;
-
-            viewModel.Close += (sender, e) =>
-            {
-                viewWindow?.Close();
-            };
-
-            viewModel.SetDialogResultAndClose += (sender, e) =>
-            {
-                resultSetter?.Invoke(e);
-
-                viewWindow?.Close();
-            };
-        }
+        
         #endregion
     }
 }

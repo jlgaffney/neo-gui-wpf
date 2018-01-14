@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Dialogs\Interfaces\ILoadableDialogViewModel.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Autofac" Version="4.6.2" />
     <PackageReference Include="Neo" Version="2.5.2" />
     <PackageReference Include="Neo.VM" Version="2.0.4" />

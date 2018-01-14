@@ -14,12 +14,11 @@ using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Transactions;
 using Neo.Gui.Base.Dialogs.Results.Transactions;
 using Neo.Gui.Base.Extensions;
-using Neo.Gui.Base.Services.Interfaces;
 
 namespace Neo.Gui.ViewModels.Transactions
 {
     public class BulkPayViewModel : ViewModelBase,
-        ILoadableDialogViewModel<BulkPayDialogResult, BulkPayLoadParameters>
+        IResultDialogViewModel<BulkPayLoadParameters, BulkPayDialogResult>
     {
         private readonly IWalletController walletController;
 
@@ -93,8 +92,6 @@ namespace Neo.Gui.ViewModels.Transactions
         public event EventHandler Close;
 
         public event EventHandler<BulkPayDialogResult> SetDialogResultAndClose;
-
-        public BulkPayDialogResult DialogResult { get; private set; }
 
         public void OnDialogLoad(BulkPayLoadParameters parameters)
         {

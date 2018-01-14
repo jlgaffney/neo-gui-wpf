@@ -12,10 +12,9 @@ using Neo.SmartContract;
 
 using Neo.Gui.Globalization.Resources;
 
-using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Controllers.Interfaces;
+using Neo.Gui.Base.Dialogs.LoadParameters.Transactions;
 using Neo.Gui.Base.Dialogs.Results.Transactions;
-using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Wpf.Wrappers;
 
@@ -144,7 +143,7 @@ namespace Neo.Gui.Wpf.Views.Development
 
         private void SetupOutputs()
         {
-            var result = dialogManager.ShowDialog<PayToDialogResult>();
+            var result = dialogManager.ShowDialog<PayToLoadParameters, PayToDialogResult>();
 
             if (result.Output == null) return;
 

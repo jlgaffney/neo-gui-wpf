@@ -1,15 +1,17 @@
 ﻿using Autofac;
 
 using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.Results;
-using Neo.Gui.Base.Dialogs.Results.Assets;
-using Neo.Gui.Base.Dialogs.Results.Contracts;
-using Neo.Gui.Base.Dialogs.Results.Development;
-using Neo.Gui.Base.Dialogs.Results.Home;
-using Neo.Gui.Base.Dialogs.Results.Settings;
-using Neo.Gui.Base.Dialogs.Results.Transactions;
-using Neo.Gui.Base.Dialogs.Results.Voting;
-using Neo.Gui.Base.Dialogs.Results.Wallets;
+using Neo.Gui.Base.Dialogs.LoadParameters;
+using Neo.Gui.Base.Dialogs.LoadParameters.Accounts;
+using Neo.Gui.Base.Dialogs.LoadParameters.Assets;
+using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
+using Neo.Gui.Base.Dialogs.LoadParameters.Development;
+using Neo.Gui.Base.Dialogs.LoadParameters.Home;
+using Neo.Gui.Base.Dialogs.LoadParameters.Settings;
+using Neo.Gui.Base.Dialogs.LoadParameters.Transactions;
+using Neo.Gui.Base.Dialogs.LoadParameters.Updater;
+using Neo.Gui.Base.Dialogs.LoadParameters.Voting;
+using Neo.Gui.Base.Dialogs.LoadParameters.Wallets;
 
 using Neo.Gui.Wpf.Views;
 using Neo.Gui.Wpf.Views.Accounts;
@@ -44,115 +46,115 @@ namespace Neo.Gui.Wpf.RegistrationModules
         {
             builder
                 .RegisterType<AssetDistributionView>()
-                .As<IDialog<AssetDistributionDialogResult>>();
+                .As<IDialog<AssetDistributionLoadParameters>>();
             builder
                 .RegisterType<AssetRegistrationView>()
-                .As<IDialog<AssetRegistrationDialogResult>>();
+                .As<IDialog<AssetRegistrationLoadParameters>>();
         }
 
         private static void RegisterContractDialogs(ContainerBuilder builder)
         {
             builder
                 .RegisterType<ContractParametersEditorView>()
-                .As<IDialog<ContractParametersEditorDialogResult>>();
+                .As<IDialog<ContractParametersEditorLoadParameters>>();
             builder
                 .RegisterType<DeployContractView>()
-                .As<IDialog<DeployContractDialogResult>>();
+                .As<IDialog<DeployContractLoadParameters>>();
             builder
                 .RegisterType<InvokeContractView>()
-                .As<IDialog<InvokeContractDialogResult>>();
+                .As<IDialog<InvokeContractLoadParameters>>();
         }
 
         private static void RegisterHomeDialogs(ContainerBuilder builder)
         {
             builder
                 .RegisterType<HomeView>()
-                .As<IDialog<HomeDialogResult>>();
+                .As<IDialog<HomeLoadParameters>>();
         }
 
         private static void RegisterSettingsDialogs(ContainerBuilder builder)
         {
             builder
                 .RegisterType<SettingsView>()
-                .As<IDialog<SettingsDialogResult>>();
+                .As<IDialog<SettingsLoadParameters>>();
             builder
                 .RegisterType<UpdateView>()
-                .As<IDialog<UpdateDialogResult>>();
+                .As<IDialog<UpdateLoadParameters>>();
         }
 
         private static void RegisterTransactionDialogs(ContainerBuilder builder)
         {
             builder
                 .RegisterType<BulkPayView>()
-                .As<IDialog<BulkPayDialogResult>>();
+                .As<IDialog<BulkPayLoadParameters>>();
             builder
                 .RegisterType<PayToView>()
-                .As<IDialog<PayToDialogResult>>();
+                .As<IDialog<PayToLoadParameters>>();
             builder
                 .RegisterType<SigningView>()
-                .As<IDialog<SigningDialogResult>>();
+                .As<IDialog<SigningLoadParameters>>();
         }
 
         private static void RegisterVotingDialogs(ContainerBuilder builder)
         {
             builder
                 .RegisterType<ElectionView>()
-                .As<IDialog<ElectionDialogResult>>();
+                .As<IDialog<ElectionLoadParameters>>();
             builder
                 .RegisterType<VotingView>()
-                .As<IDialog<VotingDialogResult>>();
+                .As<IDialog<VotingLoadParameters>>();
         }
 
         private static void RegisterWalletDialogs(ContainerBuilder builder)
         {
             builder
                 .RegisterType<CertificateApplicationView>()
-                .As<IDialog<CertificateApplicationDialogResult>>();
+                .As<IDialog<CertificateApplicationLoadParameters>>();
             builder
                 .RegisterType<ClaimView>()
-                .As<IDialog<ClaimDialogResult>>();
+                .As<IDialog<ClaimLoadParameters>>();
             builder
                 .RegisterType<CreateLockAccountView>()
-                .As<IDialog<CreateLockAccountDialogResult>>();
+                .As<IDialog<CreateLockAccountLoadParameters>>();
             builder
                 .RegisterType<CreateMultiSigContractView>()
-                .As<IDialog<CreateMultiSigContractDialogResult>>();
+                .As<IDialog<CreateMultiSigContractLoadParameters>>();
             builder
                 .RegisterType<CreateWalletView>()
-                .As<IDialog<CreateWalletDialogResult>>();
+                .As<IDialog<CreateWalletLoadParameters>>();
             builder
                 .RegisterType<ImportCertificateView>()
-                .As<IDialog<ImportCertificateDialogResult>>();
+                .As<IDialog<ImportCertificateLoadParameters>>();
             builder
                 .RegisterType<ImportCustomContractView>()
-                .As<IDialog<ImportCustomContractDialogResult>>();
+                .As<IDialog<ImportCustomContractLoadParameters>>();
             builder
                 .RegisterType<ImportPrivateKeyView>()
-                .As<IDialog<ImportPrivateKeyDialogResult>>();
+                .As<IDialog<ImportPrivateKeyLoadParameters>>();
             builder
                 .RegisterType<OpenWalletView>()
-                .As<IDialog<OpenWalletDialogResult>>();
+                .As<IDialog<OpenWalletLoadParameters>>();
             builder
                 .RegisterType<TransferView>()
-                .As<IDialog<TransferDialogResult>>();
+                .As<IDialog<TransferLoadParameters>>();
             builder
                 .RegisterType<TradeVerificationView>()
-                .As<IDialog<TradeVerificationDialogResult>>();
+                .As<IDialog<TradeVerificationLoadParameters>>();
             builder
                 .RegisterType<TradeView>()
-                .As<IDialog<TradeDialogResult>>();
+                .As<IDialog<TradeLoadParameters>>();
             builder
                 .RegisterType<ViewContractView>()
-                .As<IDialog<ViewContractDialogResult>>();
+                .As<IDialog<ViewContractLoadParameters>>();
             builder
                 .RegisterType<ViewPrivateKeyView>()
-                .As<IDialog<ViewPrivateKeyDialogResult>>();
+                .As<IDialog<ViewPrivateKeyLoadParameters>>();
             builder
                 .RegisterType<AboutView>()
-                .As<IDialog<AboutDialogResult>>();
+                .As<IDialog<AboutLoadParameters>>();
             builder
                 .RegisterType<DeveloperToolsView>()
-                .As<IDialog<DeveloperToolsDialogResult>>();
+                .As<IDialog<DeveloperToolsLoadParameters>>();
         }
     }
 }

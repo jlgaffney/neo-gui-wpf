@@ -6,13 +6,13 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
 using Neo.Gui.Base.Controllers.Interfaces;
-using Neo.Gui.Base.Dialogs.Results.Wallets;
 using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.LoadParameters.Accounts;
 using Neo.Gui.Base.Services.Interfaces;
 
 namespace Neo.Gui.ViewModels.Accounts
 {
-    public class CreateMultiSigContractViewModel : ViewModelBase, IDialogViewModel<CreateMultiSigContractDialogResult>
+    public class CreateMultiSigContractViewModel : ViewModelBase, IDialogViewModel<CreateMultiSigContractLoadParameters>
     {
         #region Private Fields 
         private readonly INotificationService notificationService;
@@ -120,9 +120,9 @@ namespace Neo.Gui.ViewModels.Accounts
         #region DialogViewModel implementation 
         public event EventHandler Close;
 
-        public event EventHandler<CreateMultiSigContractDialogResult> SetDialogResultAndClose;
-
-        public CreateMultiSigContractDialogResult DialogResult { get; private set; }
+        public void OnDialogLoad(CreateMultiSigContractLoadParameters parameters)
+        {
+        }
         #endregion
 
         #region Private Methods 

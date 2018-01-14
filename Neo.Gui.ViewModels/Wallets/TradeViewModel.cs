@@ -13,20 +13,16 @@ using Neo.SmartContract;
 
 using Neo.Gui.Globalization.Resources;
 
-using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Wallets;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
-using Neo.Gui.Base.Managers;
 using Neo.Gui.Base.Managers.Interfaces;
-using Neo.Gui.Base.Services;
-using Neo.Gui.Base.Services.Interfaces;
 
 namespace Neo.Gui.ViewModels.Wallets
 {
-    public class TradeViewModel : ViewModelBase, IDialogViewModel<TradeDialogResult>
+    public class TradeViewModel : ViewModelBase, IDialogViewModel<TradeLoadParameters>
     {
         private readonly IDialogManager dialogManager;
         private readonly IWalletController walletController;
@@ -166,9 +162,9 @@ namespace Neo.Gui.ViewModels.Wallets
         #region IDialogViewModel implementation 
         public event EventHandler Close;
 
-        public event EventHandler<TradeDialogResult> SetDialogResultAndClose;
-
-        public TradeDialogResult DialogResult { get; private set; }
+        public void OnDialogLoad(TradeLoadParameters parameters)
+        {
+        }
         #endregion
 
         public void UpdateInitiateButtonEnabled()
@@ -238,7 +234,7 @@ namespace Neo.Gui.ViewModels.Wallets
 
             outputs = outputs.Where(p => this.walletController.WalletContainsAccount(p.ScriptHash));
 
-            var dialogResult = this.dialogManager.ShowDialog<TradeVerificationDialogResult, TradeVerificationLoadParameters>(
+            var dialogResult = this.dialogManager.ShowDialog<TradeVerificationLoadParameters, TradeVerificationDialogResult>(
                 new TradeVerificationLoadParameters(outputs));
 
             this.MergeEnabled = dialogResult.TradeAccepted;

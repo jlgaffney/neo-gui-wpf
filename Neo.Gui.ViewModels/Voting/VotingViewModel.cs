@@ -12,15 +12,13 @@ using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Base.Dialogs.LoadParameters.Voting;
-using Neo.Gui.Base.Dialogs.Results.Contracts;
-using Neo.Gui.Base.Dialogs.Results.Voting;
 using Neo.Gui.Base.Extensions;
 using Neo.Gui.Base.Managers.Interfaces;
 
 namespace Neo.Gui.ViewModels.Voting
 {
     public class VotingViewModel : ViewModelBase,
-        ILoadableDialogViewModel<VotingDialogResult, VotingLoadParameters>
+        IDialogViewModel<VotingLoadParameters>
     {
         private readonly IDialogManager dialogManager;
         private readonly IWalletController walletController;
@@ -58,10 +56,6 @@ namespace Neo.Gui.ViewModels.Voting
 
         #region ILoadableDialogViewModel Implementation 
         public event EventHandler Close;
-
-        public event EventHandler<VotingDialogResult> SetDialogResultAndClose;
-
-        public VotingDialogResult DialogResult { get; set; }
         
         public void OnDialogLoad(VotingLoadParameters parameters)
         {
@@ -133,8 +127,7 @@ namespace Neo.Gui.ViewModels.Voting
 
             if (transaction == null) return;
 
-            this.dialogManager.ShowDialog<InvokeContractDialogResult, InvokeContractLoadParameters>(
-                new InvokeContractLoadParameters(transaction));
+            this.dialogManager.ShowDialog(new InvokeContractLoadParameters(transaction));
 
             this.Close(this, EventArgs.Empty);
         }

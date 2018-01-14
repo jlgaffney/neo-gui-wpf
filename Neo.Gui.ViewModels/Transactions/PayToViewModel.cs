@@ -13,12 +13,11 @@ using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Transactions;
 using Neo.Gui.Base.Dialogs.Results.Transactions;
-using Neo.Gui.Base.Services.Interfaces;
 
 namespace Neo.Gui.ViewModels.Transactions
 {
     public class PayToViewModel : ViewModelBase,
-        ILoadableDialogViewModel<PayToDialogResult, PayToLoadParameters>
+        IResultDialogViewModel<PayToLoadParameters, PayToDialogResult>
     {
         private readonly IWalletController walletController;
 
@@ -155,8 +154,6 @@ namespace Neo.Gui.ViewModels.Transactions
         public event EventHandler Close;
 
         public event EventHandler<PayToDialogResult> SetDialogResultAndClose;
-
-        public PayToDialogResult DialogResult { get; private set; }
 
         public void OnDialogLoad(PayToLoadParameters parameters)
         {

@@ -9,18 +9,15 @@ using GalaSoft.MvvmLight.Command;
 
 using Neo.Wallets;
 
-using Neo.Gui.Base.Controllers;
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.Results.Wallets;
-using Neo.Gui.Base.Managers;
+using Neo.Gui.Base.Dialogs.LoadParameters.Wallets;
 using Neo.Gui.Base.Managers.Interfaces;
-using Neo.Gui.Base.Services;
 using Neo.Gui.Base.Services.Interfaces;
 
 namespace Neo.Gui.Wpf.Views.Wallets
 {
-    public class CertificateApplicationViewModel : ViewModelBase, IDialogViewModel<CertificateApplicationDialogResult>
+    public class CertificateApplicationViewModel : ViewModelBase, IDialogViewModel<CertificateApplicationLoadParameters>
     {
         private readonly IFileManager fileManager;
         private readonly IFileDialogService fileDialogService;
@@ -139,9 +136,9 @@ namespace Neo.Gui.Wpf.Views.Wallets
         #region IDialogViewModel implementation 
         public event EventHandler Close;
 
-        public event EventHandler<CertificateApplicationDialogResult> SetDialogResultAndClose;
-
-        public CertificateApplicationDialogResult DialogResult { get; private set; }
+        public void OnDialogLoad(CertificateApplicationLoadParameters parameters)
+        {
+        }
         #endregion
 
         private void RequestCertificate()

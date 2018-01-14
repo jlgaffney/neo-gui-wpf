@@ -9,16 +9,17 @@ using Neo.Gui.Globalization.Resources;
 using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Dialogs;
 using Neo.Gui.Base.Dialogs.Interfaces;
+using Neo.Gui.Base.Dialogs.LoadParameters;
+using Neo.Gui.Base.Dialogs.LoadParameters.Assets;
 using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
-using Neo.Gui.Base.Dialogs.Results;
-using Neo.Gui.Base.Dialogs.Results.Assets;
-using Neo.Gui.Base.Dialogs.Results.Contracts;
-using Neo.Gui.Base.Dialogs.Results.Settings;
+using Neo.Gui.Base.Dialogs.LoadParameters.Development;
+using Neo.Gui.Base.Dialogs.LoadParameters.Home;
+using Neo.Gui.Base.Dialogs.LoadParameters.Settings;
+using Neo.Gui.Base.Dialogs.LoadParameters.Transactions;
+using Neo.Gui.Base.Dialogs.LoadParameters.Updater;
+using Neo.Gui.Base.Dialogs.LoadParameters.Voting;
+using Neo.Gui.Base.Dialogs.LoadParameters.Wallets;
 using Neo.Gui.Base.Dialogs.Results.Wallets;
-using Neo.Gui.Base.Dialogs.Results.Development;
-using Neo.Gui.Base.Dialogs.Results.Home;
-using Neo.Gui.Base.Dialogs.Results.Transactions;
-using Neo.Gui.Base.Dialogs.Results.Voting;
 using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Base.Messages;
 using Neo.Gui.Base.Messaging.Interfaces;
@@ -31,7 +32,7 @@ namespace Neo.Gui.ViewModels.Home
         ViewModelBase,
         ILoadable,
         IUnloadable,
-        IDialogViewModel<HomeDialogResult>,
+        IDialogViewModel<HomeLoadParameters>,
         IMessageHandler<CurrentWalletHasChangedMessage>,
         IMessageHandler<WalletStatusMessage>
     {
@@ -159,39 +160,37 @@ namespace Neo.Gui.ViewModels.Home
 
         public ICommand ExitCommand => new RelayCommand(() => this.processManager.Exit());
 
-        public ICommand TransferCommand => new RelayCommand(() => this.dialogManager.ShowDialog<TransferDialogResult>());
+        public ICommand TransferCommand => new RelayCommand(() => this.dialogManager.ShowDialog<TransferLoadParameters>());
 
-        public ICommand ShowTransactionDialogCommand => new RelayCommand(() => this.dialogManager.ShowDialog<TradeDialogResult>());
+        public ICommand ShowTransactionDialogCommand => new RelayCommand(() => this.dialogManager.ShowDialog<TradeLoadParameters>());
 
-        public ICommand ShowSigningDialogCommand => new RelayCommand(() => this.dialogManager.ShowDialog<SigningDialogResult>());
+        public ICommand ShowSigningDialogCommand => new RelayCommand(() => this.dialogManager.ShowDialog<SigningLoadParameters>());
 
-        public ICommand ClaimCommand => new RelayCommand(() => this.dialogManager.ShowDialog<ClaimDialogResult>());
+        public ICommand ClaimCommand => new RelayCommand(() => this.dialogManager.ShowDialog<ClaimLoadParameters>());
 
-        public ICommand RequestCertificateCommand => new RelayCommand(() => this.dialogManager.ShowDialog<CertificateApplicationDialogResult>());
+        public ICommand RequestCertificateCommand => new RelayCommand(() => this.dialogManager.ShowDialog<CertificateApplicationLoadParameters>());
 
-        public ICommand AssetRegistrationCommand => new RelayCommand(() => this.dialogManager.ShowDialog<AssetRegistrationDialogResult>());
+        public ICommand AssetRegistrationCommand => new RelayCommand(() => this.dialogManager.ShowDialog<AssetRegistrationLoadParameters>());
 
-        public ICommand DistributeAssetCommand => new RelayCommand(() => this.dialogManager.ShowDialog<AssetDistributionDialogResult>());
+        public ICommand DistributeAssetCommand => new RelayCommand(() => this.dialogManager.ShowDialog<AssetDistributionLoadParameters>());
 
-        public ICommand DeployContractCommand => new RelayCommand(() => this.dialogManager.ShowDialog<DeployContractDialogResult>());
+        public ICommand DeployContractCommand => new RelayCommand(() => this.dialogManager.ShowDialog<DeployContractLoadParameters>());
 
-        public RelayCommand InvokeContractCommand => new RelayCommand(() => 
-            this.dialogManager.ShowDialog<InvokeContractDialogResult, InvokeContractLoadParameters>(
-                new InvokeContractLoadParameters(null)));
+        public RelayCommand InvokeContractCommand => new RelayCommand(() =>  this.dialogManager.ShowDialog<InvokeContractLoadParameters>());
 
-        public ICommand ShowElectionDialogCommand => new RelayCommand(() => this.dialogManager.ShowDialog<ElectionDialogResult>());
+        public ICommand ShowElectionDialogCommand => new RelayCommand(() => this.dialogManager.ShowDialog<ElectionLoadParameters>());
 
-        public ICommand ShowSettingsCommand => new RelayCommand(() => this.dialogManager.ShowDialog<SettingsDialogResult>());
+        public ICommand ShowSettingsCommand => new RelayCommand(() => this.dialogManager.ShowDialog<SettingsLoadParameters>());
 
         public ICommand CheckForHelpCommand => new RelayCommand(() => { });
 
         public ICommand ShowOfficialWebsiteCommand => new RelayCommand(() => this.processManager.OpenInExternalBrowser(OfficialWebsiteUrl));
 
-        public RelayCommand ShowDeveloperToolsCommand => new RelayCommand(() => this.dialogManager.ShowDialog<DeveloperToolsDialogResult>());
+        public RelayCommand ShowDeveloperToolsCommand => new RelayCommand(() => this.dialogManager.ShowDialog<DeveloperToolsLoadParameters>());
 
-        public ICommand AboutNeoCommand => new RelayCommand(() => this.dialogManager.ShowDialog<AboutDialogResult>());
+        public ICommand AboutNeoCommand => new RelayCommand(() => this.dialogManager.ShowDialog<AboutLoadParameters>());
 
-        public ICommand ShowUpdateDialogCommand => new RelayCommand(() => this.dialogManager.ShowDialog<UpdateDialogResult>());
+        public ICommand ShowUpdateDialogCommand => new RelayCommand(() => this.dialogManager.ShowDialog<UpdateLoadParameters>());
         #endregion Public Properies
 
         #region Constructor
@@ -215,9 +214,9 @@ namespace Neo.Gui.ViewModels.Home
         #region IDialogViewModel implementation 
         public event EventHandler Close;
 
-        public event EventHandler<HomeDialogResult> SetDialogResultAndClose;
-
-        public HomeDialogResult DialogResult { get; set; }
+        public void OnDialogLoad(HomeLoadParameters parameters)
+        {
+        }
         #endregion
 
         #region ILoadable Implementation 
@@ -272,7 +271,7 @@ namespace Neo.Gui.ViewModels.Home
 
         private void CreateWallet()
         {
-            var result = this.dialogManager.ShowDialog<CreateWalletDialogResult>();
+            var result = this.dialogManager.ShowDialog<CreateWalletLoadParameters, CreateWalletDialogResult>();
 
             if (result == null) return;
 
@@ -286,7 +285,7 @@ namespace Neo.Gui.ViewModels.Home
 
         private void OpenWallet()
         {
-            var result = this.dialogManager.ShowDialog<OpenWalletDialogResult>();
+            var result = this.dialogManager.ShowDialog<OpenWalletLoadParameters, OpenWalletDialogResult>();
 
             if (result == null) return;
 

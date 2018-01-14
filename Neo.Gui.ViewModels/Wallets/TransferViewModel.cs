@@ -11,13 +11,12 @@ using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Dialogs.Interfaces;
 using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
-using Neo.Gui.Base.Dialogs.Results.Contracts;
-using Neo.Gui.Base.Dialogs.Results.Wallets;
+using Neo.Gui.Base.Dialogs.LoadParameters.Wallets;
 using Neo.Gui.Base.Managers.Interfaces;
 
 namespace Neo.Gui.ViewModels.Wallets
 {
-    public class TransferViewModel : ViewModelBase, IDialogViewModel<TransferDialogResult>
+    public class TransferViewModel : ViewModelBase, IDialogViewModel<TransferLoadParameters>
     {
         #region Private Fields 
         private readonly IDialogManager dialogManager;
@@ -105,9 +104,9 @@ namespace Neo.Gui.ViewModels.Wallets
         #region IDialogViewModel implementation 
         public event EventHandler Close;
 
-        public event EventHandler<TransferDialogResult> SetDialogResultAndClose;
-
-        public TransferDialogResult DialogResult { get; private set; }
+        public void OnDialogLoad(TransferLoadParameters parameters)
+        {
+        }
         #endregion
 
         #region Public Methods 
@@ -154,8 +153,7 @@ namespace Neo.Gui.ViewModels.Wallets
             
             if (transaction is InvocationTransaction invocationTransaction)
             {
-                this.dialogManager.ShowDialog<InvokeContractDialogResult, InvokeContractLoadParameters>(
-                    new InvokeContractLoadParameters(invocationTransaction));
+                this.dialogManager.ShowDialog(new InvokeContractLoadParameters(invocationTransaction));
             }
             else
             {
