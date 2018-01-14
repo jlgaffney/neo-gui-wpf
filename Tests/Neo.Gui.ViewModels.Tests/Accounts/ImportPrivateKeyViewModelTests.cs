@@ -73,7 +73,7 @@ namespace Neo.Gui.ViewModels.Tests.Accounts
             Assert.True(expectedCloseEventRaised);
         }
 
-        [Fact(Skip = "Need to check if this situation really happen when the app is running")]
+        [Fact]
         public void OkCommand_OneKeyAndEmptyLine_ImportKeyAndCloseDialog()
         {
             // Arrange

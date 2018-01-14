@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -64,7 +65,7 @@ namespace Neo.Gui.ViewModels.Accounts
 
             if (string.IsNullOrEmpty(this.PrivateKeysWif)) return;
 
-            var wifStrings = this.PrivateKeysWif.ToLines();
+            var wifStrings = this.PrivateKeysWif.ToLines().Where(line => !string.IsNullOrEmpty(line));
             this.walletController.ImportPrivateKeys(wifStrings);
 
             this.Close(this, EventArgs.Empty);

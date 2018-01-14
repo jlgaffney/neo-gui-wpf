@@ -16,7 +16,7 @@ namespace Neo.Gui.Base.Extensions
             {
                 var line = lines[i];
 
-                if (line[line.Length - 1] == '\r')
+                if (!string.IsNullOrEmpty(line) && line[line.Length - 1] == '\r')
                 {
                     line = line.Substring(0, line.Length - 1);
                 }
