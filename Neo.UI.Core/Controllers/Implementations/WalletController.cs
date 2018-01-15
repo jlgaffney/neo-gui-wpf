@@ -421,11 +421,22 @@ namespace Neo.UI.Core.Controllers.Implementations
             return this.currentWallet.GetChangeAddress();
         }
 
-        public Contract GetAccountContract(UInt160 accountScriptHash)
+        public AccountContract GetAccountContract(string accountScriptHash)
         {
-            var walletAccount = this.GetWalletAccount(accountScriptHash);
+            var walletAccount = this.GetWalletAccount(UInt160.Parse(accountScriptHash));
 
-            return walletAccount?.Contract;
+            if (walletAccount == null) return null;
+
+            var accountContract = new AccountContract
+            {
+                Address = walletAccount.Contract.Address,
+                ParameterList = walletAccount.Contract.ParameterList.Cast<byte>().ToArray().ToHexString(),
+                ScriptHash = walletAccount.Contract.ScriptHash.ToString(),
+                RedeemScriptHex = walletAccount.Contract.Script.ToHexString()
+
+            };
+
+            return accountContract;
         }
 
         public KeyPair GetAccountKey(UInt160 accountScriptHash)

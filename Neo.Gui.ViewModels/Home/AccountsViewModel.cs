@@ -198,7 +198,7 @@ namespace Neo.Gui.ViewModels.Home
         {
             if (!this.ViewContractEnabled) return;
 
-            this.dialogManager.ShowDialog(new ViewContractLoadParameters(this.SelectedAccount.ScriptHash));
+            this.dialogManager.ShowDialog(new ViewContractLoadParameters(this.SelectedAccount.ScriptHash.ToString()));
         }
 
         private void ShowVotingDialog()

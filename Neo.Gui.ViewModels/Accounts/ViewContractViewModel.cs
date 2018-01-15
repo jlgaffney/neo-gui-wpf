@@ -1,23 +1,25 @@
 ﻿using System;
-using System.Linq;
-using System.Windows.Input;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-using Neo.SmartContract;
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Accounts;
 using Neo.UI.Core.Controllers.Interfaces;
 
 namespace Neo.Gui.ViewModels.Accounts
 {
-    public class ViewContractViewModel : ViewModelBase, 
+    public class ViewContractViewModel : 
+        ViewModelBase, 
         IDialogViewModel<ViewContractLoadParameters>
     {
         #region Private fields
-
         private readonly IWalletController walletController;
+
+        private string address;
+        private string scriptHash;
+        private string parameterList;
+        private string redeemScriptHex;
         #endregion
 
         #region Constructor
@@ -29,15 +31,67 @@ namespace Neo.Gui.ViewModels.Accounts
         #endregion
 
         #region Public Properties 
-        public string Address { get; private set; }
+        public string Address
+        {
+            get
+            {
+                return this.address;
+            }
+            set
+            {
+                if (this.address == value) return;
 
-        public string ScriptHash { get; private set; }
+                this.address = value;
+                this.RaisePropertyChanged();
+            }
+        }
 
-        public string ParameterList { get; private set; }
+        public string ScriptHash
+        {
+            get
+            {
+                return this.scriptHash;
+            }
+            set
+            {
+                if (this.scriptHash == value) return;
 
-        public string RedeemScriptHex { get; private set; }
+                this.scriptHash = value;
+                this.RaisePropertyChanged();
+            }
+        }
 
-        public ICommand CloseCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
+        public string ParameterList
+        {
+            get
+            {
+                return this.parameterList;
+            }
+            set
+            {
+                if (this.parameterList == value) return;
+
+                this.parameterList = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public string RedeemScriptHex
+        {
+            get
+            {
+                return this.redeemScriptHex;
+            }
+            set
+            {
+                if (this.redeemScriptHex == value) return;
+
+                this.redeemScriptHex = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public RelayCommand CloseCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
         #endregion
 
         #region ILoadableDialogViewModel implementation 
@@ -47,26 +101,12 @@ namespace Neo.Gui.ViewModels.Accounts
         {
             if (parameters?.ScriptHash == null) return;
 
-            var contract = this.walletController.GetAccountContract(parameters.ScriptHash);
+            var accountContract = this.walletController.GetAccountContract(parameters.ScriptHash);
 
-            this.SetContract(contract);
-        }
-        #endregion
-
-        #region Private Methods 
-        private void SetContract(Contract contract)
-        {
-            this.Address = contract.Address;
-            this.ScriptHash = contract.ScriptHash.ToString();
-            this.ParameterList = contract.ParameterList.Cast<byte>().ToArray().ToHexString();
-
-            this.RedeemScriptHex = contract.Script.ToHexString();
-
-            // Update properties
-            RaisePropertyChanged(nameof(this.Address));
-            RaisePropertyChanged(nameof(this.ScriptHash));
-            RaisePropertyChanged(nameof(this.ParameterList));
-            RaisePropertyChanged(nameof(this.RedeemScriptHex));
+            this.Address = accountContract.Address;
+            this.ScriptHash = accountContract.ScriptHash;
+            this.ParameterList = accountContract.ParameterList;
+            this.RedeemScriptHex = accountContract.RedeemScriptHex;
         }
         #endregion
     }
