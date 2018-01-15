@@ -1,10 +1,10 @@
 ﻿using System.Threading;
-using Neo.Gui.Base.Controllers.Interfaces;
-using Neo.Gui.Base.Data;
-using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.LoadParameters.Accounts;
+using Neo.Gui.Dialogs.Interfaces;
+using Neo.Gui.Dialogs.LoadParameters.Accounts;
 using Neo.Gui.TestHelpers;
 using Neo.Gui.ViewModels.Accounts;
+using Neo.UI.Core.Controllers.Interfaces;
+using Neo.UI.Core.Data;
 using Xunit;
 
 namespace Neo.Gui.ViewModels.Tests.Accounts
