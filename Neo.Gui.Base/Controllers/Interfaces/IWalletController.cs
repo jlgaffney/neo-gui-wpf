@@ -77,7 +77,7 @@ namespace Neo.Gui.Base.Controllers.Interfaces
 
         UInt160 GetChangeAddress();
 
-        Contract GetAccountContract(UInt160 accountScriptHash);
+        AccountContract GetAccountContract(string accountScriptHash);
 
         KeyPair GetAccountKey(UInt160 accountScriptHash);
 

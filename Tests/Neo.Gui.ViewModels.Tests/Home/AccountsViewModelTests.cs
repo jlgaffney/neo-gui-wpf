@@ -289,7 +289,7 @@ address2";
             viewModel.ViewContractCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog(It.Is<ViewContractLoadParameters>(p => p.ScriptHash == selectedAccount.ScriptHash)), Times.Once);
+            dialogManagerMock.Verify(x => x.ShowDialog(It.Is<ViewContractLoadParameters>(p => p.ScriptHash == selectedAccount.ScriptHash.ToString())), Times.Once);
         }
 
         [Fact]
@@ -310,7 +310,7 @@ address2";
             viewModel.ViewContractCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog(It.Is<ViewContractLoadParameters>(p => p.ScriptHash == selectedAccount.ScriptHash)), Times.Never);
+            dialogManagerMock.Verify(x => x.ShowDialog(It.Is<ViewContractLoadParameters>(p => p.ScriptHash == selectedAccount.ScriptHash.ToString())), Times.Never);
         }
 
         [Fact]

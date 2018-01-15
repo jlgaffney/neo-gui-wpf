@@ -2,9 +2,9 @@
 {
     public class ViewContractLoadParameters
     {
-        public UInt160 ScriptHash { get; }
+        public string ScriptHash { get; }
 
-        public ViewContractLoadParameters(UInt160 scriptHash)
+        public ViewContractLoadParameters(string scriptHash)
         {
             this.ScriptHash = scriptHash;
         }
