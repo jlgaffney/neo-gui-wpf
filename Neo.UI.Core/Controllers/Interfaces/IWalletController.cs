@@ -77,7 +77,7 @@ namespace Neo.UI.Core.Controllers.Interfaces
 
         AccountContract GetAccountContract(string accountScriptHash);
 
-        KeyPair GetAccountKey(UInt160 accountScriptHash);
+        AccountKeys GetAccountKeys(string accountScriptHash);
 
         Transaction GetTransaction(UInt256 hash);
 

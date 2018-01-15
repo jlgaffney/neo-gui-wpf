@@ -439,13 +439,26 @@ namespace Neo.UI.Core.Controllers.Implementations
             return accountContract;
         }
 
-        public KeyPair GetAccountKey(UInt160 accountScriptHash)
+        public AccountKeys GetAccountKeys(string accountScriptHash)
         {
-            var walletAccount = this.GetWalletAccount(accountScriptHash);
+            var walletAccount = this.GetWalletAccount(UInt160.Parse(accountScriptHash));
 
             if (walletAccount == null) return null;
+            if (!walletAccount.HasKey) return null;
 
-            return walletAccount.HasKey ? walletAccount.GetKey() : null;
+            var accountKeys = new AccountKeys
+            {
+                Address = accountScriptHash,
+                PublicHexKey = walletAccount.GetKey().PublicKey.EncodePoint(true).ToHexString(),
+                PrivateWifKey = walletAccount.GetKey().PrivateKey.ToHexString()
+            };
+
+            using (walletAccount.GetKey().Decrypt())
+            {
+                accountKeys.PrivateHexKey = walletAccount.GetKey().PrivateKey.ToHexString();
+            }
+
+            return accountKeys;
         }
 
         public Transaction GetTransaction(UInt256 hash)

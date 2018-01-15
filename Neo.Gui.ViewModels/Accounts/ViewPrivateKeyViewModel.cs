@@ -1,21 +1,25 @@
 ﻿using System;
-using System.Windows.Input;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Accounts;
 using Neo.UI.Core.Controllers.Interfaces;
 
 namespace Neo.Gui.ViewModels.Accounts
 {
-    public class ViewPrivateKeyViewModel : ViewModelBase,
+    public class ViewPrivateKeyViewModel : 
+        ViewModelBase,
         IDialogViewModel<ViewPrivateKeyLoadParameters>
     {
         #region Private fields
-
         private readonly IWalletController walletController;
 
+        private string address;
+        private string publicKeyHex;
+        private string privateKeyHex;
+        private string privateKeyWif;
         #endregion
 
         #region Constructor
@@ -29,17 +33,69 @@ namespace Neo.Gui.ViewModels.Accounts
         #endregion
 
         #region Public Properties
-        public string Address { get; private set; }
+        public string Address
+        {
+            get
+            {
+                return this.address;
+            }
+            set
+            {
+                if (this.address == value) return;
 
-        public string PublicKeyHex { get; private set; }
+                this.address = value;
+                this.RaisePropertyChanged();
+            }
+        }
 
-        public string PrivateKeyHex { get; private set; }
+        public string PublicKeyHex
+        {
+            get
+            {
+                return this.publicKeyHex;
+            }
+            set
+            {
+                if (this.publicKeyHex == value) return;
 
-        public string PrivateKeyWif { get; private set; }
+                this.publicKeyHex = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public string PrivateKeyHex
+        {
+            get
+            {
+                return this.privateKeyHex;
+            }
+            set
+            {
+                if (this.privateKeyHex == value) return;
+
+                this.privateKeyHex = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public string PrivateKeyWif
+        {
+            get
+            {
+                return this.privateKeyWif;
+            }
+            set
+            {
+                if (this.privateKeyWif == value) return;
+
+                this.privateKeyWif = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public RelayCommand CloseCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
         #endregion Public Properties
 
-        public ICommand CloseCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
-        
         #region ILoadableDialogViewModel implementation 
         public event EventHandler Close;
 
@@ -47,21 +103,12 @@ namespace Neo.Gui.ViewModels.Accounts
         {
             if (parameters == null || parameters.ScriptHash == null) return;
 
-            var key = this.walletController.GetAccountKey(parameters.ScriptHash);
+            var accountKeys = this.walletController.GetAccountKeys(parameters.ScriptHash.ToString());
 
-            this.Address = this.walletController.ScriptHashToAddress(parameters.ScriptHash);
-            this.PublicKeyHex = key.PublicKey.EncodePoint(true).ToHexString();
-            using (key.Decrypt())
-            {
-                this.PrivateKeyHex = key.PrivateKey.ToHexString();
-            }
-            this.PrivateKeyWif = key.Export();
-
-            // Update properties
-            RaisePropertyChanged(nameof(this.Address));
-            RaisePropertyChanged(nameof(this.PublicKeyHex));
-            RaisePropertyChanged(nameof(this.PrivateKeyHex));
-            RaisePropertyChanged(nameof(this.PrivateKeyWif));
+            this.Address = accountKeys.Address;
+            this.PublicKeyHex = accountKeys.PublicHexKey;
+            this.PrivateKeyHex = accountKeys.PrivateHexKey;
+            this.PrivateKeyWif = accountKeys.PrivateWifKey;
         }
         #endregion
     }
