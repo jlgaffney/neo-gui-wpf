@@ -7,11 +7,10 @@ using GalaSoft.MvvmLight.Command;
 
 using Neo.Core;
 using Neo.Wallets;
-
-using Neo.Gui.Base.Controllers.Interfaces;
-using Neo.Gui.Base.Data;
-using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.LoadParameters.Assets;
+using Neo.Gui.Dialogs.Interfaces;
+using Neo.Gui.Dialogs.LoadParameters.Assets;
+using Neo.UI.Core.Controllers.Interfaces;
+using Neo.UI.Core.Data;
 
 namespace Neo.Gui.ViewModels.Assets
 {

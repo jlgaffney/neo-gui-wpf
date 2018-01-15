@@ -11,12 +11,11 @@ using Neo.Core;
 using Neo.SmartContract;
 
 using Neo.Gui.Globalization.Resources;
-
-using Neo.Gui.Base.Controllers.Interfaces;
-using Neo.Gui.Base.Dialogs.LoadParameters.Transactions;
-using Neo.Gui.Base.Dialogs.Results.Transactions;
+using Neo.Gui.Dialogs.LoadParameters.Transactions;
+using Neo.Gui.Dialogs.Results.Transactions;
 using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Wpf.Wrappers;
+using Neo.UI.Core.Controllers.Interfaces;
 
 namespace Neo.Gui.Wpf.Views.Development
 {

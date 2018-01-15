@@ -5,8 +5,7 @@ using ToastNotifications;
 using ToastNotifications.Lifetime;
 using ToastNotifications.Messages;
 using ToastNotifications.Position;
-
-using Neo.Gui.Base.Services.Interfaces;
+using Neo.UI.Core.Services.Interfaces;
 
 namespace Neo.Gui.Wpf.Implementations.Services
 {

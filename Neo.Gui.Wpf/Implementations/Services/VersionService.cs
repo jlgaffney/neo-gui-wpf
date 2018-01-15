@@ -2,9 +2,8 @@
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
-
-using Neo.Gui.Base.Services.Interfaces;
-using Neo.Gui.Base.Updating;
+using Neo.UI.Core.Services.Interfaces;
+using Neo.UI.Core.Updating;
 
 namespace Neo.Gui.Wpf.Implementations.Services
 {

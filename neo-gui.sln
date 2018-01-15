@@ -7,13 +7,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo.Gui.Wpf", "Neo.Gui.Wpf\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo.Gui.ViewModels", "Neo.Gui.ViewModels\Neo.Gui.ViewModels.csproj", "{6B4C96B5-9B1A-45A4-BB30-827768EDE82C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo.Gui.Base", "Neo.Gui.Base\Neo.Gui.Base.csproj", "{929FDF79-F89D-4B4F-BB56-DBD1D31528B4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo.Gui.Dialogs", "Neo.Gui.Dialogs\Neo.Gui.Dialogs.csproj", "{595B7C9E-5DF5-47E3-B953-ABD422897A85}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo.UI.Core", "Neo.UI.Core\Neo.UI.Core.csproj", "{929FDF79-F89D-4B4F-BB56-DBD1D31528B4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo.Gui.Globalization", "Neo.Gui.Globalization\Neo.Gui.Globalization.csproj", "{34501D6D-410C-4E1E-8C47-1A2EBBFBE611}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo.Gui.ViewModels.Tests", "Tests\Neo.Gui.ViewModels.Tests\Neo.Gui.ViewModels.Tests.csproj", "{B55307C0-BE48-4148-A1CD-D42ADFC360D6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo.Gui.Base.Tests", "Tests\Neo.Gui.Base.Tests\Neo.Gui.Base.Tests.csproj", "{9D18A4FD-F3A0-4E58-AC60-AF2D9DCF954A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo.UI.Core.Tests", "Tests\Neo.UI.Core.Tests\Neo.UI.Core.Tests.csproj", "{9D18A4FD-F3A0-4E58-AC60-AF2D9DCF954A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo.Gui.TestHelpers", "Tests\Neo.Gui.TestHelpers\Neo.Gui.TestHelpers.csproj", "{E5903A9F-0804-4912-92CC-469E47FAE4F6}"
 EndProject
@@ -53,6 +55,10 @@ Global
 		{E5903A9F-0804-4912-92CC-469E47FAE4F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E5903A9F-0804-4912-92CC-469E47FAE4F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E5903A9F-0804-4912-92CC-469E47FAE4F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{595B7C9E-5DF5-47E3-B953-ABD422897A85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{595B7C9E-5DF5-47E3-B953-ABD422897A85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{595B7C9E-5DF5-47E3-B953-ABD422897A85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{595B7C9E-5DF5-47E3-B953-ABD422897A85}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

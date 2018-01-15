@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="ExtensionMethods\**" />
+    <EmbeddedResource Remove="ExtensionMethods\**" />
+    <None Remove="ExtensionMethods\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Managers\FileManagersRegistrationModule.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.6.2" />
+    <PackageReference Include="Neo" Version="2.5.2" />
+    <PackageReference Include="Neo.VM" Version="2.0.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Neo.Gui.Globalization\Neo.Gui.Globalization.csproj" />
+  </ItemGroup>
+
+</Project>

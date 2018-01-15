@@ -1,5 +1,5 @@
-﻿using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.LoadParameters.Development;
+﻿using Neo.Gui.Dialogs.Interfaces;
+using Neo.Gui.Dialogs.LoadParameters.Development;
 
 namespace Neo.Gui.Wpf.Views.Development
 {

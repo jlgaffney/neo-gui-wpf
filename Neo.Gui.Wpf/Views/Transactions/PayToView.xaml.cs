@@ -1,5 +1,5 @@
-﻿using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.LoadParameters.Transactions;
+﻿using Neo.Gui.Dialogs.Interfaces;
+using Neo.Gui.Dialogs.LoadParameters.Transactions;
 
 namespace Neo.Gui.Wpf.Views.Transactions
 {

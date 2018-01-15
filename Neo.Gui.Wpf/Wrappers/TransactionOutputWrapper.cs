@@ -2,8 +2,7 @@
 
 using Neo.Core;
 using Neo.Wallets;
-
-using Neo.Gui.Base.Converters;
+using Neo.UI.Core.Converters;
 
 namespace Neo.Gui.Wpf.Wrappers
 {

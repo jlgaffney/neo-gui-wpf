@@ -1,4 +1,4 @@
-﻿using Neo.Gui.Base.Data;
+﻿using Neo.UI.Core.Data;
 
 namespace Neo.Gui.ViewModels.Tests.Builders
 {

@@ -8,10 +8,9 @@ using GalaSoft.MvvmLight.Command;
 
 using Neo.Network;
 using Neo.SmartContract;
-
-using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.Globalization.Resources;
 using Neo.Gui.Base.Managers.Interfaces;
+using Neo.UI.Core.Controllers.Interfaces;
 
 namespace Neo.Gui.ViewModels.Development
 {

@@ -7,12 +7,12 @@ using Neo.Network;
 using Neo.SmartContract;
 
 using Neo.Gui.Globalization.Resources;
-
-using Neo.Gui.Base.Controllers.Interfaces;
-using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.LoadParameters.Transactions;
+using Neo.Gui.Dialogs.Interfaces;
+using Neo.Gui.Dialogs.LoadParameters.Transactions;
 using Neo.Gui.Base.Managers.Interfaces;
-using Neo.Gui.Base.Services.Interfaces;
+using Neo.UI.Core.Controllers.Interfaces;
+using Neo.UI.Core.Managers.Interfaces;
+using Neo.UI.Core.Services.Interfaces;
 
 namespace Neo.Gui.ViewModels.Transactions
 {

@@ -1,6 +1,6 @@
 ﻿using System;
-using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
+using Neo.Gui.Dialogs.Interfaces;
+using Neo.Gui.Dialogs.LoadParameters.Contracts;
 
 namespace Neo.Gui.Wpf.Views.Contracts
 {

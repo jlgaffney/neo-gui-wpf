@@ -6,14 +6,14 @@ using System.Windows.Input;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-
-using Neo.Gui.Base.Controllers.Interfaces;
-using Neo.Gui.Base.Dialogs;
-using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.LoadParameters.Settings;
-using Neo.Gui.Base.Extensions;
+using Neo.Gui.Dialogs;
+using Neo.Gui.Dialogs.Interfaces;
+using Neo.Gui.Dialogs.LoadParameters.Settings;
 using Neo.Gui.Base.Managers.Interfaces;
-using Neo.Gui.Base.Theming;
+using Neo.UI.Core.Controllers.Interfaces;
+using Neo.UI.Core.Extensions;
+using Neo.UI.Core.Managers.Interfaces;
+using Neo.UI.Core.Theming;
 
 namespace Neo.Gui.ViewModels.Settings
 {
@@ -379,7 +379,7 @@ namespace Neo.Gui.ViewModels.Settings
 
             // Export and save as JSON in settings
             var newThemeJson = Theme.ExportToJson(newTheme);
-            this.settingsManager.AppTheme = newThemeJson;
+            this.settingsManager.AppThemeJson = newThemeJson;
             this.settingsManager.Save();
 
             // Update settings' current values

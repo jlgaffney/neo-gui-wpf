@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
-using Neo.Gui.Base.Controllers.Interfaces;
-using Neo.Gui.Base.Services.Interfaces;
 using Neo.Gui.TestHelpers;
 using Neo.Gui.ViewModels.Accounts;
+using Neo.UI.Core.Controllers.Interfaces;
+using Neo.UI.Core.Services.Interfaces;
 using Xunit;
 
 namespace Neo.Gui.ViewModels.Tests.Accounts

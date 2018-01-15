@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Moq;
-using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.Gui.TestHelpers;
 using Neo.Gui.ViewModels.Accounts;
+using Neo.UI.Core.Controllers.Interfaces;
 using Xunit;
 
 namespace Neo.Gui.ViewModels.Tests.Accounts
