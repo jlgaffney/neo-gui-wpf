@@ -23,13 +23,11 @@ namespace Neo.Gui.ViewModels.Accounts
         #endregion
 
         #region Constructor
-
         public ViewPrivateKeyViewModel(
             IWalletController walletController)
         {
             this.walletController = walletController;
         }
-        
         #endregion
 
         #region Public Properties
