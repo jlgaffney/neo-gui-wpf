@@ -2,8 +2,7 @@
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
-
-using Neo.Gui.Base.Services.Interfaces;
+using Neo.UI.Core.Services.Interfaces;
 
 namespace Neo.Gui.Wpf.Implementations.Services
 {

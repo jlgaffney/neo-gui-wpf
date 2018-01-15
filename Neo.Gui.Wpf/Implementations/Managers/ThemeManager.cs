@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Windows;
-
-using Neo.Gui.Base.Extensions;
 using Neo.Gui.Base.Managers.Interfaces;
-using Neo.Gui.Base.Theming;
-
 using Neo.Gui.Wpf.Extensions;
-
+using Neo.UI.Core.Extensions;
+using Neo.UI.Core.Managers.Interfaces;
+using Neo.UI.Core.Theming;
 using MahAppsThemeManager = MahApps.Metro.ThemeManager;
-using Style = Neo.Gui.Base.Theming.Style;
+using Style = Neo.UI.Core.Theming.Style;
 
 namespace Neo.Gui.Wpf.Implementations.Managers
 {
@@ -56,7 +54,7 @@ namespace Neo.Gui.Wpf.Implementations.Managers
 
 
             // Try load custom theme
-            var themeJson = settingsManager.AppTheme;
+            var themeJson = settingsManager.AppThemeJson;
 
             // Check if theme JSON has been set
             if (string.IsNullOrEmpty(themeJson))

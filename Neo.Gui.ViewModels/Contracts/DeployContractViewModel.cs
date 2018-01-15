@@ -6,13 +6,14 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
 using Neo.Core;
-using Neo.Gui.Base.Controllers.Interfaces;
 using Neo.SmartContract;
 
-using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
+using Neo.Gui.Dialogs.Interfaces;
+using Neo.Gui.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Base.Managers.Interfaces;
-using Neo.Gui.Base.Services.Interfaces;
+using Neo.UI.Core.Controllers.Interfaces;
+using Neo.UI.Core.Managers.Interfaces;
+using Neo.UI.Core.Services.Interfaces;
 
 namespace Neo.Gui.ViewModels.Contracts
 {

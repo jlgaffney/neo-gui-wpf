@@ -2,10 +2,9 @@
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-
-using Neo.Gui.Base.Controllers.Interfaces;
-using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.LoadParameters.Accounts;
+using Neo.Gui.Dialogs.Interfaces;
+using Neo.Gui.Dialogs.LoadParameters.Accounts;
+using Neo.UI.Core.Controllers.Interfaces;
 
 namespace Neo.Gui.ViewModels.Accounts
 {

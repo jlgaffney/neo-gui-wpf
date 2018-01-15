@@ -2,12 +2,11 @@
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-
-using Neo.Gui.Base.Data;
 using Neo.Gui.Base.Managers.Interfaces;
-using Neo.Gui.Base.Messages;
-using Neo.Gui.Base.Messaging.Interfaces;
-using Neo.Gui.Base.MVVM;
+using Neo.UI.Core.Data;
+using Neo.UI.Core.Managers.Interfaces;
+using Neo.UI.Core.Messages;
+using Neo.UI.Core.Messaging.Interfaces;
 
 namespace Neo.Gui.ViewModels.Home
 {

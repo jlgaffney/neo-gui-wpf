@@ -6,7 +6,7 @@ using System.Windows.Markup;
 
 using Autofac;
 
-using Neo.Gui.Base.MVVM;
+using Neo.Gui.ViewModels;
 
 namespace Neo.Gui.Wpf.MarkupExtensions
 {

@@ -712,9 +712,13 @@
     <Resource Include="Resources\logo_72.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Neo.Gui.Base\Neo.Gui.Base.csproj">
+    <ProjectReference Include="..\Neo.UI.Core\Neo.UI.Core.csproj">
       <Project>{929FDF79-F89D-4B4F-BB56-DBD1D31528B4}</Project>
-      <Name>Neo.Gui.Base</Name>
+      <Name>Neo.UI.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Neo.Gui.Dialogs\Neo.Gui.Dialogs.csproj">
+      <Project>{595b7c9e-5df5-47e3-b953-abd422897a85}</Project>
+      <Name>Neo.Gui.Dialogs</Name>
     </ProjectReference>
     <ProjectReference Include="..\Neo.Gui.Globalization\Neo.Gui.Globalization.csproj">
       <Project>{34501d6d-410c-4e1e-8c47-1a2ebbfbe611}</Project>

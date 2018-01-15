@@ -9,12 +9,11 @@ using GalaSoft.MvvmLight.Command;
 
 using Neo.Core;
 using Neo.Cryptography.ECC;
-
-using Neo.Gui.Base.Controllers.Interfaces;
-using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.LoadParameters.Assets;
-using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
+using Neo.Gui.Dialogs.Interfaces;
+using Neo.Gui.Dialogs.LoadParameters.Assets;
+using Neo.Gui.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Base.Managers.Interfaces;
+using Neo.UI.Core.Controllers.Interfaces;
 
 namespace Neo.Gui.ViewModels.Assets
 {

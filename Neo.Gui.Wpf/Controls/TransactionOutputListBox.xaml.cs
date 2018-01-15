@@ -6,11 +6,10 @@ using System.Windows;
 using System.Windows.Threading;
 
 using Neo.Wallets;
-
-using Neo.Gui.Base.Data;
-using Neo.Gui.Base.Dialogs.LoadParameters.Transactions;
-using Neo.Gui.Base.Dialogs.Results.Transactions;
+using Neo.Gui.Dialogs.LoadParameters.Transactions;
+using Neo.Gui.Dialogs.Results.Transactions;
 using Neo.Gui.Base.Managers.Interfaces;
+using Neo.UI.Core.Data;
 
 namespace Neo.Gui.Wpf.Controls
 {

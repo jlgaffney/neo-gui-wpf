@@ -1,10 +1,10 @@
 ﻿using System;
 using Neo.Core;
-using Neo.Gui.Base.Data;
-using Neo.Gui.Base.Messages;
-using Neo.Gui.Base.Messaging.Interfaces;
 using Neo.Gui.TestHelpers;
 using Neo.Gui.ViewModels.Home;
+using Neo.UI.Core.Data;
+using Neo.UI.Core.Messages;
+using Neo.UI.Core.Messaging.Interfaces;
 using Xunit;
 
 namespace Neo.Gui.ViewModels.Tests.Home

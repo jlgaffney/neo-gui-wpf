@@ -6,5 +6,5 @@ install:
 - dotnet restore
 script:
 - cd Tests
-- dotnet test Neo.Gui.Base.Tests
+- dotnet test Neo.UI.Core.Tests
 - dotnet test Neo.Gui.ViewModels.Tests

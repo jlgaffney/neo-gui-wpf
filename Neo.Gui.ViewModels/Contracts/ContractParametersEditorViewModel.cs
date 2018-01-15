@@ -10,11 +10,10 @@ using GalaSoft.MvvmLight.Command;
 
 using Neo.Cryptography.ECC;
 using Neo.SmartContract;
-
-using Neo.Gui.Base.Data;
-using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
+using Neo.Gui.Dialogs.Interfaces;
+using Neo.Gui.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Base.Managers.Interfaces;
+using Neo.UI.Core.Data;
 
 namespace Neo.Gui.ViewModels.Contracts
 {
@@ -30,7 +29,7 @@ namespace Neo.Gui.ViewModels.Contracts
         /// </summary>
         private IList<ContractParameter> contractParameters;
 
-        private DisplayContractParameter selectedParameter;
+        private ContractParameterItem selectedParameter;
 
         private string currentValue;
         private string newValue;
@@ -40,12 +39,12 @@ namespace Neo.Gui.ViewModels.Contracts
         {
             this.dialogManager = dialogManager;
 
-            this.Parameters = new ObservableCollection<DisplayContractParameter>();
+            this.Parameters = new ObservableCollection<ContractParameterItem>();
         }
         
-        public ObservableCollection<DisplayContractParameter> Parameters { get; }
+        public ObservableCollection<ContractParameterItem> Parameters { get; }
 
-        public DisplayContractParameter SelectedParameter
+        public ContractParameterItem SelectedParameter
         {
             get => this.selectedParameter;
             set
@@ -134,7 +133,7 @@ namespace Neo.Gui.ViewModels.Contracts
 
             for (int i = 0; i < this.contractParameters.Count; i++)
             {
-                this.Parameters.Add(new DisplayContractParameter(i, this.contractParameters[i]));
+                this.Parameters.Add(new ContractParameterItem(i, this.contractParameters[i]));
             }
 
             // Update dependent property
@@ -153,7 +152,7 @@ namespace Neo.Gui.ViewModels.Contracts
 
             var newIndex = this.Parameters.Count;
 
-            var newDisplayParameter = new DisplayContractParameter(newIndex, parameter);
+            var newDisplayParameter = new ContractParameterItem(newIndex, parameter);
 
             this.contractParameters.Add(parameter);
             this.Parameters.Add(newDisplayParameter);

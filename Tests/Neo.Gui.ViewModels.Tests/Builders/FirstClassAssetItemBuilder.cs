@@ -1,7 +1,6 @@
 ﻿using Neo.Core;
 using Neo.Cryptography.ECC;
-
-using Neo.Gui.Base.Data;
+using Neo.UI.Core.Data;
 
 namespace Neo.Gui.ViewModels.Tests.Builders
 {

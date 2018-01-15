@@ -7,12 +7,11 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
 using Neo.Wallets;
-
-using Neo.Gui.Base.Controllers.Interfaces;
-using Neo.Gui.Base.Data;
-using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.LoadParameters.Transactions;
-using Neo.Gui.Base.Dialogs.Results.Transactions;
+using Neo.Gui.Dialogs.Interfaces;
+using Neo.Gui.Dialogs.LoadParameters.Transactions;
+using Neo.Gui.Dialogs.Results.Transactions;
+using Neo.UI.Core.Controllers.Interfaces;
+using Neo.UI.Core.Data;
 
 namespace Neo.Gui.ViewModels.Transactions
 {

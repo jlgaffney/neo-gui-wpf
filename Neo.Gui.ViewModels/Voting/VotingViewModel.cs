@@ -7,13 +7,12 @@ using GalaSoft.MvvmLight.Command;
 
 using Neo.Core;
 using Neo.VM;
-
-using Neo.Gui.Base.Controllers.Interfaces;
-using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
-using Neo.Gui.Base.Dialogs.LoadParameters.Voting;
-using Neo.Gui.Base.Extensions;
+using Neo.Gui.Dialogs.Interfaces;
+using Neo.Gui.Dialogs.LoadParameters.Contracts;
+using Neo.Gui.Dialogs.LoadParameters.Voting;
 using Neo.Gui.Base.Managers.Interfaces;
+using Neo.UI.Core.Controllers.Interfaces;
+using Neo.UI.Core.Extensions;
 
 namespace Neo.Gui.ViewModels.Voting
 {

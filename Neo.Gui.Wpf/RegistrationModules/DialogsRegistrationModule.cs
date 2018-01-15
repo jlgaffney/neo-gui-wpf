@@ -1,17 +1,17 @@
 ﻿using Autofac;
 
-using Neo.Gui.Base.Dialogs.Interfaces;
-using Neo.Gui.Base.Dialogs.LoadParameters;
-using Neo.Gui.Base.Dialogs.LoadParameters.Accounts;
-using Neo.Gui.Base.Dialogs.LoadParameters.Assets;
-using Neo.Gui.Base.Dialogs.LoadParameters.Contracts;
-using Neo.Gui.Base.Dialogs.LoadParameters.Development;
-using Neo.Gui.Base.Dialogs.LoadParameters.Home;
-using Neo.Gui.Base.Dialogs.LoadParameters.Settings;
-using Neo.Gui.Base.Dialogs.LoadParameters.Transactions;
-using Neo.Gui.Base.Dialogs.LoadParameters.Updater;
-using Neo.Gui.Base.Dialogs.LoadParameters.Voting;
-using Neo.Gui.Base.Dialogs.LoadParameters.Wallets;
+using Neo.Gui.Dialogs.Interfaces;
+using Neo.Gui.Dialogs.LoadParameters;
+using Neo.Gui.Dialogs.LoadParameters.Accounts;
+using Neo.Gui.Dialogs.LoadParameters.Assets;
+using Neo.Gui.Dialogs.LoadParameters.Contracts;
+using Neo.Gui.Dialogs.LoadParameters.Development;
+using Neo.Gui.Dialogs.LoadParameters.Home;
+using Neo.Gui.Dialogs.LoadParameters.Settings;
+using Neo.Gui.Dialogs.LoadParameters.Transactions;
+using Neo.Gui.Dialogs.LoadParameters.Updater;
+using Neo.Gui.Dialogs.LoadParameters.Voting;
+using Neo.Gui.Dialogs.LoadParameters.Wallets;
 
 using Neo.Gui.Wpf.Views;
 using Neo.Gui.Wpf.Views.Accounts;
