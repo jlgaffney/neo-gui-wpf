@@ -741,8 +741,10 @@ namespace Neo.UI.Core.Controllers.Implementations
             if (claims.Length == 0) return;
 
             var claimTransaction = TransactionHelper.MakeClaimTransaction(
-                claims, this.blockchainController.UtilityToken.Hash, 
-                    this.CalculateBonus(claims), this.GetChangeAddress());
+                claims, 
+                this.blockchainController.UtilityToken.Hash, 
+                this.CalculateBonus(claims), 
+                this.GetChangeAddress());
 
             this.SignAndRelay(claimTransaction);
         }
