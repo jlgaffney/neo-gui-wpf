@@ -157,7 +157,7 @@ namespace Neo.Gui.ViewModels.Assets
 
         public void OnDialogLoad(AssetDistributionLoadParameters parameters)
         {
-            this.AssetId = parameters.AssetStateId;
+            this.AssetId = parameters?.AssetStateId;
             this.AssetIdEnabled = false;
         }
         #endregion
