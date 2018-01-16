@@ -207,7 +207,7 @@ namespace Neo.Gui.ViewModels.Assets
             else
             {
                 this.Owner = assetState.Owner.ToString();
-                this.Admin = this.walletController.ScriptHashToAddress(assetState.Admin);
+                this.Admin = this.walletController.ScriptHashToAddress(assetState.Admin.ToString());
                 this.Total = assetState.Amount == -Fixed8.Satoshi ? "+\u221e" : assetState.Amount.ToString();
                 this.Issued = assetState.Available.ToString();
                 this.DistributionEnabled = true;

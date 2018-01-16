@@ -197,7 +197,7 @@ namespace Neo.Gui.ViewModels.Transactions
 
             if (scriptHash != null)
             {
-                this.PayToAddress = this.walletController.ScriptHashToAddress(scriptHash);
+                this.PayToAddress = this.walletController.ScriptHashToAddress(scriptHash.ToString());
                 this.PayToAddressReadOnly = true;
             }
         }

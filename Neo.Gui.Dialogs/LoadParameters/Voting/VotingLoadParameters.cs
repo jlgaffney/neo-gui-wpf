@@ -2,9 +2,9 @@
 {
     public class VotingLoadParameters
     {
-        public UInt160 ScriptHash { get; }
+        public string ScriptHash { get; }
 
-        public VotingLoadParameters(UInt160 scriptHash)
+        public VotingLoadParameters(string scriptHash)
         {
             this.ScriptHash = scriptHash;
         }

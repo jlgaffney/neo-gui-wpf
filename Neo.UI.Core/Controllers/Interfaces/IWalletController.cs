@@ -77,7 +77,7 @@ namespace Neo.UI.Core.Controllers.Interfaces
 
         AccountContract GetAccountContract(string accountScriptHash);
 
-        KeyPair GetAccountKey(UInt160 accountScriptHash);
+        AccountKeys GetAccountKeys(string accountScriptHash);
 
         Transaction GetTransaction(UInt256 hash);
 
@@ -148,7 +148,7 @@ namespace Neo.UI.Core.Controllers.Interfaces
 
         UInt160 AddressToScriptHash(string address);
 
-        string ScriptHashToAddress(UInt160 scriptHash);
+        string ScriptHashToAddress(string scriptHash);
 
         bool AddressIsValid(string address);
 

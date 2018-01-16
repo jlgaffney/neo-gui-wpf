@@ -2,9 +2,9 @@
 {
     public class ViewPrivateKeyLoadParameters
     {
-        public UInt160 ScriptHash { get; }
+        public string ScriptHash { get; }
         
-        public ViewPrivateKeyLoadParameters(UInt160 scriptHash)
+        public ViewPrivateKeyLoadParameters(string scriptHash)
         {
             this.ScriptHash = scriptHash;
         }

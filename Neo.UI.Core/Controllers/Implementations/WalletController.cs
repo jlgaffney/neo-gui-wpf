@@ -439,13 +439,26 @@ namespace Neo.UI.Core.Controllers.Implementations
             return accountContract;
         }
 
-        public KeyPair GetAccountKey(UInt160 accountScriptHash)
+        public AccountKeys GetAccountKeys(string accountScriptHash)
         {
-            var walletAccount = this.GetWalletAccount(accountScriptHash);
+            var walletAccount = this.GetWalletAccount(UInt160.Parse(accountScriptHash));
 
             if (walletAccount == null) return null;
+            if (!walletAccount.HasKey) return null;
 
-            return walletAccount.HasKey ? walletAccount.GetKey() : null;
+            var accountKeys = new AccountKeys
+            {
+                Address = accountScriptHash,
+                PublicHexKey = walletAccount.GetKey().PublicKey.EncodePoint(true).ToHexString(),
+                PrivateWifKey = walletAccount.GetKey().PrivateKey.ToHexString()
+            };
+
+            using (walletAccount.GetKey().Decrypt())
+            {
+                accountKeys.PrivateHexKey = walletAccount.GetKey().PrivateKey.ToHexString();
+            }
+
+            return accountKeys;
         }
 
         public Transaction GetTransaction(UInt256 hash)
@@ -604,11 +617,11 @@ namespace Neo.UI.Core.Controllers.Implementations
 
             var accountScriptHash = account.ScriptHash;
 
-            var deletedSuccessfully = this.currentWallet.DeleteAccount(accountScriptHash);
+            var deletedSuccessfully = this.currentWallet.DeleteAccount(UInt160.Parse(accountScriptHash));
 
             if (!deletedSuccessfully) return false;
 
-            this.currentWalletInfo.RemoveAccount(accountScriptHash);
+            this.currentWalletInfo.RemoveAccount(UInt160.Parse(accountScriptHash));
 
             this.TrySaveWallet();
 
@@ -681,9 +694,9 @@ namespace Neo.UI.Core.Controllers.Implementations
             return Wallet.ToScriptHash(address);
         }
 
-        public string ScriptHashToAddress(UInt160 scriptHash)
+        public string ScriptHashToAddress(string scriptHash)
         {
-            return Wallet.ToAddress(scriptHash);
+            return Wallet.ToAddress(UInt160.Parse(scriptHash));
         }
 
         public bool AddressIsValid(string address)
@@ -1038,7 +1051,7 @@ namespace Neo.UI.Core.Controllers.Implementations
                     : AccountType.NonStandard;
             }
 
-            var newAccountItem = new AccountItem(account.Label, account.ScriptHash, accountType);
+            var newAccountItem = new AccountItem(account.Label, account.ScriptHash.ToString(), accountType);
 
             this.currentWalletInfo.AddAccount(newAccountItem);
 
@@ -1059,8 +1072,8 @@ namespace Neo.UI.Core.Controllers.Implementations
             foreach (var account in accountsList)
             {
                 var scriptHash = account.ScriptHash;
-                var neo = balanceNeo.ContainsKey(scriptHash) ? balanceNeo[scriptHash] : Fixed8.Zero;
-                var gas = balanceGas.ContainsKey(scriptHash) ? balanceGas[scriptHash] : Fixed8.Zero;
+                var neo = balanceNeo.ContainsKey(UInt160.Parse(scriptHash)) ? balanceNeo[UInt160.Parse(scriptHash)] : Fixed8.Zero;
+                var gas = balanceGas.ContainsKey(UInt160.Parse(scriptHash)) ? balanceGas[UInt160.Parse(scriptHash)] : Fixed8.Zero;
                 account.Neo = neo;
                 account.Gas = gas;
             }
@@ -1169,7 +1182,10 @@ namespace Neo.UI.Core.Controllers.Implementations
             if (timeSinceLastBlock <= TimeSpan.FromSeconds(2)) return;
 
             // Update balances
-            var accountScriptHashes = this.currentWalletInfo.GetAccounts().Select(account => account.ScriptHash).ToList();
+            var accountScriptHashes = this.currentWalletInfo
+                .GetAccounts()
+                .Select(account => UInt160.Parse(account.ScriptHash))
+                .ToList();
 
             foreach (var nep5ScriptHash in this.nep5WatchScriptHashes)
             {

@@ -177,10 +177,10 @@ namespace Neo.Gui.ViewModels.Development
             this.CurrentValue = string.Empty;
             this.NewValue = string.Empty;
 
-            foreach (var item in context.ScriptHashes.Select(
-                this.walletController.ScriptHashToAddress))
+            var contextScriptHashes = context.ScriptHashes.Select(x => x.ToString());
+            foreach (var scriptHash in contextScriptHashes)
             {
-                this.ScriptHashAddresses.Add(item);
+                this.ScriptHashAddresses.Add(this.walletController.ScriptHashToAddress(scriptHash));
             }
 
             this.SelectedScriptHashAddress = null;

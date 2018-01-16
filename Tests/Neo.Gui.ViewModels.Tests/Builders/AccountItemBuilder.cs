@@ -6,7 +6,7 @@ namespace Neo.Gui.ViewModels.Tests.Builders
     {
         private AccountType accountType = AccountType.Standard;
         private string labelInternal = "accountLabel";
-        private UInt160 hashInternal;
+        private string hashInternal;
         private Fixed8 neoBalance = Fixed8.Zero;
 
         public AccountItemBuilder WithLabel(string label)
@@ -17,7 +17,7 @@ namespace Neo.Gui.ViewModels.Tests.Builders
 
         public AccountItemBuilder WithHash(string hash)
         {
-            this.hashInternal = UInt160.Parse(hash);
+            this.hashInternal = hash;
             return this;
         }
         
