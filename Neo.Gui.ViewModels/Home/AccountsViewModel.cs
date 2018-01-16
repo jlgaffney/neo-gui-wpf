@@ -191,7 +191,7 @@ namespace Neo.Gui.ViewModels.Home
         {
             if (!this.ViewPrivateKeyEnabled) return;
             
-            this.dialogManager.ShowDialog(new ViewPrivateKeyLoadParameters(this.SelectedAccount.ScriptHash));
+            this.dialogManager.ShowDialog(new ViewPrivateKeyLoadParameters(this.SelectedAccount.ScriptHash.ToString()));
         }
 
         private void ViewContract()

@@ -22,7 +22,7 @@ namespace Neo.Gui.ViewModels.Voting
         private readonly IDialogManager dialogManager;
         private readonly IWalletController walletController;
 
-        private UInt160 scriptHash;
+        private string scriptHash;
 
         private string votes;
 
@@ -64,11 +64,14 @@ namespace Neo.Gui.ViewModels.Voting
         }
         #endregion
         
-        private void SetScriptHash(UInt160 hash)
+        private void SetScriptHash(string hash)
         {
             this.scriptHash = hash;
 
-            var voteStrings = this.walletController.GetVotes(hash).Select(p => p.ToString()).ToArray();
+            var voteStrings = this.walletController
+                .GetVotes(UInt160.Parse(hash))
+                .Select(p => p.ToString())
+                .ToArray();
 
             // Set address
             this.Address = this.walletController.ScriptHashToAddress(hash);
@@ -113,7 +116,7 @@ namespace Neo.Gui.ViewModels.Voting
                         new TransactionAttribute
                         {
                             Usage = TransactionAttributeUsage.Script,
-                            Data = this.scriptHash.ToArray()
+                            Data = UInt160.Parse(this.scriptHash).ToArray()
                         }
                     }
                 };

@@ -300,7 +300,7 @@ namespace Neo.Gui.ViewModels.Wallets
             {
                 ["vin"] = tx.Inputs.Select(p => p.ToJson()).ToArray(),
                 ["vout"] = tx.Outputs.Select((p, i) => p.ToJson((ushort)i)).ToArray(),
-                ["change_address"] = this.walletController.ScriptHashToAddress(this.walletController.GetChangeAddress())
+                ["change_address"] = this.walletController.ScriptHashToAddress(this.walletController.GetChangeAddress().ToString())
             };
             return json;
         }

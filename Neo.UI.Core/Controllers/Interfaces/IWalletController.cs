@@ -148,7 +148,7 @@ namespace Neo.UI.Core.Controllers.Interfaces
 
         UInt160 AddressToScriptHash(string address);
 
-        string ScriptHashToAddress(UInt160 scriptHash);
+        string ScriptHashToAddress(string scriptHash);
 
         bool AddressIsValid(string address);
 

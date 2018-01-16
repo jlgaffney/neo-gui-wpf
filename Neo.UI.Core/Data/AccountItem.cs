@@ -4,24 +4,17 @@ namespace Neo.UI.Core.Data
 {
     public class AccountItem : BindableClass
     {
+        #region Private Fields 
         private Fixed8 neo;
         private Fixed8 gas;
+        #endregion
 
-        public AccountItem(string label, UInt160 scriptHash, AccountType accountType)
-        {
-            this.Label = label;
-            this.ScriptHash = scriptHash;
-            this.Type = accountType;
-
-            this.neo = Fixed8.Zero;
-            this.gas = Fixed8.Zero;
-        }
-        
+        #region Public Properties 
         public string Label { get; }
 
-        public UInt160 ScriptHash { get; }
+        public string ScriptHash { get; }
 
-        public string Address => Wallet.ToAddress(this.ScriptHash);
+        public string Address => Wallet.ToAddress(UInt160.Parse(this.ScriptHash));
 
         public AccountType Type { get; }
 
@@ -50,5 +43,18 @@ namespace Neo.UI.Core.Data
                 NotifyPropertyChanged();
             }
         }
+        #endregion
+
+        #region Constructor 
+        public AccountItem(string label, string scriptHash, AccountType accountType)
+        {
+            this.Label = label;
+            this.ScriptHash = scriptHash;
+            this.Type = accountType;
+
+            this.neo = Fixed8.Zero;
+            this.gas = Fixed8.Zero;
+        }
+        #endregion
     }
 }
