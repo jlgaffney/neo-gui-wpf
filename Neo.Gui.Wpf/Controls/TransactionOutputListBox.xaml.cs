@@ -43,7 +43,7 @@ namespace Neo.Gui.Wpf.Controls
         // Dependency Property
         public static readonly DependencyProperty ScriptHashProperty =
             DependencyProperty.Register("ScriptHash",
-                typeof(UInt160), typeof(TransactionOutputListBox),
+                typeof(string), typeof(TransactionOutputListBox),
                 new FrameworkPropertyMetadata(null,
                     OnScriptHashPropertyChanged,
                     OnCoerceScriptHashProperty));
@@ -51,7 +51,7 @@ namespace Neo.Gui.Wpf.Controls
         // Dependency Property
         public static readonly DependencyProperty AssetProperty =
             DependencyProperty.Register("Asset",
-                typeof(AssetDescriptor), typeof(TransactionOutputListBox),
+                typeof(AssetDto), typeof(TransactionOutputListBox),
                 new FrameworkPropertyMetadata(null));
 
         // .NET Property wrapper
@@ -62,16 +62,16 @@ namespace Neo.Gui.Wpf.Controls
         }
 
         // .NET Property wrapper
-        public UInt160 ScriptHash
+        public string ScriptHash
         {
-            get => (UInt160)GetValue(ScriptHashProperty);
+            get => (string)GetValue(ScriptHashProperty);
             set => SetValue(ScriptHashProperty, value);
         }
 
         // .NET Property wrapper
-        public AssetDescriptor Asset
+        public AssetDto Asset
         {
-            get => (AssetDescriptor) GetValue(AssetProperty);
+            get => (AssetDto) GetValue(AssetProperty);
             set => SetValue(AssetProperty, value);
         }
 
@@ -82,11 +82,9 @@ namespace Neo.Gui.Wpf.Controls
             get => !this.DockPanel.IsEnabled;
             set => this.DockPanel.IsEnabled = !value;
         }
-
         #endregion
 
         #region Public methods
-
         public void Clear()
         {
             if (this.Items.Count <= 0) return;
@@ -103,11 +101,9 @@ namespace Neo.Gui.Wpf.Controls
                 this.UpdateRemoveButtonEnabled();
             }));
         }
-
         #endregion
 
         #region Private methods
-
         private void UpdateRemoveButtonEnabled()
         {
             this.RemoveButton.IsEnabled = this.ListBox.SelectedItem != null;

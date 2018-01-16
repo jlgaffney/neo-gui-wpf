@@ -92,7 +92,7 @@ namespace Neo.UI.Core.Controllers.Interfaces
 
         ContractState GetContractState(UInt160 scriptHash);
 
-        AssetState GetAssetState(UInt256 assetId);
+        AssetStateDto GetAssetState(string assetId);
 
         bool CanViewCertificate(FirstClassAssetItem assetItem);
 
@@ -111,12 +111,12 @@ namespace Neo.UI.Core.Controllers.Interfaces
         /// <summary>
         /// NEP-5 assets
         /// </summary>
-        BigDecimal GetAvailable(UInt160 assetId);
+        string GetNEP5TokenAvailability(string assetId);
 
         /// <summary>
         /// First class assets
         /// </summary>
-        Fixed8 GetAvailable(UInt256 assetId);
+        string GetFirstClassTokenAvailability(string assetId);
 
         void ImportWatchOnlyAddress(string[] addressesToWatch);
 
@@ -156,7 +156,7 @@ namespace Neo.UI.Core.Controllers.Interfaces
 
         void ClaimUtilityTokenAsset();
 
-        void IssueAsset(UInt256 assetId, IEnumerable<TransferOutput> items);
+        void IssueAsset(string assetId, IEnumerable<TransferOutput> items);
 
         void InvokeContract(InvocationTransaction transaction);
 

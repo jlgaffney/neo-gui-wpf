@@ -7,18 +7,9 @@ namespace Neo.UI.Core.Data
 {
     public class FirstClassAssetItem : AssetItem
     {
-        public FirstClassAssetItem(UInt256 assetId, ECPoint assetOwner, AssetType assetType, string value)
-        {
-            this.AssetId = assetId;
-            this.AssetOwner = assetOwner;
-            this.AssetType = assetType;
-
-            this.Value = value;
-        }
-
         public bool IssuerCertificateChecked { get; private set; }
 
-        public bool IsSystemAsset => 
+        public bool IsSystemAsset =>
             this.AssetType == AssetType.GoverningToken ||
             this.AssetType == AssetType.UtilityToken;
 
@@ -26,11 +17,20 @@ namespace Neo.UI.Core.Data
 
         public override string Value { get; }
 
-        public UInt256 AssetId { get; }
+        public string AssetId { get; }
 
         public ECPoint AssetOwner { get; }
 
         public AssetType AssetType { get; }
+
+        public FirstClassAssetItem(string assetId, ECPoint assetOwner, AssetType assetType, string value)
+        {
+            this.AssetId = assetId;
+            this.AssetOwner = assetOwner;
+            this.AssetType = assetType;
+
+            this.Value = value;
+        }
 
         internal void SetIssuerCertificateQueryResult(CertificateQueryResult queryResult)
         {

@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows.Input;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-using Neo.Wallets;
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Transactions;
 using Neo.Gui.Dialogs.Results.Transactions;
@@ -19,23 +17,15 @@ namespace Neo.Gui.ViewModels.Transactions
     public class BulkPayViewModel : ViewModelBase,
         IResultDialogViewModel<BulkPayLoadParameters, BulkPayDialogResult>
     {
+        #region Private Fields 
         private readonly IWalletController walletController;
-
         private bool assetSelectionEnabled;
-
-        private AssetDescriptor selectedAsset;
-
+        private AssetDto selectedAsset;
         private string addressesAndAmounts;
-        
-        public BulkPayViewModel(
-            IWalletController walletController)
-        {
-            this.walletController = walletController;
+        #endregion
 
-            this.Assets = new ObservableCollection<AssetDescriptor>();
-        }
-
-        public ObservableCollection<AssetDescriptor> Assets { get; }
+        #region Public Properties 
+        public ObservableCollection<AssetDto> Assets { get; }
 
         public bool AssetSelectionEnabled
         {
@@ -50,7 +40,7 @@ namespace Neo.Gui.ViewModels.Transactions
             }
         }
 
-        public AssetDescriptor SelectedAsset
+        public AssetDto SelectedAsset
         {
             get => this.selectedAsset;
             set
@@ -84,8 +74,18 @@ namespace Neo.Gui.ViewModels.Transactions
 
         public bool OkEnabled => this.SelectedAsset != null && !string.IsNullOrEmpty(this.AddressesAndAmounts);
 
-        public ICommand OkCommand => new RelayCommand(this.Ok);
+        public RelayCommand OkCommand => new RelayCommand(this.Ok);
+        #endregion
 
+        #region Constructor 
+        public BulkPayViewModel(
+            IWalletController walletController)
+        {
+            this.walletController = walletController;
+
+            this.Assets = new ObservableCollection<AssetDto>();
+        }
+        #endregion
 
         #region ILoadableDialogViewModel implementation 
         public event EventHandler Close;
@@ -110,7 +110,7 @@ namespace Neo.Gui.ViewModels.Transactions
                 foreach (var assetId in this.walletController.FindUnspentCoins()
                     .Select(p => p.Output.AssetId).Distinct())
                 {
-                    this.Assets.Add(new AssetDescriptor(assetId));
+                    this.Assets.Add(new AssetDto { Id = assetId.ToString(), TokenType = TokenType.FirstClassToken });
                 }
 
                 // Add NEP-5 assets to list
@@ -118,10 +118,10 @@ namespace Neo.Gui.ViewModels.Transactions
 
                 foreach (var assetId in nep5WatchScriptHashes)
                 {
-                    AssetDescriptor nep5Asset;
+                    AssetDto nep5Asset;
                     try
                     {
-                        nep5Asset = new AssetDescriptor(assetId);
+                        nep5Asset = new AssetDto { Id = assetId.ToString(), TokenType = TokenType.NEP5Token };
                     }
                     catch (ArgumentException)
                     {
@@ -134,9 +134,9 @@ namespace Neo.Gui.ViewModels.Transactions
                 this.AssetSelectionEnabled = this.Assets.Any();
             }
         }
-
         #endregion
 
+        #region Private Methods 
         private void Ok()
         {
             if (!this.OkEnabled) return;
@@ -152,13 +152,13 @@ namespace Neo.Gui.ViewModels.Transactions
         {
             if (this.SelectedAsset == null) return null;
 
-            if (this.SelectedAsset.AssetId is UInt160 scriptHash)
+            if (this.SelectedAsset.TokenType == TokenType.NEP5Token)
             {
-                return this.walletController.GetAvailable(scriptHash).ToString();
+                return this.walletController.GetNEP5TokenAvailability(this.SelectedAsset.Id);
             }
             else
             {
-                return this.walletController.GetAvailable((UInt256)this.SelectedAsset.AssetId).ToString();
+                return this.walletController.GetFirstClassTokenAvailability(this.SelectedAsset.Id);
             }
         }
 
@@ -176,12 +176,13 @@ namespace Neo.Gui.ViewModels.Transactions
 
                 return new TransactionOutputItem
                 {
-                    AssetName = this.SelectedAsset.AssetName,
-                    AssetId = this.SelectedAsset.AssetId,
+                    AssetName = this.SelectedAsset.Name,
+                    AssetId = UIntBase.Parse(this.SelectedAsset.Id),
                     Value = new BigDecimal(Fixed8.Parse(lineElements[1]).GetData(), 8),
                     ScriptHash = this.walletController.AddressToScriptHash(lineElements[0])
                 };
             }).Where(p => p.Value.Value != 0).ToArray();
         }
+        #endregion
     }
 }

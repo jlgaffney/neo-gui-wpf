@@ -4,7 +4,9 @@ using System.Linq;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+
 using Neo.Core;
+
 using Neo.Gui.Globalization.Resources;
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Contracts;
@@ -33,7 +35,7 @@ namespace Neo.Gui.ViewModels.Wallets
         #region Public Properties 
         public ObservableCollection<TransactionOutputItem> Items { get; }
 
-        public ObservableCollection<string> Addresses { get; }
+        public ObservableCollection<string> Addresses { get; private set; }
 
         public bool ShowAdvancedSection
         {
@@ -94,9 +96,7 @@ namespace Neo.Gui.ViewModels.Wallets
             this.walletController = walletController;
 
             this.Items = new ObservableCollection<TransactionOutputItem>();
-
-            this.Addresses = new ObservableCollection<string>(
-                this.walletController.GetAccounts().Select(account => account.Address));
+            this.Addresses = new ObservableCollection<string>();
         }
         #endregion
 
@@ -105,6 +105,12 @@ namespace Neo.Gui.ViewModels.Wallets
 
         public void OnDialogLoad(TransferLoadParameters parameters)
         {
+            var addresses = this.walletController
+                .GetAccounts()
+                .Select(account => account.Address)
+                .ToList();
+
+            this.Addresses = new ObservableCollection<string>(addresses);
         }
         #endregion
 

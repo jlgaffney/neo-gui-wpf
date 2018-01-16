@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Windows.Input;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-using Neo.Core;
-using Neo.Wallets;
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Assets;
 using Neo.UI.Core.Controllers.Interfaces;
@@ -16,32 +13,23 @@ namespace Neo.Gui.ViewModels.Assets
 {
     public class AssetDistributionViewModel : ViewModelBase, IDialogViewModel<AssetDistributionLoadParameters>
     {
+        #region Private Fields 
         private readonly IWalletController walletController;
 
-        private AssetDescriptor asset;
-
+        private AssetDto asset;
         private string assetId;
-
         private bool assetIdEnabled = true;
-
         private string owner;
         private string admin;
         private string total;
         private string issued;
-
         private bool distributionEnabled;
+        #endregion
 
-        public AssetDistributionViewModel(
-            IWalletController walletController)
-        {
-            this.walletController = walletController;
-
-            this.Items = new ObservableCollection<TransactionOutputItem>();
-        }
-
+        #region Public Properties 
         public ObservableCollection<TransactionOutputItem> Items { get; }
 
-        public AssetDescriptor Asset
+        public AssetDto Asset
         {
             get => this.asset;
             set
@@ -49,8 +37,7 @@ namespace Neo.Gui.ViewModels.Assets
                 if (this.asset == value) return;
 
                 this.asset = value;
-
-                RaisePropertyChanged();
+                this.RaisePropertyChanged();
             }
         }
 
@@ -150,21 +137,35 @@ namespace Neo.Gui.ViewModels.Assets
 
         public bool ConfirmEnabled => this.Items.Count > 0;
 
-        public ICommand ConfirmCommand => new RelayCommand(this.Confirm);
+        public RelayCommand ConfirmCommand => new RelayCommand(this.Confirm);
 
-        public ICommand CancelCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
+        public RelayCommand CancelCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
+        #endregion
+
+        #region Construtor 
+        public AssetDistributionViewModel(
+            IWalletController walletController)
+        {
+            this.walletController = walletController;
+
+            this.Items = new ObservableCollection<TransactionOutputItem>();
+        }
+        #endregion
 
         #region IDialogViewModel implementation 
         public event EventHandler Close;
 
         public void OnDialogLoad(AssetDistributionLoadParameters parameters)
         {
+            this.AssetId = parameters.AssetStateId;
+            this.AssetIdEnabled = false;
         }
         #endregion
 
+        #region Private Methods 
         private void Confirm()
         {
-            this.walletController.IssueAsset((UInt256)this.Asset.AssetId, this.Items);
+            this.walletController.IssueAsset(this.Asset.Id, this.Items);
 
             this.Close(this, EventArgs.Empty);
         }
@@ -174,27 +175,10 @@ namespace Neo.Gui.ViewModels.Assets
             RaisePropertyChanged(nameof(this.ConfirmEnabled));
         }
 
-        public void SetAsset(AssetState assetState)
-        {
-            if (assetState == null) return;
-
-            this.AssetId = assetState.AssetId.ToString();
-            this.AssetIdEnabled = false;
-        }
-
         private void UpdateAssetDetails()
         {
-            AssetState assetState;
-            if (UInt256.TryParse(this.AssetId, out var id))
-            {
-                assetState = this.walletController.GetAssetState(id);
-                this.Asset = new AssetDescriptor(id);
-            }
-            else
-            {
-                assetState = null;
-                this.Asset = null;
-            }
+            var assetState = this.walletController.GetAssetState(this.AssetId);
+            this.Asset = new AssetDto { Id = this.AssetId };
 
             if (assetState == null)
             {
@@ -206,14 +190,15 @@ namespace Neo.Gui.ViewModels.Assets
             }
             else
             {
-                this.Owner = assetState.Owner.ToString();
-                this.Admin = this.walletController.ScriptHashToAddress(assetState.Admin.ToString());
-                this.Total = assetState.Amount == -Fixed8.Satoshi ? "+\u221e" : assetState.Amount.ToString();
-                this.Issued = assetState.Available.ToString();
-                this.DistributionEnabled = true;
+                this.Owner = assetState.Owner;
+                this.Admin = assetState.Admin;
+                this.Total = assetState.Total;
+                this.Issued = assetState.Issued;
+                this.DistributionEnabled = assetState.DistributionEnabled;
             }
 
             this.Items.Clear();
         }
+        #endregion
     }
 }

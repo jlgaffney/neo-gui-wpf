@@ -19,4 +19,8 @@
     <ProjectReference Include="..\Neo.Gui.TestHelpers\Neo.Gui.TestHelpers.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Assets\" />
+  </ItemGroup>
+
 </Project>

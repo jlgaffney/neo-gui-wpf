@@ -129,7 +129,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
         public void DeleteAssetCommand_ShowCertificate()
         {
             // Arrange
-            var tokenId = UInt256.Parse("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF");
+            var tokenId = "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF";
 
             var selectedAssetItem = new FirstClassAssetItemBuilder()
                 .WithAssetId(tokenId)
@@ -138,8 +138,8 @@ namespace Neo.Gui.ViewModels.Tests.Home
 
             var walletControllerMock = this.AutoMockContainer.GetMock<IWalletController>();
             walletControllerMock
-                .Setup(x => x.GetAvailable(tokenId))
-                .Returns(Fixed8.Zero);
+                .Setup(x => x.GetFirstClassTokenAvailability(tokenId))
+                .Returns("0");
 
             var dialogManagerMock = this.AutoMockContainer.GetMock<IDialogManager>();
             dialogManagerMock
@@ -162,7 +162,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             // Arrange
             var expectedAssetURLFormat = @"https://www.xpto.com/{0}";
             var tokenName = "1234";
-            var tokenId = UInt256.Parse("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF");
+            var tokenId = "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF";
 
             var selectedAssetItem = new FirstClassAssetItemBuilder()
                 .WithAssetId(tokenId)

@@ -10,7 +10,7 @@ namespace Neo.Gui.ViewModels.Tests.Builders
         private string internalName = "Name";
         private string internalValue = "Value";
         private string internalIssuer = "Issuer";
-        private UInt256 internalAssetId = UInt256.Parse("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF");
+        private string internalAssetId = "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF";
         private ECPoint internalAssetOwner = new ECPoint();
         private AssetType internalAssetType = AssetType.Token;
 
@@ -50,7 +50,7 @@ namespace Neo.Gui.ViewModels.Tests.Builders
             return this;
         }
 
-        public FirstClassAssetItemBuilder WithAssetId(UInt256 assetId)
+        public FirstClassAssetItemBuilder WithAssetId(string assetId)
         {
             this.internalAssetId = assetId;
             return this;

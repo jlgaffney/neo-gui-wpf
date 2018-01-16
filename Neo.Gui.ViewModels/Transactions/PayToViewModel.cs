@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows.Input;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
 using Neo.Wallets;
+
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Transactions;
 using Neo.Gui.Dialogs.Results.Transactions;
@@ -18,25 +18,20 @@ namespace Neo.Gui.ViewModels.Transactions
     public class PayToViewModel : ViewModelBase,
         IResultDialogViewModel<PayToLoadParameters, PayToDialogResult>
     {
+        #region Private Fields 
         private readonly IWalletController walletController;
 
         private bool assetSelectionEnabled;
-        private AssetDescriptor selectedAsset;
+        private AssetDto selectedAsset;
 
         private bool payToAddressReadOnly;
         private string payToAddress;
 
         private string amount;
+        #endregion
 
-        public PayToViewModel(
-            IWalletController walletController)
-        {
-            this.walletController = walletController;
-
-            this.Assets = new ObservableCollection<AssetDescriptor>();
-        }
-
-        public ObservableCollection<AssetDescriptor> Assets { get; }
+        #region Public Properties 
+        public ObservableCollection<AssetDto> Assets { get; }
 
         public bool AssetSelectionEnabled
         {
@@ -51,7 +46,7 @@ namespace Neo.Gui.ViewModels.Transactions
             }
         }
 
-        public AssetDescriptor SelectedAsset
+        public AssetDto SelectedAsset
         {
             get => this.selectedAsset;
             set
@@ -91,7 +86,7 @@ namespace Neo.Gui.ViewModels.Transactions
                 if (this.payToAddress == value) return;
 
                 this.payToAddress = value;
-                
+
                 RaisePropertyChanged();
 
                 // Update dependent property
@@ -122,7 +117,7 @@ namespace Neo.Gui.ViewModels.Transactions
                 if (this.SelectedAsset == null ||
                     string.IsNullOrEmpty(this.PayToAddress) ||
                     string.IsNullOrEmpty(this.Amount)) return false;
-                
+
                 try
                 {
                     this.walletController.AddressToScriptHash(this.PayToAddress);
@@ -138,7 +133,7 @@ namespace Neo.Gui.ViewModels.Transactions
 
                 if (asset == null) return false;
 
-                if (parsedAmount.GetData() % (long) Math.Pow(10, 8 - asset.Decimals) != 0) return false;
+                if (parsedAmount.GetData() % (long)Math.Pow(10, 8 - asset.Decimals) != 0) return false;
 
                 if (parsedAmount == Fixed8.Zero) return false;
 
@@ -146,8 +141,18 @@ namespace Neo.Gui.ViewModels.Transactions
             }
         }
 
-        public ICommand OkCommand => new RelayCommand(this.Ok);
+        public RelayCommand OkCommand => new RelayCommand(this.Ok);
+        #endregion
 
+        #region Constructor 
+        public PayToViewModel(
+            IWalletController walletController)
+        {
+            this.walletController = walletController;
+
+            this.Assets = new ObservableCollection<AssetDto>();
+        }
+        #endregion
 
         #region ILoadableDialogViewModel implementation 
         public event EventHandler Close;
@@ -173,16 +178,16 @@ namespace Neo.Gui.ViewModels.Transactions
                 foreach (var assetId in this.walletController.FindUnspentCoins()
                     .Select(p => p.Output.AssetId).Distinct())
                 {
-                    this.Assets.Add(new AssetDescriptor(assetId));
+                    this.Assets.Add(new AssetDto { Id = assetId.ToString(), TokenType = TokenType.FirstClassToken });
                 }
 
                 // Add NEP-5 assets to list
                 foreach (var assetId in this.walletController.GetNEP5WatchScriptHashes())
                 {
-                    AssetDescriptor nep5Asset;
+                    AssetDto nep5Asset;
                     try
                     {
-                        nep5Asset = new AssetDescriptor(assetId);
+                        nep5Asset = new AssetDto { Id = assetId.ToString(), TokenType = TokenType.NEP5Token };
                     }
                     catch (ArgumentException)
                     {
@@ -203,6 +208,7 @@ namespace Neo.Gui.ViewModels.Transactions
         }
         #endregion
 
+        #region Private Methods 
         private void Ok()
         {
             if (!this.OkEnabled) return;
@@ -218,13 +224,13 @@ namespace Neo.Gui.ViewModels.Transactions
         {
             if (this.SelectedAsset == null) return null;
 
-            if (this.SelectedAsset.AssetId is UInt160 scriptHash)
+            if (this.SelectedAsset.TokenType == TokenType.NEP5Token)
             {
-                return this.walletController.GetAvailable(scriptHash).ToString();
+                return this.walletController.GetNEP5TokenAvailability(this.SelectedAsset.Id);
             }
             else
             {
-                return this.walletController.GetAvailable((UInt256) this.SelectedAsset.AssetId).ToString();
+                return this.walletController.GetFirstClassTokenAvailability(this.SelectedAsset.Id);
             }
         }
 
@@ -236,11 +242,12 @@ namespace Neo.Gui.ViewModels.Transactions
 
             return new TransactionOutputItem
             {
-                AssetName = asset.AssetName,
-                AssetId = asset.AssetId,
+                AssetName = asset.Name,
+                AssetId = UIntBase.Parse(asset.Id),
                 Value = new BigDecimal(Fixed8.Parse(this.Amount).GetData(), 8),
                 ScriptHash = this.walletController.AddressToScriptHash(this.PayToAddress)
             };
         }
+        #endregion
     }
 }

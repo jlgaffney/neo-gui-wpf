@@ -488,9 +488,19 @@ namespace Neo.UI.Core.Controllers.Implementations
             return this.blockchainController.GetContractState(scriptHash);
         }
 
-        public AssetState GetAssetState(UInt256 assetId)
+        public AssetStateDto GetAssetState(string assetId)
         {
-            return this.blockchainController.GetAssetState(assetId);
+            var assetState = this.blockchainController.GetAssetState(UInt256.Parse(assetId));
+
+            var assetStateDto = new AssetStateDto(
+                assetState.AssetId.ToString(),
+                assetState.Owner.ToString(),
+                this.ScriptHashToAddress(assetState.Admin.ToString()),
+                assetState.Amount == -Fixed8.Satoshi ? "+\u221e" : assetState.Amount.ToString(),
+                assetState.Available.ToString(),
+                true);
+
+            return assetStateDto;
         }
 
         public bool CanViewCertificate(FirstClassAssetItem assetItem)
@@ -556,24 +566,24 @@ namespace Neo.UI.Core.Controllers.Implementations
             return this.currentWallet.Contains(scriptHash);
         }
 
-        public BigDecimal GetAvailable(UInt160 assetId)
+        public string GetNEP5TokenAvailability(string assetId)
         {
             if (!this.WalletIsOpen)
             {
-                return new BigDecimal(BigInteger.Zero, 0);
+                return new BigDecimal(BigInteger.Zero, 0).ToString();
             }
 
-            return this.currentWallet.GetAvailable(assetId);
+            return this.currentWallet.GetAvailable(UInt160.Parse(assetId)).ToString();
         }
 
-        public Fixed8 GetAvailable(UInt256 assetId)
+        public string GetFirstClassTokenAvailability(string assetId)
         {
             if (!this.WalletIsOpen)
             {
-                return Fixed8.Zero;
+                return Fixed8.Zero.ToString();
             }
 
-            return this.currentWallet.GetAvailable(assetId);
+            return this.currentWallet.GetAvailable(UInt256.Parse(assetId)).ToString();
         }
 
         public void ImportWatchOnlyAddress(string[] addressesToWatch)
@@ -715,12 +725,12 @@ namespace Neo.UI.Core.Controllers.Implementations
 
         public void DeleteFirstClassAsset(FirstClassAssetItem assetItem)
         {
-            var value = this.GetAvailable(assetItem.AssetId);
+            var value = this.GetFirstClassTokenAvailability(assetItem.AssetId.ToString());
 
             var transactionOutput = new TransactionOutput
             {
-                AssetId = assetItem.AssetId,
-                Value = value,
+                AssetId = UInt256.Parse(assetItem.AssetId),
+                Value = Fixed8.Parse(value),
                 ScriptHash = this.RecycleScriptHash
             };
 
@@ -749,7 +759,7 @@ namespace Neo.UI.Core.Controllers.Implementations
             this.SignAndRelay(claimTransaction);
         }
 
-        public void IssueAsset(UInt256 assetId, IEnumerable<TransferOutput> items)
+        public void IssueAsset(string assetId, IEnumerable<TransferOutput> items)
         {
             this.ThrowIfWalletIsNotOpen();
 
@@ -758,7 +768,7 @@ namespace Neo.UI.Core.Controllers.Implementations
                 Version = 1,
                 Outputs = items.GroupBy(p => p.ScriptHash).Select(g => new TransactionOutput
                 {
-                    AssetId = assetId,
+                    AssetId = UInt256.Parse(assetId),
                     Value = g.Sum(p => new Fixed8((long)p.Value.Value)),
                     ScriptHash = g.Key
                 }).ToArray()
@@ -1113,7 +1123,7 @@ namespace Neo.UI.Core.Controllers.Implementations
 
                 foreach (var asset in this.currentWalletInfo.GetFirstClassAssets())
                 {
-                    if (assetDictionary.ContainsKey(asset.AssetId)) continue;
+                    if (assetDictionary.ContainsKey(UInt256.Parse(asset.AssetId))) continue;
 
                     this.currentWalletInfo.RemoveAsset(asset);
                 }
@@ -1155,7 +1165,7 @@ namespace Neo.UI.Core.Controllers.Implementations
                         }
 
                         var assetItem = new FirstClassAssetItem(
-                            asset.Asset.AssetId,
+                            asset.Asset.AssetId.ToString(),
                             asset.Asset.Owner,
                             asset.Asset.AssetType,
                             valueText)
