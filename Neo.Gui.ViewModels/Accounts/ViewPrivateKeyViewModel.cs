@@ -101,7 +101,7 @@ namespace Neo.Gui.ViewModels.Accounts
         {
             if (parameters == null || parameters.ScriptHash == null) return;
 
-            var accountKeys = this.walletController.GetAccountKeys(parameters.ScriptHash.ToString());
+            var accountKeys = this.walletController.GetAccountKeys(parameters.ScriptHash);
 
             this.Address = accountKeys.Address;
             this.PublicKeyHex = accountKeys.PublicHexKey;
