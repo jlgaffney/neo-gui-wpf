@@ -15,8 +15,8 @@ namespace Neo.Gui.Wpf.Views.Assets
         {
             // TODO #Issue 145 [AboimPinto]: need to find in the ViewModel a way to enable the confirm buttom
 
-            var viewModel = this.DataContext as AssetDistributionViewModel;
-            viewModel.UpdateConfirmButtonEnabled();
+            //var viewModel = this.DataContext as AssetDistributionViewModel;
+            //viewModel.UpdateConfirmButtonEnabled();
         }
     }
 }
