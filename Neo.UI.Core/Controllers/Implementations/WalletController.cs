@@ -394,8 +394,8 @@ namespace Neo.UI.Core.Controllers.Implementations
         {
             this.ThrowIfWalletIsNotOpen();
 
-            return this.GetAccounts().Where(account =>
-                !account.WatchOnly && account.Contract.IsStandard);
+            return this.GetAccounts()
+                .Where(account => !account.WatchOnly && account.Contract.IsStandard);
         }
 
         public IEnumerable<Coin> GetCoins()
@@ -820,6 +820,14 @@ namespace Neo.UI.Core.Controllers.Implementations
             return this
                 .GetStandardAccounts()
                 .Select(x => x.GetKey().PublicKey.ToString())
+                .ToList();
+        }
+
+        public IEnumerable<string> GetAddressesForNonWatchOnlyAccounts()
+        {
+            return this
+                .GetNonWatchOnlyAccounts()
+                .Select(x => x.Address.ToString())
                 .ToList();
         }
 

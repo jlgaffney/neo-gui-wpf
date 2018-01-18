@@ -170,6 +170,8 @@ namespace Neo.UI.Core.Controllers.Interfaces
 
         IEnumerable<string> GetPublicKeysFromStandardAccounts();
 
+        IEnumerable<string> GetAddressesForNonWatchOnlyAccounts();
+
         void AddMultiSignatureContract(int minimunSignatureNumber, IEnumerable<string> publicKeys);
 
         void AddContractWithParameters(string reedemScript, string parameterList);

@@ -4,6 +4,10 @@ namespace Neo.Gui.Dialogs.LoadParameters.Contracts
 {
     public class InvokeContractLoadParameters
     {
+        public InvocationTransactionType InvocationTransactionType { get; set; }
+
+        public AssetRegistrationParameters AssetRegistrationParameters { get; set; }
+
         public InvocationTransaction Transaction { get; }
 
         public InvokeContractLoadParameters(InvocationTransaction transaction)
