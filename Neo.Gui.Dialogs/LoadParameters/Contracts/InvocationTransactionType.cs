@@ -2,6 +2,7 @@
 {
     public enum InvocationTransactionType
     {
-        AssetRegistration = 0
+        AssetRegistration,
+        Election
     }
 }

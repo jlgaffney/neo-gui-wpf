@@ -8,6 +8,8 @@ namespace Neo.Gui.Dialogs.LoadParameters.Contracts
 
         public AssetRegistrationParameters AssetRegistrationParameters { get; set; }
 
+        public ElectionParameters ElectionParameters { get; set; }
+
         public InvocationTransaction Transaction { get; }
 
         public InvokeContractLoadParameters(InvocationTransaction transaction)
@@ -16,3 +18,4 @@ namespace Neo.Gui.Dialogs.LoadParameters.Contracts
         }
     }
 }
+
