@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Linq;
-using System.Windows.Input;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-
-using Neo.Core;
-using Neo.SmartContract;
 
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Contracts;
@@ -17,8 +12,11 @@ using Neo.UI.Core.Services.Interfaces;
 
 namespace Neo.Gui.ViewModels.Contracts
 {
-    public class DeployContractViewModel : ViewModelBase, IDialogViewModel<DeployContractLoadParameters>
+    public class DeployContractViewModel : 
+        ViewModelBase, 
+        IDialogViewModel<DeployContractLoadParameters>
     {
+        #region Private Fields 
         private readonly IDialogManager dialogManager;
         private readonly IFileManager fileManager;
         private readonly IFileDialogService fileDialogService;
@@ -34,20 +32,9 @@ namespace Neo.Gui.ViewModels.Contracts
 
         private string code;
         private bool needsStorage;
+        #endregion
 
-        public DeployContractViewModel(
-            IDialogManager dialogManager,
-            IFileManager fileManager,
-            IFileDialogService fileDialogService,
-            IWalletController walletController)
-        {
-            this.dialogManager = dialogManager;
-            this.fileManager = fileManager;
-            this.fileDialogService = fileDialogService;
-            this.walletController = walletController;
-        }
-
-
+        #region Public Properties 
         public string Name
         {
             get => this.name;
@@ -187,9 +174,7 @@ namespace Neo.Gui.ViewModels.Contracts
                 {
                     var codeBytes = this.Code.HexToBytes();
 
-                    var scriptHash = codeBytes.ToScriptHash();
-
-                    return scriptHash.ToString();
+                    return this.walletController.ByteToScriptHash(codeBytes);
                 }
                 catch (FormatException)
                 {
@@ -219,11 +204,26 @@ namespace Neo.Gui.ViewModels.Contracts
             !string.IsNullOrEmpty(this.Description) &&
             !string.IsNullOrEmpty(this.Code);
 
-        public ICommand LoadCommand => new RelayCommand(this.Load);
+        public RelayCommand LoadCommand => new RelayCommand(this.HandleLoadCommand);
 
-        public ICommand DeployCommand => new RelayCommand(this.Deploy);
+        public RelayCommand DeployCommand => new RelayCommand(this.HandleDeployCommand);
 
-        public ICommand CancelCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
+        public RelayCommand CancelCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
+        #endregion
+
+        #region Constructor 
+        public DeployContractViewModel(
+            IDialogManager dialogManager,
+            IFileManager fileManager,
+            IFileDialogService fileDialogService,
+            IWalletController walletController)
+        {
+            this.dialogManager = dialogManager;
+            this.fileManager = fileManager;
+            this.fileDialogService = fileDialogService;
+            this.walletController = walletController;
+        }
+        #endregion
 
         #region IDialogViewModel implementation 
         public event EventHandler Close;
@@ -233,7 +233,8 @@ namespace Neo.Gui.ViewModels.Contracts
         }
         #endregion
 
-        private void Load()
+        #region Private Methods 
+        private void HandleLoadCommand()
         {
             var filePath = this.fileDialogService.OpenFileDialog("AVM File|*.avm", "avm");
 
@@ -260,36 +261,49 @@ namespace Neo.Gui.ViewModels.Contracts
             this.Code = hexString;
         }
 
-        private void Deploy()
+        private void HandleDeployCommand()
         {
-            var transaction = this.MakeTransaction();
+            //var transaction = this.MakeTransaction();
 
-            if (transaction == null) return;
+            //if (transaction == null) return;
 
-            this.dialogManager.ShowDialog(new InvokeContractLoadParameters(transaction));
+            this.dialogManager.ShowDialog(new InvokeContractLoadParameters(null)
+            {
+                InvocationTransactionType = InvocationTransactionType.DeployContract,
+                DeployContractParameters = new DeployContractParameters(this.Code)
+            });
 
             this.Close(this, EventArgs.Empty);
         }
 
-        private InvocationTransaction MakeTransaction()
-        {
-            if (!this.DeployEnabled) return null;
+        //private InvocationTransaction MakeTransaction()
+        //{
+        //    if (!this.DeployEnabled) return null;
 
-            var script = this.Code.HexToBytes();
-            var parameterListBytes = string.IsNullOrEmpty(this.ParameterList) ? new byte[0] : this.ParameterList.HexToBytes();
+        //    var script = this.Code.HexToBytes();
+        //    var parameterListBytes = string.IsNullOrEmpty(this.ParameterList) ? new byte[0] : this.ParameterList.HexToBytes();
 
-            ContractParameterType returnType;
-            if (string.IsNullOrEmpty(this.ReturnType))
-            {
-                returnType = ContractParameterType.Void;
-            }
-            else
-            {
-                returnType = this.ReturnType.HexToBytes().Select(p => (ContractParameterType?)p).FirstOrDefault() ?? ContractParameterType.Void;
-            }
+        //    ContractParameterType returnType;
+        //    if (string.IsNullOrEmpty(this.ReturnType))
+        //    {
+        //        returnType = ContractParameterType.Void;
+        //    }
+        //    else
+        //    {
+        //        returnType = this.ReturnType.HexToBytes().Select(p => (ContractParameterType?)p).FirstOrDefault() ?? ContractParameterType.Void;
+        //    }
 
-            return this.walletController.MakeContractCreationTransaction(script, parameterListBytes, returnType,
-                this.NeedsStorage, this.Name, this.Version, this.Author, this.Email, this.Description);
-        }
+        //    return this.walletController.MakeContractCreationTransaction(
+        //        script, 
+        //        parameterListBytes, 
+        //        returnType,
+        //        this.NeedsStorage, 
+        //        this.Name, 
+        //        this.Version, 
+        //        this.Author, 
+        //        this.Email, 
+        //        this.Description);
+        //}
+        #endregion
     }
 }

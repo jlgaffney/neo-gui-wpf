@@ -146,6 +146,8 @@ namespace Neo.UI.Core.Controllers.Interfaces
             string email, 
             string description);
 
+        string ByteToScriptHash(byte[] codeBytes);
+
         UInt160 AddressToScriptHash(string address);
 
         string ScriptHashToAddress(string scriptHash);

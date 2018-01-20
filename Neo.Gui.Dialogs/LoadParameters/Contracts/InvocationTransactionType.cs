@@ -3,6 +3,7 @@
     public enum InvocationTransactionType
     {
         AssetRegistration,
-        Election
+        Election, 
+        DeployContract
     }
 }

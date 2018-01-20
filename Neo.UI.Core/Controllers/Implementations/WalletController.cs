@@ -699,6 +699,11 @@ namespace Neo.UI.Core.Controllers.Implementations
                     name, version, author, email, description);
         }
 
+        public string ByteToScriptHash(byte[] codeBytes)
+        {
+            return codeBytes.ToScriptHash().ToString();
+        }
+
         public UInt160 AddressToScriptHash(string address)
         {
             return Wallet.ToScriptHash(address);
