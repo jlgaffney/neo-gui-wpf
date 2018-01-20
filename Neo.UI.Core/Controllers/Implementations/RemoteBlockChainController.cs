@@ -1,7 +1,6 @@
 ﻿using System;
 using Neo.Core;
 using Neo.UI.Core.Controllers.Interfaces;
-using Neo.UI.Core.Messaging.Interfaces;
 using Neo.UI.Core.Status;
 
 namespace Neo.UI.Core.Controllers.Implementations
@@ -10,14 +9,6 @@ namespace Neo.UI.Core.Controllers.Implementations
         BaseBlockchainController,
         IBlockchainController
     {
-        #region Constructor
-        public RemoteBlockchainController(
-            IMessagePublisher messagePublisher)
-                : base(messagePublisher)
-        {
-        }
-        #endregion
-
         public uint BlockHeight => throw new NotImplementedException();
 
         public event EventHandler<Block> PersistCompleted

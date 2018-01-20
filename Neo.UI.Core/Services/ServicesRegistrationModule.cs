@@ -9,6 +9,10 @@ namespace Neo.UI.Core.Services
         protected override void Load(ContainerBuilder builder)
         {
             builder
+                .RegisterType<BlockchainImportService>()
+                .As<IBlockchainImportService>();
+
+            builder
                 .RegisterType<CertificateService>()
                 .As<ICertificateService>();
 

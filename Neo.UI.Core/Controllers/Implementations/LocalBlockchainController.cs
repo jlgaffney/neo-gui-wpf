@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Neo.Core;
 using Neo.Implementations.Blockchains.LevelDB;
 using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Exceptions;
 using Neo.UI.Core.Helpers;
-using Neo.UI.Core.Importers;
+using Neo.UI.Core.Messages;
 using Neo.UI.Core.Messaging.Interfaces;
+using Neo.UI.Core.Services.Interfaces;
 using Neo.UI.Core.Status;
 
 namespace Neo.UI.Core.Controllers.Implementations
@@ -15,17 +17,27 @@ namespace Neo.UI.Core.Controllers.Implementations
         IBlockchainController
     {
         #region Private Fields
+        private static readonly TimeSpan OneSecondTimeSpan = new TimeSpan(0, 0, 1);
+
+        private readonly IBlockchainImportService blockchainImportService;
+        private readonly IMessagePublisher messagePublisher;
+
         private bool initialized;
         private bool disposed;
 
         private Blockchain blockchain;
+        private DateTime timeOfLastBlock = DateTime.MinValue;
+
+        private DateTime timeOfLastBlockAddedMessagePublish = DateTime.MinValue;
         #endregion
 
         #region Constructor 
         public LocalBlockchainController(
+            IBlockchainImportService blockchainImportService,
             IMessagePublisher messagePublisher)
-                : base(messagePublisher)
         {
+            this.blockchainImportService = blockchainImportService;
+            this.messagePublisher = messagePublisher;
         }
         #endregion
 
@@ -54,9 +66,15 @@ namespace Neo.UI.Core.Controllers.Implementations
             // Setup blockchain
             var levelDBBlockchain = Blockchain.RegisterBlockchain(new LevelDBBlockchain(blockchainDataDirectoryPath));
 
-            Blockchain.PersistCompleted += this.BlockAdded;
+            Blockchain.PersistCompleted += this.OnBlockAdded;
 
-            BlockchainImporter.ImportBlocksIfRequired(levelDBBlockchain);
+            if (this.blockchainImportService.BlocksAreAvailableToImport)
+            {
+                Task.Run(() =>
+                {
+                    this.blockchainImportService.ImportBlocks(levelDBBlockchain);
+                });
+            }
 
             this.blockchain = levelDBBlockchain;
 
@@ -150,7 +168,7 @@ namespace Neo.UI.Core.Controllers.Implementations
                 {
                     if (this.initialized)
                     {
-                        Blockchain.PersistCompleted -= this.BlockAdded;
+                        Blockchain.PersistCompleted -= this.OnBlockAdded;
 
                         this.blockchain.Dispose();
                         this.blockchain = null;
@@ -166,6 +184,25 @@ namespace Neo.UI.Core.Controllers.Implementations
             Dispose(false);
         }
 
+        #endregion
+
+        #region Private Methods
+        private TimeSpan GetTimeSinceLastBlock()
+        {
+            return DateTime.UtcNow - this.timeOfLastBlock;
+        }
+
+        protected void OnBlockAdded(object sender, Block block)
+        {
+            var now = DateTime.UtcNow;
+
+            this.timeOfLastBlock = now;
+
+            if (now - this.timeOfLastBlockAddedMessagePublish < OneSecondTimeSpan) return;
+
+            this.messagePublisher.Publish(new BlockAddedMessage());
+            this.timeOfLastBlockAddedMessagePublish = now;
+        }
         #endregion
     }
 }
