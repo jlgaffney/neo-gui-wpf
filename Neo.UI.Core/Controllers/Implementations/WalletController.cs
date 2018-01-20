@@ -1093,12 +1093,12 @@ namespace Neo.UI.Core.Controllers.Implementations
             var balanceGas = coins.Where(p => p.Output.AssetId.Equals(this.blockchainController.UtilityToken.Hash)).GroupBy(p => p.Output.ScriptHash).ToDictionary(p => p.Key, p => p.Sum(i => i.Output.Value));
 
             var accountsList = this.currentWalletInfo.GetAccounts().ToList();
-
+            
             foreach (var account in accountsList)
             {
-                var scriptHash = account.ScriptHash;
-                var neo = balanceNeo.ContainsKey(UInt160.Parse(scriptHash)) ? balanceNeo[UInt160.Parse(scriptHash)] : Fixed8.Zero;
-                var gas = balanceGas.ContainsKey(UInt160.Parse(scriptHash)) ? balanceGas[UInt160.Parse(scriptHash)] : Fixed8.Zero;
+                var scriptHash = UInt160.Parse(account.ScriptHash);
+                var neo = balanceNeo.ContainsKey(scriptHash) ? balanceNeo[scriptHash] : Fixed8.Zero;
+                var gas = balanceGas.ContainsKey(scriptHash) ? balanceGas[scriptHash] : Fixed8.Zero;
                 account.Neo = neo;
                 account.Gas = gas;
             }
