@@ -88,7 +88,7 @@ namespace Neo.UI.Core.Controllers.Interfaces
         /// </summary>
         /// <param name="scriptHash">Script hash of the account that voted</param>
         /// <returns>Enumerable collection of public keys</returns>
-        IEnumerable<ECPoint> GetVotes(UInt160 scriptHash);
+        IEnumerable<string> GetVotes(string scriptHash);
 
         ContractState GetContractState(UInt160 scriptHash);
 

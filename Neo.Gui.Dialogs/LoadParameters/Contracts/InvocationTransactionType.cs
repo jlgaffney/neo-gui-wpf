@@ -4,6 +4,7 @@
     {
         AssetRegistration,
         Election, 
-        DeployContract
+        DeployContract,
+        Vote
     }
 }

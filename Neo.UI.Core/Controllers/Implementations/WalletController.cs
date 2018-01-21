@@ -471,16 +471,16 @@ namespace Neo.UI.Core.Controllers.Implementations
             return this.blockchainController.GetTransaction(hash, out height);
         }
 
-        public IEnumerable<ECPoint> GetVotes(UInt160 scriptHash)
+        public IEnumerable<string> GetVotes(string scriptHash)
         {
-            var accountState = this.blockchainController.GetAccountState(scriptHash);
+            var accountState = this.blockchainController.GetAccountState(UInt160.Parse(scriptHash));
 
             if (accountState == null)
             {
-                return Enumerable.Empty<ECPoint>();
+                return Enumerable.Empty<string>();
             }
 
-            return accountState.Votes;
+            return accountState.Votes.Select(x => x.ToString());
         }
 
         public ContractState GetContractState(UInt160 scriptHash)
