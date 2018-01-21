@@ -118,6 +118,10 @@ namespace Neo.Gui.Wpf
                         window = dialogManager.CreateDialog<HomeLoadParameters>(null) as Window;
                     });
                 }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                }
                 finally
                 {
                     Debug.Assert(window != null);
