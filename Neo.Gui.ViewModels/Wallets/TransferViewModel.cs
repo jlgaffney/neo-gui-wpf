@@ -11,6 +11,7 @@ using Neo.Gui.Dialogs.LoadParameters.Wallets;
 using Neo.Gui.Globalization.Resources;
 using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Data;
+using Neo.UI.Core.Data.TransactionParameters;
 
 namespace Neo.Gui.ViewModels.Wallets
 {
@@ -135,8 +136,8 @@ namespace Neo.Gui.ViewModels.Wallets
         {
             if (!this.OkEnabled) return;
 
-            var assetTransferParameters = new AssetTransferParameters(this.Items, this.SelectedChangeAddress, this.remark, this.Fee);
-            this.dialogManager.ShowDialog(new InvokeContractLoadParameters(null)
+            var assetTransferParameters = new AssetTransferTransactionParameters(this.Items, this.SelectedChangeAddress, this.remark, this.Fee);
+            this.dialogManager.ShowDialog(new InvokeContractLoadParameters()
             {
                 InvocationTransactionType = InvocationTransactionType.AssetTransfer,
                 AssetTransferParameters = assetTransferParameters

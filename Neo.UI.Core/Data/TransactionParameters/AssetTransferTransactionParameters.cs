@@ -1,9 +1,8 @@
-﻿using Neo.UI.Core.Data;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace Neo.Gui.Dialogs.LoadParameters.Contracts
+namespace Neo.UI.Core.Data.TransactionParameters
 {
-    public class AssetTransferParameters
+    public class AssetTransferTransactionParameters
     {
         public IEnumerable<TransactionOutputItem> TransactionOutputItems { get; private set; }
 
@@ -13,7 +12,7 @@ namespace Neo.Gui.Dialogs.LoadParameters.Contracts
 
         public string TransferFee { get; private set; }
 
-        public AssetTransferParameters(IEnumerable<TransactionOutputItem> transactionOutputItems, string transferChangeAddress, string remark, string transferFee)
+        public AssetTransferTransactionParameters(IEnumerable<TransactionOutputItem> transactionOutputItems, string transferChangeAddress, string remark, string transferFee)
         {
             this.TransactionOutputItems = transactionOutputItems;
             this.TransferChangeAddress = transferChangeAddress;

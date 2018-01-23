@@ -1,8 +1,6 @@
-﻿using Neo.UI.Core.Data;
-
-namespace Neo.Gui.Dialogs.LoadParameters.Contracts
+﻿namespace Neo.UI.Core.Data.TransactionParameters
 {
-    public class AssetRegistrationParameters
+    public class AssetRegistrationTransactionParameters
     {
         public AssetTypeDto AssetType { get; private set; }
 
@@ -18,7 +16,7 @@ namespace Neo.Gui.Dialogs.LoadParameters.Contracts
 
         public string IssuerAddress { get; private set; }
 
-        public AssetRegistrationParameters(
+        public AssetRegistrationTransactionParameters(
             AssetTypeDto assetTypeDto, 
             string formatedName, 
             decimal totalTokenAmount,

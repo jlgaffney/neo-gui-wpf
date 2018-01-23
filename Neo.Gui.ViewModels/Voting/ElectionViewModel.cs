@@ -10,6 +10,7 @@ using Neo.Gui.Dialogs.LoadParameters.Voting;
 using Neo.Gui.Base.Managers.Interfaces;
 using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Extensions;
+using Neo.UI.Core.Data.TransactionParameters;
 
 namespace Neo.Gui.ViewModels.Voting
 {
@@ -79,10 +80,10 @@ namespace Neo.Gui.ViewModels.Voting
 
             //this.dialogManager.ShowDialog(new InvokeContractLoadParameters(transaction));
 
-            var invokeContractLoadParameters = new InvokeContractLoadParameters(null)
+            var invokeContractLoadParameters = new InvokeContractLoadParameters()
             {
                 InvocationTransactionType = InvocationTransactionType.Election,
-                ElectionParameters = new ElectionParameters(this.SelectedBookKeeper)
+                ElectionParameters = new ElectionTransactionParameters(this.SelectedBookKeeper)
             };
             this.dialogManager.ShowDialog(invokeContractLoadParameters);
 

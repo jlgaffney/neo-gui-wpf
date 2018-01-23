@@ -9,6 +9,7 @@ using Neo.Gui.Base.Managers.Interfaces;
 using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Managers.Interfaces;
 using Neo.UI.Core.Services.Interfaces;
+using Neo.UI.Core.Data.TransactionParameters;
 
 namespace Neo.Gui.ViewModels.Contracts
 {
@@ -267,10 +268,10 @@ namespace Neo.Gui.ViewModels.Contracts
 
             //if (transaction == null) return;
 
-            this.dialogManager.ShowDialog(new InvokeContractLoadParameters(null)
+            this.dialogManager.ShowDialog(new InvokeContractLoadParameters()
             {
                 InvocationTransactionType = InvocationTransactionType.DeployContract,
-                DeployContractParameters = new DeployContractParameters(this.Code)
+                DeployContractParameters = new DeployContractTransactionParameters(this.Code)
             });
 
             this.Close(this, EventArgs.Empty);

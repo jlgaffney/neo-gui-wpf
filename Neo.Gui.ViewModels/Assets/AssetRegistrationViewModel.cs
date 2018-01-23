@@ -11,6 +11,7 @@ using Neo.Gui.Dialogs.LoadParameters.Contracts;
 using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Extensions;
 using Neo.UI.Core.Data;
+using Neo.UI.Core.Data.TransactionParameters;
 
 namespace Neo.Gui.ViewModels.Assets
 {
@@ -254,7 +255,7 @@ namespace Neo.Gui.ViewModels.Assets
 
             //this.dialogManager.ShowDialog(new InvokeContractLoadParameters(transaction));
 
-            var assetRegistrationParameters = new AssetRegistrationParameters(
+            var assetRegistrationParameters = new AssetRegistrationTransactionParameters(
                 this.SelectedAssetType,
                 this.Name,
                 this.TotalIsLimited ? decimal.Parse(this.TotalLimit) : decimal.MinValue,
@@ -263,7 +264,7 @@ namespace Neo.Gui.ViewModels.Assets
                 this.SelectedAdmin,
                 this.SelectedIssuer);
 
-            var invokeContractLoadParameters = new InvokeContractLoadParameters(null)
+            var invokeContractLoadParameters = new InvokeContractLoadParameters()
             {
                 InvocationTransactionType = InvocationTransactionType.AssetRegistration,
                 AssetRegistrationParameters = assetRegistrationParameters

@@ -1,4 +1,4 @@
-﻿using Neo.Core;
+﻿using Neo.UI.Core.Data.TransactionParameters;
 
 namespace Neo.Gui.Dialogs.LoadParameters.Contracts
 {
@@ -6,21 +6,18 @@ namespace Neo.Gui.Dialogs.LoadParameters.Contracts
     {
         public InvocationTransactionType InvocationTransactionType { get; set; }
 
-        public AssetRegistrationParameters AssetRegistrationParameters { get; set; }
+        public AssetRegistrationTransactionParameters AssetRegistrationParameters { get; set; }
 
-        public ElectionParameters ElectionParameters { get; set; }
+        public ElectionTransactionParameters ElectionParameters { get; set; }
 
-        public DeployContractParameters DeployContractParameters { get; set; }
+        public DeployContractTransactionParameters DeployContractParameters { get; set; }
 
-        public VotingParameters VotingParameters { get; set; }
+        public VotingTransactionParameters VotingParameters { get; set; }
 
-        public AssetTransferParameters AssetTransferParameters { get; set; }
+        public AssetTransferTransactionParameters AssetTransferParameters { get; set; }
 
-        public InvocationTransaction Transaction { get; }
-
-        public InvokeContractLoadParameters(InvocationTransaction transaction)
+        public InvokeContractLoadParameters()
         {
-            this.Transaction = transaction;
         }
     }
 }

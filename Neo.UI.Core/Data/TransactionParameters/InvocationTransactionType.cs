@@ -1,4 +1,4 @@
-﻿namespace Neo.Gui.Dialogs.LoadParameters.Contracts
+﻿namespace Neo.UI.Core.Data.TransactionParameters
 {
     public enum InvocationTransactionType
     {

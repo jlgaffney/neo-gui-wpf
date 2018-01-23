@@ -31,7 +31,7 @@ namespace Neo.Gui.ViewModels.Contracts
         private readonly IFileDialogService fileDialogService;
         private readonly IWalletController walletController;
 
-        private InvocationTransaction transaction;
+        //private InvocationTransaction transaction;
 
         private UInt160 scriptHash;
         private ContractParameter[] contractParameters;
@@ -179,12 +179,14 @@ namespace Neo.Gui.ViewModels.Contracts
 
         public void OnDialogLoad(InvokeContractLoadParameters parameters)
         {
-            if (parameters?.Transaction == null) return;
+            //if (parameters?.Transaction == null) return;
 
             // Set base transaction
-            this.transaction = parameters.Transaction;
+            //this.transaction = parameters.Transaction;
 
-            this.CustomScript = this.transaction.Script.ToHexString();
+
+            // TODO
+            //this.CustomScript = this.transaction.Script.ToHexString();
         }
         #endregion
 
@@ -265,74 +267,74 @@ namespace Neo.Gui.ViewModels.Contracts
 
         private void Test()
         {
-            byte[] script;
-            try
-            {
-                script = this.CustomScript.Trim().HexToBytes();
-            }
-            catch (FormatException ex)
-            {
-                this.dialogManager.ShowMessageDialog("An error occurred!", ex.Message);
-                return;
-            }
+            //byte[] script;
+            //try
+            //{
+            //    script = this.CustomScript.Trim().HexToBytes();
+            //}
+            //catch (FormatException ex)
+            //{
+            //    this.dialogManager.ShowMessageDialog("An error occurred!", ex.Message);
+            //    return;
+            //}
 
-            if (this.transaction == null)
-            {
-                this.transaction = new InvocationTransaction();
-            }
+            //if (this.transaction == null)
+            //{
+            //    this.transaction = new InvocationTransaction();
+            //}
 
-            this.transaction.Version = 1;
-            this.transaction.Script = script;
+            //this.transaction.Version = 1;
+            //this.transaction.Script = script;
 
-            // Load default transaction values if required
-            if (this.transaction.Attributes == null) this.transaction.Attributes = new TransactionAttribute[0];
-            if (this.transaction.Inputs == null) this.transaction.Inputs = new CoinReference[0];
-            if (this.transaction.Outputs == null) this.transaction.Outputs = new TransactionOutput[0];
-            if (this.transaction.Scripts == null) this.transaction.Scripts = new Witness[0];
+            //// Load default transaction values if required
+            //if (this.transaction.Attributes == null) this.transaction.Attributes = new TransactionAttribute[0];
+            //if (this.transaction.Inputs == null) this.transaction.Inputs = new CoinReference[0];
+            //if (this.transaction.Outputs == null) this.transaction.Outputs = new TransactionOutput[0];
+            //if (this.transaction.Scripts == null) this.transaction.Scripts = new Witness[0];
 
-            var engine = ApplicationEngine.Run(this.transaction.Script, this.transaction);
+            //var engine = ApplicationEngine.Run(this.transaction.Script, this.transaction);
 
-            // Get transaction test results
-            var builder = new StringBuilder();
-            builder.AppendLine($"VM State: {engine.State}");
-            builder.AppendLine($"Gas Consumed: {engine.GasConsumed}");
-            builder.AppendLine($"Evaluation Stack: {new JArray(engine.EvaluationStack.Select(p => p.ToParameter().ToJson()))}");
+            //// Get transaction test results
+            //var builder = new StringBuilder();
+            //builder.AppendLine($"VM State: {engine.State}");
+            //builder.AppendLine($"Gas Consumed: {engine.GasConsumed}");
+            //builder.AppendLine($"Evaluation Stack: {new JArray(engine.EvaluationStack.Select(p => p.ToParameter().ToJson()))}");
 
-            this.Results = builder.ToString();
+            //this.Results = builder.ToString();
 
-            if (!engine.State.HasFlag(VMState.FAULT))
-            {
-                this.transaction.Gas = engine.GasConsumed - Fixed8.FromDecimal(10);
+            //if (!engine.State.HasFlag(VMState.FAULT))
+            //{
+            //    this.transaction.Gas = engine.GasConsumed - Fixed8.FromDecimal(10);
 
-                if (this.transaction.Gas < Fixed8.Zero) this.transaction.Gas = Fixed8.Zero;
+            //    if (this.transaction.Gas < Fixed8.Zero) this.transaction.Gas = Fixed8.Zero;
 
-                this.transaction.Gas = this.transaction.Gas.Ceiling();
+            //    this.transaction.Gas = this.transaction.Gas.Ceiling();
 
-                var transactionFee = this.transaction.Gas.Equals(Fixed8.Zero) ? this.walletController.NetworkFee : this.transaction.Gas;
+            //    var transactionFee = this.transaction.Gas.Equals(Fixed8.Zero) ? this.walletController.NetworkFee : this.transaction.Gas;
 
-                this.Fee = transactionFee + " gas";
-                this.InvokeEnabled = true;
-            }
-            else
-            {
-                this.dialogManager.ShowMessageDialog(string.Empty, Strings.ExecutionFailed);
-            }
+            //    this.Fee = transactionFee + " gas";
+            //    this.InvokeEnabled = true;
+            //}
+            //else
+            //{
+            //    this.dialogManager.ShowMessageDialog(string.Empty, Strings.ExecutionFailed);
+            //}
         }
 
         private void Invoke()
         {
-            if (!this.InvokeEnabled) return;
+            //if (!this.InvokeEnabled) return;
 
-            if (this.transaction == null) return;
+            //if (this.transaction == null) return;
 
-            this.walletController.InvokeContract(this.transaction);
+            //this.walletController.InvokeContract(this.transaction);
 
-            this.Close(this, EventArgs.Empty);
+            //this.Close(this, EventArgs.Empty);
         }
 
         private void Cancel()
         {
-            this.transaction = null;
+            //this.transaction = null;
 
             this.Close(this, EventArgs.Empty);
         }
