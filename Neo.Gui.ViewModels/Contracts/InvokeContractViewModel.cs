@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Linq;
-using System.Text;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-using Neo.Core;
-using Neo.IO.Json;
 using Neo.SmartContract;
 using Neo.VM;
 
@@ -187,6 +184,14 @@ namespace Neo.Gui.ViewModels.Contracts
 
             // TODO
             //this.CustomScript = this.transaction.Script.ToHexString();
+
+            var transactionInvoker = this.walletController.GetTransactionInvoker(
+                parameters.InvocationTransactionType,
+                parameters.AssetRegistrationParameters,
+                parameters.AssetTransferParameters,
+                parameters.DeployContractParameters,
+                parameters.ElectionParameters,
+                parameters.VotingParameters);
         }
         #endregion
 

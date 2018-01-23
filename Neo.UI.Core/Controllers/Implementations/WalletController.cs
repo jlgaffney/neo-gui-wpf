@@ -14,6 +14,7 @@ using Neo.SmartContract;
 using Neo.UI.Core.Certificates;
 using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Data;
+using Neo.UI.Core.Data.TransactionParameters;
 using Neo.UI.Core.Exceptions;
 using Neo.UI.Core.Extensions;
 using Neo.UI.Core.Helpers;
@@ -43,7 +44,7 @@ namespace Neo.UI.Core.Controllers.Implementations
         private readonly IMessageSubscriber messageSubscriber;
         private readonly INetworkController networkController;
         private readonly INotificationService notificationService;
-
+        private readonly ITransactionInvokerFactory transactionInvokerFactory;
         private readonly string blockchainDataDirectoryPath;
 
         private readonly int localNodePort;
@@ -79,7 +80,8 @@ namespace Neo.UI.Core.Controllers.Implementations
             IMessageSubscriber messageSubscriber,
             INetworkController networkController,
             INotificationService notificationService,
-            ISettingsManager settingsManager)
+            ISettingsManager settingsManager, 
+            ITransactionInvokerFactory transactionInvokerFactory)
         {
             this.blockchainController = blockchainController;
             this.certificateService = certificateService;
@@ -87,7 +89,7 @@ namespace Neo.UI.Core.Controllers.Implementations
             this.messageSubscriber = messageSubscriber;
             this.networkController = networkController;
             this.notificationService = notificationService;
-
+            this.transactionInvokerFactory = transactionInvokerFactory;
             this.blockchainDataDirectoryPath = settingsManager.BlockchainDataDirectoryPath;
 
             this.localNodePort = settingsManager.LocalNodePort;
@@ -865,6 +867,24 @@ namespace Neo.UI.Core.Controllers.Implementations
             var contract = Contract.Create(parameters, scriptHash);
 
             this.CreateAccount(contract);
+        }
+
+        public ITransactionInvoker GetTransactionInvoker(
+            InvocationTransactionType invocationTransactionType,
+            AssetRegistrationTransactionParameters assetRegistrationTransactionParameters,
+            AssetTransferTransactionParameters assetTransferTransactionParameters,
+            DeployContractTransactionParameters deployContractTransactionParameters,
+            ElectionTransactionParameters electionTransactionParameters,
+            VotingTransactionParameters votingTransactionParameters)
+        {
+            return this.transactionInvokerFactory.GetTransactionInvoker(
+                this,
+                invocationTransactionType,
+                assetRegistrationTransactionParameters,
+                assetTransferTransactionParameters,
+                deployContractTransactionParameters,
+                electionTransactionParameters,
+                votingTransactionParameters);
         }
         #endregion
 

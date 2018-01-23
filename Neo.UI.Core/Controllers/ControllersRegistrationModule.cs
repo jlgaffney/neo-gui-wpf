@@ -29,6 +29,10 @@ namespace Neo.UI.Core.Controllers
                 .As<IWalletController>()
                 .SingleInstance();
 
+            builder
+                .RegisterType<TransactionInvokerFactory>()
+                .As<ITransactionInvokerFactory>();
+
             base.Load(builder);
         }
     }

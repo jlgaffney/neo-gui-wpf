@@ -6,6 +6,7 @@ using Neo.Cryptography.ECC;
 using Neo.Network;
 using Neo.SmartContract;
 using Neo.UI.Core.Data;
+using Neo.UI.Core.Data.TransactionParameters;
 using Neo.Wallets;
 
 namespace Neo.UI.Core.Controllers.Interfaces
@@ -182,5 +183,13 @@ namespace Neo.UI.Core.Controllers.Interfaces
         void AddMultiSignatureContract(int minimunSignatureNumber, IEnumerable<string> publicKeys);
 
         void AddContractWithParameters(string reedemScript, string parameterList);
+
+        ITransactionInvoker GetTransactionInvoker(
+            InvocationTransactionType invocationTransactionType,
+            AssetRegistrationTransactionParameters assetRegistrationTransactionParameters,
+            AssetTransferTransactionParameters assetTransferTransactionParameters,
+            DeployContractTransactionParameters deployContractTransactionParameters,
+            ElectionTransactionParameters electionTransactionParameters,
+            VotingTransactionParameters votingTransactionParameters);
     }
 }
