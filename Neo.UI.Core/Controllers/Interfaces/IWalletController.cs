@@ -55,6 +55,11 @@ namespace Neo.UI.Core.Controllers.Interfaces
         IEnumerable<UInt160> GetNEP5WatchScriptHashes();
 
         /// <summary>
+        /// Get all accounts addresses in the wallet.
+        /// </summary>
+        IEnumerable<string> GetAccountsAddresses();
+
+        /// <summary>
         /// Gets all accounts in wallets.
         /// </summary>
         IEnumerable<WalletAccount> GetAccounts();

@@ -14,6 +14,8 @@ namespace Neo.Gui.Dialogs.LoadParameters.Contracts
 
         public VotingParameters VotingParameters { get; set; }
 
+        public AssetTransferParameters AssetTransferParameters { get; set; }
+
         public InvocationTransaction Transaction { get; }
 
         public InvokeContractLoadParameters(InvocationTransaction transaction)

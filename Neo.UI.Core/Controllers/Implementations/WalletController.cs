@@ -383,6 +383,15 @@ namespace Neo.UI.Core.Controllers.Implementations
             return this.currentWallet.GetAccounts();
         }
 
+        public IEnumerable<string> GetAccountsAddresses()
+        {
+            this.ThrowIfWalletIsNotOpen();
+
+            return this.GetAccounts()
+                .Select(x => x.Address)
+                .ToList();
+        }
+
         public IEnumerable<WalletAccount> GetNonWatchOnlyAccounts()
         {
             this.ThrowIfWalletIsNotOpen();
@@ -1054,8 +1063,8 @@ namespace Neo.UI.Core.Controllers.Implementations
 
             this.ThrowIfWalletIsNotOpen();
 
-            return this.GetAccounts().FirstOrDefault(account =>
-                scriptHash.Equals(account.ScriptHash));
+            return this.GetAccounts()
+                .FirstOrDefault(account => scriptHash.Equals(account.ScriptHash));
         }
 
         private void AddAccountItem(WalletAccount account)
@@ -1092,7 +1101,9 @@ namespace Neo.UI.Core.Controllers.Implementations
             var balanceNeo = coins.Where(p => p.Output.AssetId.Equals(this.blockchainController.GoverningToken.Hash)).GroupBy(p => p.Output.ScriptHash).ToDictionary(p => p.Key, p => p.Sum(i => i.Output.Value));
             var balanceGas = coins.Where(p => p.Output.AssetId.Equals(this.blockchainController.UtilityToken.Hash)).GroupBy(p => p.Output.ScriptHash).ToDictionary(p => p.Key, p => p.Sum(i => i.Output.Value));
 
-            var accountsList = this.currentWalletInfo.GetAccounts().ToList();
+            var accountsList = this.currentWalletInfo
+                .GetAccounts()
+                .ToList();
             
             foreach (var account in accountsList)
             {

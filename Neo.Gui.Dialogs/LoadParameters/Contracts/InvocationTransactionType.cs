@@ -5,6 +5,7 @@
         AssetRegistration,
         Election, 
         DeployContract,
-        Vote
+        Vote, 
+        AssetTransfer
     }
 }

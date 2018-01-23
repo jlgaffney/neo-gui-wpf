@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-using Neo.Core;
-
-using Neo.Gui.Globalization.Resources;
+using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Dialogs.LoadParameters.Wallets;
-using Neo.Gui.Base.Managers.Interfaces;
+using Neo.Gui.Globalization.Resources;
 using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Data;
 
@@ -105,11 +102,7 @@ namespace Neo.Gui.ViewModels.Wallets
 
         public void OnDialogLoad(TransferLoadParameters parameters)
         {
-            var addresses = this.walletController
-                .GetAccounts()
-                .Select(account => account.Address)
-                .ToList();
-
+            var addresses = this.walletController.GetAccountsAddresses();
             this.Addresses = new ObservableCollection<string>(addresses);
         }
         #endregion
@@ -142,28 +135,35 @@ namespace Neo.Gui.ViewModels.Wallets
         {
             if (!this.OkEnabled) return;
 
-            UInt160 transferChangeAddress = null;
-
-            if (!Fixed8.TryParse(this.fee, out var transferFee))
+            var assetTransferParameters = new AssetTransferParameters(this.Items, this.SelectedChangeAddress, this.remark, this.Fee);
+            this.dialogManager.ShowDialog(new InvokeContractLoadParameters(null)
             {
-                transferFee = Fixed8.Zero;
-            }
+                InvocationTransactionType = InvocationTransactionType.AssetTransfer,
+                AssetTransferParameters = assetTransferParameters
+            });
 
-            if (!string.IsNullOrEmpty(this.SelectedChangeAddress))
-            {
-                transferChangeAddress = this.walletController.AddressToScriptHash(this.SelectedChangeAddress);
-            }
+            //UInt160 transferChangeAddress = null;
 
-            var transaction = this.walletController.MakeTransferTransaction(this.Items, this.remark, transferChangeAddress, transferFee);
+            //if (!Fixed8.TryParse(this.fee, out var transferFee))
+            //{
+            //    transferFee = Fixed8.Zero;
+            //}
+
+            //if (!string.IsNullOrEmpty(this.SelectedChangeAddress))
+            //{
+            //    transferChangeAddress = this.walletController.AddressToScriptHash(this.SelectedChangeAddress);
+            //}
+
+            //var transaction = this.walletController.MakeTransferTransaction(this.Items, this.remark, transferChangeAddress, transferFee);
             
-            if (transaction is InvocationTransaction invocationTransaction)
-            {
-                this.dialogManager.ShowDialog(new InvokeContractLoadParameters(invocationTransaction));
-            }
-            else
-            {
-                this.walletController.SignAndRelay(transaction);
-            }
+            //if (transaction is InvocationTransaction invocationTransaction)
+            //{
+            //    this.dialogManager.ShowDialog(new InvokeContractLoadParameters(invocationTransaction));
+            //}
+            //else
+            //{
+            //    this.walletController.SignAndRelay(transaction);
+            //}
 
             this.Close(this, EventArgs.Empty);
         }
