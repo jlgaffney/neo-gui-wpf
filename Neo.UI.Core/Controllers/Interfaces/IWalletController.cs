@@ -75,6 +75,8 @@ namespace Neo.UI.Core.Controllers.Interfaces
         /// </summary>
         IEnumerable<WalletAccount> GetStandardAccounts();
 
+        IEnumerable<AssetDto> GetWalletAssets();
+
         IEnumerable<Coin> GetCoins();
 
         IEnumerable<Coin> FindUnspentCoins();

@@ -412,6 +412,40 @@ namespace Neo.UI.Core.Controllers.Implementations
                 .Where(account => !account.WatchOnly && account.Contract.IsStandard);
         }
 
+        public IEnumerable<AssetDto> GetWalletAssets()
+        {
+            var walletAssets = new List<AssetDto>();
+
+            // Add First-Class assets
+            var unspendCoins = this.FindUnspentCoins();
+            foreach(var coin in unspendCoins)
+            {
+                var assetState = this.blockchainController.GetAssetState(coin.Output.AssetId);
+
+                walletAssets.Add(new AssetDto
+                {
+                    Id = coin.Output.AssetId.ToString(),
+                    Name = assetState.ToString(),
+                    Decimals = assetState.Precision,
+                    TokenType = TokenType.FirstClassToken
+                });
+            }
+
+            // Add  NEP-5 assets
+            var nep5Tokens = this.GetNEP5WatchScriptHashes();
+            foreach(var nep5Token in nep5Tokens)
+            {
+                // TODO - Issue: #150 - [AboimPinto]: Missing add the name of the token
+                walletAssets.Add(new AssetDto
+                {
+                    Id = nep5Token.ToString(),
+                    TokenType = TokenType.NEP5Token
+                });
+            }
+
+            return walletAssets;
+        }
+
         public IEnumerable<Coin> GetCoins()
         {
             // TODO - ISSUE #37 [AboimPinto]: at this point the return should not be a object from the NEO assemblies but a DTO only know by the application with only the necessary fields.
@@ -424,6 +458,8 @@ namespace Neo.UI.Core.Controllers.Implementations
         public IEnumerable<Coin> FindUnspentCoins()
         {
             this.ThrowIfWalletIsNotOpen();
+
+            var x = this.currentWallet.GetCoins();
 
             return this.currentWallet.FindUnspentCoins();
         }

@@ -5,13 +5,12 @@ using System.Linq;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-using Neo.Wallets;
-
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Transactions;
 using Neo.Gui.Dialogs.Results.Transactions;
 using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Data;
+using Neo.UI.Core.Extensions;
 
 namespace Neo.Gui.ViewModels.Transactions
 {
@@ -174,28 +173,8 @@ namespace Neo.Gui.ViewModels.Transactions
             }
             else
             {
-                // Add first-class assets to list
-                foreach (var assetId in this.walletController.FindUnspentCoins()
-                    .Select(p => p.Output.AssetId).Distinct())
-                {
-                    this.Assets.Add(new AssetDto { Id = assetId.ToString(), TokenType = TokenType.FirstClassToken });
-                }
-
-                // Add NEP-5 assets to list
-                foreach (var assetId in this.walletController.GetNEP5WatchScriptHashes())
-                {
-                    AssetDto nep5Asset;
-                    try
-                    {
-                        nep5Asset = new AssetDto { Id = assetId.ToString(), TokenType = TokenType.NEP5Token };
-                    }
-                    catch (ArgumentException)
-                    {
-                        continue;
-                    }
-
-                    this.Assets.Add(nep5Asset);
-                }
+                var walletAssets = this.walletController.GetWalletAssets();
+                this.Assets.AddRange(walletAssets);
 
                 this.AssetSelectionEnabled = this.Assets.Any();
             }
