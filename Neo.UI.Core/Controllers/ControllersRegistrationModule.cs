@@ -46,6 +46,14 @@ namespace Neo.UI.Core.Controllers
                 .RegisterType<DeployContractTransactionInvoker>()
                 .As<ITransactionInvoker>();
 
+            builder
+                .RegisterType<ElectionTransactionInvoker>()
+                .As<ITransactionInvoker>();
+
+            builder
+                .RegisterType<VotingTransactionInvoker>()
+                .As<ITransactionInvoker>();
+
             base.Load(builder);
         }
     }
