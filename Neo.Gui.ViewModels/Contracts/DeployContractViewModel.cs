@@ -271,7 +271,16 @@ namespace Neo.Gui.ViewModels.Contracts
             this.dialogManager.ShowDialog(new InvokeContractLoadParameters()
             {
                 InvocationTransactionType = InvocationTransactionType.DeployContract,
-                DeployContractParameters = new DeployContractTransactionParameters(this.Code)
+                DeployContractParameters = new DeployContractTransactionParameters(
+                    this.Code, 
+                    this.parameterList, 
+                    this.ReturnType, 
+                    this.NeedsStorage, 
+                    this.Name, 
+                    this.Version,
+                    this.Author, 
+                    this.Email, 
+                    this.Description)
             });
 
             this.Close(this, EventArgs.Empty);

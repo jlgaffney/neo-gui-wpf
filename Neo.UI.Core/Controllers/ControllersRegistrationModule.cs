@@ -38,6 +38,14 @@ namespace Neo.UI.Core.Controllers
                 .RegisterType<AssetRegistrationTransactionInvoker>()
                 .As<ITransactionInvoker>();
 
+            builder
+                .RegisterType<AssetTransferTransactionInvoker>()
+                .As<ITransactionInvoker>();
+
+            builder
+                .RegisterType<DeployContractTransactionInvoker>()
+                .As<ITransactionInvoker>();
+
             base.Load(builder);
         }
     }
