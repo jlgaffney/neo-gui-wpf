@@ -2,11 +2,11 @@
 {
     public class ElectionTransactionParameters
     {
-        public string BookKepperPublicKey { get; private set; }
+        public string BookKeeperPublicKey { get; private set; }
 
         public ElectionTransactionParameters(string bookKeeperPublicKey)
         {
-            this.BookKepperPublicKey = bookKeeperPublicKey;
+            this.BookKeeperPublicKey = bookKeeperPublicKey;
         }
     }
 }
