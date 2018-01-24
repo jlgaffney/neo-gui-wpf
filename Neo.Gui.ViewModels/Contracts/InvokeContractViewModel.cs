@@ -15,6 +15,7 @@ using Neo.Gui.Base.Managers.Interfaces;
 using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Managers.Interfaces;
 using Neo.UI.Core.Services.Interfaces;
+using Neo.UI.Core.Controllers;
 
 namespace Neo.Gui.ViewModels.Contracts
 {
@@ -29,6 +30,7 @@ namespace Neo.Gui.ViewModels.Contracts
         private readonly IWalletController walletController;
 
         //private InvocationTransaction transaction;
+        private ITransactionInvoker transactionInvoker = null; 
 
         private UInt160 scriptHash;
         private ContractParameter[] contractParameters;
@@ -185,13 +187,15 @@ namespace Neo.Gui.ViewModels.Contracts
             // TODO
             //this.CustomScript = this.transaction.Script.ToHexString();
 
-            var transactionInvoker = this.walletController.GetTransactionInvoker(
+            this.transactionInvoker = this.walletController.GetTransactionInvoker(
                 parameters.InvocationTransactionType,
                 parameters.AssetRegistrationParameters,
                 parameters.AssetTransferParameters,
                 parameters.DeployContractParameters,
                 parameters.ElectionParameters,
                 parameters.VotingParameters);
+
+            this.CustomScript = this.transactionInvoker.GetTransactionScript();
         }
         #endregion
 
@@ -272,6 +276,12 @@ namespace Neo.Gui.ViewModels.Contracts
 
         private void Test()
         {
+            var result = this.transactionInvoker.TestForGasUsage(this.customScript);
+
+            this.Results = result.Result;
+            this.Fee = $"{result.Fee} gas";
+            this.InvokeEnabled = true;
+
             //byte[] script;
             //try
             //{

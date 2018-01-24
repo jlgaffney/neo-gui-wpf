@@ -1,6 +1,8 @@
-﻿using Neo.UI.Core.Controllers.Interfaces;
+﻿using System;
+using System.Collections.Generic;
+
+using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Data.TransactionParameters;
-using System;
 
 namespace Neo.UI.Core.Controllers
 {
@@ -9,6 +11,7 @@ namespace Neo.UI.Core.Controllers
         #region ITransactionInvokerFactory Implementation 
         public ITransactionInvoker GetTransactionInvoker(
             IWalletController walletController,
+            IEnumerable<ITransactionInvoker> transactionInvokers,
             InvocationTransactionType invocationTransactionType,
             AssetRegistrationTransactionParameters assetRegistrationParameters,
             AssetTransferTransactionParameters assetTransferTransactionParameters,
@@ -16,7 +19,22 @@ namespace Neo.UI.Core.Controllers
             ElectionTransactionParameters electionTransactionParameters,
             VotingTransactionParameters votingTransactionParameters)
         {
-            throw new NotImplementedException();
+            var configDictionary = new Dictionary<InvocationTransactionType, ITransactionConfiguration>
+            {
+                { invocationTransactionType, new AssetRegistrationTransactionConfiguration { WalletController = walletController, InvocationTransactionType = invocationTransactionType, AssetRegistrationTransactionParameters = assetRegistrationParameters } }
+            };
+
+            foreach(var invoker in transactionInvokers)
+            {
+                if (invoker.IsValid(invocationTransactionType))
+                {
+                    invoker.Configuration = configDictionary[invocationTransactionType];
+                    invoker.GenerateTransaction();
+                    return invoker;
+                }
+            }
+
+            throw new InvalidOperationException($"Strategy for {invocationTransactionType.ToString()} not found.");
         }
         #endregion
     }

@@ -189,10 +189,10 @@ namespace Neo.Gui.ViewModels.Assets
             (!this.TotalIsLimited || !string.IsNullOrEmpty(this.TotalLimit)) &&
             this.SelectedOwner != null &&
             !string.IsNullOrWhiteSpace(this.SelectedAdmin) &&
-            !string.IsNullOrWhiteSpace(this.SelectedIssuer) &&
+            !string.IsNullOrWhiteSpace(this.SelectedIssuer);
 
             // Check if form is valid
-            !this.formValid;
+            //!this.formValid;
 
         public RelayCommand OkCommand => new RelayCommand(this.HandleOkCommand);
         #endregion
@@ -258,7 +258,8 @@ namespace Neo.Gui.ViewModels.Assets
             var assetRegistrationParameters = new AssetRegistrationTransactionParameters(
                 this.SelectedAssetType,
                 this.Name,
-                this.TotalIsLimited ? decimal.Parse(this.TotalLimit) : decimal.MinValue,
+                this.TotalIsLimited,
+                this.TotalLimit,
                 this.Precision,
                 this.SelectedOwner,
                 this.SelectedAdmin,

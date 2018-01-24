@@ -1,4 +1,6 @@
-﻿using Neo.UI.Core.Controllers.Interfaces;
+﻿using System.Collections.Generic;
+
+using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Data.TransactionParameters;
 
 namespace Neo.UI.Core.Controllers
@@ -7,6 +9,7 @@ namespace Neo.UI.Core.Controllers
     {
         ITransactionInvoker GetTransactionInvoker(
             IWalletController walletController,
+            IEnumerable<ITransactionInvoker> transactionInvokers,
             InvocationTransactionType invocationTransactionType,
             AssetRegistrationTransactionParameters assetRegistrationParameters,
             AssetTransferTransactionParameters assetTransferTransactionParameters,

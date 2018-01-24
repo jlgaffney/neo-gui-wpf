@@ -46,6 +46,7 @@ namespace Neo.UI.Core.Controllers.Implementations
         private readonly INotificationService notificationService;
         private readonly ITransactionInvokerFactory transactionInvokerFactory;
         private readonly string blockchainDataDirectoryPath;
+        private IEnumerable<ITransactionInvoker> transactionInvokersInternal;
 
         private readonly int localNodePort;
         private readonly int localWSPort;
@@ -81,7 +82,8 @@ namespace Neo.UI.Core.Controllers.Implementations
             INetworkController networkController,
             INotificationService notificationService,
             ISettingsManager settingsManager, 
-            ITransactionInvokerFactory transactionInvokerFactory)
+            ITransactionInvokerFactory transactionInvokerFactory, 
+            IEnumerable<ITransactionInvoker> transactionInvokers)
         {
             this.blockchainController = blockchainController;
             this.certificateService = certificateService;
@@ -91,6 +93,7 @@ namespace Neo.UI.Core.Controllers.Implementations
             this.notificationService = notificationService;
             this.transactionInvokerFactory = transactionInvokerFactory;
             this.blockchainDataDirectoryPath = settingsManager.BlockchainDataDirectoryPath;
+            this.transactionInvokersInternal = transactionInvokers;
 
             this.localNodePort = settingsManager.LocalNodePort;
             this.localWSPort = settingsManager.LocalWSPort;
@@ -879,6 +882,7 @@ namespace Neo.UI.Core.Controllers.Implementations
         {
             return this.transactionInvokerFactory.GetTransactionInvoker(
                 this,
+                this.transactionInvokersInternal,
                 invocationTransactionType,
                 assetRegistrationTransactionParameters,
                 assetTransferTransactionParameters,

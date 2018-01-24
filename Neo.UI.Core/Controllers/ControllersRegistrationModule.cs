@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Neo.UI.Core.Controllers.Implementations;
 using Neo.UI.Core.Controllers.Interfaces;
+using Neo.UI.Core.Controllers.TransactionInvokers;
 
 namespace Neo.UI.Core.Controllers
 {
@@ -32,6 +33,10 @@ namespace Neo.UI.Core.Controllers
             builder
                 .RegisterType<TransactionInvokerFactory>()
                 .As<ITransactionInvokerFactory>();
+
+            builder
+                .RegisterType<AssetRegistrationTransactionInvoker>()
+                .As<ITransactionInvoker>();
 
             base.Load(builder);
         }
