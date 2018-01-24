@@ -17,6 +17,8 @@ namespace Neo.UI.Core.Controllers.TransactionInvokers
         #region ITransactionInvoker Implementation 
         public ITransactionConfiguration Configuration { get; set; }
 
+        public bool IsTransactionSignedAndRelayed { get; set; }
+
         public abstract bool IsValid(InvocationTransactionType invocationTransactionType);
 
         public abstract void GenerateTransaction();

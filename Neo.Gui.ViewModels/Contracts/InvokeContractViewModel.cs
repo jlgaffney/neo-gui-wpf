@@ -195,7 +195,14 @@ namespace Neo.Gui.ViewModels.Contracts
                 parameters.ElectionParameters,
                 parameters.VotingParameters);
 
-            this.CustomScript = this.transactionInvoker.GetTransactionScript();
+            if (this.transactionInvoker.IsTransactionSignedAndRelayed)
+            {
+                this.Close(this, EventArgs.Empty);
+            }
+            else
+            {
+                this.CustomScript = this.transactionInvoker.GetTransactionScript();
+            }
         }
         #endregion
 

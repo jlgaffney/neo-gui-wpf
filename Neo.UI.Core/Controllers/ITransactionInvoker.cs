@@ -7,6 +7,8 @@ namespace Neo.UI.Core.Controllers
     {
         ITransactionConfiguration Configuration { get; set; }
 
+        bool IsTransactionSignedAndRelayed { get; set; }
+
         bool IsValid(InvocationTransactionType invocationTransactionType);
 
         void GenerateTransaction();
