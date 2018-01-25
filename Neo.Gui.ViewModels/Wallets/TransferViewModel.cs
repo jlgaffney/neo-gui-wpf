@@ -105,6 +105,11 @@ namespace Neo.Gui.ViewModels.Wallets
         {
             var addresses = this.walletController.GetAccountsAddresses();
             this.Addresses = new ObservableCollection<string>(addresses);
+
+            this.Items.CollectionChanged += (sender, e) =>
+            {
+                this.RaisePropertyChanged(nameof(this.OkEnabled));
+            };
         }
         #endregion
 

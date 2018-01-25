@@ -16,6 +16,8 @@ namespace Neo.Gui.Wpf.Implementations.Managers
     {
         #region Private Fields 
         private static ILifetimeScope containerLifetimeScope;
+
+        private bool dialogIsClosed;
         #endregion
 
         #region IDialogManager implementation
@@ -25,14 +27,15 @@ namespace Neo.Gui.Wpf.Implementations.Managers
 
             if (view.DataContext is IDialogViewModel<TLoadParameters> viewModel)
             {
-                viewModel.OnDialogLoad(parameters);
-
                 var viewWindow = view as Window;
 
                 viewModel.Close += (sender, e) =>
                 {
+                    this.dialogIsClosed = true;
                     viewWindow?.Close();
                 };
+
+                viewModel.OnDialogLoad(parameters);
             }
 
             return view;
@@ -42,7 +45,10 @@ namespace Neo.Gui.Wpf.Implementations.Managers
         {
             var view = this.CreateDialog(parameters);
 
-            view.ShowDialog();
+            if (!this.dialogIsClosed)
+            {
+                view.ShowDialog();
+            }
         }
 
         public TDialogResult ShowDialog<TLoadParameters, TDialogResult>(TLoadParameters parameters)

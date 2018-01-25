@@ -5,7 +5,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
 
-using Neo.Wallets;
 using Neo.Gui.Dialogs.LoadParameters.Transactions;
 using Neo.Gui.Dialogs.Results.Transactions;
 using Neo.Gui.Base.Managers.Interfaces;

@@ -49,7 +49,7 @@
                 <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Fee, UpdateSourceTrigger=PropertyChanged}" Margin="4" Padding="4" HorizontalAlignment="Stretch" />
 
                 <Label Grid.Row="1" Grid.Column="0" Content="{x:Static globalization:Strings.ChangeAddress}" Margin="0 0 4 0" VerticalAlignment="Center" />
-                <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Addresses}" SelectedItem="{Binding SelectedChangeAddress}" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+                <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Addresses}" SelectedItem="{Binding SelectedChangeAddress, Mode=TwoWay}" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
             </Grid>
         </GroupBox>
 

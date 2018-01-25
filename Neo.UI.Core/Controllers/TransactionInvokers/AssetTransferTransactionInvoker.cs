@@ -17,7 +17,12 @@ namespace Neo.UI.Core.Controllers.TransactionInvokers
             var parameters = assetTransferTransactionConfiguration.AssetTransferTransactionParameters;
 
             var transferFee = Fixed8.Parse(parameters.TransferFee);
-            var transferChangeAddress = this.Configuration.WalletController.AddressToScriptHash(parameters.TransferChangeAddress);
+
+            UInt160 transferChangeAddress = null;
+            if (!string.IsNullOrEmpty(parameters.TransferChangeAddress))
+            {
+                transferChangeAddress = this.Configuration.WalletController.AddressToScriptHash(parameters.TransferChangeAddress);
+            }
 
             var transaction =  this.Configuration.WalletController.MakeTransferTransaction(parameters.TransactionOutputItems, parameters.Remark, transferChangeAddress, transferFee);
 
