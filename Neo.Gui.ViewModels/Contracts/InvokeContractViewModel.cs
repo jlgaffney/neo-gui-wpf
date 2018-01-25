@@ -195,13 +195,14 @@ namespace Neo.Gui.ViewModels.Contracts
                 parameters.ElectionParameters,
                 parameters.VotingParameters);
 
-            if (this.transactionInvoker.IsTransactionSignedAndRelayed)
+            if (this.transactionInvoker.IsContractTransaction)
             {
-                this.Close(this, EventArgs.Empty);
+                this.CustomScript = this.transactionInvoker.GetTransactionScript();
             }
             else
             {
-                this.CustomScript = this.transactionInvoker.GetTransactionScript();
+                this.transactionInvoker.SignAndRelayTransaction();
+                this.Close(this, EventArgs.Empty);
             }
         }
         #endregion
@@ -345,7 +346,9 @@ namespace Neo.Gui.ViewModels.Contracts
 
         private void Invoke()
         {
-            //if (!this.InvokeEnabled) return;
+            if (!this.InvokeEnabled) return;
+
+            this.transactionInvoker.Invoke();
 
             //if (this.transaction == null) return;
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Data.TransactionParameters;
@@ -28,17 +29,18 @@ namespace Neo.UI.Core.Controllers
                 { InvocationTransactionType.Vote, new VotingTransactionConfiguration { WalletController = walletController, InvocationTransactionType = invocationTransactionType, VotingTransactionParameters = votingTransactionParameters}}
             };
 
-            foreach(var invoker in transactionInvokers)
+            try
             {
-                if (invoker.IsValid(invocationTransactionType))
-                {
-                    invoker.Configuration = configDictionary[invocationTransactionType];
-                    invoker.GenerateTransaction();
-                    return invoker;
-                }
-            }
+                var invoker = transactionInvokers.Single(x => x.IsValid(invocationTransactionType));
 
-            throw new InvalidOperationException($"Strategy for {invocationTransactionType.ToString()} not found.");
+                invoker.Configuration = configDictionary[invocationTransactionType];
+                invoker.GenerateTransaction();
+                return invoker;
+            }
+            catch 
+            {
+                throw new InvalidOperationException($"Strategy for {invocationTransactionType.ToString()} not found.");
+            }
         }
         #endregion
     }

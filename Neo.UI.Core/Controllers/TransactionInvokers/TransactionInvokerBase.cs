@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+
+using System.Linq;
 using System.Text;
 
 using Neo.Core;
@@ -12,12 +14,14 @@ namespace Neo.UI.Core.Controllers.TransactionInvokers
 {
     internal abstract class TransactionInvokerBase : ITransactionInvoker
     {
+        #region Public Properties 
         public InvocationTransaction Transaction { get; set; }
+        #endregion
 
         #region ITransactionInvoker Implementation 
         public ITransactionConfiguration Configuration { get; set; }
 
-        public bool IsTransactionSignedAndRelayed { get; set; }
+        public bool IsContractTransaction { get; set; }
 
         public abstract bool IsValid(InvocationTransactionType invocationTransactionType);
 
@@ -30,11 +34,35 @@ namespace Neo.UI.Core.Controllers.TransactionInvokers
 
         public void Invoke()
         {
+            if (this.Transaction == null)
+            {
+                if (this.IsContractTransaction)
+                {
+                    throw new InvalidOperationException("Cannot invoke an InvocationTransaction before create it.");
+                }
+                else
+                {
+                    throw new InvalidOperationException("The transaction is not InvocationTransaction to be Invoked. Please use the SignAndRelayTransaction method.");
+                }
+            }
+
             this.Configuration.WalletController.InvokeContract(this.Transaction);
         }
 
         public TestForGasUsageResult TestForGasUsage(string customScript)
         {
+            if (this.Transaction == null)
+            {
+                if (this.IsContractTransaction)
+                {
+                    throw new InvalidOperationException("Cannot invoke an InvocationTransaction before create it.");
+                }
+                else
+                {
+                    throw new InvalidOperationException("The transaction is not InvocationTransaction to be Invoked. Please use the SignAndRelayTransaction method.");
+                }
+            }
+
             var transactionExecutionFailed = false;
             var transactionFee = Fixed8.Zero;
 
@@ -71,6 +99,12 @@ namespace Neo.UI.Core.Controllers.TransactionInvokers
             }
 
             return new TestForGasUsageResult(builder.ToString(), transactionFee.ToString(), transactionExecutionFailed);
+        }
+
+        public virtual void SignAndRelayTransaction()
+        {
+            // Not all transactions type will override method
+            throw new InvalidOperationException("The SignAndRelayTransaction need to be overwriten in the Invoker.");
         }
         #endregion
     }
