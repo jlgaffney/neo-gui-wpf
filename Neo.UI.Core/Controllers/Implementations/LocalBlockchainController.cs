@@ -63,22 +63,29 @@ namespace Neo.UI.Core.Controllers.Implementations
                 throw new ObjectAlreadyInitializedException(nameof(IBlockchainController));
             }
 
-            // Setup blockchain
-            var levelDBBlockchain = Blockchain.RegisterBlockchain(new LevelDBBlockchain(blockchainDataDirectoryPath));
-
-            Blockchain.PersistCompleted += this.OnBlockAdded;
-
-            if (this.blockchainImportService.BlocksAreAvailableToImport)
+            try
             {
-                Task.Run(() =>
+                // Setup blockchain
+                var levelDBBlockchain = Blockchain.RegisterBlockchain(new LevelDBBlockchain(blockchainDataDirectoryPath));
+
+                Blockchain.PersistCompleted += this.OnBlockAdded;
+
+                if (this.blockchainImportService.BlocksAreAvailableToImport)
                 {
-                    this.blockchainImportService.ImportBlocks(levelDBBlockchain);
-                });
+                    Task.Run(() =>
+                    {
+                        this.blockchainImportService.ImportBlocks(levelDBBlockchain);
+                    });
+                }
+
+                this.blockchain = levelDBBlockchain;
+
+                this.initialized = true;
             }
-
-            this.blockchain = levelDBBlockchain;
-
-            this.initialized = true;
+            catch (Exception ex)
+            {
+                throw new ApplicationException($"Error initializing BlockchainController {ex.Message}");
+            }
         }
 
         public BlockchainStatus GetStatus()

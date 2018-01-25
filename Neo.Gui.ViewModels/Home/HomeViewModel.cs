@@ -1,5 +1,4 @@
 using System;
-using System.Windows.Input;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -151,45 +150,45 @@ namespace Neo.Gui.ViewModels.Home
                 RaisePropertyChanged(nameof(this.BlockStatus));
             }
         }
-        public ICommand CreateWalletCommand => new RelayCommand(this.CreateWallet);
+        public RelayCommand CreateWalletCommand => new RelayCommand(this.CreateWallet);
 
-        public ICommand OpenWalletCommand => new RelayCommand(this.OpenWallet);
+        public RelayCommand OpenWalletCommand => new RelayCommand(this.OpenWallet);
 
-        public ICommand CloseWalletCommand => new RelayCommand(() => this.walletController.CloseWallet());
+        public RelayCommand CloseWalletCommand => new RelayCommand(() => this.walletController.CloseWallet());
 
-        public ICommand ExitCommand => new RelayCommand(() => this.processManager.Exit());
+        public RelayCommand ExitCommand => new RelayCommand(() => this.processManager.Exit());
 
-        public ICommand TransferCommand => new RelayCommand(() => this.dialogManager.ShowDialog<TransferLoadParameters>());
+        public RelayCommand TransferCommand => new RelayCommand(() => this.dialogManager.ShowDialog<TransferLoadParameters>());
 
-        public ICommand ShowTransactionDialogCommand => new RelayCommand(() => this.dialogManager.ShowDialog<TradeLoadParameters>());
+        public RelayCommand ShowTransactionDialogCommand => new RelayCommand(() => this.dialogManager.ShowDialog<TradeLoadParameters>());
 
-        public ICommand ShowSigningDialogCommand => new RelayCommand(() => this.dialogManager.ShowDialog<SigningLoadParameters>());
+        public RelayCommand ShowSigningDialogCommand => new RelayCommand(() => this.dialogManager.ShowDialog<SigningLoadParameters>());
 
-        public ICommand ClaimCommand => new RelayCommand(() => this.dialogManager.ShowDialog<ClaimLoadParameters>());
+        public RelayCommand ClaimCommand => new RelayCommand(() => this.dialogManager.ShowDialog<ClaimLoadParameters>());
 
-        public ICommand RequestCertificateCommand => new RelayCommand(() => this.dialogManager.ShowDialog<CertificateApplicationLoadParameters>());
+        public RelayCommand RequestCertificateCommand => new RelayCommand(() => this.dialogManager.ShowDialog<CertificateApplicationLoadParameters>());
 
-        public ICommand AssetRegistrationCommand => new RelayCommand(() => this.dialogManager.ShowDialog<AssetRegistrationLoadParameters>());
+        public RelayCommand AssetRegistrationCommand => new RelayCommand(() => this.dialogManager.ShowDialog<AssetRegistrationLoadParameters>());
 
-        public ICommand DistributeAssetCommand => new RelayCommand(() => this.dialogManager.ShowDialog<AssetDistributionLoadParameters>());
+        public RelayCommand DistributeAssetCommand => new RelayCommand(() => this.dialogManager.ShowDialog<AssetDistributionLoadParameters>());
 
-        public ICommand DeployContractCommand => new RelayCommand(() => this.dialogManager.ShowDialog<DeployContractLoadParameters>());
+        public RelayCommand DeployContractCommand => new RelayCommand(() => this.dialogManager.ShowDialog<DeployContractLoadParameters>());
 
         public RelayCommand InvokeContractCommand => new RelayCommand(() =>  this.dialogManager.ShowDialog<InvokeContractLoadParameters>());
 
-        public ICommand ShowElectionDialogCommand => new RelayCommand(() => this.dialogManager.ShowDialog<ElectionLoadParameters>());
+        public RelayCommand ShowElectionDialogCommand => new RelayCommand(() => this.dialogManager.ShowDialog<ElectionLoadParameters>());
 
-        public ICommand ShowSettingsCommand => new RelayCommand(() => this.dialogManager.ShowDialog<SettingsLoadParameters>());
+        public RelayCommand ShowSettingsCommand => new RelayCommand(() => this.dialogManager.ShowDialog<SettingsLoadParameters>());
 
-        public ICommand CheckForHelpCommand => new RelayCommand(() => { });
+        public RelayCommand CheckForHelpCommand => new RelayCommand(() => { });
 
-        public ICommand ShowOfficialWebsiteCommand => new RelayCommand(() => this.processManager.OpenInExternalBrowser(OfficialWebsiteUrl));
+        public RelayCommand ShowOfficialWebsiteCommand => new RelayCommand(() => this.processManager.OpenInExternalBrowser(OfficialWebsiteUrl));
 
         public RelayCommand ShowDeveloperToolsCommand => new RelayCommand(() => this.dialogManager.ShowDialog<DeveloperToolsLoadParameters>());
 
-        public ICommand AboutNeoCommand => new RelayCommand(() => this.dialogManager.ShowDialog<AboutLoadParameters>());
+        public RelayCommand AboutNeoCommand => new RelayCommand(() => this.dialogManager.ShowDialog<AboutLoadParameters>());
 
-        public ICommand ShowUpdateDialogCommand => new RelayCommand(() => this.dialogManager.ShowDialog<UpdateLoadParameters>());
+        public RelayCommand ShowUpdateDialogCommand => new RelayCommand(() => this.dialogManager.ShowDialog<UpdateLoadParameters>());
         #endregion Public Properies
 
         #region Constructor

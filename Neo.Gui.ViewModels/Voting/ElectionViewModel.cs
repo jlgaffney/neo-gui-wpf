@@ -1,45 +1,32 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows.Input;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-using Neo.Core;
-using Neo.Cryptography.ECC;
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Dialogs.LoadParameters.Voting;
 using Neo.Gui.Base.Managers.Interfaces;
 using Neo.UI.Core.Controllers.Interfaces;
+using Neo.UI.Core.Extensions;
+using Neo.UI.Core.Data.TransactionParameters;
 
 namespace Neo.Gui.ViewModels.Voting
 {
     public class ElectionViewModel : ViewModelBase, IDialogViewModel<ElectionLoadParameters>
     {
+        #region Private Fields 
         private readonly IDialogManager dialogManager;
         private readonly IWalletController walletController;
 
-        private ECPoint selectedBookKeeper;
+        private string selectedBookKeeper;
+        #endregion
 
-        public ElectionViewModel(
-            IDialogManager dialogManager,
-            IWalletController walletController)
-        {
-            this.dialogManager = dialogManager;
-            this.walletController = walletController;
+        #region Public Properties 
+        public ObservableCollection<string> BookKeepers { get; }
 
-            // Load book keepers
-            var bookKeepers = this.walletController.GetStandardAccounts()
-                .Select(p => p.GetKey().PublicKey);
-
-            this.BookKeepers = new ObservableCollection<ECPoint>(bookKeepers);
-        }
-
-        public ObservableCollection<ECPoint> BookKeepers { get; }
-
-        public ECPoint SelectedBookKeeper
+        public string SelectedBookKeeper
         {
             get => this.selectedBookKeeper;
             set
@@ -56,33 +43,57 @@ namespace Neo.Gui.ViewModels.Voting
         }
 
         public bool OkEnabled => this.SelectedBookKeeper != null;
-        
-        public ICommand OkCommand => new RelayCommand(this.Ok);
+
+        public RelayCommand OkCommand => new RelayCommand(this.HandleOkCommand);
+        #endregion
+
+        #region Constructor 
+        public ElectionViewModel(
+            IDialogManager dialogManager,
+            IWalletController walletController)
+        {
+            this.dialogManager = dialogManager;
+            this.walletController = walletController;
+
+            this.BookKeepers = new ObservableCollection<string>();
+        }
+        #endregion
         
         #region IDialogViewModel implementation 
         public event EventHandler Close;
 
         public void OnDialogLoad(ElectionLoadParameters parameters)
         {
+            var bookKeepers = this.walletController.GetPublicKeysFromStandardAccounts();
+            this.BookKeepers.AddRange(bookKeepers);
         }
         #endregion
 
-        private void Ok()
+        #region Private Methods 
+        private void HandleOkCommand()
         {
             if (!this.OkEnabled) return;
 
-            var transaction = this.MakeTransaction();
+            //var transaction = this.MakeTransaction();
 
-            if (transaction == null) return;
+            //if (transaction == null) return;
 
-            this.dialogManager.ShowDialog(new InvokeContractLoadParameters(transaction));
+            //this.dialogManager.ShowDialog(new InvokeContractLoadParameters(transaction));
+
+            var invokeContractLoadParameters = new InvokeContractLoadParameters()
+            {
+                InvocationTransactionType = InvocationTransactionType.Election,
+                ElectionParameters = new ElectionTransactionParameters(this.SelectedBookKeeper)
+            };
+            this.dialogManager.ShowDialog(invokeContractLoadParameters);
 
             this.Close(this, EventArgs.Empty);
         }
 
-        private InvocationTransaction MakeTransaction()
-        {
-            return this.walletController.MakeValidatorRegistrationTransaction(this.SelectedBookKeeper);
-        }
+        //private InvocationTransaction MakeTransaction()
+        //{
+        //    return this.walletController.MakeValidatorRegistrationTransaction(this.SelectedBookKeeper);
+        //}
+        #endregion
     }
 }

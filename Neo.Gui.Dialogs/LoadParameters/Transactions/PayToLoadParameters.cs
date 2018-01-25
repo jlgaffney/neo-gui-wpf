@@ -1,17 +1,17 @@
-﻿using Neo.Wallets;
+﻿using Neo.UI.Core.Data;
 
 namespace Neo.Gui.Dialogs.LoadParameters.Transactions
 {
     public class PayToLoadParameters
     {
-        public PayToLoadParameters(AssetDescriptor asset = null, UInt160 scriptHash = null)
+        public AssetDto Asset { get; }
+
+        public string ScriptHash { get; }
+
+        public PayToLoadParameters(AssetDto asset, string scriptHash)
         {
             this.Asset = asset;
             this.ScriptHash = scriptHash;
         }
-
-        public AssetDescriptor Asset { get; }
-
-        public UInt160 ScriptHash { get; }
     }
 }

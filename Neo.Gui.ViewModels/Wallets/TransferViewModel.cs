@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using Neo.Core;
-using Neo.Gui.Globalization.Resources;
+
+using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Dialogs.LoadParameters.Wallets;
-using Neo.Gui.Base.Managers.Interfaces;
+using Neo.Gui.Globalization.Resources;
 using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Data;
+using Neo.UI.Core.Data.TransactionParameters;
 
 namespace Neo.Gui.ViewModels.Wallets
 {
@@ -33,7 +33,7 @@ namespace Neo.Gui.ViewModels.Wallets
         #region Public Properties 
         public ObservableCollection<TransactionOutputItem> Items { get; }
 
-        public ObservableCollection<string> Addresses { get; }
+        public ObservableCollection<string> Addresses { get; private set; }
 
         public bool ShowAdvancedSection
         {
@@ -94,9 +94,7 @@ namespace Neo.Gui.ViewModels.Wallets
             this.walletController = walletController;
 
             this.Items = new ObservableCollection<TransactionOutputItem>();
-
-            this.Addresses = new ObservableCollection<string>(
-                this.walletController.GetAccounts().Select(account => account.Address));
+            this.Addresses = new ObservableCollection<string>();
         }
         #endregion
 
@@ -105,6 +103,13 @@ namespace Neo.Gui.ViewModels.Wallets
 
         public void OnDialogLoad(TransferLoadParameters parameters)
         {
+            var addresses = this.walletController.GetAccountsAddresses();
+            this.Addresses = new ObservableCollection<string>(addresses);
+
+            this.Items.CollectionChanged += (sender, e) =>
+            {
+                this.RaisePropertyChanged(nameof(this.OkEnabled));
+            };
         }
         #endregion
 
@@ -136,28 +141,35 @@ namespace Neo.Gui.ViewModels.Wallets
         {
             if (!this.OkEnabled) return;
 
-            UInt160 transferChangeAddress = null;
-
-            if (!Fixed8.TryParse(this.fee, out var transferFee))
+            var assetTransferParameters = new AssetTransferTransactionParameters(this.Items, this.SelectedChangeAddress, this.remark, this.Fee);
+            this.dialogManager.ShowDialog(new InvokeContractLoadParameters()
             {
-                transferFee = Fixed8.Zero;
-            }
+                InvocationTransactionType = InvocationTransactionType.AssetTransfer,
+                AssetTransferParameters = assetTransferParameters
+            });
 
-            if (!string.IsNullOrEmpty(this.SelectedChangeAddress))
-            {
-                transferChangeAddress = this.walletController.AddressToScriptHash(this.SelectedChangeAddress);
-            }
+            //UInt160 transferChangeAddress = null;
 
-            var transaction = this.walletController.MakeTransferTransaction(this.Items, this.remark, transferChangeAddress, transferFee);
+            //if (!Fixed8.TryParse(this.fee, out var transferFee))
+            //{
+            //    transferFee = Fixed8.Zero;
+            //}
+
+            //if (!string.IsNullOrEmpty(this.SelectedChangeAddress))
+            //{
+            //    transferChangeAddress = this.walletController.AddressToScriptHash(this.SelectedChangeAddress);
+            //}
+
+            //var transaction = this.walletController.MakeTransferTransaction(this.Items, this.remark, transferChangeAddress, transferFee);
             
-            if (transaction is InvocationTransaction invocationTransaction)
-            {
-                this.dialogManager.ShowDialog(new InvokeContractLoadParameters(invocationTransaction));
-            }
-            else
-            {
-                this.walletController.SignAndRelay(transaction);
-            }
+            //if (transaction is InvocationTransaction invocationTransaction)
+            //{
+            //    this.dialogManager.ShowDialog(new InvokeContractLoadParameters(invocationTransaction));
+            //}
+            //else
+            //{
+            //    this.walletController.SignAndRelay(transaction);
+            //}
 
             this.Close(this, EventArgs.Empty);
         }

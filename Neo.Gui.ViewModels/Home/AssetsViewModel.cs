@@ -156,7 +156,7 @@ namespace Neo.Gui.ViewModels.Home
 
             if (firstClassAssetItem == null) return;
 
-            var value = this.walletController.GetAvailable(firstClassAssetItem.AssetId);
+            var value = this.walletController.GetFirstClassTokenAvailability(firstClassAssetItem.AssetId.ToString());
 
             var result = this.dialogManager.ShowMessageDialog(
                 Strings.DeleteConfirmation,

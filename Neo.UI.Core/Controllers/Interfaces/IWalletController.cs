@@ -6,6 +6,7 @@ using Neo.Cryptography.ECC;
 using Neo.Network;
 using Neo.SmartContract;
 using Neo.UI.Core.Data;
+using Neo.UI.Core.Data.TransactionParameters;
 using Neo.Wallets;
 
 namespace Neo.UI.Core.Controllers.Interfaces
@@ -55,6 +56,11 @@ namespace Neo.UI.Core.Controllers.Interfaces
         IEnumerable<UInt160> GetNEP5WatchScriptHashes();
 
         /// <summary>
+        /// Get all accounts addresses in the wallet.
+        /// </summary>
+        IEnumerable<string> GetAccountsAddresses();
+
+        /// <summary>
         /// Gets all accounts in wallets.
         /// </summary>
         IEnumerable<WalletAccount> GetAccounts();
@@ -68,6 +74,8 @@ namespace Neo.UI.Core.Controllers.Interfaces
         /// Gets standard contract accounts.
         /// </summary>
         IEnumerable<WalletAccount> GetStandardAccounts();
+
+        IEnumerable<AssetDto> GetWalletAssets();
 
         IEnumerable<Coin> GetCoins();
 
@@ -88,11 +96,11 @@ namespace Neo.UI.Core.Controllers.Interfaces
         /// </summary>
         /// <param name="scriptHash">Script hash of the account that voted</param>
         /// <returns>Enumerable collection of public keys</returns>
-        IEnumerable<ECPoint> GetVotes(UInt160 scriptHash);
+        IEnumerable<string> GetVotes(string scriptHash);
 
         ContractState GetContractState(UInt160 scriptHash);
 
-        AssetState GetAssetState(UInt256 assetId);
+        AssetStateDto GetAssetState(string assetId);
 
         bool CanViewCertificate(FirstClassAssetItem assetItem);
 
@@ -111,12 +119,12 @@ namespace Neo.UI.Core.Controllers.Interfaces
         /// <summary>
         /// NEP-5 assets
         /// </summary>
-        BigDecimal GetAvailable(UInt160 assetId);
+        string GetNEP5TokenAvailability(string assetId);
 
         /// <summary>
         /// First class assets
         /// </summary>
-        Fixed8 GetAvailable(UInt256 assetId);
+        string GetFirstClassTokenAvailability(string assetId);
 
         void ImportWatchOnlyAddress(string[] addressesToWatch);
 
@@ -146,6 +154,8 @@ namespace Neo.UI.Core.Controllers.Interfaces
             string email, 
             string description);
 
+        string ByteToScriptHash(byte[] codeBytes);
+
         UInt160 AddressToScriptHash(string address);
 
         string ScriptHashToAddress(string scriptHash);
@@ -156,7 +166,7 @@ namespace Neo.UI.Core.Controllers.Interfaces
 
         void ClaimUtilityTokenAsset();
 
-        void IssueAsset(UInt256 assetId, IEnumerable<TransferOutput> items);
+        void IssueAsset(string assetId, IEnumerable<TransferOutput> items);
 
         void InvokeContract(InvocationTransaction transaction);
 
@@ -170,8 +180,18 @@ namespace Neo.UI.Core.Controllers.Interfaces
 
         IEnumerable<string> GetPublicKeysFromStandardAccounts();
 
+        IEnumerable<string> GetAddressesForNonWatchOnlyAccounts();
+
         void AddMultiSignatureContract(int minimunSignatureNumber, IEnumerable<string> publicKeys);
 
         void AddContractWithParameters(string reedemScript, string parameterList);
+
+        ITransactionInvoker GetTransactionInvoker(
+            InvocationTransactionType invocationTransactionType,
+            AssetRegistrationTransactionParameters assetRegistrationTransactionParameters,
+            AssetTransferTransactionParameters assetTransferTransactionParameters,
+            DeployContractTransactionParameters deployContractTransactionParameters,
+            ElectionTransactionParameters electionTransactionParameters,
+            VotingTransactionParameters votingTransactionParameters);
     }
 }

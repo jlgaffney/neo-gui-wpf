@@ -1,27 +1,22 @@
 ﻿using System;
-using Neo.Core;
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Assets;
-using Neo.Gui.ViewModels.Assets;
 
 namespace Neo.Gui.Wpf.Views.Assets
 {
     public partial class AssetDistributionView : IDialog<AssetDistributionLoadParameters>
     {
-        private readonly AssetDistributionViewModel viewModel;
-
-        public AssetDistributionView(AssetState asset = null)
+        public AssetDistributionView()
         {
             InitializeComponent();
-
-            this.viewModel = this.DataContext as AssetDistributionViewModel;
-
-            this.viewModel?.SetAsset(asset);
         }
 
         private void TxOutListBox_OnItemsChanged(object sender, EventArgs e)
         {
-            this.viewModel?.UpdateConfirmButtonEnabled();
+            // TODO #Issue 145 [AboimPinto]: need to find in the ViewModel a way to enable the confirm buttom
+
+            //var viewModel = this.DataContext as AssetDistributionViewModel;
+            //viewModel.UpdateConfirmButtonEnabled();
         }
     }
 }

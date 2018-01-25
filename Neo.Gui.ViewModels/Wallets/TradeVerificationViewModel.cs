@@ -50,7 +50,7 @@ namespace Neo.Gui.ViewModels.Wallets
             // Set outputs
             foreach (var output in parameters.TransactionOutputs)
             {
-                var asset = this.walletController.GetAssetState(output.AssetId);
+                var asset = this.walletController.GetAssetState(output.AssetId.ToString());
 
                 this.Items.Add(new TransactionOutputItem
                 {

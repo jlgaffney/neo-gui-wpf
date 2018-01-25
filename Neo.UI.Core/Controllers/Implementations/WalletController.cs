@@ -14,6 +14,7 @@ using Neo.SmartContract;
 using Neo.UI.Core.Certificates;
 using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Data;
+using Neo.UI.Core.Data.TransactionParameters;
 using Neo.UI.Core.Exceptions;
 using Neo.UI.Core.Extensions;
 using Neo.UI.Core.Helpers;
@@ -43,8 +44,9 @@ namespace Neo.UI.Core.Controllers.Implementations
         private readonly IMessageSubscriber messageSubscriber;
         private readonly INetworkController networkController;
         private readonly INotificationService notificationService;
-
+        private readonly ITransactionInvokerFactory transactionInvokerFactory;
         private readonly string blockchainDataDirectoryPath;
+        private IEnumerable<ITransactionInvoker> transactionInvokersInternal;
 
         private readonly int localNodePort;
         private readonly int localWSPort;
@@ -79,7 +81,9 @@ namespace Neo.UI.Core.Controllers.Implementations
             IMessageSubscriber messageSubscriber,
             INetworkController networkController,
             INotificationService notificationService,
-            ISettingsManager settingsManager)
+            ISettingsManager settingsManager, 
+            ITransactionInvokerFactory transactionInvokerFactory, 
+            IEnumerable<ITransactionInvoker> transactionInvokers)
         {
             this.blockchainController = blockchainController;
             this.certificateService = certificateService;
@@ -87,8 +91,9 @@ namespace Neo.UI.Core.Controllers.Implementations
             this.messageSubscriber = messageSubscriber;
             this.networkController = networkController;
             this.notificationService = notificationService;
-
+            this.transactionInvokerFactory = transactionInvokerFactory;
             this.blockchainDataDirectoryPath = settingsManager.BlockchainDataDirectoryPath;
+            this.transactionInvokersInternal = transactionInvokers;
 
             this.localNodePort = settingsManager.LocalNodePort;
             this.localWSPort = settingsManager.LocalWSPort;
@@ -383,6 +388,15 @@ namespace Neo.UI.Core.Controllers.Implementations
             return this.currentWallet.GetAccounts();
         }
 
+        public IEnumerable<string> GetAccountsAddresses()
+        {
+            this.ThrowIfWalletIsNotOpen();
+
+            return this.GetAccounts()
+                .Select(x => x.Address)
+                .ToList();
+        }
+
         public IEnumerable<WalletAccount> GetNonWatchOnlyAccounts()
         {
             this.ThrowIfWalletIsNotOpen();
@@ -394,8 +408,42 @@ namespace Neo.UI.Core.Controllers.Implementations
         {
             this.ThrowIfWalletIsNotOpen();
 
-            return this.GetAccounts().Where(account =>
-                !account.WatchOnly && account.Contract.IsStandard);
+            return this.GetAccounts()
+                .Where(account => !account.WatchOnly && account.Contract.IsStandard);
+        }
+
+        public IEnumerable<AssetDto> GetWalletAssets()
+        {
+            var walletAssets = new List<AssetDto>();
+
+            // Add First-Class assets
+            var unspendCoins = this.FindUnspentCoins();
+            foreach(var coin in unspendCoins)
+            {
+                var assetState = this.blockchainController.GetAssetState(coin.Output.AssetId);
+
+                walletAssets.Add(new AssetDto
+                {
+                    Id = coin.Output.AssetId.ToString(),
+                    Name = assetState.ToString(),
+                    Decimals = assetState.Precision,
+                    TokenType = TokenType.FirstClassToken
+                });
+            }
+
+            // Add  NEP-5 assets
+            var nep5Tokens = this.GetNEP5WatchScriptHashes();
+            foreach(var nep5Token in nep5Tokens)
+            {
+                // TODO - Issue: #150 - [AboimPinto]: Missing add the name of the token
+                walletAssets.Add(new AssetDto
+                {
+                    Id = nep5Token.ToString(),
+                    TokenType = TokenType.NEP5Token
+                });
+            }
+
+            return walletAssets;
         }
 
         public IEnumerable<Coin> GetCoins()
@@ -410,6 +458,8 @@ namespace Neo.UI.Core.Controllers.Implementations
         public IEnumerable<Coin> FindUnspentCoins()
         {
             this.ThrowIfWalletIsNotOpen();
+
+            var x = this.currentWallet.GetCoins();
 
             return this.currentWallet.FindUnspentCoins();
         }
@@ -471,16 +521,16 @@ namespace Neo.UI.Core.Controllers.Implementations
             return this.blockchainController.GetTransaction(hash, out height);
         }
 
-        public IEnumerable<ECPoint> GetVotes(UInt160 scriptHash)
+        public IEnumerable<string> GetVotes(string scriptHash)
         {
-            var accountState = this.blockchainController.GetAccountState(scriptHash);
+            var accountState = this.blockchainController.GetAccountState(UInt160.Parse(scriptHash));
 
             if (accountState == null)
             {
-                return Enumerable.Empty<ECPoint>();
+                return Enumerable.Empty<string>();
             }
 
-            return accountState.Votes;
+            return accountState.Votes.Select(x => x.ToString());
         }
 
         public ContractState GetContractState(UInt160 scriptHash)
@@ -488,9 +538,19 @@ namespace Neo.UI.Core.Controllers.Implementations
             return this.blockchainController.GetContractState(scriptHash);
         }
 
-        public AssetState GetAssetState(UInt256 assetId)
+        public AssetStateDto GetAssetState(string assetId)
         {
-            return this.blockchainController.GetAssetState(assetId);
+            var assetState = this.blockchainController.GetAssetState(UInt256.Parse(assetId));
+
+            var assetStateDto = new AssetStateDto(
+                assetState.AssetId.ToString(),
+                assetState.Owner.ToString(),
+                this.ScriptHashToAddress(assetState.Admin.ToString()),
+                assetState.Amount == -Fixed8.Satoshi ? "+\u221e" : assetState.Amount.ToString(),
+                assetState.Available.ToString(),
+                true);
+
+            return assetStateDto;
         }
 
         public bool CanViewCertificate(FirstClassAssetItem assetItem)
@@ -556,24 +616,24 @@ namespace Neo.UI.Core.Controllers.Implementations
             return this.currentWallet.Contains(scriptHash);
         }
 
-        public BigDecimal GetAvailable(UInt160 assetId)
+        public string GetNEP5TokenAvailability(string assetId)
         {
             if (!this.WalletIsOpen)
             {
-                return new BigDecimal(BigInteger.Zero, 0);
+                return new BigDecimal(BigInteger.Zero, 0).ToString();
             }
 
-            return this.currentWallet.GetAvailable(assetId);
+            return this.currentWallet.GetAvailable(UInt160.Parse(assetId)).ToString();
         }
 
-        public Fixed8 GetAvailable(UInt256 assetId)
+        public string GetFirstClassTokenAvailability(string assetId)
         {
             if (!this.WalletIsOpen)
             {
-                return Fixed8.Zero;
+                return Fixed8.Zero.ToString();
             }
 
-            return this.currentWallet.GetAvailable(assetId);
+            return this.currentWallet.GetAvailable(UInt256.Parse(assetId)).ToString();
         }
 
         public void ImportWatchOnlyAddress(string[] addressesToWatch)
@@ -689,6 +749,11 @@ namespace Neo.UI.Core.Controllers.Implementations
                     name, version, author, email, description);
         }
 
+        public string ByteToScriptHash(byte[] codeBytes)
+        {
+            return codeBytes.ToScriptHash().ToString();
+        }
+
         public UInt160 AddressToScriptHash(string address)
         {
             return Wallet.ToScriptHash(address);
@@ -715,12 +780,12 @@ namespace Neo.UI.Core.Controllers.Implementations
 
         public void DeleteFirstClassAsset(FirstClassAssetItem assetItem)
         {
-            var value = this.GetAvailable(assetItem.AssetId);
+            var value = this.GetFirstClassTokenAvailability(assetItem.AssetId.ToString());
 
             var transactionOutput = new TransactionOutput
             {
-                AssetId = assetItem.AssetId,
-                Value = value,
+                AssetId = UInt256.Parse(assetItem.AssetId),
+                Value = Fixed8.Parse(value),
                 ScriptHash = this.RecycleScriptHash
             };
 
@@ -749,7 +814,7 @@ namespace Neo.UI.Core.Controllers.Implementations
             this.SignAndRelay(claimTransaction);
         }
 
-        public void IssueAsset(UInt256 assetId, IEnumerable<TransferOutput> items)
+        public void IssueAsset(string assetId, IEnumerable<TransferOutput> items)
         {
             this.ThrowIfWalletIsNotOpen();
 
@@ -758,7 +823,7 @@ namespace Neo.UI.Core.Controllers.Implementations
                 Version = 1,
                 Outputs = items.GroupBy(p => p.ScriptHash).Select(g => new TransactionOutput
                 {
-                    AssetId = assetId,
+                    AssetId = UInt256.Parse(assetId),
                     Value = g.Sum(p => new Fixed8((long)p.Value.Value)),
                     ScriptHash = g.Key
                 }).ToArray()
@@ -813,6 +878,14 @@ namespace Neo.UI.Core.Controllers.Implementations
                 .ToList();
         }
 
+        public IEnumerable<string> GetAddressesForNonWatchOnlyAccounts()
+        {
+            return this
+                .GetNonWatchOnlyAccounts()
+                .Select(x => x.Address.ToString())
+                .ToList();
+        }
+
         public void AddMultiSignatureContract(int minimunSignatureNumber, IEnumerable<string> publicKeys)
         {
             var ecPoints = publicKeys
@@ -833,6 +906,25 @@ namespace Neo.UI.Core.Controllers.Implementations
             var contract = Contract.Create(parameters, scriptHash);
 
             this.CreateAccount(contract);
+        }
+
+        public ITransactionInvoker GetTransactionInvoker(
+            InvocationTransactionType invocationTransactionType,
+            AssetRegistrationTransactionParameters assetRegistrationTransactionParameters,
+            AssetTransferTransactionParameters assetTransferTransactionParameters,
+            DeployContractTransactionParameters deployContractTransactionParameters,
+            ElectionTransactionParameters electionTransactionParameters,
+            VotingTransactionParameters votingTransactionParameters)
+        {
+            return this.transactionInvokerFactory.GetTransactionInvoker(
+                this,
+                this.transactionInvokersInternal,
+                invocationTransactionType,
+                assetRegistrationTransactionParameters,
+                assetTransferTransactionParameters,
+                deployContractTransactionParameters,
+                electionTransactionParameters,
+                votingTransactionParameters);
         }
         #endregion
 
@@ -1031,8 +1123,8 @@ namespace Neo.UI.Core.Controllers.Implementations
 
             this.ThrowIfWalletIsNotOpen();
 
-            return this.GetAccounts().FirstOrDefault(account =>
-                scriptHash.Equals(account.ScriptHash));
+            return this.GetAccounts()
+                .FirstOrDefault(account => scriptHash.Equals(account.ScriptHash));
         }
 
         private void AddAccountItem(WalletAccount account)
@@ -1069,7 +1161,9 @@ namespace Neo.UI.Core.Controllers.Implementations
             var balanceNeo = coins.Where(p => p.Output.AssetId.Equals(this.blockchainController.GoverningToken.Hash)).GroupBy(p => p.Output.ScriptHash).ToDictionary(p => p.Key, p => p.Sum(i => i.Output.Value));
             var balanceGas = coins.Where(p => p.Output.AssetId.Equals(this.blockchainController.UtilityToken.Hash)).GroupBy(p => p.Output.ScriptHash).ToDictionary(p => p.Key, p => p.Sum(i => i.Output.Value));
 
-            var accountsList = this.currentWalletInfo.GetAccounts().ToList();
+            var accountsList = this.currentWalletInfo
+                .GetAccounts()
+                .ToList();
             
             foreach (var account in accountsList)
             {
@@ -1113,7 +1207,7 @@ namespace Neo.UI.Core.Controllers.Implementations
 
                 foreach (var asset in this.currentWalletInfo.GetFirstClassAssets())
                 {
-                    if (assetDictionary.ContainsKey(asset.AssetId)) continue;
+                    if (assetDictionary.ContainsKey(UInt256.Parse(asset.AssetId))) continue;
 
                     this.currentWalletInfo.RemoveAsset(asset);
                 }
@@ -1155,7 +1249,7 @@ namespace Neo.UI.Core.Controllers.Implementations
                         }
 
                         var assetItem = new FirstClassAssetItem(
-                            asset.Asset.AssetId,
+                            asset.Asset.AssetId.ToString(),
                             asset.Asset.Owner,
                             asset.Asset.AssetType,
                             valueText)
