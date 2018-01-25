@@ -6,6 +6,8 @@ namespace Neo.UI.Core.Controllers.TransactionInvokers
 {
     internal class AssetTransferTransactionInvoker : TransactionInvokerBase
     {
+        private Transaction nonContractTransaction;
+
         public override bool IsValid(InvocationTransactionType invocationTransactionType)
         {
             return invocationTransactionType == InvocationTransactionType.AssetTransfer;
@@ -29,13 +31,18 @@ namespace Neo.UI.Core.Controllers.TransactionInvokers
             if (transaction is InvocationTransaction)
             {
                 this.Transaction = transaction as InvocationTransaction;
-                this.IsTransactionSignedAndRelayed = false;
+                this.IsContractTransaction = false;
             }
             else
             {
-                this.Configuration.WalletController.SignAndRelay(transaction);
-                this.IsTransactionSignedAndRelayed = true;
+                this.nonContractTransaction = transaction;
+                this.IsContractTransaction = true;
             }
+        }
+
+        public override void SignAndRelayTransaction()
+        {
+            this.Configuration.WalletController.SignAndRelay(this.nonContractTransaction);
         }
     }
 }

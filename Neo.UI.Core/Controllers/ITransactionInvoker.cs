@@ -7,7 +7,7 @@ namespace Neo.UI.Core.Controllers
     {
         ITransactionConfiguration Configuration { get; set; }
 
-        bool IsTransactionSignedAndRelayed { get; set; }
+        bool IsContractTransaction { get; set; }
 
         bool IsValid(InvocationTransactionType invocationTransactionType);
 
@@ -16,6 +16,8 @@ namespace Neo.UI.Core.Controllers
         string GetTransactionScript();
 
         TestForGasUsageResult TestForGasUsage(string customScript);
+
+        void SignAndRelayTransaction();
 
         void Invoke();
     }
