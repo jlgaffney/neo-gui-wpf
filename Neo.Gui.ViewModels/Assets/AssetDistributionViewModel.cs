@@ -159,6 +159,11 @@ namespace Neo.Gui.ViewModels.Assets
         {
             this.AssetId = parameters?.AssetStateId;
             this.AssetIdEnabled = false;
+
+            this.Items.CollectionChanged += (sender, e) =>
+            {
+                RaisePropertyChanged(nameof(this.ConfirmEnabled));
+            };
         }
         #endregion
 
@@ -168,11 +173,6 @@ namespace Neo.Gui.ViewModels.Assets
             this.walletController.IssueAsset(this.Asset.Id, this.Items);
 
             this.Close(this, EventArgs.Empty);
-        }
-
-        public void UpdateConfirmButtonEnabled()
-        {
-            RaisePropertyChanged(nameof(this.ConfirmEnabled));
         }
 
         private void UpdateAssetDetails()
