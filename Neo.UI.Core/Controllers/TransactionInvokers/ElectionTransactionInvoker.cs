@@ -18,6 +18,8 @@ namespace Neo.UI.Core.Controllers.TransactionInvokers
 
             var bookKeeperPublicKeyECPoint = ECPoint.Parse(parameters.BookKeeperPublicKey, ECCurve.Secp256k1);
             this.Transaction = this.Configuration.WalletController.MakeValidatorRegistrationTransaction(bookKeeperPublicKeyECPoint);
+
+            this.IsContractTransaction = true;
         }
     }
 }

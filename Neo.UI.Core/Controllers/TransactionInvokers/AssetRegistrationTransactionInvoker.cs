@@ -33,6 +33,8 @@ namespace Neo.UI.Core.Controllers.TransactionInvokers
                 ECPoint.Parse(owner, ECCurve.Secp256r1), 
                 admin, 
                 issuer);
+
+            this.IsContractTransaction = true;
         }
     }
 }

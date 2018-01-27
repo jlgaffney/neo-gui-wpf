@@ -43,6 +43,8 @@ namespace Neo.UI.Core.Controllers.TransactionInvokers
                 parameters.Author,
                 parameters.Email,
                 parameters.Description);
+
+            this.IsContractTransaction = true;
         }
     }
 }

@@ -55,6 +55,8 @@ namespace Neo.UI.Core.Controllers.TransactionInvokers
                             }
                         }
                 };
+
+                this.IsContractTransaction = true;
             }
         }
     }

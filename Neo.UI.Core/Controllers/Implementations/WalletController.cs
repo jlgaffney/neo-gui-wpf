@@ -846,7 +846,14 @@ namespace Neo.UI.Core.Controllers.Implementations
                 Outputs = transaction.Outputs
             }, fee: transactionFee);
 
-            this.SignAndRelay(transactionWithFee);
+            if (transactionWithFee == null)
+            {
+                this.notificationService.ShowErrorNotification("Transaction could not be created");
+            }
+            else
+            {
+                this.SignAndRelay(transactionWithFee);
+            }
         }
 
         public void AddLockContractAccount(string publicKey, uint unlockDateTime)

@@ -354,7 +354,7 @@ namespace Neo.Gui.ViewModels.Contracts
 
             //this.walletController.InvokeContract(this.transaction);
 
-            //this.Close(this, EventArgs.Empty);
+            this.Close(this, EventArgs.Empty);
         }
 
         private void Cancel()

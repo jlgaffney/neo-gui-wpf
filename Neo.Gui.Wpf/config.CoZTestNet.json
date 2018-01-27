@@ -11,9 +11,9 @@
     },
 
     "Urls": {
-      "AddressUrl": "http://coz.neoscan-testnet.io/address/{0}",
-      "AssetUrl": "http://coz.neoscan-testnet.io/asset/hash/{0}",
-      "TransactionUrl": "http://coz.neoscan-testnet.io/tx/hash/{0}"
+      "AddressUrl": "https://coz.neoscan-testnet.io/address/{0}",
+      "AssetUrl": "http://coz.neoscan-testnet.io/asset/{0}",
+      "TransactionUrl": "https://coz.neoscan-testnet.io/transaction/{0}"
     }
   }
 }
