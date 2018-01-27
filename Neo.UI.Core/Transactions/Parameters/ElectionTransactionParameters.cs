@@ -1,8 +1,8 @@
-﻿namespace Neo.UI.Core.Data.TransactionParameters
+﻿namespace Neo.UI.Core.Transactions.Parameters
 {
     public class ElectionTransactionParameters
     {
-        public string BookKeeperPublicKey { get; private set; }
+        public string BookKeeperPublicKey { get; }
 
         public ElectionTransactionParameters(string bookKeeperPublicKey)
         {

@@ -1,4 +1,4 @@
-﻿namespace Neo.UI.Core.Data.TransactionParameters
+﻿namespace Neo.UI.Core.Transactions
 {
     public enum InvocationTransactionType
     {

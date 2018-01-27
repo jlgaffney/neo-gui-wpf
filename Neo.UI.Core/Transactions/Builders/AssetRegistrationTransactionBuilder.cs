@@ -3,9 +3,9 @@
 using Neo.UI.Core.Data.TransactionParameters;
 using Neo.UI.Core.Extensions;
 
-namespace Neo.UI.Core.Controllers.TransactionInvokers
+namespace Neo.UI.Core.Transactions.Builders
 {
-    internal class AssetRegistrationTransactionInvoker : TransactionInvokerBase
+    internal class AssetRegistrationTransactionBuilder : TransactionBuilderBase
     {
         public override bool IsValid(InvocationTransactionType invocationTransactionType)
         {
@@ -18,7 +18,7 @@ namespace Neo.UI.Core.Controllers.TransactionInvokers
             var parameters = assetRegistrationTransactionConfiguration.AssetRegistrationTransactionParameters;
 
             var assetType = parameters.AssetType.ToNeoAssetType();
-            var formattedName = parameters.FormatedName;
+            var formattedName = parameters.FormattedName;
             var amount = parameters.IsTotalTokenAmountLimited ? Fixed8.Parse(parameters.TotalTokenAmount) : -Fixed8.Satoshi;
             var precisionByte = (byte)parameters.Precision;
             var owner = parameters.OwnerKey;

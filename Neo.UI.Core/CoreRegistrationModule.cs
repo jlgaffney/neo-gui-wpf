@@ -4,6 +4,7 @@ using Neo.UI.Core.Controllers;
 using Neo.UI.Core.Managers;
 using Neo.UI.Core.Messaging;
 using Neo.UI.Core.Services;
+using Neo.UI.Core.Transactions;
 
 namespace Neo.UI.Core
 {
@@ -16,6 +17,7 @@ namespace Neo.UI.Core
             builder.RegisterModule<ManagersRegistrationModule>();
             builder.RegisterModule<MessagingRegistrationModule>();
             builder.RegisterModule<ServicesRegistrationModule>();
+            builder.RegisterModule<TransactionsRegistrationModule>();
 
             base.Load(builder);
         }

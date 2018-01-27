@@ -1,4 +1,6 @@
 ﻿using Neo.UI.Core.Data.TransactionParameters;
+using Neo.UI.Core.Transactions;
+using Neo.UI.Core.Transactions.Parameters;
 
 namespace Neo.Gui.Dialogs.LoadParameters.Contracts
 {

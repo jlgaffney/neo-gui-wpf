@@ -7,6 +7,9 @@ using Neo.Network;
 using Neo.SmartContract;
 using Neo.UI.Core.Data;
 using Neo.UI.Core.Data.TransactionParameters;
+using Neo.UI.Core.Transactions;
+using Neo.UI.Core.Transactions.Interfaces;
+using Neo.UI.Core.Transactions.Parameters;
 using Neo.Wallets;
 
 namespace Neo.UI.Core.Controllers.Interfaces
@@ -186,7 +189,7 @@ namespace Neo.UI.Core.Controllers.Interfaces
 
         void AddContractWithParameters(string reedemScript, string parameterList);
 
-        ITransactionInvoker GetTransactionInvoker(
+        ITransactionBuilder GetTransactionInvoker(
             InvocationTransactionType invocationTransactionType,
             AssetRegistrationTransactionParameters assetRegistrationTransactionParameters,
             AssetTransferTransactionParameters assetTransferTransactionParameters,

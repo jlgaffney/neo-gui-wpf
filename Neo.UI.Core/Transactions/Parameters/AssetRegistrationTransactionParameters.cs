@@ -1,26 +1,27 @@
 ﻿using System.Globalization;
+using Neo.UI.Core.Data;
 
-namespace Neo.UI.Core.Data.TransactionParameters
+namespace Neo.UI.Core.Transactions.Parameters
 {
     public class AssetRegistrationTransactionParameters
     {
-        public AssetTypeDto AssetType { get; private set; }
+        public AssetTypeDto AssetType { get; }
 
-        public string Name { get; private set; }
+        public string Name { get; }
 
-        public string FormatedName { get; private set; }
+        public string FormattedName { get; }
 
-        public bool IsTotalTokenAmountLimited { get; private set; }
+        public bool IsTotalTokenAmountLimited { get; }
 
-        public string TotalTokenAmount { get; private set; }
+        public string TotalTokenAmount { get; }
 
-        public int Precision { get; private set; }
+        public int Precision { get; }
 
-        public string OwnerKey { get; private set; }
+        public string OwnerKey { get; }
 
-        public string AdminAddress { get; private set; }
+        public string AdminAddress { get; }
 
-        public string IssuerAddress { get; private set; }
+        public string IssuerAddress { get; }
 
         public AssetRegistrationTransactionParameters(
             AssetTypeDto assetTypeDto, 
@@ -30,7 +31,7 @@ namespace Neo.UI.Core.Data.TransactionParameters
             int precision, 
             string ownerKey,
             string adminAddress, 
-            string IssuerAddress)
+            string issuerAddress)
         {
             this.AssetType = assetTypeDto;
             this.Name = name;
@@ -39,9 +40,9 @@ namespace Neo.UI.Core.Data.TransactionParameters
             this.Precision = precision;
             this.OwnerKey = ownerKey;
             this.AdminAddress = adminAddress;
-            this.IssuerAddress = IssuerAddress;
+            this.IssuerAddress = issuerAddress;
 
-            this.FormatedName = !string.IsNullOrWhiteSpace(this.Name)
+            this.FormattedName = !string.IsNullOrWhiteSpace(this.Name)
                     ? $"[{{\"lang\":\"{CultureInfo.CurrentCulture.Name}\",\"name\":\"{this.Name}\"}}]"
                     : string.Empty;
         }
