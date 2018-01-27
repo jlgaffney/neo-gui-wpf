@@ -1,10 +1,9 @@
 ﻿using Neo.Core;
-
 using Neo.UI.Core.Data.TransactionParameters;
 
-namespace Neo.UI.Core.Controllers.TransactionInvokers
+namespace Neo.UI.Core.Transactions.Builders
 {
-    internal class AssetTransferTransactionInvoker : TransactionInvokerBase
+    internal class AssetTransferTransactionBuilder : TransactionBuilderBase
     {
         private Transaction nonContractTransaction;
 

@@ -1,9 +1,9 @@
-﻿using Neo.UI.Core.Controllers.TransactionInvokers;
-using Neo.UI.Core.Data.TransactionParameters;
+﻿using Neo.UI.Core.Data.TransactionParameters;
+using Neo.UI.Core.Transactions.Testing;
 
-namespace Neo.UI.Core.Controllers
+namespace Neo.UI.Core.Transactions.Interfaces
 {
-    public interface ITransactionInvoker
+    public interface ITransactionBuilder
     {
         ITransactionConfiguration Configuration { get; set; }
 
@@ -14,8 +14,6 @@ namespace Neo.UI.Core.Controllers
         void GenerateTransaction();
 
         string GetTransactionScript();
-
-        TestForGasUsageResult TestForGasUsage(string customScript);
 
         void SignAndRelayTransaction();
 

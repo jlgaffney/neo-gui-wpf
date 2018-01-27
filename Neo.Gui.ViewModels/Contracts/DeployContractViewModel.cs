@@ -9,7 +9,8 @@ using Neo.Gui.Base.Managers.Interfaces;
 using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Managers.Interfaces;
 using Neo.UI.Core.Services.Interfaces;
-using Neo.UI.Core.Data.TransactionParameters;
+using Neo.UI.Core.Transactions;
+using Neo.UI.Core.Transactions.Parameters;
 
 namespace Neo.Gui.ViewModels.Contracts
 {

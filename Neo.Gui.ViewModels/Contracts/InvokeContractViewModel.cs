@@ -15,7 +15,7 @@ using Neo.Gui.Base.Managers.Interfaces;
 using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Managers.Interfaces;
 using Neo.UI.Core.Services.Interfaces;
-using Neo.UI.Core.Controllers;
+using Neo.UI.Core.Transactions.Interfaces;
 
 namespace Neo.Gui.ViewModels.Contracts
 {
@@ -27,10 +27,11 @@ namespace Neo.Gui.ViewModels.Contracts
         private readonly IDialogManager dialogManager;
         private readonly IFileManager fileManager;
         private readonly IFileDialogService fileDialogService;
+        private readonly ITransactionTester transactionTester;
         private readonly IWalletController walletController;
 
         //private InvocationTransaction transaction;
-        private ITransactionInvoker transactionInvoker = null; 
+        private ITransactionBuilder transactionBuilder = null; 
 
         private UInt160 scriptHash;
         private ContractParameter[] contractParameters;
@@ -164,11 +165,13 @@ namespace Neo.Gui.ViewModels.Contracts
             IDialogManager dialogManager,
             IFileManager fileManager,
             IFileDialogService fileDialogService,
+            ITransactionTester transactionTester,
             IWalletController walletController)
         {
             this.dialogManager = dialogManager;
             this.fileManager = fileManager;
             this.fileDialogService = fileDialogService;
+            this.transactionTester = transactionTester;
             this.walletController = walletController;
         }
         #endregion
@@ -187,7 +190,7 @@ namespace Neo.Gui.ViewModels.Contracts
             // TODO
             //this.CustomScript = this.transaction.Script.ToHexString();
 
-            this.transactionInvoker = this.walletController.GetTransactionInvoker(
+            this.transactionBuilder = this.walletController.GetTransactionInvoker(
                 parameters.InvocationTransactionType,
                 parameters.AssetRegistrationParameters,
                 parameters.AssetTransferParameters,
@@ -195,13 +198,13 @@ namespace Neo.Gui.ViewModels.Contracts
                 parameters.ElectionParameters,
                 parameters.VotingParameters);
 
-            if (this.transactionInvoker.IsContractTransaction)
+            if (this.transactionBuilder.IsContractTransaction)
             {
-                this.CustomScript = this.transactionInvoker.GetTransactionScript();
+                this.CustomScript = this.transactionBuilder.GetTransactionScript();
             }
             else
             {
-                this.transactionInvoker.SignAndRelayTransaction();
+                this.transactionBuilder.SignAndRelayTransaction();
                 this.Close(this, EventArgs.Empty);
             }
         }
@@ -284,7 +287,7 @@ namespace Neo.Gui.ViewModels.Contracts
 
         private void Test()
         {
-            var result = this.transactionInvoker.TestForGasUsage(this.customScript);
+            var result = this.transactionTester.TestForGasUsage(this.transactionBuilder, this.customScript);
 
             this.Results = result.Result;
             this.Fee = $"{result.Fee} gas";
@@ -348,7 +351,7 @@ namespace Neo.Gui.ViewModels.Contracts
         {
             if (!this.InvokeEnabled) return;
 
-            this.transactionInvoker.Invoke();
+            this.transactionBuilder.Invoke();
 
             //if (this.transaction == null) return;
 

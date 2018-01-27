@@ -23,6 +23,9 @@ using Neo.UI.Core.Messages;
 using Neo.UI.Core.Messaging.Interfaces;
 using Neo.UI.Core.Services.Interfaces;
 using Neo.UI.Core.Status;
+using Neo.UI.Core.Transactions;
+using Neo.UI.Core.Transactions.Interfaces;
+using Neo.UI.Core.Transactions.Parameters;
 using Neo.VM;
 using Neo.Wallets;
 using DeprecatedWallet = Neo.Implementations.Wallets.EntityFramework.UserWallet;
@@ -44,9 +47,9 @@ namespace Neo.UI.Core.Controllers.Implementations
         private readonly IMessageSubscriber messageSubscriber;
         private readonly INetworkController networkController;
         private readonly INotificationService notificationService;
-        private readonly ITransactionInvokerFactory transactionInvokerFactory;
+        private readonly ITransactionBuilderFactory transactionBuilderFactory;
         private readonly string blockchainDataDirectoryPath;
-        private IEnumerable<ITransactionInvoker> transactionInvokersInternal;
+        private IEnumerable<ITransactionBuilder> transactionInvokersInternal;
 
         private readonly int localNodePort;
         private readonly int localWSPort;
@@ -82,8 +85,8 @@ namespace Neo.UI.Core.Controllers.Implementations
             INetworkController networkController,
             INotificationService notificationService,
             ISettingsManager settingsManager, 
-            ITransactionInvokerFactory transactionInvokerFactory, 
-            IEnumerable<ITransactionInvoker> transactionInvokers)
+            ITransactionBuilderFactory transactionBuilderFactory, 
+            IEnumerable<ITransactionBuilder> transactionInvokers)
         {
             this.blockchainController = blockchainController;
             this.certificateService = certificateService;
@@ -91,7 +94,7 @@ namespace Neo.UI.Core.Controllers.Implementations
             this.messageSubscriber = messageSubscriber;
             this.networkController = networkController;
             this.notificationService = notificationService;
-            this.transactionInvokerFactory = transactionInvokerFactory;
+            this.transactionBuilderFactory = transactionBuilderFactory;
             this.blockchainDataDirectoryPath = settingsManager.BlockchainDataDirectoryPath;
             this.transactionInvokersInternal = transactionInvokers;
 
@@ -915,7 +918,7 @@ namespace Neo.UI.Core.Controllers.Implementations
             this.CreateAccount(contract);
         }
 
-        public ITransactionInvoker GetTransactionInvoker(
+        public ITransactionBuilder GetTransactionInvoker(
             InvocationTransactionType invocationTransactionType,
             AssetRegistrationTransactionParameters assetRegistrationTransactionParameters,
             AssetTransferTransactionParameters assetTransferTransactionParameters,
@@ -923,7 +926,7 @@ namespace Neo.UI.Core.Controllers.Implementations
             ElectionTransactionParameters electionTransactionParameters,
             VotingTransactionParameters votingTransactionParameters)
         {
-            return this.transactionInvokerFactory.GetTransactionInvoker(
+            return this.transactionBuilderFactory.GetTransactionInvoker(
                 this,
                 this.transactionInvokersInternal,
                 invocationTransactionType,

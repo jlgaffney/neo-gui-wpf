@@ -1,27 +1,27 @@
-﻿namespace Neo.UI.Core.Data.TransactionParameters
+﻿namespace Neo.UI.Core.Transactions.Parameters
 {
     public class DeployContractTransactionParameters
     {
-        public string ContractSourceCode { get; private set; }
+        public string ContractSourceCode { get; }
 
-        public string ParameterList { get; private set; }
+        public string ParameterList { get; }
 
-        public string ReturnType { get; private set; }
+        public string ReturnType { get; }
 
-        public bool NeedsStorage { get; private set; }
+        public bool NeedsStorage { get; }
 
-        public string Name { get; private set; }
+        public string Name { get; }
 
-        public string Version { get; private set; }
+        public string Version { get; }
 
-        public string Author { get; private set; }
+        public string Author { get; }
 
-        public string Email { get; private set; }
+        public string Email { get; }
 
-        public string Description { get; private set; }
+        public string Description { get; }
 
         public DeployContractTransactionParameters(
-            string contactSourceCode, 
+            string contractSourceCode, 
             string parameterList, 
             string returnType, 
             bool needsStorage, 
@@ -31,7 +31,7 @@
             string email, 
             string description)
         {
-            this.ContractSourceCode = ContractSourceCode;
+            this.ContractSourceCode = contractSourceCode;
             this.ParameterList = parameterList;
             this.ReturnType = returnType;
             this.NeedsStorage = needsStorage;

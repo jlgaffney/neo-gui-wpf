@@ -12,6 +12,8 @@ using Neo.Gui.Globalization.Resources;
 using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Data;
 using Neo.UI.Core.Data.TransactionParameters;
+using Neo.UI.Core.Transactions;
+using Neo.UI.Core.Transactions.Parameters;
 
 namespace Neo.Gui.ViewModels.Wallets
 {

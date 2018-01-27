@@ -1,10 +1,10 @@
-﻿namespace Neo.UI.Core.Data.TransactionParameters
+﻿namespace Neo.UI.Core.Transactions.Parameters
 {
     public class VotingTransactionParameters
     {
-        public string ScriptHash { get; private set; }
+        public string ScriptHash { get; }
 
-        public string Votes { get; private set; }
+        public string Votes { get; }
 
         public VotingTransactionParameters(string scriptHash, string votes)
         {

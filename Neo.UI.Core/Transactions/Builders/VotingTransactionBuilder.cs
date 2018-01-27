@@ -1,14 +1,12 @@
 ﻿using System.Linq;
-
 using Neo.Core;
-using Neo.VM;
-
 using Neo.UI.Core.Data.TransactionParameters;
 using Neo.UI.Core.Extensions;
+using Neo.VM;
 
-namespace Neo.UI.Core.Controllers.TransactionInvokers
+namespace Neo.UI.Core.Transactions.Builders
 {
-    internal class VotingTransactionInvoker : TransactionInvokerBase
+    internal class VotingTransactionBuilder : TransactionBuilderBase
     {
         public override bool IsValid(InvocationTransactionType invocationTransactionType)
         {

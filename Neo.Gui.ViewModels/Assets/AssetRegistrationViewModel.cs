@@ -11,7 +11,8 @@ using Neo.Gui.Dialogs.LoadParameters.Contracts;
 using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Extensions;
 using Neo.UI.Core.Data;
-using Neo.UI.Core.Data.TransactionParameters;
+using Neo.UI.Core.Transactions;
+using Neo.UI.Core.Transactions.Parameters;
 
 namespace Neo.Gui.ViewModels.Assets
 {

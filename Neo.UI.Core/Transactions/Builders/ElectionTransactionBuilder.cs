@@ -1,10 +1,9 @@
 ﻿using Neo.Cryptography.ECC;
-
 using Neo.UI.Core.Data.TransactionParameters;
 
-namespace Neo.UI.Core.Controllers.TransactionInvokers
+namespace Neo.UI.Core.Transactions.Builders
 {
-    internal class ElectionTransactionInvoker : TransactionInvokerBase
+    internal class ElectionTransactionBuilder : TransactionBuilderBase
     {
         public override bool IsValid(InvocationTransactionType invocationTransactionType)
         {

@@ -1,4 +1,5 @@
 ﻿using Neo.UI.Core.Controllers.Interfaces;
+using Neo.UI.Core.Transactions;
 
 namespace Neo.UI.Core.Data.TransactionParameters
 {

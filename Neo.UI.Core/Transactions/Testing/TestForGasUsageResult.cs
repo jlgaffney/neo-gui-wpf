@@ -1,12 +1,12 @@
-﻿namespace Neo.UI.Core.Controllers.TransactionInvokers
+﻿namespace Neo.UI.Core.Transactions.Testing
 {
     public class TestForGasUsageResult
     {
-        public string Result { get; private set; }
+        public string Result { get; }
 
-        public string Fee { get; private set; }
+        public string Fee { get; }
 
-        public bool TransactionExecutionFailed { get; private set; }
+        public bool TransactionExecutionFailed { get; }
 
         public TestForGasUsageResult(string result, string fee, bool transactionExecutionFailed)
         {

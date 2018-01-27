@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
 
 using Neo.UI.Core.Controllers.Interfaces;
-using Neo.UI.Core.Data.TransactionParameters;
+using Neo.UI.Core.Transactions.Parameters;
 
-namespace Neo.UI.Core.Controllers
+namespace Neo.UI.Core.Transactions.Interfaces
 {
-    public interface ITransactionInvokerFactory
+    public interface ITransactionBuilderFactory
     {
-        ITransactionInvoker GetTransactionInvoker(
+        ITransactionBuilder GetTransactionInvoker(
             IWalletController walletController,
-            IEnumerable<ITransactionInvoker> transactionInvokers,
+            IEnumerable<ITransactionBuilder> transactionInvokers,
             InvocationTransactionType invocationTransactionType,
             AssetRegistrationTransactionParameters assetRegistrationParameters,
             AssetTransferTransactionParameters assetTransferTransactionParameters,
