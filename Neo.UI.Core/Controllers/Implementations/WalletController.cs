@@ -1189,14 +1189,27 @@ namespace Neo.UI.Core.Controllers.Implementations
 
         private void UpdateFirstClassAssetBalances()
         {
-            if (this.WalletIsSynchronized) return;
+            var bonus = Fixed8.Zero;
 
             if (this.GetWalletBalanceChangedFlag())
             {
                 var coins = this.GetCoins().Where(p => !p.State.HasFlag(CoinState.Spent)).ToList();
                 var bonusAvailable = this.blockchainController.CalculateBonus(this.GetUnclaimedCoins().Select(p => p.Reference));
-                var bonusUnavailable = this.blockchainController.CalculateBonus(coins.Where(p => p.State.HasFlag(CoinState.Confirmed) && p.Output.AssetId.Equals(this.blockchainController.GoverningToken.Hash)).Select(p => p.Reference), this.blockchainController.BlockHeight + 1);
-                var bonus = bonusAvailable + bonusUnavailable;
+
+                var confirmedGoverningTokens = coins
+                    .Where(p => 
+                        p.State.HasFlag(CoinState.Confirmed) && 
+                        p.Output.AssetId.Equals(this.blockchainController.GoverningToken.Hash))
+                    .Select(p => p.Reference);
+
+                // TODO Issue #158 [AboimPinto]: Calculation of the Bonus is returning an Error
+                //if (!this.WalletIsSynchronized)
+                //{
+                //    var lastBlockHeight = this.blockchainController.BlockHeight + 1;
+
+                //    var bonusUnavailable = this.blockchainController.CalculateBonus(confirmedGoverningTokens, lastBlockHeight);
+                //    bonus = bonusAvailable + bonusUnavailable;
+                //}
 
                 var assetDictionary = coins.GroupBy(p => p.Output.AssetId, (k, g) => new
                 {

@@ -11,6 +11,7 @@ using Neo.UI.Core.Data;
 using Neo.UI.Core.Managers.Interfaces;
 using Neo.UI.Core.Messages;
 using Neo.UI.Core.Messaging.Interfaces;
+using System.Linq;
 
 namespace Neo.Gui.ViewModels.Home
 {
@@ -120,7 +121,17 @@ namespace Neo.Gui.ViewModels.Home
 
         public void HandleMessage(AssetAddedMessage message)
         {
-            this.Assets.Add(message.Asset);
+            var isAssetInTheList = this.Assets.Any(x => x.Name == message.Asset.Name);
+
+            if (isAssetInTheList)
+            {
+                var assetInList = this.Assets.Single(x => x.Name == message.Asset.Name);
+                
+            }
+            else
+            {
+                this.Assets.Add(message.Asset);
+            }
         }
         #endregion
 
