@@ -30,12 +30,12 @@ namespace Neo.UI.Core.Transactions.Builders
             if (transaction is InvocationTransaction)
             {
                 this.Transaction = transaction as InvocationTransaction;
-                this.IsContractTransaction = false;
+                this.IsContractTransaction = true;
             }
             else
             {
                 this.nonContractTransaction = transaction;
-                this.IsContractTransaction = true;
+                this.IsContractTransaction = false;
             }
         }
 

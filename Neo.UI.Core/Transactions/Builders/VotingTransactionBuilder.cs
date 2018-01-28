@@ -53,6 +53,8 @@ namespace Neo.UI.Core.Transactions.Builders
                             }
                         }
                 };
+
+                this.IsContractTransaction = true;
             }
         }
     }

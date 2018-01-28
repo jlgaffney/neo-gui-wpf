@@ -41,6 +41,8 @@ namespace Neo.UI.Core.Transactions.Builders
                 parameters.Author,
                 parameters.Email,
                 parameters.Description);
+
+            this.IsContractTransaction = true;
         }
     }
 }
