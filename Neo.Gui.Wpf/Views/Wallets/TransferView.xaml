@@ -23,7 +23,6 @@
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <controls:TransactionOutputListBox 
                     Items="{Binding Items}" 
-                    ItemsChanged="TxOutListBox_OnItemsChanged" 
                     HorizontalAlignment="Stretch" 
                     VerticalAlignment="Stretch" />
 

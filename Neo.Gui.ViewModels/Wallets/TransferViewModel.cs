@@ -11,7 +11,7 @@ using Neo.Gui.Dialogs.LoadParameters.Wallets;
 using Neo.Gui.Globalization.Resources;
 using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Data;
-using Neo.UI.Core.Data.TransactionParameters;
+using Neo.UI.Core.Extensions;
 using Neo.UI.Core.Transactions;
 using Neo.UI.Core.Transactions.Parameters;
 
@@ -106,21 +106,12 @@ namespace Neo.Gui.ViewModels.Wallets
         public void OnDialogLoad(TransferLoadParameters parameters)
         {
             var addresses = this.walletController.GetAccountsAddresses();
-            this.Addresses = new ObservableCollection<string>(addresses);
+            this.Addresses.AddRange(addresses);
 
             this.Items.CollectionChanged += (sender, e) =>
             {
                 this.RaisePropertyChanged(nameof(this.OkEnabled));
             };
-        }
-        #endregion
-
-        #region Public Methods 
-        public void UpdateOkButtonEnabled()
-        {
-            // TODO: Issue #109 [AboimPinto]: Having a public method in ViewModel is a "smell" that this has not been used as should be.
-
-            RaisePropertyChanged(nameof(this.OkEnabled));
         }
         #endregion
 
