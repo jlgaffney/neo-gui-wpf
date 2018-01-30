@@ -420,14 +420,15 @@ namespace Neo.UI.Core.Controllers.Implementations
             var walletAssets = new List<AssetDto>();
 
             // Add First-Class assets
-            var unspendCoins = this.FindUnspentCoins();
-            foreach(var coin in unspendCoins)
+            var unspendAssetId = this.FindUnspentAssetIds();
+
+            foreach(var assetId in unspendAssetId)
             {
-                var assetState = this.blockchainController.GetAssetState(coin.Output.AssetId);
+                var assetState = this.blockchainController.GetAssetState(assetId);
 
                 walletAssets.Add(new AssetDto
                 {
-                    Id = coin.Output.AssetId.ToString(),
+                    Id = assetId.ToString(),
                     Name = assetState.ToString(),
                     Decimals = assetState.Precision,
                     TokenType = TokenType.FirstClassToken
@@ -462,9 +463,10 @@ namespace Neo.UI.Core.Controllers.Implementations
         {
             this.ThrowIfWalletIsNotOpen();
 
-            var x = this.currentWallet.GetCoins();
+            var coins = this.currentWallet
+                .FindUnspentCoins();
 
-            return this.currentWallet.FindUnspentCoins();
+            return coins;
         }
 
         public UInt160 GetChangeAddress()
@@ -996,6 +998,18 @@ namespace Neo.UI.Core.Controllers.Implementations
         #endregion
 
         #region Private Methods
+        private IEnumerable<UInt256> FindUnspentAssetIds()
+        {
+            this.ThrowIfWalletIsNotOpen();
+
+            var distinctUnspentedCoinsAssetId = this.currentWallet
+                .FindUnspentCoins()
+                .Select(x => x.Output.AssetId)
+                .Distinct();
+
+            return distinctUnspentedCoinsAssetId;
+        }
+
         /// <summary>
         /// Throws <see cref="WalletIsNotOpenException" /> if a wallet is not open.
         /// </summary>
