@@ -4,10 +4,9 @@ using System.Windows;
 
 using Autofac;
 
+using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Dialogs;
 using Neo.Gui.Dialogs.Interfaces;
-using Neo.Gui.Base.Managers.Interfaces;
-
 using Neo.Gui.Wpf.Controls;
 
 namespace Neo.Gui.Wpf.Implementations.Managers
@@ -16,8 +15,6 @@ namespace Neo.Gui.Wpf.Implementations.Managers
     {
         #region Private Fields 
         private static ILifetimeScope containerLifetimeScope;
-
-        private bool dialogIsClosed;
         #endregion
 
         #region IDialogManager implementation
@@ -25,39 +22,54 @@ namespace Neo.Gui.Wpf.Implementations.Managers
         {
             var view = ResolveDialogInstance<TLoadParameters>();
 
-            if (view.DataContext is IDialogViewModel<TLoadParameters> viewModel)
-            {
-                var viewWindow = view as Window;
-
-                viewModel.Close += (sender, e) =>
-                {
-                    this.dialogIsClosed = true;
-                    viewWindow?.Close();
-                };
-
-                viewModel.OnDialogLoad(parameters);
-            }
-
             return view;
         }
 
         public void ShowDialog<TLoadParameters>(TLoadParameters parameters)
         {
+            var isDialogClosed = false;
+
             var view = this.CreateDialog(parameters);
 
-            if (!this.dialogIsClosed)
+            if (view.DataContext is IDialogViewModel<TLoadParameters> viewModel)
             {
-                view.ShowDialog();
+                viewModel.Close += (sender, args) =>
+                {
+                    isDialogClosed = true;
+                    (view as Window).Close();
+                };
+
+                viewModel.OnDialogLoad(parameters);
+
+                if (!isDialogClosed)
+                {
+                    view.ShowDialog();
+                }
             }
         }
 
         public TDialogResult ShowDialog<TLoadParameters, TDialogResult>(TLoadParameters parameters)
         {
+            var isDialogClosed = false;
             var dialogResult = default(TDialogResult);
 
             var view = this.CreateDialog<TLoadParameters, TDialogResult>(parameters, result => { dialogResult = result; });
 
-            view.ShowDialog();
+            if (view.DataContext is IDialogViewModel<TLoadParameters> viewModel)
+            {
+                viewModel.Close += (sender, args) =>
+                {
+                    isDialogClosed = true;
+                    (view as Window).Close();
+                };
+
+                viewModel.OnDialogLoad(parameters);
+
+                if (!isDialogClosed)
+                {
+                    view.ShowDialog();
+                }
+            }
 
             return dialogResult;
         }

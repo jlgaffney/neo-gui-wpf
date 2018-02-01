@@ -2,6 +2,7 @@
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Wallets;
 using Neo.UI.Core.Controllers.Interfaces;

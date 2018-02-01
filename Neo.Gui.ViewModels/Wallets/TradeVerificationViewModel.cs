@@ -4,6 +4,7 @@ using System.Windows.Input;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Wallets;
 using Neo.Gui.Dialogs.Results.Wallets;
@@ -38,7 +39,6 @@ namespace Neo.Gui.ViewModels.Wallets
         #endregion
 
         #region ILoadableDialogViewModel implementation
-
         public event EventHandler Close;
 
         public event EventHandler<TradeVerificationDialogResult> SetDialogResultAndClose;
