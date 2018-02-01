@@ -3,6 +3,7 @@
     public interface IDialog<TLoadParameters>
     {
         object DataContext { get; set; }
+
         bool? ShowDialog();
     }
 }
