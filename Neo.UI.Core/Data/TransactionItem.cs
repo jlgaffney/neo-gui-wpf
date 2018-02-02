@@ -5,6 +5,7 @@ using Neo.UI.Core.Helpers;
 
 namespace Neo.UI.Core.Data
 {
+    // TODO [AboimPinto]: Change BindableClass with ObservableObject from MvvmLight
     public class TransactionItem : BindableClass
     {
         #region Private Fields 
@@ -29,7 +30,8 @@ namespace Neo.UI.Core.Data
 
                 this.confirmations = value;
 
-                NotifyPropertyChanged();
+                this.NotifyPropertyChanged();
+                this.NotifyPropertyChanged("ConfirmationsText");
             }
         }
 

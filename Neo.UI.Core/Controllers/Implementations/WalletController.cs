@@ -1358,9 +1358,13 @@ namespace Neo.UI.Core.Controllers.Implementations
 
         private void AddTransaction(TransactionItem transaction)
         {
-            this.currentWalletInfo.AddTransaction(transaction);
-            
-            this.messagePublisher.Publish(new TransactionAddedMessage(transaction));
+            var transactionNotAdded = !this.currentWalletInfo.GetTransactions().Any(x => x.Hash == transaction.Hash);
+
+            if (transactionNotAdded)
+            {
+                this.currentWalletInfo.AddTransaction(transaction);
+                this.messagePublisher.Publish(new TransactionAddedMessage(transaction));
+            }
         }
 
         private void CheckFirstClassAssetIssuerCertificates()
