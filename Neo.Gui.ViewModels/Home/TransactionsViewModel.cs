@@ -1,8 +1,8 @@
 ﻿using System.Collections.ObjectModel;
-
+using System.Linq;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using Neo.Gui.Base.Managers.Interfaces;
+
 using Neo.UI.Core.Data;
 using Neo.UI.Core.Managers.Interfaces;
 using Neo.UI.Core.Messages;
