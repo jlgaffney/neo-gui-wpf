@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+
 using Neo.UI.Core.Data;
 
 namespace Neo.UI.Core.Transactions.Parameters

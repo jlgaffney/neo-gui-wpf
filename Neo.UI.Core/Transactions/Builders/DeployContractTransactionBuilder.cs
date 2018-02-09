@@ -1,5 +1,7 @@
 ﻿using System.Linq;
+
 using Neo.SmartContract;
+
 using Neo.UI.Core.Data.TransactionParameters;
 
 namespace Neo.UI.Core.Transactions.Builders

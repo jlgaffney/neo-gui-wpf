@@ -22,6 +22,11 @@ namespace Neo.UI.Core.Transactions.Builders
 
         public string GetTransactionScript()
         {
+            if (this.Transaction == null)
+            {
+                return string.Empty;
+            }
+
             return this.Transaction.Script.ToHexString();
         }
 

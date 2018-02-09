@@ -23,6 +23,8 @@ using Neo.UI.Core.Managers.Interfaces;
 using Neo.UI.Core.Messages;
 using Neo.UI.Core.Messaging.Interfaces;
 using Neo.UI.Core.Services.Interfaces;
+using Neo.UI.Core.Transactions.Parameters;
+using Neo.UI.Core.Transactions;
 
 namespace Neo.Gui.ViewModels.Home
 {
@@ -174,7 +176,12 @@ namespace Neo.Gui.ViewModels.Home
 
         public RelayCommand DeployContractCommand => new RelayCommand(() => this.dialogManager.ShowDialog<DeployContractLoadParameters>());
 
-        public RelayCommand InvokeContractCommand => new RelayCommand(() =>  this.dialogManager.ShowDialog<InvokeContractLoadParameters>());
+        public RelayCommand InvokeContractCommand => new RelayCommand(() =>  
+        this.dialogManager.ShowDialog(new InvokeContractLoadParameters
+        {
+            InvocationTransactionType = InvocationTransactionType.Invoke,
+            InvokeTransactionParameters = new InvokeTransactionParameters(null)
+        }));
 
         public RelayCommand ShowElectionDialogCommand => new RelayCommand(() => this.dialogManager.ShowDialog<ElectionLoadParameters>());
 
