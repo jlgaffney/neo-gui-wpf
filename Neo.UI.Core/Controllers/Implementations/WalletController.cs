@@ -104,6 +104,17 @@ namespace Neo.UI.Core.Controllers.Implementations
             this.certificateCachePath = settingsManager.CertificateCachePath;
 
             this.certificateQueryResultCache = new Dictionary<ECPoint, CertificateQueryResult>();
+
+            StateReader.Default.Notify += Default_Notify;
+            StateReader.Default.Log += Default_Log;
+        }
+
+        private void Default_Log(object sender, LogEventArgs e)
+        {
+        }
+
+        private void Default_Notify(object sender, NotifyEventArgs e)
+        {
         }
         #endregion
 
