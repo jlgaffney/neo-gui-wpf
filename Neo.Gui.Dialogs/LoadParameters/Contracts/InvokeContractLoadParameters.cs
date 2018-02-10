@@ -18,6 +18,8 @@ namespace Neo.Gui.Dialogs.LoadParameters.Contracts
 
         public AssetTransferTransactionParameters AssetTransferParameters { get; set; }
 
+        public InvokeTransactionParameters InvokeTransactionParameters { get; set; }
+
         public InvokeContractLoadParameters()
         {
         }

@@ -26,8 +26,9 @@ namespace Neo.UI.Core.Transactions.Implementations
                 { InvocationTransactionType.AssetRegistration, new AssetRegistrationTransactionConfiguration { WalletController = walletController, InvocationTransactionType = invocationTransactionType, AssetRegistrationTransactionParameters = assetRegistrationParameters }},
                 { InvocationTransactionType.AssetTransfer, new AssetTransferTransactionConfiguration { WalletController = walletController, InvocationTransactionType = invocationTransactionType, AssetTransferTransactionParameters = assetTransferTransactionParameters }},
                 { InvocationTransactionType.DeployContract, new DeployContractTransactionConfiguration { WalletController = walletController, InvocationTransactionType = invocationTransactionType, DeployContractTransactionParameters = deployContractTransactionParameters }},
-                { InvocationTransactionType.Election, new ElectionTransactionConfiguration { WalletController = walletController, InvocationTransactionType = invocationTransactionType, ElectionTransactionParameters = electionTransactionParameters}},
-                { InvocationTransactionType.Vote, new VotingTransactionConfiguration { WalletController = walletController, InvocationTransactionType = invocationTransactionType, VotingTransactionParameters = votingTransactionParameters}}
+                { InvocationTransactionType.Election, new ElectionTransactionConfiguration { WalletController = walletController, InvocationTransactionType = invocationTransactionType, ElectionTransactionParameters = electionTransactionParameters }},
+                { InvocationTransactionType.Vote, new VotingTransactionConfiguration { WalletController = walletController, InvocationTransactionType = invocationTransactionType, VotingTransactionParameters = votingTransactionParameters }},
+                { InvocationTransactionType.Invoke, new InvokeTransactionConfiguration { WalletController = walletController, InvocationTransactionType = InvocationTransactionType.Invoke, InvokeTransactionParameters = null }}
             };
 
             try

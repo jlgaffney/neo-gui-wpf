@@ -38,6 +38,10 @@ namespace Neo.UI.Core.Transactions
                 .RegisterType<VotingTransactionBuilder>()
                 .As<ITransactionBuilder>();
 
+            builder
+                .RegisterType<InvokeTransactionBuilder>()
+                .As<ITransactionBuilder>();
+
             base.Load(builder);
         }
     }

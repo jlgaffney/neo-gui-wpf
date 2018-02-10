@@ -339,7 +339,10 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.InvokeContractCommand.Execute(null);
             
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<InvokeContractLoadParameters>(null));
+            dialogManagerMock.Verify(x => 
+                x.ShowDialog(
+                    It.Is<InvokeContractLoadParameters>(param => 
+                        param.InvocationTransactionType == UI.Core.Transactions.InvocationTransactionType.Invoke )));
         }
 
         [Fact]

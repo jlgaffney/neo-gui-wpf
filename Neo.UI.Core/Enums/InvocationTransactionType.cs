@@ -6,6 +6,7 @@
         Election, 
         DeployContract,
         Vote, 
-        AssetTransfer
+        AssetTransfer,
+        Invoke
     }
 }

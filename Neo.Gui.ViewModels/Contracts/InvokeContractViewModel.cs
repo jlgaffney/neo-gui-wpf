@@ -16,6 +16,9 @@ using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Managers.Interfaces;
 using Neo.UI.Core.Services.Interfaces;
 using Neo.UI.Core.Transactions.Interfaces;
+using Neo.UI.Core.Transactions;
+using Neo.UI.Core.Transactions.Parameters;
+using Neo.UI.Core.Data.TransactionParameters;
 
 namespace Neo.Gui.ViewModels.Contracts
 {
@@ -287,6 +290,12 @@ namespace Neo.Gui.ViewModels.Contracts
 
         private void Test()
         {
+            if (transactionBuilder.Configuration.InvocationTransactionType == InvocationTransactionType.Invoke)
+            {
+                ((InvokeTransactionConfiguration)transactionBuilder.Configuration).InvokeTransactionParameters = new InvokeTransactionParameters(this.customScript);
+                transactionBuilder.GenerateTransaction();
+            }
+
             var result = this.transactionTester.TestForGasUsage(this.transactionBuilder, this.customScript);
 
             this.Results = result.Result;

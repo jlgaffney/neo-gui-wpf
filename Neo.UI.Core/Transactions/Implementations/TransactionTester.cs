@@ -4,6 +4,7 @@ using System.Text;
 using Neo.Core;
 using Neo.IO.Json;
 using Neo.SmartContract;
+using Neo.UI.Core.Extensions;
 using Neo.UI.Core.Transactions.Builders;
 using Neo.UI.Core.Transactions.Interfaces;
 using Neo.UI.Core.Transactions.Testing;
@@ -45,10 +46,10 @@ namespace Neo.UI.Core.Transactions.Implementations
             var engine = ApplicationEngine.Run(builderBase.Transaction.Script, builderBase.Transaction);
 
             // Get transaction test results
-            var stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine($"VM State: {engine.State}");
-            stringBuilder.AppendLine($"Gas Consumed: {engine.GasConsumed}");
-            stringBuilder.AppendLine($"Evaluation Stack: {new JArray(engine.EvaluationStack.Select(p => p.ToParameter().ToJson()))}");
+            //var stringBuilder = new StringBuilder();
+            //stringBuilder.AppendLine($"VM State: {engine.State}");
+            //stringBuilder.AppendLine($"Gas Consumed: {engine.GasConsumed}");
+            //stringBuilder.AppendLine($"Evaluation Stack: {new JArray(engine.EvaluationStack.Select(p => p.ToParameter().ToJson()))}");
 
             if (!engine.State.HasFlag(VMState.FAULT))
             {
@@ -67,7 +68,7 @@ namespace Neo.UI.Core.Transactions.Implementations
                 transactionExecutionFailed = true;
             }
 
-            return new TestForGasUsageResult(stringBuilder.ToString(), transactionFee.ToString(), transactionExecutionFailed);
+            return new TestForGasUsageResult(engine.GetInvocationTestResult(), transactionFee.ToString(), transactionExecutionFailed);
         }
     }
 }

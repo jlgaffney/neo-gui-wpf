@@ -123,6 +123,10 @@ namespace Neo.Gui.ViewModels.Wallets
             {
                 this.ClaimEnabled = false;
             }
+            else
+            {
+                this.claimEnabled = true;
+            }
         }
 
         private void CalculateBonusUnavailable(uint height)
@@ -132,6 +136,7 @@ namespace Neo.Gui.ViewModels.Wallets
 
         private void Claim()
         {
+
             this.walletController.ClaimUtilityTokenAsset();
 
             this.Close(this, EventArgs.Empty);
