@@ -177,11 +177,11 @@ namespace Neo.Gui.ViewModels.Home
         public RelayCommand DeployContractCommand => new RelayCommand(() => this.dialogManager.ShowDialog<DeployContractLoadParameters>());
 
         public RelayCommand InvokeContractCommand => new RelayCommand(() =>  
-        this.dialogManager.ShowDialog(new InvokeContractLoadParameters
-        {
-            InvocationTransactionType = InvocationTransactionType.Invoke,
-            InvokeTransactionParameters = new InvokeTransactionParameters(null)
-        }));
+            this.dialogManager.ShowDialog(new InvokeContractLoadParameters
+            {
+                InvocationTransactionType = InvocationTransactionType.Invoke,
+                InvokeTransactionParameters = new InvokeTransactionParameters(null)
+            }));
 
         public RelayCommand ShowElectionDialogCommand => new RelayCommand(() => this.dialogManager.ShowDialog<ElectionLoadParameters>());
 
