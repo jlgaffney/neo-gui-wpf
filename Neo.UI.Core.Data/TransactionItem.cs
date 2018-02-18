@@ -1,6 +1,6 @@
 ﻿using System;
 using Neo.Core;
-using Neo.Gui.Globalization.Resources;
+using Neo.UI.Core.Globalization.Resources;
 using Neo.UI.Core.Helpers;
 
 namespace Neo.UI.Core.Data

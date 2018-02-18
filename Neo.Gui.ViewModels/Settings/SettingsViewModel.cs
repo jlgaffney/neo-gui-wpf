@@ -10,7 +10,6 @@ using GalaSoft.MvvmLight.Command;
 using Neo.Gui.Dialogs;
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Settings;
-using Neo.Gui.Base.Managers.Interfaces;
 using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Extensions;
 using Neo.UI.Core.Managers.Interfaces;

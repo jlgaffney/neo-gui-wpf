@@ -6,7 +6,7 @@ namespace Neo.UI.Core.Data
     {
         private BigDecimal balance;
 
-        public NEP5AssetItem(UInt160 scriptHash, BigDecimal balance)
+        public NEP5AssetItem(string scriptHash, BigDecimal balance)
         {
             this.ScriptHash = scriptHash;
             this.balance = balance;
@@ -18,7 +18,7 @@ namespace Neo.UI.Core.Data
 
         public override string Value => this.balance.ToString();
 
-        public UInt160 ScriptHash { get; }
+        public string ScriptHash { get; }
 
         public bool BalanceIsZero => this.balance.Value == BigInteger.Zero;
     }

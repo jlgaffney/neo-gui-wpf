@@ -55,16 +55,20 @@ namespace Neo.UI.Core.Data
         {
             if (assetId == null) return null;
 
+            var assetIdStr = assetId.ToString();
+
             return this.assets.FirstOrDefault(asset => asset is FirstClassAssetItem &&
-                assetId.Equals(((FirstClassAssetItem) asset).AssetId)) as FirstClassAssetItem;
+                assetIdStr.Equals(((FirstClassAssetItem) asset).AssetId)) as FirstClassAssetItem;
         }
 
         public NEP5AssetItem GetNEP5Asset(UInt160 scriptHash)
         {
             if (scriptHash == null) return null;
 
+            var scriptHashStr = scriptHash.ToString();
+
             return this.assets.FirstOrDefault(asset => asset is NEP5AssetItem &&
-                scriptHash.Equals(((NEP5AssetItem) asset).ScriptHash)) as NEP5AssetItem;
+                scriptHashStr.Equals(((NEP5AssetItem) asset).ScriptHash)) as NEP5AssetItem;
         }
 
         public void AddAsset(AssetItem asset)

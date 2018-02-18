@@ -3,15 +3,15 @@ using System.Collections.ObjectModel;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-using Neo.Gui.Globalization.Resources;
+using Neo.UI.Core.Globalization.Resources;
 using Neo.Gui.Dialogs;
-using Neo.Gui.Base.Managers.Interfaces;
 using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Data;
 using Neo.UI.Core.Managers.Interfaces;
 using Neo.UI.Core.Messages;
 using Neo.UI.Core.Messaging.Interfaces;
 using System.Linq;
+using Neo.Gui.Dialogs.Interfaces;
 
 namespace Neo.Gui.ViewModels.Home
 {
@@ -167,7 +167,7 @@ namespace Neo.Gui.ViewModels.Home
 
             if (firstClassAssetItem == null) return;
 
-            var value = this.walletController.GetFirstClassTokenAvailability(firstClassAssetItem.AssetId.ToString());
+            var value = this.walletController.GetFirstClassTokenAvailability(firstClassAssetItem.AssetId);
 
             var result = this.dialogManager.ShowMessageDialog(
                 Strings.DeleteConfirmation,

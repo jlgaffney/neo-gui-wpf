@@ -5,7 +5,7 @@ using Neo.UI.Core.Status;
 
 namespace Neo.UI.Core.Controllers.Interfaces
 {
-    internal interface INetworkController : IDisposable
+    internal interface INodeController : IDisposable
     {
         void Initialize(int localNodePort, int localWSPort);
 

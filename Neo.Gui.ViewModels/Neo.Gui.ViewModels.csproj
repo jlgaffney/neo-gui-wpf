@@ -7,14 +7,14 @@
 
   <ItemGroup>
     <PackageReference Include="MvvmLightLibsStd10" Version="5.4.0.1-alpha" />
-    <PackageReference Include="Neo" Version="2.5.2" />
+    <PackageReference Include="Neo" Version="2.6.0" />
     <PackageReference Include="Neo.VM" Version="2.0.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Neo.Gui.Dialogs\Neo.Gui.Dialogs.csproj" />
-    <ProjectReference Include="..\Neo.Gui.Globalization\Neo.Gui.Globalization.csproj" />
+    <ProjectReference Include="..\Neo.UI.Core.Globalization\Neo.UI.Core.Globalization.csproj" />
     <ProjectReference Include="..\Neo.UI.Core\Neo.UI.Core.csproj" />
+    <ProjectReference Include="..\Neo.Gui.Dialogs\Neo.Gui.Dialogs.csproj" />
   </ItemGroup>
 
 </Project>

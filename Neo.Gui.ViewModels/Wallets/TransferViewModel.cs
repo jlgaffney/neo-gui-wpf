@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-
+using System.Linq;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-
-using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Dialogs.LoadParameters.Wallets;
-using Neo.Gui.Globalization.Resources;
+using Neo.UI.Core.Globalization.Resources;
 using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Data;
 using Neo.UI.Core.Extensions;
@@ -134,12 +132,17 @@ namespace Neo.Gui.ViewModels.Wallets
         {
             if (!this.OkEnabled) return;
 
-            var assetTransferParameters = new AssetTransferTransactionParameters(this.Items, this.SelectedChangeAddress, this.remark, this.Fee);
-            this.dialogManager.ShowDialog(new InvokeContractLoadParameters()
+            var accountScriptHashes = this.walletController.GetAccounts().Select(p => p.ScriptHash.ToString()).ToArray();
+
+            var assetTransferParameters = new AssetTransferTransactionParameters(accountScriptHashes, this.Items, this.SelectedChangeAddress, this.remark, this.Fee);
+
+            this.walletController.BuildSignAndRelayTransaction(assetTransferParameters);
+            
+            /*this.dialogManager.ShowDialog(new InvokeContractLoadParameters
             {
                 InvocationTransactionType = InvocationTransactionType.AssetTransfer,
                 AssetTransferParameters = assetTransferParameters
-            });
+            });*/
 
             //UInt160 transferChangeAddress = null;
 

@@ -1,6 +1,6 @@
 ﻿namespace Neo.UI.Core.Transactions.Parameters
 {
-    public class DeployContractTransactionParameters
+    public class DeployContractTransactionParameters : TransactionParameters
     {
         public string ContractSourceCode { get; }
 

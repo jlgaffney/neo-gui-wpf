@@ -3,7 +3,7 @@ using System;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-using Neo.Gui.Globalization.Resources;
+using Neo.UI.Core.Globalization.Resources;
 using Neo.Gui.Dialogs;
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters;
@@ -17,7 +17,6 @@ using Neo.Gui.Dialogs.LoadParameters.Updater;
 using Neo.Gui.Dialogs.LoadParameters.Voting;
 using Neo.Gui.Dialogs.LoadParameters.Wallets;
 using Neo.Gui.Dialogs.Results.Wallets;
-using Neo.Gui.Base.Managers.Interfaces;
 using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Managers.Interfaces;
 using Neo.UI.Core.Messages;
@@ -176,12 +175,7 @@ namespace Neo.Gui.ViewModels.Home
 
         public RelayCommand DeployContractCommand => new RelayCommand(() => this.dialogManager.ShowDialog<DeployContractLoadParameters>());
 
-        public RelayCommand InvokeContractCommand => new RelayCommand(() =>  
-            this.dialogManager.ShowDialog(new InvokeContractLoadParameters
-            {
-                InvocationTransactionType = InvocationTransactionType.Invoke,
-                InvokeTransactionParameters = new InvokeTransactionParameters(null)
-            }));
+        public RelayCommand InvokeContractCommand => new RelayCommand(() => this.dialogManager.ShowDialog(new InvokeContractLoadParameters(null)));
 
         public RelayCommand ShowElectionDialogCommand => new RelayCommand(() => this.dialogManager.ShowDialog<ElectionLoadParameters>());
 

@@ -7,10 +7,8 @@ using GalaSoft.MvvmLight.Command;
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Dialogs.LoadParameters.Voting;
-using Neo.Gui.Base.Managers.Interfaces;
 using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Extensions;
-using Neo.UI.Core.Data.TransactionParameters;
 using Neo.UI.Core.Transactions;
 using Neo.UI.Core.Transactions.Parameters;
 
@@ -22,24 +20,20 @@ namespace Neo.Gui.ViewModels.Voting
         #region Private Fields 
         private readonly IDialogManager dialogManager;
         private readonly IWalletController walletController;
-
-        private string scriptHash;
-        private string address;
+        
+        private string voterAddress;
         private string votes;
         #endregion
 
         #region Public Properties 
-        public string Address
+        public string VoterAddress
         {
-            get
-            {
-                return this.address;
-            }
+            get => this.voterAddress;
             set
             {
-                if (this.address == value) return;
+                if (this.voterAddress == value) return;
 
-                this.address = value;
+                this.voterAddress = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -77,23 +71,21 @@ namespace Neo.Gui.ViewModels.Voting
         
         public void OnDialogLoad(VotingLoadParameters parameters)
         {
-            if (parameters?.ScriptHash == null) return;
+            if (parameters?.VoterScriptHash == null) return;
             
-            this.SetScriptHash(parameters.ScriptHash);
+            this.SetVoterScriptHash(parameters.VoterScriptHash);
         }
         #endregion
 
         #region Private Methods 
-        private void SetScriptHash(string hash)
+        private void SetVoterScriptHash(string scriptHash)
         {
-            this.scriptHash = hash;
-
             var voteStrings = this.walletController
-                .GetVotes(hash)
+                .GetVotes(scriptHash)
                 .ToArray();
 
-            // Set address
-            this.Address = this.walletController.ScriptHashToAddress(hash);
+            // Set voter address
+            this.VoterAddress = this.walletController.ScriptHashToAddress(scriptHash);
 
             // Concatenate votes into multi-line string
             this.Votes = voteStrings.ToMultiLineString();
@@ -147,12 +139,17 @@ namespace Neo.Gui.ViewModels.Voting
 
             //this.dialogManager.ShowDialog(new InvokeContractLoadParameters(transaction));
 
-            var votingParamers = new VotingTransactionParameters(this.scriptHash, this.Votes);
-            this.dialogManager.ShowDialog(new InvokeContractLoadParameters()
+            var voterScriptHash = this.walletController.AddressToScriptHash(this.VoterAddress).ToString();
+
+            var transactionParameters = new VotingTransactionParameters(voterScriptHash, this.Votes.ToLines());
+
+            this.walletController.BuildSignAndRelayTransaction(transactionParameters);
+
+            /*this.dialogManager.ShowDialog(new InvokeContractLoadParameters()
             {
                 InvocationTransactionType = InvocationTransactionType.Vote,
                 VotingParameters = votingParamers
-            });
+            });*/
 
             this.Close(this, EventArgs.Empty);
         }

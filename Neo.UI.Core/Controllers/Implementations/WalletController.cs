@@ -7,14 +7,13 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using Neo.Core;
-using Neo.Gui.Globalization.Resources;
+using Neo.UI.Core.Globalization.Resources;
 using Neo.Implementations.Wallets.NEP6;
 using Neo.Network;
 using Neo.SmartContract;
 using Neo.UI.Core.Certificates;
 using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Data;
-using Neo.UI.Core.Data.TransactionParameters;
 using Neo.UI.Core.Exceptions;
 using Neo.UI.Core.Extensions;
 using Neo.UI.Core.Helpers;
@@ -23,9 +22,9 @@ using Neo.UI.Core.Messages;
 using Neo.UI.Core.Messaging.Interfaces;
 using Neo.UI.Core.Services.Interfaces;
 using Neo.UI.Core.Status;
-using Neo.UI.Core.Transactions;
 using Neo.UI.Core.Transactions.Interfaces;
 using Neo.UI.Core.Transactions.Parameters;
+using Neo.UI.Core.Transactions.Testing;
 using Neo.VM;
 using Neo.Wallets;
 using DeprecatedWallet = Neo.Implementations.Wallets.EntityFramework.UserWallet;
@@ -39,17 +38,19 @@ namespace Neo.UI.Core.Controllers.Implementations
         IMessageHandler<BlockAddedMessage>
     {
         #region Private Fields 
+        private readonly Fixed8 NetworkFee = Fixed8.FromDecimal(0.001m);
+
         private readonly UInt160 RecycleScriptHash = new[] { (byte)OpCode.PUSHT }.ToScriptHash();
 
         private readonly IBlockchainController blockchainController;
         private readonly ICertificateService certificateService;
         private readonly IMessagePublisher messagePublisher;
         private readonly IMessageSubscriber messageSubscriber;
-        private readonly INetworkController networkController;
+        private readonly INodeController nodeController;
         private readonly INotificationService notificationService;
         private readonly ITransactionBuilderFactory transactionBuilderFactory;
+        
         private readonly string blockchainDataDirectoryPath;
-        private IEnumerable<ITransactionBuilder> transactionInvokersInternal;
 
         private readonly int localNodePort;
         private readonly int localWSPort;
@@ -82,21 +83,19 @@ namespace Neo.UI.Core.Controllers.Implementations
             ICertificateService certificateService,
             IMessagePublisher messagePublisher,
             IMessageSubscriber messageSubscriber,
-            INetworkController networkController,
+            INodeController nodeController,
             INotificationService notificationService,
-            ISettingsManager settingsManager, 
-            ITransactionBuilderFactory transactionBuilderFactory, 
-            IEnumerable<ITransactionBuilder> transactionInvokers)
+            ISettingsManager settingsManager,
+            ITransactionBuilderFactory transactionBuilderFactory)
         {
             this.blockchainController = blockchainController;
             this.certificateService = certificateService;
             this.messagePublisher = messagePublisher;
             this.messageSubscriber = messageSubscriber;
-            this.networkController = networkController;
+            this.nodeController = nodeController;
             this.notificationService = notificationService;
             this.transactionBuilderFactory = transactionBuilderFactory;
             this.blockchainDataDirectoryPath = settingsManager.BlockchainDataDirectoryPath;
-            this.transactionInvokersInternal = transactionInvokers;
 
             this.localNodePort = settingsManager.LocalNodePort;
             this.localWSPort = settingsManager.LocalWSPort;
@@ -118,9 +117,8 @@ namespace Neo.UI.Core.Controllers.Implementations
         }
         #endregion
 
-        #region IWalletController implementation 
-        public Fixed8 NetworkFee => Fixed8.FromDecimal(0.001m);
-
+        #region IWalletController implementation
+        
         public void Initialize()
         {
             if (this.disposed)
@@ -133,7 +131,7 @@ namespace Neo.UI.Core.Controllers.Implementations
                 throw new ObjectAlreadyInitializedException(nameof(IWalletController));
             }
 
-            this.networkController.Initialize(this.localNodePort, this.localWSPort);
+            this.nodeController.Initialize(this.localNodePort, this.localWSPort);
             this.blockchainController.Initialize(this.blockchainDataDirectoryPath);
             this.certificateService.Initialize(this.certificateCachePath);
 
@@ -317,32 +315,64 @@ namespace Neo.UI.Core.Controllers.Implementations
 
             this.TrySaveWallet();
         }
-
-        public bool Sign(ContractParametersContext context)
+        
+        public TestForGasUsageResult TestTransactionForGasUsage(InvokeContractTransactionParameters parameters)
         {
-            Guard.ArgumentIsNotNull(context, nameof(context));
+            var builder = this.transactionBuilderFactory.GetBuilder(parameters);
 
-            this.ThrowIfWalletIsNotOpen();
+            var transaction = builder.Build(parameters) as InvocationTransaction;
 
-            return this.currentWallet.Sign(context);
+            if (transaction == null)
+            {
+                return new TestForGasUsageResult(null, null, true);
+            }
+
+            transaction.Version = 1;
+
+            // Load default transaction values if required
+            if (transaction.Attributes == null) transaction.Attributes = new TransactionAttribute[0];
+            if (transaction.Inputs == null) transaction.Inputs = new CoinReference[0];
+            if (transaction.Outputs == null) transaction.Outputs = new TransactionOutput[0];
+            if (transaction.Scripts == null) transaction.Scripts = new Witness[0];
+
+            var transactionExecutionFailed = false;
+            var transactionFee = Fixed8.Zero;
+
+            var engine = ApplicationEngine.Run(parameters.Script, transaction);
+
+            // Get transaction test results
+            //var stringBuilder = new StringBuilder();
+            //stringBuilder.AppendLine($"VM State: {engine.State}");
+            //stringBuilder.AppendLine($"Gas Consumed: {engine.GasConsumed}");
+            //stringBuilder.AppendLine($"Evaluation Stack: {new JArray(engine.EvaluationStack.Select(p => p.ToParameter().ToJson()))}");
+
+            if (!engine.State.HasFlag(VMState.FAULT))
+            {
+                transaction.Gas = engine.GasConsumed - Fixed8.FromDecimal(10);
+
+                if (transaction.Gas < Fixed8.Zero) transaction.Gas = Fixed8.Zero;
+
+                transaction.Gas = transaction.Gas.Ceiling();
+
+                transactionFee = transaction.Gas.Equals(Fixed8.Zero)
+                    ? NetworkFee
+                    : transaction.Gas;
+            }
+            else
+            {
+                transactionExecutionFailed = true;
+            }
+
+            return new TestForGasUsageResult(engine.GetInvocationTestResult(), transactionFee.ToString(), transactionExecutionFailed);
         }
 
-        public void Relay(Transaction transaction, bool saveTransaction = true)
+        public void BuildSignAndRelayTransaction<TParameters>(TParameters transactionParameters) where TParameters : TransactionParameters
         {
-            Guard.ArgumentIsNotNull(transaction, nameof(transaction));
+            Guard.ArgumentIsNotNull(transactionParameters, nameof(transactionParameters));
 
-            this.networkController.Relay(transaction);
+            var transaction = this.BuildTransaction(transactionParameters);
 
-            if (!saveTransaction) return;
-
-            this.currentWallet.ApplyTransaction(transaction);
-        }
-
-        public void Relay(IInventory inventory)
-        {
-            Guard.ArgumentIsNotNull(inventory, nameof(inventory));
-
-            this.networkController.Relay(inventory);
+            this.SignAndRelay(transaction);
         }
 
         public void SignAndRelay(Transaction transaction)
@@ -374,6 +404,33 @@ namespace Neo.UI.Core.Controllers.Implementations
             {
                 this.notificationService.ShowSuccessNotification($"{Strings.IncompletedSignatureMessage} {context}");
             }
+        }
+
+        public bool Sign(ContractParametersContext context)
+        {
+            Guard.ArgumentIsNotNull(context, nameof(context));
+
+            this.ThrowIfWalletIsNotOpen();
+
+            return this.currentWallet.Sign(context);
+        }
+
+        public void Relay(Transaction transaction, bool saveTransaction = true)
+        {
+            Guard.ArgumentIsNotNull(transaction, nameof(transaction));
+
+            this.nodeController.Relay(transaction);
+
+            if (!saveTransaction) return;
+
+            this.currentWallet.ApplyTransaction(transaction);
+        }
+
+        public void Relay(IInventory inventory)
+        {
+            Guard.ArgumentIsNotNull(inventory, nameof(inventory));
+
+            this.nodeController.Relay(inventory);
         }
 
         public void SetNEP5WatchScriptHashes(IEnumerable<string> nep5WatchScriptHashesHex)
@@ -537,9 +594,9 @@ namespace Neo.UI.Core.Controllers.Implementations
             return this.blockchainController.GetTransaction(hash, out height);
         }
 
-        public IEnumerable<string> GetVotes(string scriptHash)
+        public IEnumerable<string> GetVotes(string voterScriptHash)
         {
-            var accountState = this.blockchainController.GetAccountState(UInt160.Parse(scriptHash));
+            var accountState = this.blockchainController.GetAccountState(UInt160.Parse(voterScriptHash));
 
             if (accountState == null)
             {
@@ -713,61 +770,12 @@ namespace Neo.UI.Core.Controllers.Implementations
         {
             this.ThrowIfWalletIsNotOpen();
 
-            return this.currentWallet.MakeTransaction(transaction, changeAddress, fee);
+            return this.currentWallet.MakeTransaction(transaction, change_address: changeAddress, fee: fee);
         }
 
-        public Transaction MakeTransferTransaction(IEnumerable<TransferOutput> items, string remark, UInt160 changeAddress = null, Fixed8 fee = default(Fixed8))
+        public string BytesToScriptHash(byte[] data)
         {
-            var accountAddresses = this.GetAccounts().Select(p => p.ScriptHash);
-
-            var tx = TransactionHelper.MakeTransferTransaction(items, accountAddresses, remark, changeAddress, fee);
-
-            if (tx is ContractTransaction ctx)
-            {
-                tx = this.MakeTransaction(ctx, changeAddress, fee);
-            }
-
-            return tx;
-        }
-
-        public InvocationTransaction MakeValidatorRegistrationTransaction(ECPoint publicKey)
-        {
-            return TransactionHelper.MakeValidatorRegistrationTransaction(publicKey);
-        }
-
-        public InvocationTransaction MakeAssetCreationTransaction(
-            AssetType? assetType, 
-            string assetName,
-            Fixed8 amount, 
-            byte precision, 
-            ECPoint assetOwner, 
-            UInt160 assetAdmin, 
-            UInt160 assetIssuer)
-        {
-            return TransactionHelper.MakeAssetCreationTransaction(
-                assetType, assetName, amount, precision, 
-                    assetOwner, assetAdmin, assetIssuer);
-        }
-
-        public InvocationTransaction MakeContractCreationTransaction(
-            byte[] script, 
-            byte[] parameterList, 
-            ContractParameterType returnType,
-            bool needsStorage, 
-            string name, 
-            string version, 
-            string author, 
-            string email, 
-            string description)
-        {
-            return TransactionHelper.MakeContractCreationTransaction(
-                script, parameterList, returnType, needsStorage,
-                    name, version, author, email, description);
-        }
-
-        public string ByteToScriptHash(byte[] codeBytes)
-        {
-            return codeBytes.ToScriptHash().ToString();
+            return data.ToScriptHash().ToString();
         }
 
         public UInt160 AddressToScriptHash(string address)
@@ -821,11 +829,21 @@ namespace Neo.UI.Core.Controllers.Implementations
 
             if (claims.Length == 0) return;
 
-            var claimTransaction = TransactionHelper.MakeClaimTransaction(
-                claims, 
-                this.blockchainController.UtilityToken.Hash, 
-                this.CalculateBonus(claims), 
-                this.GetChangeAddress());
+            var claimTransaction = new ClaimTransaction
+            {
+                Claims = claims,
+                Attributes = new TransactionAttribute[0],
+                Inputs = new CoinReference[0],
+                Outputs = new[]
+                {
+                    new TransactionOutput
+                    {
+                        AssetId = this.blockchainController.UtilityToken.Hash,
+                        Value = this.CalculateBonus(claims),
+                        ScriptHash = this.GetChangeAddress()
+                    }
+                }
+            };
 
             this.SignAndRelay(claimTransaction);
         }
@@ -846,30 +864,6 @@ namespace Neo.UI.Core.Controllers.Implementations
             }, fee: Fixed8.One);
 
             this.SignAndRelay(issueTransaction);
-        }
-
-        public void InvokeContract(InvocationTransaction transaction)
-        {
-            var transactionFee = transaction.Gas.Equals(Fixed8.Zero) ? NetworkFee : Fixed8.Zero;
-
-            var transactionWithFee = this.MakeTransaction(new InvocationTransaction
-            {
-                Version = transaction.Version,
-                Script = transaction.Script,
-                Gas = transaction.Gas,
-                Attributes = transaction.Attributes,
-                Inputs = transaction.Inputs,
-                Outputs = transaction.Outputs
-            }, fee: transactionFee);
-
-            if (transactionWithFee == null)
-            {
-                this.notificationService.ShowErrorNotification("Transaction could not be created");
-            }
-            else
-            {
-                this.SignAndRelay(transactionWithFee);
-            }
         }
 
         public void AddLockContractAccount(string publicKey, uint unlockDateTime)
@@ -924,30 +918,11 @@ namespace Neo.UI.Core.Controllers.Implementations
         public void AddContractWithParameters(string reedemScript, string parameterList)
         {
             var parameters = parameterList.HexToBytes().Select(p => (ContractParameterType)p).ToArray();
-            var scriptHash = reedemScript.HexToBytes();
+            var scriptBytes = reedemScript.HexToBytes();
 
-            var contract = Contract.Create(parameters, scriptHash);
+            var contract = Contract.Create(parameters, scriptBytes);
 
             this.CreateAccount(contract);
-        }
-
-        public ITransactionBuilder GetTransactionInvoker(
-            InvocationTransactionType invocationTransactionType,
-            AssetRegistrationTransactionParameters assetRegistrationTransactionParameters,
-            AssetTransferTransactionParameters assetTransferTransactionParameters,
-            DeployContractTransactionParameters deployContractTransactionParameters,
-            ElectionTransactionParameters electionTransactionParameters,
-            VotingTransactionParameters votingTransactionParameters)
-        {
-            return this.transactionBuilderFactory.GetTransactionInvoker(
-                this,
-                this.transactionInvokersInternal,
-                invocationTransactionType,
-                assetRegistrationTransactionParameters,
-                assetTransferTransactionParameters,
-                deployContractTransactionParameters,
-                electionTransactionParameters,
-                votingTransactionParameters);
         }
         #endregion
 
@@ -1050,7 +1025,7 @@ namespace Neo.UI.Core.Controllers.Implementations
             try
             {
                 var blockchainStatus = this.blockchainController.GetStatus();
-                var networkStatus = this.networkController.GetStatus();
+                var networkStatus = this.nodeController.GetStatus();
 
                 var walletStatus = new WalletStatus(this.WalletHeight, blockchainStatus, networkStatus);
 
@@ -1333,7 +1308,7 @@ namespace Neo.UI.Core.Controllers.Implementations
 
             foreach (var nep5ScriptHash in this.nep5WatchScriptHashes)
             {
-                var assetItem = NEP5Helper.GetBalance(nep5ScriptHash, accountScriptHashes);
+                var assetItem = NEP5Helper.GetTotalBalance(nep5ScriptHash, accountScriptHashes);
 
                 if (assetItem == null) continue;
 
@@ -1389,7 +1364,10 @@ namespace Neo.UI.Core.Controllers.Implementations
 
                 if (queryResult == null) continue;
 
-                asset.SetIssuerCertificateQueryResult(queryResult);
+                using (queryResult)
+                {
+                    asset.SetIssuerCertificateQueryResult(queryResult.Type, queryResult.Certificate?.Subject);
+                }
             }
         }
 
@@ -1441,6 +1419,58 @@ namespace Neo.UI.Core.Controllers.Implementations
             this.ThrowIfWalletIsNotOpen();
 
             return this.currentWallet.GetUnclaimedCoins();
+        }
+
+        private Transaction BuildTransaction<TParameters>(TParameters parameters) where TParameters : TransactionParameters
+        {
+            var builder = this.transactionBuilderFactory.GetBuilder(parameters);
+
+            var transaction = builder.Build(parameters);
+
+            if (transaction is InvocationTransaction invocationTransaction)
+            {
+                var transactionFee = invocationTransaction.Gas.Equals(Fixed8.Zero) ? NetworkFee : Fixed8.Zero;
+
+                transaction = this.MakeTransaction(new InvocationTransaction
+                {
+                    Version = transaction.Version,
+                    Script = invocationTransaction.Script,
+                    Gas = invocationTransaction.Gas,
+                    Attributes = transaction.Attributes,
+                    Inputs = transaction.Inputs,
+                    Outputs = transaction.Outputs
+                }, fee: transactionFee);
+
+                if (transaction == null)
+                {
+                    throw new Exception("Transaction could not be created!");
+                }
+            }
+            else
+            {
+                var transferParameters = parameters as AssetTransferTransactionParameters;
+
+                if (transferParameters != null && transaction is ContractTransaction contractTransaction)
+                {
+                    // A first-class asset transfer transaction is being built
+                    // Add fee and change address info to the transaction
+                    var fee = Fixed8.Zero;
+                    if (!string.IsNullOrEmpty(transferParameters.TransferFee))
+                    {
+                        fee = Fixed8.Parse(transferParameters.TransferFee);
+                    }
+
+                    UInt160 changeAddress = null;
+                    if (!string.IsNullOrEmpty(transferParameters.TransferChangeAddress))
+                    {
+                        changeAddress = Wallet.ToScriptHash(transferParameters.TransferChangeAddress);
+                    }
+
+                    transaction = this.MakeTransaction(contractTransaction, changeAddress, fee);
+                }
+            }
+
+            return transaction;
         }
         #endregion
     }

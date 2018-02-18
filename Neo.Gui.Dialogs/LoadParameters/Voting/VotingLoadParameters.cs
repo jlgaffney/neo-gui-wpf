@@ -2,11 +2,11 @@
 {
     public class VotingLoadParameters
     {
-        public string ScriptHash { get; }
+        public string VoterScriptHash { get; }
 
-        public VotingLoadParameters(string scriptHash)
+        public VotingLoadParameters(string voterScriptHash)
         {
-            this.ScriptHash = scriptHash;
+            this.VoterScriptHash = voterScriptHash;
         }
     }
 }

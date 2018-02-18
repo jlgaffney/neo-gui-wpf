@@ -5,7 +5,6 @@ using GalaSoft.MvvmLight.Command;
 
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Contracts;
-using Neo.Gui.Base.Managers.Interfaces;
 using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Managers.Interfaces;
 using Neo.UI.Core.Services.Interfaces;
@@ -32,7 +31,7 @@ namespace Neo.Gui.ViewModels.Contracts
         private string parameterList;
         private string returnTypeStr;
 
-        private string code;
+        private string script;
         private bool needsStorage;
         #endregion
 
@@ -149,14 +148,14 @@ namespace Neo.Gui.ViewModels.Contracts
             }
         }
 
-        public string Code
+        public string Script
         {
-            get => this.code;
+            get => this.script;
             set
             {
-                if (this.code == value) return;
+                if (this.script == value) return;
 
-                this.code = value;
+                this.script = value;
 
                 RaisePropertyChanged();
 
@@ -170,13 +169,13 @@ namespace Neo.Gui.ViewModels.Contracts
         {
             get
             {
-                if (string.IsNullOrEmpty(this.Code)) return string.Empty;
+                if (string.IsNullOrEmpty(this.Script)) return string.Empty;
 
                 try
                 {
-                    var codeBytes = this.Code.HexToBytes();
+                    var scriptBytes = this.Script.HexToBytes();
 
-                    return this.walletController.ByteToScriptHash(codeBytes);
+                    return this.walletController.BytesToScriptHash(scriptBytes);
                 }
                 catch (FormatException)
                 {
@@ -204,7 +203,7 @@ namespace Neo.Gui.ViewModels.Contracts
             !string.IsNullOrEmpty(this.Author) &&
             !string.IsNullOrEmpty(this.Email) &&
             !string.IsNullOrEmpty(this.Description) &&
-            !string.IsNullOrEmpty(this.Code);
+            !string.IsNullOrEmpty(this.Script);
 
         public RelayCommand LoadCommand => new RelayCommand(this.HandleLoadCommand);
 
@@ -260,7 +259,7 @@ namespace Neo.Gui.ViewModels.Contracts
                 hexString = loadedBytes.ToHexString();
             }
 
-            this.Code = hexString;
+            this.Script = hexString;
         }
 
         private void HandleDeployCommand()
@@ -269,20 +268,24 @@ namespace Neo.Gui.ViewModels.Contracts
 
             //if (transaction == null) return;
 
-            this.dialogManager.ShowDialog(new InvokeContractLoadParameters()
+            var transactionParameters = new DeployContractTransactionParameters(
+                this.Script,
+                this.parameterList,
+                this.ReturnType,
+                this.NeedsStorage,
+                this.Name,
+                this.Version,
+                this.Author,
+                this.Email,
+                this.Description);
+
+            this.walletController.BuildSignAndRelayTransaction(transactionParameters);
+
+            /*this.dialogManager.ShowDialog(new InvokeContractLoadParameters()
             {
                 InvocationTransactionType = InvocationTransactionType.DeployContract,
-                DeployContractParameters = new DeployContractTransactionParameters(
-                    this.Code, 
-                    this.parameterList, 
-                    this.ReturnType, 
-                    this.NeedsStorage, 
-                    this.Name, 
-                    this.Version,
-                    this.Author, 
-                    this.Email, 
-                    this.Description)
-            });
+                DeployContractParameters = 
+            });*/
 
             this.Close(this, EventArgs.Empty);
         }

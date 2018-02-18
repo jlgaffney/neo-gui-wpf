@@ -7,18 +7,14 @@ using GalaSoft.MvvmLight.Command;
 using Neo.SmartContract;
 using Neo.VM;
 
-using Neo.Gui.Globalization.Resources;
+using Neo.UI.Core.Globalization.Resources;
 
 using Neo.Gui.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Dialogs.Interfaces;
-using Neo.Gui.Base.Managers.Interfaces;
 using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Managers.Interfaces;
 using Neo.UI.Core.Services.Interfaces;
-using Neo.UI.Core.Transactions.Interfaces;
-using Neo.UI.Core.Transactions;
 using Neo.UI.Core.Transactions.Parameters;
-using Neo.UI.Core.Data.TransactionParameters;
 
 namespace Neo.Gui.ViewModels.Contracts
 {
@@ -30,11 +26,9 @@ namespace Neo.Gui.ViewModels.Contracts
         private readonly IDialogManager dialogManager;
         private readonly IFileManager fileManager;
         private readonly IFileDialogService fileDialogService;
-        private readonly ITransactionTester transactionTester;
         private readonly IWalletController walletController;
 
         //private InvocationTransaction transaction;
-        private ITransactionBuilder transactionBuilder = null; 
 
         private UInt160 scriptHash;
         private ContractParameter[] contractParameters;
@@ -168,13 +162,11 @@ namespace Neo.Gui.ViewModels.Contracts
             IDialogManager dialogManager,
             IFileManager fileManager,
             IFileDialogService fileDialogService,
-            ITransactionTester transactionTester,
             IWalletController walletController)
         {
             this.dialogManager = dialogManager;
             this.fileManager = fileManager;
             this.fileDialogService = fileDialogService;
-            this.transactionTester = transactionTester;
             this.walletController = walletController;
         }
         #endregion
@@ -189,11 +181,10 @@ namespace Neo.Gui.ViewModels.Contracts
             // Set base transaction
             //this.transaction = parameters.Transaction;
 
+            
+            this.CustomScript = parameters.Script.ToHexString();
 
-            // TODO
-            //this.CustomScript = this.transaction.Script.ToHexString();
-
-            this.transactionBuilder = this.walletController.GetTransactionInvoker(
+            /*this.invocationTransactionBuilder = this.walletController.GetTransactionInvoker(
                 parameters.InvocationTransactionType,
                 parameters.AssetRegistrationParameters,
                 parameters.AssetTransferParameters,
@@ -201,15 +192,15 @@ namespace Neo.Gui.ViewModels.Contracts
                 parameters.ElectionParameters,
                 parameters.VotingParameters);
 
-            if (this.transactionBuilder.IsContractTransaction)
+            if (this.invocationTransactionBuilder.IsContractTransaction)
             {
-                this.CustomScript = this.transactionBuilder.GetTransactionScript();
+                this.CustomScript = this.invocationTransactionBuilder.GetTransactionScript();
             }
             else
             {
-                this.transactionBuilder.SignAndRelayTransaction();
+                //this.invocationTransactionBuilder.SignAndRelayTransaction();
                 this.Close(this, EventArgs.Empty);
-            }
+            }*/
         }
         #endregion
 
@@ -290,17 +281,31 @@ namespace Neo.Gui.ViewModels.Contracts
 
         private void Test()
         {
-            if (transactionBuilder.Configuration.InvocationTransactionType == InvocationTransactionType.Invoke)
+            byte[] script;
+            try
             {
-                ((InvokeTransactionConfiguration)transactionBuilder.Configuration).InvokeTransactionParameters = new InvokeTransactionParameters(this.customScript);
-                transactionBuilder.GenerateTransaction();
+                script = this.CustomScript.Trim().HexToBytes();
+            }
+            catch (FormatException ex)
+            {
+                this.dialogManager.ShowMessageDialog("An error occurred!", ex.Message);
+                return;
             }
 
-            var result = this.transactionTester.TestForGasUsage(this.transactionBuilder, this.customScript);
+            var transactionParameters = new InvokeContractTransactionParameters(script);
+
+            /*if (invocationTransactionBuilder.Configuration.InvocationTransactionType == InvocationTransactionType.InvokeContract)
+            {
+                ((InvokeContractTransactionConfiguration)invocationTransactionBuilder.Configuration).InvokeContractTransactionParameters = new InvokeContractTransactionParameters(script);
+                invocationTransactionBuilder.BuildTransaction();
+            }*/
+
+            var result = this.walletController.TestTransactionForGasUsage(transactionParameters);
 
             this.Results = result.Result;
             this.Fee = $"{result.Fee} gas";
-            this.InvokeEnabled = true;
+
+            this.InvokeEnabled = !result.TransactionExecutionFailed;
 
             //byte[] script;
             //try
@@ -360,7 +365,11 @@ namespace Neo.Gui.ViewModels.Contracts
         {
             if (!this.InvokeEnabled) return;
 
-            this.transactionBuilder.Invoke();
+            var script = this.CustomScript.Trim().HexToBytes();
+            
+            var transactionParameters = new InvokeContractTransactionParameters(script);
+
+            this.walletController.BuildSignAndRelayTransaction(transactionParameters);
 
             //if (this.transaction == null) return;
 

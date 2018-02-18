@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace Neo.UI.Core.Converters
+namespace Neo.UI.Core.Globalization
 {
     public class EnumDescriptionTypeConverter : EnumConverter
     {

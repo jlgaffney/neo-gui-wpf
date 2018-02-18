@@ -12,7 +12,6 @@ using Neo.Cryptography.ECC;
 using Neo.SmartContract;
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Contracts;
-using Neo.Gui.Base.Managers.Interfaces;
 using Neo.UI.Core.Data;
 
 namespace Neo.Gui.ViewModels.Contracts

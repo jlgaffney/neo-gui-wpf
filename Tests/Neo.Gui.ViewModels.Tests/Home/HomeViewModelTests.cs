@@ -4,8 +4,9 @@ using Xunit;
 
 using Moq;
 
-using Neo.Gui.Globalization.Resources;
+using Neo.UI.Core.Globalization.Resources;
 using Neo.Gui.Dialogs;
+using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters;
 using Neo.Gui.Dialogs.LoadParameters.Assets;
 using Neo.Gui.Dialogs.LoadParameters.Contracts;
@@ -17,7 +18,6 @@ using Neo.Gui.Dialogs.LoadParameters.Voting;
 using Neo.Gui.Dialogs.LoadParameters.Wallets;
 using Neo.Gui.Dialogs.Results.Wallets;
 using Neo.Gui.ViewModels.Home;
-using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.TestHelpers;
 using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Managers.Interfaces;
@@ -339,10 +339,8 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.InvokeContractCommand.Execute(null);
             
             // Assert
-            dialogManagerMock.Verify(x => 
-                x.ShowDialog(
-                    It.Is<InvokeContractLoadParameters>(param => 
-                        param.InvocationTransactionType == UI.Core.Transactions.InvocationTransactionType.Invoke )));
+            dialogManagerMock.Verify(x => x.ShowDialog(
+                It.Is<InvokeContractLoadParameters>(param => param.Script == null)));
         }
 
         [Fact]
