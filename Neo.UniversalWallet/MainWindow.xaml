@@ -6,7 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="clr-namespace:Neo.UniversalWallet"
     mc:Ignorable="d"
-    Title="MainWindow">
+    Title="City of Zion - NEO Universal Wallet">
 
     <Window.Resources>
         <Style TargetType="ContentControl" x:Key="CoZ">
@@ -92,127 +92,29 @@
         <Border Background="#2b2b5e">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="100" />
+                    <RowDefinition Height="50" />
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="100" />
+                    <RowDefinition Height="10" />
                 </Grid.RowDefinitions>
-
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="10" />
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="10" />
                 </Grid.ColumnDefinitions>
 
                 <ContentControl 
                     Grid.Row="0"
                     Grid.Column="1"
                     Style="{StaticResource CoZ}" 
-                    Width="500" 
-                    Height="100" 
+                    Width="250" 
+                    Height="50" 
                     Foreground="White" 
                     HorizontalAlignment="Left" />
 
-                <Border Grid.Row="1" Grid.Column="1" Background="#212146">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-
-                        <TextBlock 
-                            Grid.Row="0"
-                            FontFamily="/Fonts/Orbitron-Black.ttf#Orbitron"
-                            FontSize="50"
-                            Foreground="White"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Text="NEO Universal Wallet">
-                            
-                            <TextBlock.Effect>
-                                <DropShadowEffect
-                                  ShadowDepth="4"
-                                  Direction="330"
-                                  Color="Black"
-                                  Opacity="0.5"
-                                 BlurRadius="4"/>
-                            </TextBlock.Effect>
-                        </TextBlock>
-
-                        <Grid Grid.Row="1" Margin="100 0 100 20">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="300" />
-                                <ColumnDefinition Width="10" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-
-                            <TextBlock 
-                                Grid.Column="0" 
-                                Grid.Row="0"
-                                Text="Wallet password" 
-                                Foreground="White" 
-                                VerticalAlignment="Center" 
-                                FontFamily="/Fonts/Orbitron-Black.ttf#Orbitron"
-                                FontSize="30">
-
-                                <TextBlock.Effect>
-                                    <DropShadowEffect
-                                        ShadowDepth="4"
-                                        Direction="330"
-                                        Color="Black"
-                                        Opacity="0.5"
-                                        BlurRadius="4"/>
-                                </TextBlock.Effect>
-                            </TextBlock>
-                            <PasswordBox 
-                                Grid.Column="2" 
-                                Grid.Row="0"
-                                VerticalAlignment="Center" 
-                                Foreground="White"
-                                FontFamily="/Fonts/Orbitron-Black.ttf#Orbitron"
-                                FontSize="30" />
-                            <Button 
-                                Grid.Row="0" 
-                                Grid.Column="3" 
-                                Content="ENTER" 
-                                FontFamily="/Fonts/Orbitron-Black.ttf#Orbitron" />
-                        </Grid>
-
-                        <Grid Grid.Row="2" Margin="100 20 100 0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="300" />
-                                <ColumnDefinition Width="10" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-
-                            <TextBlock 
-                                Grid.Column="0" 
-                                Text="Network" 
-                                Foreground="White" 
-                                VerticalAlignment="Center" 
-                                FontFamily="/Fonts/Orbitron-Black.ttf#Orbitron"
-                                FontSize="30">
-
-                                <TextBlock.Effect>
-                                    <DropShadowEffect
-                                        ShadowDepth="4"
-                                        Direction="330"
-                                        Color="Black"
-                                        Opacity="0.5"
-                                        BlurRadius="4"/>
-                                </TextBlock.Effect>
-                            </TextBlock>
-                            <ComboBox Grid.Column="2" />
-                        </Grid>
-                    </Grid>
+                <Border Grid.Row="1" Grid.Column="1">
+                    <Frame 
+                        Content="{Binding PageContent}"
+                        NavigationUIVisibility="Hidden" />
                 </Border>
             </Grid>
         </Border>

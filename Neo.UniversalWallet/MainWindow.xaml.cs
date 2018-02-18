@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using Neo.UniversalWallet.ViewModels;
+using System.Windows;
 
 namespace Neo.UniversalWallet
 {
@@ -6,6 +7,8 @@ namespace Neo.UniversalWallet
     {
         public MainWindow()
         {
+            this.DataContext = new MainWindowViewModel();
+
             InitializeComponent();
         }
     }
