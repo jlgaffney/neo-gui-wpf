@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo.Gui.TestHelpers", "Test
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{086BB6EE-E60E-45C4-8590-DF528AE96AEE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo.UniversalWallet", "Neo.UniversalWallet\Neo.UniversalWallet.csproj", "{1D2B0762-C480-47E1-A3AA-56EA3C00405F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -110,6 +112,16 @@ Global
 		{E5903A9F-0804-4912-92CC-469E47FAE4F6}.DebugPrivateNet|Any CPU.Build.0 = DebugPrivateNet|Any CPU
 		{E5903A9F-0804-4912-92CC-469E47FAE4F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E5903A9F-0804-4912-92CC-469E47FAE4F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D2B0762-C480-47E1-A3AA-56EA3C00405F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D2B0762-C480-47E1-A3AA-56EA3C00405F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D2B0762-C480-47E1-A3AA-56EA3C00405F}.DebugCoZTestNet|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D2B0762-C480-47E1-A3AA-56EA3C00405F}.DebugCoZTestNet|Any CPU.Build.0 = Debug|Any CPU
+		{1D2B0762-C480-47E1-A3AA-56EA3C00405F}.DebugNeoTestNet|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D2B0762-C480-47E1-A3AA-56EA3C00405F}.DebugNeoTestNet|Any CPU.Build.0 = Debug|Any CPU
+		{1D2B0762-C480-47E1-A3AA-56EA3C00405F}.DebugPrivateNet|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D2B0762-C480-47E1-A3AA-56EA3C00405F}.DebugPrivateNet|Any CPU.Build.0 = Debug|Any CPU
+		{1D2B0762-C480-47E1-A3AA-56EA3C00405F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D2B0762-C480-47E1-A3AA-56EA3C00405F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
