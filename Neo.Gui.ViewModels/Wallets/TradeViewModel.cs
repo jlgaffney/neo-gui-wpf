@@ -11,11 +11,10 @@ using Neo.Core;
 using Neo.IO.Json;
 using Neo.SmartContract;
 
-using Neo.Gui.Globalization.Resources;
+using Neo.UI.Core.Globalization.Resources;
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Wallets;
 using Neo.Gui.Dialogs.Results.Wallets;
-using Neo.Gui.Base.Managers.Interfaces;
 using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Data;
 

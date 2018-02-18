@@ -14,10 +14,8 @@ namespace Neo.UI.Core.Transactions
                 .RegisterType<TransactionBuilderFactory>()
                 .As<ITransactionBuilderFactory>();
 
-            builder
-                .RegisterType<TransactionTester>()
-                .As<ITransactionTester>();
 
+            // Register builders
             builder
                 .RegisterType<AssetRegistrationTransactionBuilder>()
                 .As<ITransactionBuilder>();
@@ -31,7 +29,7 @@ namespace Neo.UI.Core.Transactions
                 .As<ITransactionBuilder>();
 
             builder
-                .RegisterType<ElectionTransactionBuilder>()
+                .RegisterType<ValidatorRegisterTransactionBuilder>()
                 .As<ITransactionBuilder>();
 
             builder
@@ -39,7 +37,7 @@ namespace Neo.UI.Core.Transactions
                 .As<ITransactionBuilder>();
 
             builder
-                .RegisterType<InvokeTransactionBuilder>()
+                .RegisterType<InvokeContractTransactionBuilder>()
                 .As<ITransactionBuilder>();
 
             base.Load(builder);

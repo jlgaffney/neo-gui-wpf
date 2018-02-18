@@ -1,23 +1,18 @@
 ﻿using System.Linq;
-
+using Neo.Core;
 using Neo.SmartContract;
-
-using Neo.UI.Core.Data.TransactionParameters;
+using Neo.UI.Core.Transactions.Interfaces;
+using Neo.UI.Core.Transactions.Parameters;
+using Neo.VM;
 
 namespace Neo.UI.Core.Transactions.Builders
 {
-    internal class DeployContractTransactionBuilder : TransactionBuilderBase
+    public class DeployContractTransactionBuilder : ITransactionBuilder<DeployContractTransactionParameters>
     {
-        public override bool IsValid(InvocationTransactionType invocationTransactionType)
-        {
-            return invocationTransactionType == InvocationTransactionType.DeployContract;
-        }
+        private const string ContractCreateApi = "Neo.Contract.Create";
 
-        public override void GenerateTransaction()
+        public Transaction Build(DeployContractTransactionParameters parameters)
         {
-            var deployContractTransactionConfiguration = this.Configuration as DeployContractTransactionConfiguration;
-            var parameters = deployContractTransactionConfiguration.DeployContractTransactionParameters;
-
             var script = parameters.ContractSourceCode.HexToBytes();
             var parameterListBytes = string.IsNullOrEmpty(parameters.ParameterList) ? new byte[0] : parameters.ParameterList.HexToBytes();
 
@@ -29,22 +24,28 @@ namespace Neo.UI.Core.Transactions.Builders
             else
             {
                 returnType = parameters.ReturnType
-                    .HexToBytes()
-                    .Select(p => (ContractParameterType?)p).FirstOrDefault() ?? ContractParameterType.Void;
+                                 .HexToBytes()
+                                 .Select(p => (ContractParameterType?)p).FirstOrDefault() ?? ContractParameterType.Void;
             }
 
-            this.Transaction = this.Configuration.WalletController.MakeContractCreationTransaction(
-                script,
-                parameterListBytes,
-                returnType,
-                parameters.NeedsStorage,
-                parameters.Name,
-                parameters.Version,
-                parameters.Author,
-                parameters.Email,
-                parameters.Description);
+            var needsStorage = parameters.NeedsStorage;
+            var name = parameters.Name;
+            var version = parameters.Version;
+            var author = parameters.Author;
+            var email = parameters.Email;
+            var description = parameters.Description;
 
-            this.IsContractTransaction = true;
+            InvocationTransaction transaction;
+            using (var builder = new ScriptBuilder())
+            {
+                builder.EmitSysCall(ContractCreateApi, script, parameterListBytes, returnType, needsStorage, name, version, author, email, description);
+                transaction = new InvocationTransaction
+                {
+                    Script = builder.ToArray()
+                };
+            }
+
+            return transaction;
         }
     }
 }

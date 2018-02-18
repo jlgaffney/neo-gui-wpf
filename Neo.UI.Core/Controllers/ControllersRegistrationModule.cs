@@ -20,8 +20,8 @@ namespace Neo.UI.Core.Controllers
                 .SingleInstance();
 
             builder
-                .RegisterType<NetworkController>()
-                .As<INetworkController>()
+                .RegisterType<NodeController>()
+                .As<INodeController>()
                 .SingleInstance();
 
             builder

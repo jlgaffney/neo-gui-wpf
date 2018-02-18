@@ -1,7 +1,5 @@
 ﻿using Autofac;
-
-using Neo.Gui.Base.Managers.Interfaces;
-
+using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Wpf.Implementations.Managers;
 using Neo.UI.Core.Managers.Interfaces;
 

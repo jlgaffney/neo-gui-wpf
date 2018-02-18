@@ -5,11 +5,10 @@ using System.Windows.Input;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-
+using Neo.Gui.Dialogs.Interfaces;
 using Neo.Network;
 using Neo.SmartContract;
-using Neo.Gui.Globalization.Resources;
-using Neo.Gui.Base.Managers.Interfaces;
+using Neo.UI.Core.Globalization.Resources;
 using Neo.UI.Core.Controllers.Interfaces;
 
 namespace Neo.Gui.ViewModels.Development

@@ -8,22 +8,22 @@ using System.Windows;
 
 using Autofac;
 
-using Neo.Gui.Globalization.Resources;
-
-using Neo.Gui.Base;
+using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Home;
 using Neo.Gui.Dialogs.LoadParameters.Updater;
-using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Wpf.Controls;
 using Neo.Gui.Wpf.Extensions;
 using Neo.Gui.Wpf.Implementations.Managers;
 using Neo.Gui.Wpf.MarkupExtensions;
 using Neo.Gui.Wpf.Properties;
 using Neo.Gui.Wpf.RegistrationModules;
+
 using Neo.UI.Core;
 using Neo.UI.Core.Controllers.Interfaces;
+using Neo.UI.Core.Globalization.Resources;
 using Neo.UI.Core.Managers.Interfaces;
 using Neo.UI.Core.Services.Interfaces;
+
 using SplashScreen = Neo.Gui.Wpf.Views.SplashScreen;
 using ViewModelsRegistrationModule = Neo.Gui.ViewModels.ViewModelsRegistrationModule;
 using WpfProjectViewModelsRegistrationModule = Neo.Gui.Wpf.RegistrationModules.ViewModelsRegistrationModule;

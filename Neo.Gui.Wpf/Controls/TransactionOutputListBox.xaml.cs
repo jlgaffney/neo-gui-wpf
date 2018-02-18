@@ -4,10 +4,9 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
-
+using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Transactions;
 using Neo.Gui.Dialogs.Results.Transactions;
-using Neo.Gui.Base.Managers.Interfaces;
 using Neo.UI.Core.Data;
 
 namespace Neo.Gui.Wpf.Controls

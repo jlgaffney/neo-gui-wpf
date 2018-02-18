@@ -3,8 +3,6 @@ using System.Collections.ObjectModel;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-
-using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Assets;
 using Neo.Gui.Dialogs.LoadParameters.Contracts;
@@ -266,13 +264,15 @@ namespace Neo.Gui.ViewModels.Assets
                 this.SelectedAdmin,
                 this.SelectedIssuer);
 
-            var invokeContractLoadParameters = new InvokeContractLoadParameters()
+            this.walletController.BuildSignAndRelayTransaction(assetRegistrationParameters);
+
+            /*var invokeContractLoadParameters = new InvokeContractLoadParameters()
             {
                 InvocationTransactionType = InvocationTransactionType.AssetRegistration,
                 AssetRegistrationParameters = assetRegistrationParameters
             };
 
-            this.dialogManager.ShowDialog(invokeContractLoadParameters);
+            this.dialogManager.ShowDialog(invokeContractLoadParameters);*/
 
             //this.dialogManager.ShowDialog(new InvokeContractLoadParameters(transaction));
 

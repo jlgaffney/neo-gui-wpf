@@ -209,8 +209,8 @@
     <Reference Include="Microsoft.Net.Http.Headers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Net.Http.Headers.2.0.0\lib\netstandard2.0\Microsoft.Net.Http.Headers.dll</HintPath>
     </Reference>
-    <Reference Include="Neo, Version=2.5.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Neo.2.5.2\lib\net47\Neo.dll</HintPath>
+    <Reference Include="Neo, Version=2.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Neo.2.6.0\lib\net47\Neo.dll</HintPath>
     </Reference>
     <Reference Include="Neo.VM, Version=2.0.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Neo.VM.2.0.4\lib\net461\Neo.VM.dll</HintPath>
@@ -745,6 +745,10 @@
     <Resource Include="Resources\logo_72.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Neo.UI.Core.Data\Neo.UI.Core.Data.csproj">
+      <Project>{5aaff4e8-108e-4b55-905b-a63ccf866046}</Project>
+      <Name>Neo.UI.Core.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Neo.UI.Core\Neo.UI.Core.csproj">
       <Project>{929FDF79-F89D-4B4F-BB56-DBD1D31528B4}</Project>
       <Name>Neo.UI.Core</Name>
@@ -753,9 +757,9 @@
       <Project>{595b7c9e-5df5-47e3-b953-abd422897a85}</Project>
       <Name>Neo.Gui.Dialogs</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Neo.Gui.Globalization\Neo.Gui.Globalization.csproj">
+    <ProjectReference Include="..\Neo.UI.Core.Globalization\Neo.UI.Core.Globalization.csproj">
       <Project>{34501d6d-410c-4e1e-8c47-1a2ebbfbe611}</Project>
-      <Name>Neo.Gui.Globalization</Name>
+      <Name>Neo.UI.Core.Globalization</Name>
     </ProjectReference>
     <ProjectReference Include="..\Neo.Gui.ViewModels\Neo.Gui.ViewModels.csproj">
       <Project>{e7116c94-ca06-4045-9517-b4332c47fd4c}</Project>

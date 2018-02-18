@@ -1,23 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
+
 using Neo.Core;
-using Neo.Cryptography.ECC;
 using Neo.Network;
 using Neo.SmartContract;
-using Neo.UI.Core.Data;
-using Neo.UI.Core.Data.TransactionParameters;
-using Neo.UI.Core.Transactions;
-using Neo.UI.Core.Transactions.Interfaces;
-using Neo.UI.Core.Transactions.Parameters;
 using Neo.Wallets;
+
+using Neo.UI.Core.Data;
+using Neo.UI.Core.Transactions.Parameters;
+using Neo.UI.Core.Transactions.Testing;
 
 namespace Neo.UI.Core.Controllers.Interfaces
 {
     public interface IWalletController : IDisposable
     {
-        Fixed8 NetworkFee { get; }
-
         void Initialize();
 
         bool WalletIsOpen { get; }
@@ -46,13 +43,17 @@ namespace Neo.UI.Core.Controllers.Interfaces
 
         void ImportCertificate(X509Certificate2 certificate);
 
+        TestForGasUsageResult TestTransactionForGasUsage(InvokeContractTransactionParameters parameters);
+
+        void BuildSignAndRelayTransaction<TParameters>(TParameters transactionParameters) where TParameters : TransactionParameters;
+
+        void SignAndRelay(Transaction transaction);
+
         bool Sign(ContractParametersContext context);
 
         void Relay(Transaction transaction, bool saveTransaction = true);
 
         void Relay(IInventory inventory);
-        
-        void SignAndRelay(Transaction transaction);
 
         void SetNEP5WatchScriptHashes(IEnumerable<string> nep5WatchScriptHashesHex);
 
@@ -97,9 +98,9 @@ namespace Neo.UI.Core.Controllers.Interfaces
         /// <summary>
         /// Gets the public keys that the specified script hash have voted for.
         /// </summary>
-        /// <param name="scriptHash">Script hash of the account that voted</param>
+        /// <param name="voterScriptHash">Script hash of the account that voted</param>
         /// <returns>Enumerable collection of public keys</returns>
-        IEnumerable<string> GetVotes(string scriptHash);
+        IEnumerable<string> GetVotes(string voterScriptHash);
 
         ContractState GetContractState(UInt160 scriptHash);
 
@@ -134,30 +135,8 @@ namespace Neo.UI.Core.Controllers.Interfaces
         bool DeleteAccount(AccountItem account);
 
         Transaction MakeTransaction(Transaction transaction, UInt160 changeAddress = null, Fixed8 fee = default(Fixed8));
-
-        InvocationTransaction MakeValidatorRegistrationTransaction(ECPoint publicKey);
-
-        InvocationTransaction MakeAssetCreationTransaction(
-            AssetType? assetType, 
-            string assetName,
-            Fixed8 amount, 
-            byte precision, 
-            ECPoint assetOwner, 
-            UInt160 assetAdmin, 
-            UInt160 assetIssuer);
-
-        InvocationTransaction MakeContractCreationTransaction(
-            byte[] script, 
-            byte[] parameterList, 
-            ContractParameterType returnType,
-            bool needsStorage, 
-            string name, 
-            string version, 
-            string author, 
-            string email, 
-            string description);
-
-        string ByteToScriptHash(byte[] codeBytes);
+        
+        string BytesToScriptHash(byte[] data);
 
         UInt160 AddressToScriptHash(string address);
 
@@ -171,14 +150,6 @@ namespace Neo.UI.Core.Controllers.Interfaces
 
         void IssueAsset(string assetId, IEnumerable<TransferOutput> items);
 
-        void InvokeContract(InvocationTransaction transaction);
-
-        Transaction MakeTransferTransaction(
-            IEnumerable<TransferOutput> items, 
-            string remark, 
-            UInt160 changeAddress = null, 
-            Fixed8 fee = default(Fixed8));
-
         void AddLockContractAccount(string publicKey, uint unlockDateTime);
 
         IEnumerable<string> GetPublicKeysFromStandardAccounts();
@@ -188,13 +159,5 @@ namespace Neo.UI.Core.Controllers.Interfaces
         void AddMultiSignatureContract(int minimunSignatureNumber, IEnumerable<string> publicKeys);
 
         void AddContractWithParameters(string reedemScript, string parameterList);
-
-        ITransactionBuilder GetTransactionInvoker(
-            InvocationTransactionType invocationTransactionType,
-            AssetRegistrationTransactionParameters assetRegistrationTransactionParameters,
-            AssetTransferTransactionParameters assetTransferTransactionParameters,
-            DeployContractTransactionParameters deployContractTransactionParameters,
-            ElectionTransactionParameters electionTransactionParameters,
-            VotingTransactionParameters votingTransactionParameters);
     }
 }

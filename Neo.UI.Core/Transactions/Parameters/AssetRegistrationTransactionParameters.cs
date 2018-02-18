@@ -4,13 +4,15 @@ using Neo.UI.Core.Data;
 
 namespace Neo.UI.Core.Transactions.Parameters
 {
-    public class AssetRegistrationTransactionParameters
+    public class AssetRegistrationTransactionParameters : TransactionParameters
     {
         public AssetTypeDto AssetType { get; }
 
         public string Name { get; }
 
-        public string FormattedName { get; }
+        public string FormattedName => !string.IsNullOrWhiteSpace(this.Name)
+            ? $"[{{\"lang\":\"{CultureInfo.CurrentCulture.Name}\",\"name\":\"{this.Name}\"}}]"
+            : string.Empty;
 
         public bool IsTotalTokenAmountLimited { get; }
 
@@ -42,10 +44,6 @@ namespace Neo.UI.Core.Transactions.Parameters
             this.OwnerKey = ownerKey;
             this.AdminAddress = adminAddress;
             this.IssuerAddress = issuerAddress;
-
-            this.FormattedName = !string.IsNullOrWhiteSpace(this.Name)
-                    ? $"[{{\"lang\":\"{CultureInfo.CurrentCulture.Name}\",\"name\":\"{this.Name}\"}}]"
-                    : string.Empty;
         }
     }
 }

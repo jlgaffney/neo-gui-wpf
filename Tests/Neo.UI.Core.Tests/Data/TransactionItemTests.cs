@@ -1,10 +1,10 @@
 ﻿using System;
 using Neo.Core;
-using Neo.Gui.Globalization.Resources;
 using Neo.UI.Core.Data;
+using Neo.UI.Core.Globalization.Resources;
 using Xunit;
 
-namespace Neo.Gui.Base.Tests.Data
+namespace Neo.UI.Core.Tests.Data
 {
     public class TransactionItemTests
     {

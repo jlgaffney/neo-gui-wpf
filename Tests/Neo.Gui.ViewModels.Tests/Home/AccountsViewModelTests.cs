@@ -1,9 +1,9 @@
 ﻿using Moq;
 using Neo.Gui.Dialogs;
+using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Accounts;
 using Neo.Gui.Dialogs.LoadParameters.Voting;
-using Neo.Gui.Base.Managers.Interfaces;
-using Neo.Gui.Globalization.Resources;
+using Neo.UI.Core.Globalization.Resources;
 using Neo.Gui.TestHelpers;
 using Neo.Gui.ViewModels.Home;
 using Neo.Gui.ViewModels.Tests.Builders;
@@ -333,7 +333,7 @@ address2";
             viewModel.ShowVotingDialogCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog(It.Is<VotingLoadParameters>(p => p.ScriptHash == selectedAccount.ScriptHash)));
+            dialogManagerMock.Verify(x => x.ShowDialog(It.Is<VotingLoadParameters>(p => p.VoterScriptHash == selectedAccount.ScriptHash)));
         }
 
         [Fact]

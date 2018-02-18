@@ -8,7 +8,7 @@ using Neo.UI.Core.Status;
 
 namespace Neo.UI.Core.Controllers.Implementations
 {
-    internal class NetworkController : INetworkController
+    internal class NodeController : INodeController
     {
         #region Private fields
         private const string PeerStatePath = "peers.dat";
@@ -25,12 +25,12 @@ namespace Neo.UI.Core.Controllers.Implementations
         {
             if (this.disposed)
             {
-                throw new ObjectDisposedException(nameof(INetworkController));
+                throw new ObjectDisposedException(nameof(INodeController));
             }
 
             if (this.initialized)
             {
-                throw new ObjectAlreadyInitializedException(nameof(INetworkController));
+                throw new ObjectAlreadyInitializedException(nameof(INodeController));
             }
 
             // Setup local node
@@ -90,7 +90,7 @@ namespace Neo.UI.Core.Controllers.Implementations
             }
         }
 
-        ~NetworkController()
+        ~NodeController()
         {
             Dispose(false);
         }

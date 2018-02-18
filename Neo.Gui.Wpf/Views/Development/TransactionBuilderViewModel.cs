@@ -8,12 +8,12 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
 using Neo.Core;
+using Neo.Gui.Dialogs.Interfaces;
 using Neo.SmartContract;
 
-using Neo.Gui.Globalization.Resources;
+using Neo.UI.Core.Globalization.Resources;
 using Neo.Gui.Dialogs.LoadParameters.Transactions;
 using Neo.Gui.Dialogs.Results.Transactions;
-using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Wpf.Wrappers;
 using Neo.UI.Core.Controllers.Interfaces;
 

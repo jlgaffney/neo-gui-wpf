@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows;
-using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.Wpf.Extensions;
 using Neo.UI.Core.Extensions;
 using Neo.UI.Core.Managers.Interfaces;

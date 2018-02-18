@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Resources;
 
-namespace Neo.Gui.Globalization.Localization
+namespace Neo.UI.Core.Globalization
 {
     public class LocalizedDescriptionAttribute : DescriptionAttribute
     {

@@ -1,12 +1,12 @@
 ﻿namespace Neo.UI.Core.Transactions.Parameters
 {
-    public class ElectionTransactionParameters
+    public class ElectionTransactionParameters : TransactionParameters
     {
-        public string BookKeeperPublicKey { get; }
+        public string ValidatorPublicKey { get; }
 
-        public ElectionTransactionParameters(string bookKeeperPublicKey)
+        public ElectionTransactionParameters(string validatorPublicKey)
         {
-            this.BookKeeperPublicKey = bookKeeperPublicKey;
+            this.ValidatorPublicKey = validatorPublicKey;
         }
     }
 }

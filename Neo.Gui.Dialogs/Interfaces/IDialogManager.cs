@@ -1,7 +1,4 @@
-﻿using Neo.Gui.Dialogs;
-using Neo.Gui.Dialogs.Interfaces;
-
-namespace Neo.Gui.Base.Managers.Interfaces
+﻿namespace Neo.Gui.Dialogs.Interfaces
 {
     /// <summary>
     /// Interface that abstracts the usage of dialog views in the application.

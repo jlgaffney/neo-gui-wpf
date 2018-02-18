@@ -1,7 +1,6 @@
 ﻿using System.Windows;
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Wallets;
-using Neo.Gui.Base.Managers.Interfaces;
 using Neo.Gui.ViewModels.Wallets;
 using Neo.UI.Core.Managers.Interfaces;
 
