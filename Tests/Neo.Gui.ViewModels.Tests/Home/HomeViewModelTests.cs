@@ -19,11 +19,11 @@ using Neo.Gui.Dialogs.LoadParameters.Wallets;
 using Neo.Gui.Dialogs.Results.Wallets;
 using Neo.Gui.ViewModels.Home;
 using Neo.Gui.TestHelpers;
-using Neo.UI.Core.Controllers.Interfaces;
-using Neo.UI.Core.Managers.Interfaces;
-using Neo.UI.Core.Messages;
+using Neo.UI.Core.Data;
 using Neo.UI.Core.Messaging.Interfaces;
-using Neo.UI.Core.Status;
+using Neo.UI.Core.Services.Interfaces;
+using Neo.UI.Core.Wallet;
+using Neo.UI.Core.Wallet.Messages;
 
 namespace Neo.Gui.ViewModels.Tests.Home
 {
@@ -279,7 +279,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.RequestCertificateCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<CertificateApplicationLoadParameters>(null));
+            dialogManagerMock.Verify(x => x.ShowDialog<CertificateRequestLoadParameters>(null));
         }
 
         [Fact]

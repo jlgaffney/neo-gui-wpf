@@ -15,7 +15,7 @@ using Neo.UI.Core.Globalization.Resources;
 using Neo.Gui.Dialogs.LoadParameters.Transactions;
 using Neo.Gui.Dialogs.Results.Transactions;
 using Neo.Gui.Wpf.Wrappers;
-using Neo.UI.Core.Controllers.Interfaces;
+using Neo.UI.Core.Wallet;
 
 namespace Neo.Gui.Wpf.Views.Development
 {

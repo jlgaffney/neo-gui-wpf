@@ -7,10 +7,10 @@ using GalaSoft.MvvmLight.Command;
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Dialogs.LoadParameters.Voting;
-using Neo.UI.Core.Controllers.Interfaces;
-using Neo.UI.Core.Extensions;
+using Neo.UI.Core.Helpers.Extensions;
 using Neo.UI.Core.Transactions;
 using Neo.UI.Core.Transactions.Parameters;
+using Neo.UI.Core.Wallet;
 
 namespace Neo.Gui.ViewModels.Voting
 {
@@ -74,30 +74,12 @@ namespace Neo.Gui.ViewModels.Voting
         {
             if (!this.OkEnabled) return;
 
-            //var transaction = this.MakeTransaction();
-
-            //if (transaction == null) return;
-
-            //this.dialogManager.ShowDialog(new InvokeContractLoadParameters(transaction));
-
             var transactionParameters = new ElectionTransactionParameters(this.SelectedBookKeeper);
 
             this.walletController.BuildSignAndRelayTransaction(transactionParameters);
 
-            /*var invokeContractLoadParameters = new InvokeContractLoadParameters
-            {
-                InvocationTransactionType = InvocationTransactionType.Election,
-                ElectionParameters = new ElectionTransactionParameters(this.SelectedBookKeeper)
-            };
-            this.dialogManager.ShowDialog(invokeContractLoadParameters);*/
-
             this.Close(this, EventArgs.Empty);
         }
-
-        //private InvocationTransaction MakeTransaction()
-        //{
-        //    return this.walletController.MakeValidatorRegistrationTransaction(this.SelectedBookKeeper);
-        //}
         #endregion
     }
 }

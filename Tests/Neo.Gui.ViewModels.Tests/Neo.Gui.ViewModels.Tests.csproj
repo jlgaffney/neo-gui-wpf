@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Neo.UI.Core.Globalization\Neo.UI.Core.Globalization.csproj" />
+    <ProjectReference Include="..\..\Core\Neo.UI.Core.Globalization\Neo.UI.Core.Globalization.csproj" />
     <ProjectReference Include="..\..\Neo.Gui.ViewModels\Neo.Gui.ViewModels.csproj" />
     <ProjectReference Include="..\Neo.Gui.TestHelpers\Neo.Gui.TestHelpers.csproj" />
   </ItemGroup>

@@ -7,7 +7,6 @@ using GalaSoft.MvvmLight.Command;
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Wallets;
 using Neo.Gui.Dialogs.Results.Wallets;
-using Neo.UI.Core.Managers.Interfaces;
 using Neo.UI.Core.Services.Interfaces;
 
 namespace Neo.Gui.ViewModels.Wallets

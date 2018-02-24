@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Neo.UI.Core\Neo.UI.Core.csproj" />
+    <ProjectReference Include="..\Core\Neo.UI.Core.Data\Neo.UI.Core.Data.csproj" />
   </ItemGroup>
 
 </Project>

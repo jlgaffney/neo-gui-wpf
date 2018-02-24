@@ -1,4 +1,5 @@
 ﻿using Neo.UI.Core.Data;
+using Neo.UI.Core.Data.Enums;
 
 namespace Neo.Gui.ViewModels.Tests.Builders
 {

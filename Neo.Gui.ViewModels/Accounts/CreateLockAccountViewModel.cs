@@ -8,7 +8,8 @@ using GalaSoft.MvvmLight.Command;
 
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Accounts;
-using Neo.UI.Core.Controllers.Interfaces;
+using Neo.UI.Core.Helpers.Extensions;
+using Neo.UI.Core.Wallet;
 
 namespace Neo.Gui.ViewModels.Accounts
 {
@@ -27,7 +28,7 @@ namespace Neo.Gui.ViewModels.Accounts
         #endregion
 
         #region Public Properties 
-        public ObservableCollection<string> PublicKeys { get; }      // TODO: this is not KeyPairs anymore but a list of PublicKeys. Need to be checked with jlgaffney
+        public ObservableCollection<string> PublicKeys { get; }
 
         public string SelectedPublicKey
         {
@@ -124,11 +125,8 @@ namespace Neo.Gui.ViewModels.Accounts
             var accountPublicKeys = walletController.GetPublicKeysFromStandardAccounts();
 
             this.PublicKeys.Clear();
-            foreach(var publicKey in accountPublicKeys)
-            {
-                this.PublicKeys.Add(publicKey);
-            }
-
+            this.PublicKeys.AddRange(accountPublicKeys);
+            
             this.Hours = Enumerable.Range(0, HoursInDay).ToList();
             this.Minutes = Enumerable.Range(0, MinutesInHour).ToList();
 

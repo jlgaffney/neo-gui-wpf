@@ -5,12 +5,10 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Assets;
-using Neo.Gui.Dialogs.LoadParameters.Contracts;
-using Neo.UI.Core.Controllers.Interfaces;
-using Neo.UI.Core.Extensions;
 using Neo.UI.Core.Data;
-using Neo.UI.Core.Transactions;
+using Neo.UI.Core.Helpers.Extensions;
 using Neo.UI.Core.Transactions.Parameters;
+using Neo.UI.Core.Wallet;
 
 namespace Neo.Gui.ViewModels.Assets
 {
@@ -190,9 +188,6 @@ namespace Neo.Gui.ViewModels.Assets
             !string.IsNullOrWhiteSpace(this.SelectedAdmin) &&
             !string.IsNullOrWhiteSpace(this.SelectedIssuer);
 
-            // Check if form is valid
-            //!this.formValid;
-
         public RelayCommand OkCommand => new RelayCommand(this.HandleOkCommand);
         #endregion
 
@@ -248,12 +243,6 @@ namespace Neo.Gui.ViewModels.Assets
 
             if (!this.OkEnabled) return;
 
-            //var transaction = this.MakeTransaction();
-
-            //if (transaction == null) return;
-
-            //this.dialogManager.ShowDialog(new InvokeContractLoadParameters(transaction));
-
             var assetRegistrationParameters = new AssetRegistrationTransactionParameters(
                 this.SelectedAssetType,
                 this.Name,
@@ -266,33 +255,8 @@ namespace Neo.Gui.ViewModels.Assets
 
             this.walletController.BuildSignAndRelayTransaction(assetRegistrationParameters);
 
-            /*var invokeContractLoadParameters = new InvokeContractLoadParameters()
-            {
-                InvocationTransactionType = InvocationTransactionType.AssetRegistration,
-                AssetRegistrationParameters = assetRegistrationParameters
-            };
-
-            this.dialogManager.ShowDialog(invokeContractLoadParameters);*/
-
-            //this.dialogManager.ShowDialog(new InvokeContractLoadParameters(transaction));
-
             this.Close(this, EventArgs.Empty);
         }
-
-        //private InvocationTransaction MakeTransaction()
-        //{
-        //    var assetType = this.SelectedAssetType;
-        //    var formattedName = !string.IsNullOrWhiteSpace(this.Name)
-        //        ? $"[{{\"lang\":\"{CultureInfo.CurrentCulture.Name}\",\"name\":\"{this.Name}\"}}]"
-        //        : string.Empty;
-        //    var amount = this.TotalIsLimited ? Fixed8.Parse(this.TotalLimit) : -Fixed8.Satoshi;
-        //    var precisionByte = (byte)this.Precision;
-        //    var owner = this.SelectedOwner;
-        //    var admin = this.walletController.AddressToScriptHash(this.SelectedAdmin);
-        //    var issuer = this.walletController.AddressToScriptHash(this.SelectedIssuer);
-
-        //    return this.walletController.MakeAssetCreationTransaction(assetType, formattedName, amount, precisionByte, ECPoint.Parse(owner, ECCurve.Secp256r1), admin, issuer);
-        //}
         #endregion
     }
 }

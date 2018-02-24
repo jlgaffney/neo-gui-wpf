@@ -11,22 +11,21 @@ using Autofac;
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Home;
 using Neo.Gui.Dialogs.LoadParameters.Updater;
+
 using Neo.Gui.Wpf.Controls;
 using Neo.Gui.Wpf.Extensions;
-using Neo.Gui.Wpf.Implementations.Managers;
 using Neo.Gui.Wpf.MarkupExtensions;
+using Neo.Gui.Wpf.Native;
+using Neo.Gui.Wpf.Native.Services;
 using Neo.Gui.Wpf.Properties;
-using Neo.Gui.Wpf.RegistrationModules;
+using Neo.Gui.Wpf.Views;
 
-using Neo.UI.Core;
-using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Globalization.Resources;
-using Neo.UI.Core.Managers.Interfaces;
 using Neo.UI.Core.Services.Interfaces;
-
+using Neo.UI.Core.Wallet;
 using SplashScreen = Neo.Gui.Wpf.Views.SplashScreen;
 using ViewModelsRegistrationModule = Neo.Gui.ViewModels.ViewModelsRegistrationModule;
-using WpfProjectViewModelsRegistrationModule = Neo.Gui.Wpf.RegistrationModules.ViewModelsRegistrationModule;
+using WpfProjectViewModelsRegistrationModule = Neo.Gui.Wpf.Views.ViewModelsRegistrationModule;
 
 namespace Neo.Gui.Wpf
 {
@@ -138,6 +137,24 @@ namespace Neo.Gui.Wpf
             });
         }
 
+        private static ILifetimeScope BuildContainer()
+        {
+            var autoFacContainerBuilder = new ContainerBuilder();
+
+            autoFacContainerBuilder.RegisterModule<WalletRegistrationModule>();
+
+            autoFacContainerBuilder.RegisterModule<NativeServicesRegistrationModule>();
+
+            autoFacContainerBuilder.RegisterModule<WpfProjectViewModelsRegistrationModule>();
+            autoFacContainerBuilder.RegisterModule<ViewModelsRegistrationModule>();
+            autoFacContainerBuilder.RegisterModule<DialogsRegistrationModule>();
+
+            var container = autoFacContainerBuilder.Build();
+            var lifetimeScope = container.BeginLifetimeScope();
+
+            return lifetimeScope;
+        }
+
         private static void InstallRootCertificateIfRequired()
         {
             // Only install if using a local node
@@ -189,24 +206,6 @@ namespace Neo.Gui.Wpf
             {
                 // TODO Log exception somewhere
             }
-        }
-
-        private static ILifetimeScope BuildContainer()
-        {
-            var autoFacContainerBuilder = new ContainerBuilder();
-
-            autoFacContainerBuilder.RegisterModule<CoreRegistrationModule>();
-            autoFacContainerBuilder.RegisterModule<WpfProjectViewModelsRegistrationModule>();
-            autoFacContainerBuilder.RegisterModule<ViewModelsRegistrationModule>();
-            autoFacContainerBuilder.RegisterModule<HelpersRegistrationModule>();
-            autoFacContainerBuilder.RegisterModule<ManagersRegistrationModule>();
-            autoFacContainerBuilder.RegisterModule<ServicesRegistrationModule>();
-            autoFacContainerBuilder.RegisterModule<DialogsRegistrationModule>();
-
-            var container = autoFacContainerBuilder.Build();
-            var lifetimeScope = container.BeginLifetimeScope();
-
-            return lifetimeScope;
         }
 
         #region Unhandled exception methods

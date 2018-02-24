@@ -10,10 +10,10 @@ using GalaSoft.MvvmLight.Command;
 using Neo.Gui.Dialogs;
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Settings;
-using Neo.UI.Core.Controllers.Interfaces;
-using Neo.UI.Core.Extensions;
-using Neo.UI.Core.Managers.Interfaces;
+using Neo.UI.Core.Helpers.Extensions;
+using Neo.UI.Core.Services.Interfaces;
 using Neo.UI.Core.Theming;
+using Neo.UI.Core.Wallet;
 
 namespace Neo.Gui.ViewModels.Settings
 {

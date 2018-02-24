@@ -5,11 +5,9 @@ using GalaSoft.MvvmLight.Command;
 
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Contracts;
-using Neo.UI.Core.Controllers.Interfaces;
-using Neo.UI.Core.Managers.Interfaces;
 using Neo.UI.Core.Services.Interfaces;
-using Neo.UI.Core.Transactions;
 using Neo.UI.Core.Transactions.Parameters;
+using Neo.UI.Core.Wallet;
 
 namespace Neo.Gui.ViewModels.Contracts
 {
@@ -264,10 +262,6 @@ namespace Neo.Gui.ViewModels.Contracts
 
         private void HandleDeployCommand()
         {
-            //var transaction = this.MakeTransaction();
-
-            //if (transaction == null) return;
-
             var transactionParameters = new DeployContractTransactionParameters(
                 this.Script,
                 this.parameterList,
@@ -281,43 +275,8 @@ namespace Neo.Gui.ViewModels.Contracts
 
             this.walletController.BuildSignAndRelayTransaction(transactionParameters);
 
-            /*this.dialogManager.ShowDialog(new InvokeContractLoadParameters()
-            {
-                InvocationTransactionType = InvocationTransactionType.DeployContract,
-                DeployContractParameters = 
-            });*/
-
             this.Close(this, EventArgs.Empty);
         }
-
-        //private InvocationTransaction MakeTransaction()
-        //{
-        //    if (!this.DeployEnabled) return null;
-
-        //    var script = this.Code.HexToBytes();
-        //    var parameterListBytes = string.IsNullOrEmpty(this.ParameterList) ? new byte[0] : this.ParameterList.HexToBytes();
-
-        //    ContractParameterType returnType;
-        //    if (string.IsNullOrEmpty(this.ReturnType))
-        //    {
-        //        returnType = ContractParameterType.Void;
-        //    }
-        //    else
-        //    {
-        //        returnType = this.ReturnType.HexToBytes().Select(p => (ContractParameterType?)p).FirstOrDefault() ?? ContractParameterType.Void;
-        //    }
-
-        //    return this.walletController.MakeContractCreationTransaction(
-        //        script, 
-        //        parameterListBytes, 
-        //        returnType,
-        //        this.NeedsStorage, 
-        //        this.Name, 
-        //        this.Version, 
-        //        this.Author, 
-        //        this.Email, 
-        //        this.Description);
-        //}
         #endregion
     }
 }

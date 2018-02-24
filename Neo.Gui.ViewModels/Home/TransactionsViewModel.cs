@@ -4,9 +4,9 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
 using Neo.UI.Core.Data;
-using Neo.UI.Core.Managers.Interfaces;
-using Neo.UI.Core.Messages;
 using Neo.UI.Core.Messaging.Interfaces;
+using Neo.UI.Core.Services.Interfaces;
+using Neo.UI.Core.Wallet.Messages;
 
 namespace Neo.Gui.ViewModels.Home
 {

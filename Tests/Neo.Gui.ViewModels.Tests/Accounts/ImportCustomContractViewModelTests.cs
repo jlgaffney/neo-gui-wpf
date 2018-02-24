@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using Neo.Gui.TestHelpers;
 using Neo.Gui.ViewModels.Accounts;
-using Neo.UI.Core.Controllers.Interfaces;
+using Neo.UI.Core.Wallet;
 using Xunit;
 
 namespace Neo.Gui.ViewModels.Tests.Accounts

@@ -9,9 +9,8 @@ using Neo.SmartContract;
 using Neo.UI.Core.Globalization.Resources;
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Transactions;
-using Neo.UI.Core.Controllers.Interfaces;
-using Neo.UI.Core.Managers.Interfaces;
 using Neo.UI.Core.Services.Interfaces;
+using Neo.UI.Core.Wallet;
 
 namespace Neo.Gui.ViewModels.Transactions
 {

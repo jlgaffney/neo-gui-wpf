@@ -2,7 +2,7 @@
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Wallets;
 using Neo.Gui.ViewModels.Wallets;
-using Neo.UI.Core.Managers.Interfaces;
+using Neo.UI.Core.Services.Interfaces;
 
 namespace Neo.Gui.Wpf.Views.Wallets
 {

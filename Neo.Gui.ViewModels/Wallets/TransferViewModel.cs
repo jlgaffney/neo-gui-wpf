@@ -4,14 +4,12 @@ using System.Linq;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using Neo.Gui.Dialogs.Interfaces;
-using Neo.Gui.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Dialogs.LoadParameters.Wallets;
 using Neo.UI.Core.Globalization.Resources;
-using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Data;
-using Neo.UI.Core.Extensions;
-using Neo.UI.Core.Transactions;
+using Neo.UI.Core.Helpers.Extensions;
 using Neo.UI.Core.Transactions.Parameters;
+using Neo.UI.Core.Wallet;
 
 namespace Neo.Gui.ViewModels.Wallets
 {
@@ -138,35 +136,6 @@ namespace Neo.Gui.ViewModels.Wallets
 
             this.walletController.BuildSignAndRelayTransaction(assetTransferParameters);
             
-            /*this.dialogManager.ShowDialog(new InvokeContractLoadParameters
-            {
-                InvocationTransactionType = InvocationTransactionType.AssetTransfer,
-                AssetTransferParameters = assetTransferParameters
-            });*/
-
-            //UInt160 transferChangeAddress = null;
-
-            //if (!Fixed8.TryParse(this.fee, out var transferFee))
-            //{
-            //    transferFee = Fixed8.Zero;
-            //}
-
-            //if (!string.IsNullOrEmpty(this.SelectedChangeAddress))
-            //{
-            //    transferChangeAddress = this.walletController.AddressToScriptHash(this.SelectedChangeAddress);
-            //}
-
-            //var transaction = this.walletController.MakeTransferTransaction(this.Items, this.remark, transferChangeAddress, transferFee);
-            
-            //if (transaction is InvocationTransaction invocationTransaction)
-            //{
-            //    this.dialogManager.ShowDialog(new InvokeContractLoadParameters(invocationTransaction));
-            //}
-            //else
-            //{
-            //    this.walletController.SignAndRelay(transaction);
-            //}
-
             this.Close(this, EventArgs.Empty);
         }
         #endregion

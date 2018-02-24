@@ -9,7 +9,6 @@ using GalaSoft.MvvmLight.Command;
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Updater;
 using Neo.Gui.Wpf.Properties;
-using Neo.UI.Core.Managers.Interfaces;
 using Neo.UI.Core.Services.Interfaces;
 
 namespace Neo.Gui.Wpf.Views.Updater

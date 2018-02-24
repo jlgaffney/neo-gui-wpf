@@ -7,12 +7,13 @@ using Neo.UI.Core.Globalization.Resources;
 using Neo.Gui.TestHelpers;
 using Neo.Gui.ViewModels.Home;
 using Neo.Gui.ViewModels.Tests.Builders;
-using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Data;
-using Neo.UI.Core.Extensions;
-using Neo.UI.Core.Managers.Interfaces;
-using Neo.UI.Core.Messages;
+using Neo.UI.Core.Data.Enums;
+using Neo.UI.Core.Helpers.Extensions;
 using Neo.UI.Core.Messaging.Interfaces;
+using Neo.UI.Core.Services.Interfaces;
+using Neo.UI.Core.Wallet;
+using Neo.UI.Core.Wallet.Messages;
 using Xunit;
 
 namespace Neo.Gui.ViewModels.Tests.Home

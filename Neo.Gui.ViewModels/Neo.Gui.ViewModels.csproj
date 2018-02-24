@@ -6,14 +6,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MvvmLightLibsStd10" Version="5.4.0.1-alpha" />
+    <PackageReference Include="MvvmLightLibsStd10" Version="5.4.1" />
     <PackageReference Include="Neo" Version="2.6.0" />
     <PackageReference Include="Neo.VM" Version="2.0.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Neo.UI.Core.Globalization\Neo.UI.Core.Globalization.csproj" />
-    <ProjectReference Include="..\Neo.UI.Core\Neo.UI.Core.csproj" />
+    <ProjectReference Include="..\Core\Neo.UI.Core.Globalization\Neo.UI.Core.Globalization.csproj" />
+    <ProjectReference Include="..\Core\Neo.UI.Core.Helpers\Neo.UI.Core.Helpers.csproj" />
+    <ProjectReference Include="..\Core\Neo.UI.Core.Messaging\Neo.UI.Core.Messaging.csproj" />
+    <ProjectReference Include="..\Core\Neo.UI.Core.Theming\Neo.UI.Core.Theming.csproj" />
+    <ProjectReference Include="..\Core\Neo.UI.Core.Wallet\Neo.UI.Core.Wallet.csproj" />
     <ProjectReference Include="..\Neo.Gui.Dialogs\Neo.Gui.Dialogs.csproj" />
   </ItemGroup>
 

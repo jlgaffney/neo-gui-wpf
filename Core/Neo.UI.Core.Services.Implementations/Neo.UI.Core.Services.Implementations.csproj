@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="CertificateRequestService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.6.2" />
+    <PackageReference Include="Neo" Version="2.6.0" />
+    <PackageReference Include="Neo.VM" Version="2.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Neo.UI.Core.Data\Neo.UI.Core.Data.csproj" />
+    <ProjectReference Include="..\Neo.UI.Core.Messaging\Neo.UI.Core.Messaging.csproj" />
+    <ProjectReference Include="..\Neo.UI.Core.Services.Interfaces\Neo.UI.Core.Services.Interfaces.csproj" />
+  </ItemGroup>
+
+</Project>

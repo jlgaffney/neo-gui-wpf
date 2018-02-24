@@ -8,12 +8,13 @@ using Neo.Gui.Dialogs;
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Accounts;
 using Neo.Gui.Dialogs.LoadParameters.Voting;
-using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Data;
-using Neo.UI.Core.Extensions;
-using Neo.UI.Core.Managers.Interfaces;
-using Neo.UI.Core.Messages;
+using Neo.UI.Core.Data.Enums;
+using Neo.UI.Core.Helpers.Extensions;
 using Neo.UI.Core.Messaging.Interfaces;
+using Neo.UI.Core.Services.Interfaces;
+using Neo.UI.Core.Wallet;
+using Neo.UI.Core.Wallet.Messages;
 
 namespace Neo.Gui.ViewModels.Home
 {
