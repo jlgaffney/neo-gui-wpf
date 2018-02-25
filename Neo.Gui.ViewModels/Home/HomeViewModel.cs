@@ -249,7 +249,7 @@ namespace Neo.Gui.ViewModels.Home
             this.NextBlockProgressIsIndeterminate = status.BlockchainStatus.NextBlockProgressIsIndeterminate;
             this.NextBlockProgressFraction = status.BlockchainStatus.NextBlockProgressFraction;
 
-            this.NodeCount = status.NetworkStatus.NodeCount;
+            this.NodeCount = status.BlockchainStatus.NodeCount;
             this.BlockStatus = $"{Strings.WaitingForNextBlock}:"; // TODO Update property to return actual status
         }
         #endregion

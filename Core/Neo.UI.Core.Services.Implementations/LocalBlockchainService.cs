@@ -1,11 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using Neo.Core;
 using Neo.Implementations.Blockchains.LevelDB;
+using Neo.Network;
+using Neo.SmartContract;
 using Neo.UI.Core.Data;
 using Neo.UI.Core.Helpers;
 using Neo.UI.Core.Services.Implementations.Exceptions;
 using Neo.UI.Core.Services.Interfaces;
+using Neo.VM;
 
 namespace Neo.UI.Core.Services.Implementations
 {
@@ -14,12 +21,15 @@ namespace Neo.UI.Core.Services.Implementations
         IBlockchainService
     {
         #region Private Fields
+        private const string PeerStatePath = "peers.dat";
         private static readonly TimeSpan OneSecondTimeSpan = new TimeSpan(0, 0, 1);
 
         private readonly IBlockchainImportService blockchainImportService;
 
         private bool initialized;
         private bool disposed;
+
+        private LocalNode localNode;
 
         private Blockchain blockchain;
         private DateTime timeOfLastBlock = DateTime.MinValue;
@@ -41,7 +51,7 @@ namespace Neo.UI.Core.Services.Implementations
 
         public uint BlockHeight => this.blockchain.Height;
 
-        public void Initialize(string blockchainDataDirectoryPath)
+        public void Initialize(int localNodePort, int localWSPort, string blockchainDataDirectoryPath)
         {
             if (this.disposed)
             {
@@ -70,11 +80,22 @@ namespace Neo.UI.Core.Services.Implementations
 
                 this.blockchain = levelDBBlockchain;
 
+
+                // Setup local node
+                TryLoadPeerState();
+                this.localNode = new LocalNode
+                {
+                    UpnpEnabled = true
+                };
+
+                // Start local node
+                this.localNode?.Start(localNodePort, localWSPort);
+
                 this.initialized = true;
             }
             catch (Exception ex)
             {
-                throw new ApplicationException($"Error initializing BlockchainController {ex.Message}");
+                throw new ApplicationException($"Error initializing {nameof(IBlockchainService)} {ex.Message}");
             }
         }
 
@@ -112,7 +133,8 @@ namespace Neo.UI.Core.Services.Implementations
             }
 
             return new BlockchainStatus(this.blockchain.Height, this.blockchain.HeaderHeight,
-                nextBlockProgressIsIndeterminate, nextBlockProgressFraction, timeSinceLastBlock);
+                nextBlockProgressIsIndeterminate, nextBlockProgressFraction,
+                    timeSinceLastBlock, this.localNode.RemoteNodeCount);
         }
 
         public Transaction GetTransaction(UInt256 hash)
@@ -147,6 +169,100 @@ namespace Neo.UI.Core.Services.Implementations
             return TimeHelper.UnixTimestampToDateTime(unixTimestamp);
         }
 
+        public Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, bool ignoreClaimed = true)
+        {
+            return Blockchain.CalculateBonus(inputs, ignoreClaimed);
+        }
+
+        public Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, uint heightEnd)
+        {
+            return Blockchain.CalculateBonus(inputs, heightEnd);
+        }
+
+
+        public NEP5AssetItem GetTotalNEP5Balance(UInt160 nep5ScriptHash, IEnumerable<UInt160> accountScriptHashes)
+        {
+            byte[] script;
+            using (var builder = new ScriptBuilder())
+            {
+                foreach (var accountScriptHash in accountScriptHashes)
+                {
+                    builder.EmitAppCall(nep5ScriptHash, "balanceOf", accountScriptHash);
+                }
+
+                builder.Emit(OpCode.DEPTH, OpCode.PACK);
+
+                builder.EmitAppCall(nep5ScriptHash, "decimals");
+                builder.EmitAppCall(nep5ScriptHash, "name");
+
+                script = builder.ToArray();
+            }
+
+            var engine = ApplicationEngine.Run(script);
+            if (engine.State.HasFlag(VMState.FAULT)) return null;
+
+            var name = engine.EvaluationStack.Pop().GetString();
+            var decimals = (byte)engine.EvaluationStack.Pop().GetBigInteger();
+            var amount = engine.EvaluationStack.Pop().GetArray().Aggregate(BigInteger.Zero, (x, y) => x + y.GetBigInteger());
+
+            var balance = new BigDecimal();
+
+            if (amount != 0)
+            {
+                balance = new BigDecimal(amount, decimals);
+            }
+
+            // TODO Set issuer
+            return new NEP5AssetItem(nep5ScriptHash.ToString(), balance)
+            {
+                Name = name
+            };
+        }
+
+        public IDictionary<UInt160, BigDecimal> GetNEP5Balances(UInt160 nep5ScriptHash, IEnumerable<UInt160> accountScriptHashes)
+        {
+            var acccountScriptHashArray = accountScriptHashes.ToArray();
+
+            byte[] script;
+            using (var builder = new ScriptBuilder())
+            {
+                foreach (var address in acccountScriptHashArray)
+                {
+                    builder.EmitAppCall(nep5ScriptHash, "balanceOf", address);
+                }
+
+                builder.Emit(OpCode.DEPTH, OpCode.PACK);
+
+                builder.EmitAppCall(nep5ScriptHash, "decimals");
+
+                script = builder.ToArray();
+            }
+
+            var engine = ApplicationEngine.Run(script);
+            if (engine.State.HasFlag(VMState.FAULT)) return null;
+
+            var decimals = (byte)engine.EvaluationStack.Pop().GetBigInteger();
+
+            var balances = engine.EvaluationStack.Pop().GetArray().Reverse().Zip(acccountScriptHashArray, (i, a) => new
+            {
+                Account = a,
+                Value = new BigDecimal(i.GetBigInteger(), decimals)
+            }).ToDictionary(balance => balance.Account, balance => balance.Value);
+
+            return balances;
+        }
+
+
+        public void Relay(Transaction transaction)
+        {
+            this.localNode.Relay(transaction);
+        }
+
+        public void Relay(IInventory inventory)
+        {
+            this.localNode.Relay(inventory);
+        }
+
         #endregion
 
         #region IDisposable implementation
@@ -165,6 +281,12 @@ namespace Neo.UI.Core.Services.Implementations
                 {
                     if (this.initialized)
                     {
+                        SavePeerState();
+
+                        this.localNode.Dispose();
+                        this.localNode = null;
+
+
                         Blockchain.PersistCompleted -= this.OnBlockAdded;
 
                         this.blockchain.Dispose();
@@ -200,6 +322,40 @@ namespace Neo.UI.Core.Services.Implementations
             this.BlockAdded?.Invoke(this, EventArgs.Empty);
             
             this.timeOfLastBlockAddedMessagePublish = now;
+        }
+
+        private static void TryLoadPeerState()
+        {
+            if (!File.Exists(PeerStatePath)) return;
+
+            try
+            {
+                using (var fileStream = new FileStream(PeerStatePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    LocalNode.LoadState(fileStream);
+                }
+            }
+            catch
+            {
+                // Swallow exception
+                // TODO Log exception somewhere
+            }
+        }
+
+        private static void SavePeerState()
+        {
+            try
+            {
+                using (var fileStream = new FileStream(PeerStatePath, FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    LocalNode.SaveState(fileStream);
+                }
+            }
+            catch
+            {
+                // Swallow exception
+                // TODO Log exception somewhere
+            }
         }
         #endregion
     }

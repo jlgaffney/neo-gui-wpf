@@ -17,10 +17,6 @@ namespace Neo.UI.Core.Wallet
 
         bool WalletIsOpen { get; }
 
-        uint WalletHeight { get; }
-
-        bool WalletIsSynchronized { get; }
-
         bool WalletCanBeMigrated(string walletPath);
 
         /// <summary>
@@ -35,7 +31,7 @@ namespace Neo.UI.Core.Wallet
 
         void CloseWallet();
 
-        void CreateAccount(Contract contract = null);
+        void CreateNewAccount();
 
         void ImportPrivateKeys(IEnumerable<string> wifPrivateKeys);
 
@@ -79,8 +75,6 @@ namespace Neo.UI.Core.Wallet
 
         IEnumerable<AssetDto> GetWalletAssets();
 
-        IEnumerable<Coin> GetCoins();
-
         IEnumerable<Coin> FindUnspentCoins();
 
         UInt160 GetChangeAddress();
@@ -90,8 +84,6 @@ namespace Neo.UI.Core.Wallet
         AccountKeyInfo GetAccountKeys(string accountScriptHash);
 
         Transaction GetTransaction(UInt256 hash);
-
-        Transaction GetTransaction(UInt256 hash, out int height);
 
         /// <summary>
         /// Gets the public keys that the specified script hash have voted for.
@@ -109,10 +101,6 @@ namespace Neo.UI.Core.Wallet
         string ViewCertificate(FirstClassAssetItem assetItem);
 
         Fixed8 CalculateBonus();
-
-        Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, bool ignoreClaimed = true);
-
-        Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, uint heightEnd);
         
         Fixed8 CalculateUnavailableBonusGas(uint height);
 

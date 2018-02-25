@@ -41,13 +41,9 @@ namespace Neo.UI.Core.Wallet
         #region Private Fields 
         private readonly Fixed8 NetworkFee = Fixed8.FromDecimal(0.001m);
 
-        private readonly UInt160 RecycleScriptHash = new[] { (byte)OpCode.PUSHT }.ToScriptHash();
-
         private readonly IBlockchainService blockchainService;
         private readonly ICertificateQueryService certificateQueryService;
         private readonly IMessagePublisher messagePublisher;
-        private readonly INEP5QueryService nep5QueryService;
-        private readonly INodeController nodeController;
         private readonly INotificationService notificationService;
         private readonly ITransactionBuilderFactory transactionBuilderFactory;
         
@@ -83,8 +79,6 @@ namespace Neo.UI.Core.Wallet
             IBlockchainService blockchainService,
             ICertificateQueryService certificateQueryService,
             IMessagePublisher messagePublisher,
-            INEP5QueryService nep5QueryService,
-            INodeController nodeController,
             INotificationService notificationService,
             ISettingsManager settingsManager,
             ITransactionBuilderFactory transactionBuilderFactory)
@@ -92,8 +86,6 @@ namespace Neo.UI.Core.Wallet
             this.blockchainService = blockchainService;
             this.certificateQueryService = certificateQueryService;
             this.messagePublisher = messagePublisher;
-            this.nep5QueryService = nep5QueryService;
-            this.nodeController = nodeController;
             this.notificationService = notificationService;
             this.transactionBuilderFactory = transactionBuilderFactory;
 
@@ -133,8 +125,7 @@ namespace Neo.UI.Core.Wallet
                 throw new ObjectAlreadyInitializedException(nameof(IWalletController));
             }
 
-            this.nodeController.Initialize(this.localNodePort, this.localWSPort);
-            this.blockchainService.Initialize(this.blockchainDataDirectoryPath);
+            this.blockchainService.Initialize(this.localNodePort, this.localWSPort, this.blockchainDataDirectoryPath);
             this.certificateQueryService.Initialize(this.certificateCachePath);
 
             this.blockchainService.BlockAdded += this.OnBlockAdded;
@@ -153,10 +144,6 @@ namespace Neo.UI.Core.Wallet
         }
 
         public bool WalletIsOpen => this.currentWallet != null;
-
-        public uint WalletHeight => !this.WalletIsOpen ? 0 : this.currentWallet.WalletHeight;
-
-        public bool WalletIsSynchronized => this.WalletHeight > this.blockchainService.BlockHeight + 1;
 
         public bool WalletCanBeMigrated(string walletPath)
         {
@@ -198,7 +185,7 @@ namespace Neo.UI.Core.Wallet
 
             if (createWithAccount)
             {
-                this.CreateAccount();
+                this.CreateNewAccount();
             }
         }
 
@@ -250,73 +237,6 @@ namespace Neo.UI.Core.Wallet
         {
             this.SetCurrentWallet(null, null);
         }
-
-        public void CreateAccount(Contract contract = null)
-        {
-            this.ThrowIfWalletIsNotOpen();
-
-            WalletAccount account;
-            if (contract == null)
-            {
-                account = this.currentWallet.CreateAccount();
-            }
-            else
-            {
-                account = this.currentWallet.CreateAccount(contract);
-            }
-
-            this.AddAccountItem(account);
-
-            this.TrySaveWallet();
-        }
-
-        public void ImportPrivateKeys(IEnumerable<string> wifPrivateKeys)
-        {
-            if (wifPrivateKeys == null) return;
-
-            var wifList = wifPrivateKeys.ToList();
-
-            if (!wifList.Any()) return;
-
-            foreach (var wif in wifList)
-            {
-                WalletAccount account;
-                try
-                {
-                    account = this.currentWallet.Import(wif);
-                }
-                catch (FormatException)
-                {
-                    // Skip WIF
-                    continue;
-                }
-
-                this.AddAccountItem(account);
-            }
-
-            this.TrySaveWallet();
-        }
-
-        public void ImportCertificate(X509Certificate2 certificate)
-        {
-            if (certificate == null) return;
-
-            WalletAccount account;
-            try
-            {
-                account = this.currentWallet.Import(certificate);
-            }
-            catch
-            {
-                // TODO Localise this text
-                this.notificationService.ShowErrorNotification("Certificate import failed!");
-                return;
-            }
-
-            this.AddAccountItem(account);
-
-            this.TrySaveWallet();
-        }
         
         public TestForGasUsageResult TestTransactionForGasUsage(InvokeContractTransactionParameters parameters)
         {
@@ -326,7 +246,7 @@ namespace Neo.UI.Core.Wallet
 
             if (transaction == null)
             {
-                return new TestForGasUsageResult(null, null, true);
+                return null;
             }
 
             transaction.Version = 1;
@@ -421,7 +341,7 @@ namespace Neo.UI.Core.Wallet
         {
             Guard.ArgumentIsNotNull(transaction, nameof(transaction));
 
-            this.nodeController.Relay(transaction);
+            this.blockchainService.Relay(transaction);
 
             if (!saveTransaction) return;
 
@@ -432,7 +352,7 @@ namespace Neo.UI.Core.Wallet
         {
             Guard.ArgumentIsNotNull(inventory, nameof(inventory));
 
-            this.nodeController.Relay(inventory);
+            this.blockchainService.Relay(inventory);
         }
 
         public void SetNEP5WatchScriptHashes(IEnumerable<string> nep5WatchScriptHashesHex)
@@ -520,21 +440,11 @@ namespace Neo.UI.Core.Wallet
             return walletAssets;
         }
 
-        public IEnumerable<Coin> GetCoins()
-        {
-            // TODO - ISSUE #37 [AboimPinto]: at this point the return should not be a object from the NEO assemblies but a DTO only know by the application with only the necessary fields.
-
-            this.ThrowIfWalletIsNotOpen();
-
-            return this.currentWallet.GetCoins();
-        }
-
         public IEnumerable<Coin> FindUnspentCoins()
         {
             this.ThrowIfWalletIsNotOpen();
 
-            var coins = this.currentWallet
-                .FindUnspentCoins();
+            var coins = this.currentWallet.FindUnspentCoins();
 
             return coins;
         }
@@ -589,11 +499,6 @@ namespace Neo.UI.Core.Wallet
         public Transaction GetTransaction(UInt256 hash)
         {
             return this.blockchainService.GetTransaction(hash);
-        }
-
-        public Transaction GetTransaction(UInt256 hash, out int height)
-        {
-            return this.blockchainService.GetTransaction(hash, out height);
         }
 
         public IEnumerable<string> GetVotes(string voterScriptHash)
@@ -651,21 +556,11 @@ namespace Neo.UI.Core.Wallet
             return this.CalculateBonus(this.GetUnclaimedCoins().Select(p => p.Reference));
         }
 
-        public Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, bool ignoreClaimed = true)
-        {
-            return this.blockchainService.CalculateBonus(inputs, ignoreClaimed);
-        }
-
-        public Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, uint heightEnd)
-        {
-            return this.blockchainService.CalculateBonus(inputs, heightEnd);
-        }
-
         public Fixed8 CalculateUnavailableBonusGas(uint height)
         {
             if (!this.WalletIsOpen) return Fixed8.Zero;
 
-            var unspent = this.FindUnspentCoins().Where(p =>p.Output.AssetId.Equals(this.blockchainService.GoverningToken.Hash)).Select(p => p.Reference);
+            var unspent = this.FindUnspentCoins().Where(p =>p.Output.AssetId.Equals(this.blockchainService.GoverningTokenHash)).Select(p => p.Reference);
             
             var references = new HashSet<CoinReference>();
 
@@ -709,6 +604,170 @@ namespace Neo.UI.Core.Wallet
             }
 
             return this.currentWallet.GetAvailable(UInt256.Parse(assetId)).ToString();
+        }
+
+        public Transaction MakeTransaction(
+            Transaction transaction, 
+            UInt160 changeAddress = null,
+            Fixed8 fee = default(Fixed8))
+        {
+            this.ThrowIfWalletIsNotOpen();
+
+            return this.currentWallet.MakeTransaction(transaction, change_address: changeAddress, fee: fee);
+        }
+
+        public string BytesToScriptHash(byte[] data)
+        {
+            return data.ToScriptHash().ToString();
+        }
+
+        public UInt160 AddressToScriptHash(string address)
+        {
+            return BaseWallet.ToScriptHash(address);
+        }
+
+        public string ScriptHashToAddress(string scriptHash)
+        {
+            return BaseWallet.ToAddress(UInt160.Parse(scriptHash));
+        }
+
+        public bool AddressIsValid(string address)
+        {
+            try
+            {
+                this.AddressToScriptHash(address);
+
+                return true;
+            }
+            catch (FormatException)
+            {
+                return false;
+            }
+        }
+
+        public void DeleteFirstClassAsset(FirstClassAssetItem assetItem)
+        {
+            var value = this.GetFirstClassTokenAvailability(assetItem.AssetId);
+
+            var assetId = UInt256.Parse(assetItem.AssetId);
+            var amountToDelete = Fixed8.Parse(value);
+
+            var transactionParameters = new DeleteFirstClassAssetTransactionParameters(assetId, amountToDelete);
+
+            this.BuildSignAndRelayTransaction(transactionParameters);
+        }
+
+        public void ClaimUtilityTokenAsset()
+        {
+            var claims = this.GetUnclaimedCoins()
+                .Select(p => p.Reference)
+                    .ToArray();
+
+            if (claims.Length == 0) return;
+
+            var claimingAssetId = this.blockchainService.UtilityTokenHash;
+            var claimAmount = this.CalculateBonus(claims);
+            var changeAddress = this.GetChangeAddress();
+
+            var transactionParameters = new ClaimTransactionParameters(claims, claimingAssetId, claimAmount, changeAddress);
+
+            this.BuildSignAndRelayTransaction(transactionParameters);
+        }
+
+        public void CreateNewAccount()
+        {
+            this.CreateAccount(null);
+        }
+
+        public void ImportPrivateKeys(IEnumerable<string> wifPrivateKeys)
+        {
+            if (wifPrivateKeys == null) return;
+
+            var wifList = wifPrivateKeys.ToList();
+
+            if (!wifList.Any()) return;
+
+            foreach (var wif in wifList)
+            {
+                WalletAccount account;
+                try
+                {
+                    account = this.currentWallet.Import(wif);
+                }
+                catch (FormatException)
+                {
+                    // Skip WIF
+                    continue;
+                }
+
+                this.AddAccountItem(account);
+            }
+
+            this.TrySaveWallet();
+        }
+
+        public void ImportCertificate(X509Certificate2 certificate)
+        {
+            if (certificate == null) return;
+
+            WalletAccount account;
+            try
+            {
+                account = this.currentWallet.Import(certificate);
+            }
+            catch
+            {
+                // TODO Localise this text
+                this.notificationService.ShowErrorNotification("Certificate import failed!");
+                return;
+            }
+
+            this.AddAccountItem(account);
+
+            this.TrySaveWallet();
+        }
+
+        public void AddLockContractAccount(string publicKey, uint unlockDateTime)
+        {
+            using (var sb = new ScriptBuilder())
+            {
+                sb.EmitPush(publicKey.ToECPoint());
+                sb.EmitPush(unlockDateTime);
+                // Lock 2.0 in mainnet tx:4e84015258880ced0387f34842b1d96f605b9cc78b308e1f0d876933c2c9134b
+                sb.EmitAppCall(UInt160.Parse("d3cce84d0800172d09c88ccad61130611bd047a4"));
+
+                try
+                {
+                    var contract = Contract.Create(new[] { ContractParameterType.Signature }, sb.ToArray());
+                    this.CreateAccount(contract);
+                }
+                catch
+                {
+                    this.notificationService.ShowErrorNotification(Strings.AddContractFailedMessage);
+                }
+            }
+        }
+
+        public void AddMultiSignatureContract(int minimunSignatureNumber, IEnumerable<string> publicKeys)
+        {
+            var ecPoints = publicKeys
+                .Select(p => p.ToECPoint())
+                .ToArray();
+
+            var contract = Contract.CreateMultiSigContract(minimunSignatureNumber, ecPoints);
+
+            if (contract == null) return;
+            this.CreateAccount(contract);
+        }
+
+        public void AddContractWithParameters(string reedemScript, string parameterList)
+        {
+            var parameters = parameterList.HexToBytes().Select(p => (ContractParameterType)p).ToArray();
+            var scriptBytes = reedemScript.HexToBytes();
+
+            var contract = Contract.Create(parameters, scriptBytes);
+
+            this.CreateAccount(contract);
         }
 
         public void ImportWatchOnlyAddress(string[] addressesToWatch)
@@ -761,114 +820,9 @@ namespace Neo.UI.Core.Wallet
             this.TrySaveWallet();
 
             this.SetWalletBalanceChangedFlag();
+            this.checkNep5Balance = true;
 
             return true;
-        }
-
-        public Transaction MakeTransaction(
-            Transaction transaction, 
-            UInt160 changeAddress = null,
-            Fixed8 fee = default(Fixed8))
-        {
-            this.ThrowIfWalletIsNotOpen();
-
-            return this.currentWallet.MakeTransaction(transaction, change_address: changeAddress, fee: fee);
-        }
-
-        public string BytesToScriptHash(byte[] data)
-        {
-            return data.ToScriptHash().ToString();
-        }
-
-        public UInt160 AddressToScriptHash(string address)
-        {
-            return BaseWallet.ToScriptHash(address);
-        }
-
-        public string ScriptHashToAddress(string scriptHash)
-        {
-            return BaseWallet.ToAddress(UInt160.Parse(scriptHash));
-        }
-
-        public bool AddressIsValid(string address)
-        {
-            try
-            {
-                this.AddressToScriptHash(address);
-
-                return true;
-            }
-            catch (FormatException)
-            {
-                return false;
-            }
-        }
-
-        public void DeleteFirstClassAsset(FirstClassAssetItem assetItem)
-        {
-            var value = this.GetFirstClassTokenAvailability(assetItem.AssetId);
-
-            var transactionOutput = new TransactionOutput
-            {
-                AssetId = UInt256.Parse(assetItem.AssetId),
-                Value = Fixed8.Parse(value),
-                ScriptHash = this.RecycleScriptHash
-            };
-
-            var deleteTransaction = this.MakeTransaction(new ContractTransaction
-            {
-                Outputs = new[] { transactionOutput }
-            }, fee: Fixed8.Zero);
-
-            this.SignAndRelay(deleteTransaction);
-        }
-
-        public void ClaimUtilityTokenAsset()
-        {
-            var claims = this.GetUnclaimedCoins()
-                .Select(p => p.Reference)
-                    .ToArray();
-
-            if (claims.Length == 0) return;
-
-            var claimTransaction = new ClaimTransaction
-            {
-                Claims = claims,
-                Attributes = new TransactionAttribute[0],
-                Inputs = new CoinReference[0],
-                Outputs = new[]
-                {
-                    new TransactionOutput
-                    {
-                        AssetId = this.blockchainService.UtilityToken.Hash,
-                        Value = this.CalculateBonus(claims),
-                        ScriptHash = this.GetChangeAddress()
-                    }
-                }
-            };
-
-            this.SignAndRelay(claimTransaction);
-        }
-        
-        public void AddLockContractAccount(string publicKey, uint unlockDateTime)
-        {
-            using (var sb = new ScriptBuilder())
-            {
-                sb.EmitPush(publicKey.ToECPoint());
-                sb.EmitPush(unlockDateTime);
-                // Lock 2.0 in mainnet tx:4e84015258880ced0387f34842b1d96f605b9cc78b308e1f0d876933c2c9134b
-                sb.EmitAppCall(UInt160.Parse("d3cce84d0800172d09c88ccad61130611bd047a4"));
-
-                try
-                {
-                    var contract = Contract.Create(new[] { ContractParameterType.Signature }, sb.ToArray());
-                    this.CreateAccount(contract);
-                }
-                catch
-                {
-                    this.notificationService.ShowErrorNotification(Strings.AddContractFailedMessage);
-                }
-            }
         }
 
         public IEnumerable<string> GetPublicKeysFromStandardAccounts()
@@ -885,28 +839,6 @@ namespace Neo.UI.Core.Wallet
                 .GetNonWatchOnlyAccounts()
                 .Select(x => x.Address.ToString())
                 .ToList();
-        }
-
-        public void AddMultiSignatureContract(int minimunSignatureNumber, IEnumerable<string> publicKeys)
-        {
-            var ecPoints = publicKeys
-                .Select(p => p.ToECPoint())
-                .ToArray();
-
-            var contract = Contract.CreateMultiSigContract(minimunSignatureNumber, ecPoints);
-
-            if (contract == null) return;
-            this.CreateAccount(contract);
-        }
-
-        public void AddContractWithParameters(string reedemScript, string parameterList)
-        {
-            var parameters = parameterList.HexToBytes().Select(p => (ContractParameterType)p).ToArray();
-            var scriptBytes = reedemScript.HexToBytes();
-
-            var contract = Contract.Create(parameters, scriptBytes);
-
-            this.CreateAccount(contract);
         }
         #endregion
 
@@ -962,12 +894,40 @@ namespace Neo.UI.Core.Wallet
             var coins = this.GetCoins();
 
             if (coins.Any(coin => !coin.State.HasFlag(CoinState.Spent) &&
-                                  coin.Output.AssetId.Equals(this.blockchainService.GoverningToken.Hash)))
+                                  coin.Output.AssetId.Equals(this.blockchainService.GoverningTokenHash)))
             {
                 this.SetWalletBalanceChangedFlag();
             }
 
             this.RefreshTransactionConfirmations();
+        }
+
+        private void CreateAccount(Contract contract)
+        {
+            this.ThrowIfWalletIsNotOpen();
+
+            WalletAccount account;
+            if (contract == null)
+            {
+                account = this.currentWallet.CreateAccount();
+            }
+            else
+            {
+                account = this.currentWallet.CreateAccount(contract);
+            }
+
+            this.AddAccountItem(account);
+
+            this.TrySaveWallet();
+        }
+
+        private IEnumerable<Coin> GetCoins()
+        {
+            // TODO - ISSUE #37 [AboimPinto]: at this point the return should not be a object from the NEO assemblies but a DTO only know by the application with only the necessary fields.
+
+            this.ThrowIfWalletIsNotOpen();
+
+            return this.currentWallet.GetCoins();
         }
 
         private IEnumerable<UInt256> FindUnspentAssetIds()
@@ -1011,9 +971,8 @@ namespace Neo.UI.Core.Wallet
             try
             {
                 var blockchainStatus = this.blockchainService.GetStatus();
-                var networkStatus = this.nodeController.GetStatus();
 
-                var walletStatus = new WalletStatus(this.WalletHeight, blockchainStatus, networkStatus);
+                var walletStatus = new WalletStatus(this.WalletIsOpen ? this.currentWallet.WalletHeight : 0, blockchainStatus);
 
                 this.messagePublisher.Publish(new WalletStatusMessage(walletStatus));
 
@@ -1113,6 +1072,16 @@ namespace Neo.UI.Core.Wallet
             this.SetWalletBalanceChangedFlag();
         }
 
+        private Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, bool ignoreClaimed = true)
+        {
+            return this.blockchainService.CalculateBonus(inputs, ignoreClaimed);
+        }
+
+        private Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, uint heightEnd)
+        {
+            return this.blockchainService.CalculateBonus(inputs, heightEnd);
+        }
+
         private WalletAccount GetWalletAccount(UInt160 scriptHash)
         {
             if (scriptHash == null) return null;
@@ -1154,8 +1123,8 @@ namespace Neo.UI.Core.Wallet
 
             if (!coins.Any()) return;
 
-            var balanceNeo = coins.Where(p => p.Output.AssetId.Equals(this.blockchainService.GoverningToken.Hash)).GroupBy(p => p.Output.ScriptHash).ToDictionary(p => p.Key, p => p.Sum(i => i.Output.Value));
-            var balanceGas = coins.Where(p => p.Output.AssetId.Equals(this.blockchainService.UtilityToken.Hash)).GroupBy(p => p.Output.ScriptHash).ToDictionary(p => p.Key, p => p.Sum(i => i.Output.Value));
+            var balanceNeo = coins.Where(p => p.Output.AssetId.Equals(this.blockchainService.GoverningTokenHash)).GroupBy(p => p.Output.ScriptHash).ToDictionary(p => p.Key, p => p.Sum(i => i.Output.Value));
+            var balanceGas = coins.Where(p => p.Output.AssetId.Equals(this.blockchainService.UtilityTokenHash)).GroupBy(p => p.Output.ScriptHash).ToDictionary(p => p.Key, p => p.Sum(i => i.Output.Value));
 
             var accountsList = this.currentWalletInfo
                 .GetAccounts()
@@ -1185,15 +1154,17 @@ namespace Neo.UI.Core.Wallet
                 var confirmedGoverningTokens = coins
                     .Where(p => 
                         p.State.HasFlag(CoinState.Confirmed) && 
-                        p.Output.AssetId.Equals(this.blockchainService.GoverningToken.Hash))
+                        p.Output.AssetId.Equals(this.blockchainService.GoverningTokenHash))
                     .Select(p => p.Reference);
 
                 // TODO Issue #158 [AboimPinto]: Calculation of the Bonus is returning an Error
-                //if (!this.WalletIsSynchronized)
+                //var walletIsSynchronized = this.WalletIsOpen && this.currentWallet.WalletHeight > this.blockchainService.BlockHeight + 1;
+                //
+                //if (!walletIsSynchronized)
                 //{
-                //    var lastBlockHeight = this.blockchainController.BlockHeight + 1;
-
-                //    var bonusUnavailable = this.blockchainController.CalculateBonus(confirmedGoverningTokens, lastBlockHeight);
+                //    var lastBlockHeight = this.blockchainService.BlockHeight + 1;
+                //
+                //    var bonusUnavailable = this.blockchainService.CalculateBonus(confirmedGoverningTokens, lastBlockHeight);
                 //    bonus = bonusAvailable + bonusUnavailable;
                 //}
 
@@ -1201,14 +1172,14 @@ namespace Neo.UI.Core.Wallet
                 {
                     Asset = this.blockchainService.GetAssetState(k),
                     Value = g.Sum(p => p.Output.Value),
-                    Claim = k.Equals(this.blockchainService.UtilityToken.Hash) ? bonus : Fixed8.Zero
+                    Claim = k.Equals(this.blockchainService.UtilityTokenHash) ? bonus : Fixed8.Zero
                 }).ToDictionary(p => p.Asset.AssetId);
 
-                if (bonus != Fixed8.Zero && !assetDictionary.ContainsKey(this.blockchainService.UtilityToken.Hash))
+                if (bonus != Fixed8.Zero && !assetDictionary.ContainsKey(this.blockchainService.UtilityTokenHash))
                 {
-                    assetDictionary[this.blockchainService.UtilityToken.Hash] = new
+                    assetDictionary[this.blockchainService.UtilityTokenHash] = new
                     {
-                        Asset = this.blockchainService.GetAssetState(this.blockchainService.UtilityToken.Hash),
+                        Asset = this.blockchainService.GetAssetState(this.blockchainService.UtilityTokenHash),
                         Value = Fixed8.Zero,
                         Claim = bonus
                     };
@@ -1227,7 +1198,7 @@ namespace Neo.UI.Core.Wallet
 
                     var valueText = asset.Value.ToString();
 
-                    if (asset.Asset.AssetId.Equals(this.blockchainService.UtilityToken.Hash))
+                    if (asset.Asset.AssetId.Equals(this.blockchainService.UtilityTokenHash))
                     {
                         valueText += $"+({asset.Claim})";
                     }
@@ -1294,7 +1265,7 @@ namespace Neo.UI.Core.Wallet
 
             foreach (var nep5ScriptHash in this.nep5WatchScriptHashes)
             {
-                var assetItem = this.nep5QueryService.GetTotalBalance(nep5ScriptHash, accountScriptHashes);
+                var assetItem = this.blockchainService.GetTotalNEP5Balance(nep5ScriptHash, accountScriptHashes);
 
                 if (assetItem == null) continue;
 
@@ -1330,13 +1301,12 @@ namespace Neo.UI.Core.Wallet
 
         private void AddTransaction(TransactionItem transaction)
         {
-            var transactionNotAdded = !this.currentWalletInfo.GetTransactions().Any(x => x.Hash == transaction.Hash);
+            var transactionAlreadyAdded = this.currentWalletInfo.GetTransactions().Any(x => x.Hash == transaction.Hash);
 
-            if (transactionNotAdded)
-            {
-                this.currentWalletInfo.AddTransaction(transaction);
-                this.messagePublisher.Publish(new TransactionAddedMessage(transaction));
-            }
+            if (transactionAlreadyAdded) return;
+
+            this.currentWalletInfo.AddTransaction(transaction);
+            this.messagePublisher.Publish(new TransactionAddedMessage(transaction));
         }
 
         private void CheckFirstClassAssetIssuerCertificates()
@@ -1436,6 +1406,11 @@ namespace Neo.UI.Core.Wallet
             {
                 // Set asset distribution transaction fee
                 transaction = this.currentWallet.MakeTransaction(issueTransaction, fee: Fixed8.One);
+            }
+            else if (parameters is DeleteFirstClassAssetTransactionParameters)
+            {
+                // Set transaction fee to zero
+                transaction = this.currentWallet.MakeTransaction(transaction, fee: Fixed8.Zero);
             }
             else
             {

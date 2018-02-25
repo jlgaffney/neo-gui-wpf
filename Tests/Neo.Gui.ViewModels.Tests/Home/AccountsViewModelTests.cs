@@ -107,7 +107,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             viewModel.CreateNewAddressCommand.Execute(null);
 
             // Assert
-            walletControllerMock.Verify(x => x.CreateAccount(null));
+            walletControllerMock.Verify(x => x.CreateNewAccount());
         }
 
         [Fact]

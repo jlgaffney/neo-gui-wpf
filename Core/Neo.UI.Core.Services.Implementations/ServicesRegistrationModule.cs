@@ -47,15 +47,6 @@ namespace Neo.UI.Core.Services.Implementations
                 .SingleInstance();
 
             builder
-                .RegisterType<NEP5QueryService>()
-                .As<INEP5QueryService>();
-
-            builder
-                .RegisterType<NodeController>()
-                .As<INodeController>()
-                .SingleInstance();
-
-            builder
                 .RegisterType<StoreCertificateService>()
                 .As<IStoreCertificateService>();
 

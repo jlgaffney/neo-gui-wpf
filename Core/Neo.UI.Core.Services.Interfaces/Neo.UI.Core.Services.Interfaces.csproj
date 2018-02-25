@@ -5,6 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="IBaseBlockchainService.cs" />
+    <Compile Remove="INodeController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Autofac" Version="4.6.2" />
     <PackageReference Include="Neo" Version="2.6.0" />
     <PackageReference Include="Neo.VM" Version="2.0.4" />

@@ -94,8 +94,8 @@ namespace Neo.Gui.ViewModels.Tests.Home
                         blockChainHeaderHeight, 
                         nextBlockProgressIsIndeterminate, 
                         nextBlockProgressFraction,
-                        timeSinceLastBlock),
-                    new NetworkStatus(nodeCount))));
+                        timeSinceLastBlock,
+                        nodeCount))));
 
             // Assert
             Assert.Equal(expectedHeightStatus, viewModel.HeightStatus);

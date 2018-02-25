@@ -29,6 +29,10 @@ namespace Neo.UI.Core.Transactions
                 .As<ITransactionBuilder>();
 
             builder
+                .RegisterType<ClaimTransactionBuilder>()
+                .As<ITransactionBuilder>();
+
+            builder
                 .RegisterType<DeployContractTransactionBuilder>()
                 .As<ITransactionBuilder>();
 

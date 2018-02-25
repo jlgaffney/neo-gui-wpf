@@ -2,19 +2,15 @@
 {
     public class WalletStatus
     {
-        public WalletStatus(uint walletHeight, BlockchainStatus blockchainStatus, NetworkStatus networkStatus)
+        public WalletStatus(uint walletHeight, BlockchainStatus blockchainStatus)
         {
             this.WalletHeight = walletHeight;
 
             this.BlockchainStatus = blockchainStatus;
-
-            this.NetworkStatus = networkStatus;
         }
 
         public uint WalletHeight { get; }
 
         public BlockchainStatus BlockchainStatus { get; }
-
-        public NetworkStatus NetworkStatus { get; }
     }
 }

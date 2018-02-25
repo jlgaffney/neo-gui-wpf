@@ -149,7 +149,7 @@ namespace Neo.Gui.ViewModels.Home
         #region Private Methods 
         private void CreateNewAccount()
         {
-            this.walletController.CreateAccount();
+            this.walletController.CreateNewAccount();
         }
 
         private void ImportWifPrivateKey()

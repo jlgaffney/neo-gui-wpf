@@ -5,10 +5,8 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
 using Neo.Gui.Dialogs.Interfaces;
-using Neo.Gui.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Dialogs.LoadParameters.Voting;
 using Neo.UI.Core.Helpers.Extensions;
-using Neo.UI.Core.Transactions;
 using Neo.UI.Core.Transactions.Parameters;
 using Neo.UI.Core.Wallet;
 
@@ -20,20 +18,20 @@ namespace Neo.Gui.ViewModels.Voting
         private readonly IDialogManager dialogManager;
         private readonly IWalletController walletController;
 
-        private string selectedBookKeeper;
+        private string selectedPublicKey;
         #endregion
 
         #region Public Properties 
-        public ObservableCollection<string> BookKeepers { get; }
+        public ObservableCollection<string> PublicKeys { get; }
 
-        public string SelectedBookKeeper
+        public string SelectedPublicKey
         {
-            get => this.selectedBookKeeper;
+            get => this.selectedPublicKey;
             set
             {
-                if (this.selectedBookKeeper != null && this.selectedBookKeeper.Equals(value)) return;
+                if (this.selectedPublicKey != null && this.selectedPublicKey.Equals(value)) return;
 
-                this.selectedBookKeeper = value;
+                this.selectedPublicKey = value;
 
                 RaisePropertyChanged();
 
@@ -42,7 +40,7 @@ namespace Neo.Gui.ViewModels.Voting
             }
         }
 
-        public bool OkEnabled => this.SelectedBookKeeper != null;
+        public bool OkEnabled => this.SelectedPublicKey != null;
 
         public RelayCommand OkCommand => new RelayCommand(this.HandleOkCommand);
         #endregion
@@ -55,7 +53,7 @@ namespace Neo.Gui.ViewModels.Voting
             this.dialogManager = dialogManager;
             this.walletController = walletController;
 
-            this.BookKeepers = new ObservableCollection<string>();
+            this.PublicKeys = new ObservableCollection<string>();
         }
         #endregion
         
@@ -64,8 +62,8 @@ namespace Neo.Gui.ViewModels.Voting
 
         public void OnDialogLoad(ElectionLoadParameters parameters)
         {
-            var bookKeepers = this.walletController.GetPublicKeysFromStandardAccounts();
-            this.BookKeepers.AddRange(bookKeepers);
+            var accountPublicKeys = this.walletController.GetPublicKeysFromStandardAccounts();
+            this.PublicKeys.AddRange(accountPublicKeys);
         }
         #endregion
 
@@ -74,7 +72,7 @@ namespace Neo.Gui.ViewModels.Voting
         {
             if (!this.OkEnabled) return;
 
-            var transactionParameters = new ElectionTransactionParameters(this.SelectedBookKeeper);
+            var transactionParameters = new ElectionTransactionParameters(this.SelectedPublicKey);
 
             this.walletController.BuildSignAndRelayTransaction(transactionParameters);
 

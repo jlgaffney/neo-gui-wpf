@@ -6,6 +6,8 @@
 
   <ItemGroup>
     <Compile Remove="CertificateRequestService.cs" />
+    <Compile Remove="NEP5QueryService.cs" />
+    <Compile Remove="NodeController.cs" />
   </ItemGroup>
 
   <ItemGroup>

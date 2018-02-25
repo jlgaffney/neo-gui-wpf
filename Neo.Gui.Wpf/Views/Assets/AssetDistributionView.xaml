@@ -21,7 +21,7 @@
         </Grid.RowDefinitions>
 
         <GroupBox Grid.Row="0" Header="{x:Static globalization:Strings.AssetId}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <TextBox Text="{Binding AssetId}" IsEnabled="{Binding AssetIdEnabled}" Margin="3" Padding="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            <TextBox Text="{Binding AssetId}" IsEnabled="{Binding AssetIdEnabled}" MaxLength="66" Margin="3" Padding="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </GroupBox>
 
         <GroupBox Grid.Row="1" Header="{x:Static globalization:Strings.AssetDetails}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">

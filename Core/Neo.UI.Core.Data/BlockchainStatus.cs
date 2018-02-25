@@ -5,7 +5,7 @@ namespace Neo.UI.Core.Data
     public class BlockchainStatus
     {
         public BlockchainStatus(uint height, uint headerHeight, bool nextBlockProgressIsIndeterminate,
-            double nextBlockProgressFraction, TimeSpan timeSinceLastBlock)
+            double nextBlockProgressFraction, TimeSpan timeSinceLastBlock, int nodeCount)
         {
             this.Height = height;
             this.HeaderHeight = headerHeight;
@@ -14,6 +14,8 @@ namespace Neo.UI.Core.Data
             this.NextBlockProgressFraction = nextBlockProgressFraction;
 
             this.TimeSinceLastBlock = timeSinceLastBlock;
+
+            this.NodeCount = nodeCount;
         }
 
         public uint Height { get; }
@@ -25,5 +27,7 @@ namespace Neo.UI.Core.Data
         public double NextBlockProgressFraction { get; }
 
         public TimeSpan TimeSinceLastBlock { get; set; }
+
+        public int NodeCount { get; }
     }
 }

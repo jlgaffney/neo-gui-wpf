@@ -37,11 +37,11 @@ namespace Neo.Gui.Wpf.Native.Services
                 };
 
                 viewModel.OnDialogLoad(parameters);
+            }
 
-                if (!isDialogClosed)
-                {
-                    view.ShowDialog();
-                }
+            if (!isDialogClosed)
+            {
+                view.ShowDialog();
             }
         }
 
@@ -61,11 +61,11 @@ namespace Neo.Gui.Wpf.Native.Services
                 };
 
                 viewModel.OnDialogLoad(parameters);
+            }
 
-                if (!isDialogClosed)
-                {
-                    view.ShowDialog();
-                }
+            if (!isDialogClosed)
+            {
+                view.ShowDialog();
             }
 
             return dialogResult;

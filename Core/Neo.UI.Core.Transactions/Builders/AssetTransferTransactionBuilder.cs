@@ -14,12 +14,12 @@ namespace Neo.UI.Core.Transactions.Builders
 {
     internal class AssetTransferTransactionBuilder : ITransactionBuilder<AssetTransferTransactionParameters>
     {
-        private readonly INEP5QueryService nep5QueryService;
+        private readonly IBlockchainService blockchainService;
 
         public AssetTransferTransactionBuilder(
-            INEP5QueryService nep5QueryService)
+            IBlockchainService blockchainService)
         {
-            this.nep5QueryService = nep5QueryService;
+            this.blockchainService = blockchainService;
         }
 
         public Transaction Build(AssetTransferTransactionParameters parameters)
@@ -54,7 +54,7 @@ namespace Neo.UI.Core.Transactions.Builders
                         var nep5ScriptHash = output.AssetId;
 
                         // Get balances of each account
-                        var balanceDictionary = this.nep5QueryService.GetBalances(nep5ScriptHash, accountScriptHashes);
+                        var balanceDictionary = this.blockchainService.GetNEP5Balances(nep5ScriptHash, accountScriptHashes);
 
                         if (balanceDictionary == null)
                         {
