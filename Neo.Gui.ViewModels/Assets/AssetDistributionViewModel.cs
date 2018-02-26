@@ -6,8 +6,9 @@ using GalaSoft.MvvmLight.Command;
 
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Assets;
-using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Data;
+using Neo.UI.Core.Transactions.Parameters;
+using Neo.UI.Core.Wallet;
 
 namespace Neo.Gui.ViewModels.Assets
 {
@@ -170,7 +171,9 @@ namespace Neo.Gui.ViewModels.Assets
         #region Private Methods 
         private void Confirm()
         {
-            this.walletController.IssueAsset(this.Asset.Id, this.Items);
+            var transactionParameters = new AssetDistributionTransactionParameters(this.Asset.Id, this.Items);
+
+            this.walletController.BuildSignAndRelayTransaction(transactionParameters);
 
             this.Close(this, EventArgs.Empty);
         }

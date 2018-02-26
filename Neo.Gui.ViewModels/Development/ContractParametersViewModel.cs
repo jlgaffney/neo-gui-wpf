@@ -9,7 +9,7 @@ using Neo.Gui.Dialogs.Interfaces;
 using Neo.Network;
 using Neo.SmartContract;
 using Neo.UI.Core.Globalization.Resources;
-using Neo.UI.Core.Controllers.Interfaces;
+using Neo.UI.Core.Wallet;
 
 namespace Neo.Gui.ViewModels.Development
 {

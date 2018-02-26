@@ -3,8 +3,8 @@ using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Accounts;
 using Neo.Gui.TestHelpers;
 using Neo.Gui.ViewModels.Accounts;
-using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Data;
+using Neo.UI.Core.Wallet;
 using Xunit;
 
 namespace Neo.Gui.ViewModels.Tests.Accounts
@@ -52,12 +52,12 @@ namespace Neo.Gui.ViewModels.Tests.Accounts
             var scriptHash = "ScriptHash";
             var viewPrivateKeyLoadParameters = new ViewPrivateKeyLoadParameters(scriptHash);
 
-            var expectedAccountKeys = new AccountKeys
+            var expectedAccountKeys = new AccountKeyInfo
             {
                 Address = "Address",
-                PrivateHexKey = "PrivateHexKey",
-                PublicHexKey = "PublicHexKey",
-                PrivateWifKey = "PrivateWifKey"
+                PrivateKeyHex = "PrivateHexKey",
+                PublicKeyHex = "PublicHexKey",
+                PrivateKeyWif = "PrivateWifKey"
             };
 
             var wallerControllerMock = this.AutoMockContainer.GetMock<IWalletController>();
@@ -73,9 +73,9 @@ namespace Neo.Gui.ViewModels.Tests.Accounts
 
             // Assert
             Assert.Equal(viewModel.Address, expectedAccountKeys.Address);
-            Assert.Equal(viewModel.PrivateKeyHex, expectedAccountKeys.PrivateHexKey);
-            Assert.Equal(viewModel.PublicKeyHex, expectedAccountKeys.PublicHexKey);
-            Assert.Equal(viewModel.PrivateKeyWif, expectedAccountKeys.PrivateWifKey);
+            Assert.Equal(viewModel.PrivateKeyHex, expectedAccountKeys.PrivateKeyHex);
+            Assert.Equal(viewModel.PublicKeyHex, expectedAccountKeys.PublicKeyHex);
+            Assert.Equal(viewModel.PrivateKeyWif, expectedAccountKeys.PrivateKeyWif);
         }
     }
 }

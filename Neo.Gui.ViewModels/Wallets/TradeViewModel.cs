@@ -15,8 +15,8 @@ using Neo.UI.Core.Globalization.Resources;
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Wallets;
 using Neo.Gui.Dialogs.Results.Wallets;
-using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Data;
+using Neo.UI.Core.Wallet;
 
 namespace Neo.Gui.ViewModels.Wallets
 {

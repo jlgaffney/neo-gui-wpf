@@ -11,10 +11,9 @@ using Neo.UI.Core.Globalization.Resources;
 
 using Neo.Gui.Dialogs.LoadParameters.Contracts;
 using Neo.Gui.Dialogs.Interfaces;
-using Neo.UI.Core.Controllers.Interfaces;
-using Neo.UI.Core.Managers.Interfaces;
 using Neo.UI.Core.Services.Interfaces;
 using Neo.UI.Core.Transactions.Parameters;
+using Neo.UI.Core.Wallet;
 
 namespace Neo.Gui.ViewModels.Contracts
 {
@@ -28,12 +27,15 @@ namespace Neo.Gui.ViewModels.Contracts
         private readonly IFileDialogService fileDialogService;
         private readonly IWalletController walletController;
 
-        //private InvocationTransaction transaction;
-
         private UInt160 scriptHash;
         private ContractParameter[] contractParameters;
 
         private string scriptHashStr;
+
+        private string contractName;
+        private string contractVersion;
+        private string contractAuthor;
+        private string contractParametersStr;
 
         private bool editParametersEnabled;
 
@@ -65,13 +67,57 @@ namespace Neo.Gui.ViewModels.Contracts
 
         public bool GetContractEnabled => UInt160.TryParse(this.ScriptHash, out _);
 
-        public string ContractName { get; private set; }
+        public string ContractName
+        {
+            get => this.contractName;
+            private set
+            {
+                if (this.contractName == value) return;
 
-        public string ContractVersion { get; private set; }
+                this.contractName = value;
 
-        public string ContractAuthor { get; private set; }
+                RaisePropertyChanged();
+            }
+        }
 
-        public string ContractParameters { get; private set; }
+        public string ContractVersion
+        {
+            get => this.contractVersion;
+            private set
+            {
+                if (this.contractVersion == value) return;
+
+                this.contractVersion = value;
+
+                RaisePropertyChanged();
+            }
+        }
+
+        public string ContractAuthor
+        {
+            get => this.contractAuthor;
+            private set
+            {
+                if (this.contractAuthor == value) return;
+
+                this.contractAuthor = value;
+
+                RaisePropertyChanged();
+            }
+        }
+
+        public string ContractParameters
+        {
+            get => this.contractParametersStr;
+            private set
+            {
+                if (this.contractParametersStr == value) return;
+
+                this.contractParametersStr = value;
+
+                RaisePropertyChanged();
+            }
+        }
 
         public bool EditParametersEnabled
         {
@@ -154,7 +200,7 @@ namespace Neo.Gui.ViewModels.Contracts
 
         public RelayCommand InvokeCommand => new RelayCommand(this.Invoke);
 
-        public RelayCommand CancelCommand => new RelayCommand(this.Cancel);
+        public RelayCommand CancelCommand => new RelayCommand(() => this.Close(this, EventArgs.Empty));
         #endregion Public Properties
 
         #region Constructor 
@@ -176,31 +222,7 @@ namespace Neo.Gui.ViewModels.Contracts
 
         public void OnDialogLoad(InvokeContractLoadParameters parameters)
         {
-            //if (parameters?.Transaction == null) return;
-
-            // Set base transaction
-            //this.transaction = parameters.Transaction;
-
-            
             this.CustomScript = parameters.Script.ToHexString();
-
-            /*this.invocationTransactionBuilder = this.walletController.GetTransactionInvoker(
-                parameters.InvocationTransactionType,
-                parameters.AssetRegistrationParameters,
-                parameters.AssetTransferParameters,
-                parameters.DeployContractParameters,
-                parameters.ElectionParameters,
-                parameters.VotingParameters);
-
-            if (this.invocationTransactionBuilder.IsContractTransaction)
-            {
-                this.CustomScript = this.invocationTransactionBuilder.GetTransactionScript();
-            }
-            else
-            {
-                //this.invocationTransactionBuilder.SignAndRelayTransaction();
-                this.Close(this, EventArgs.Empty);
-            }*/
         }
         #endregion
 
@@ -213,7 +235,7 @@ namespace Neo.Gui.ViewModels.Contracts
 
             if (contractState == null)
             {
-                this.dialogManager.ShowMessageDialog(string.Empty, "Cannot find contract.");
+                this.dialogManager.ShowMessageDialog(string.Empty, "Contract not found!");
                 return;
             }
 
@@ -222,12 +244,6 @@ namespace Neo.Gui.ViewModels.Contracts
             this.ContractVersion = contractState.CodeVersion;
             this.ContractAuthor = contractState.Author;
             this.ContractParameters = string.Join(", ", contractState.ParameterList);
-
-            // Update bindable properties
-            RaisePropertyChanged(nameof(this.ContractName));
-            RaisePropertyChanged(nameof(this.ContractVersion));
-            RaisePropertyChanged(nameof(this.ContractAuthor));
-            RaisePropertyChanged(nameof(this.ContractParameters));
 
             this.EditParametersEnabled = this.contractParameters.Length > 0;
 
@@ -294,71 +310,18 @@ namespace Neo.Gui.ViewModels.Contracts
 
             var transactionParameters = new InvokeContractTransactionParameters(script);
 
-            /*if (invocationTransactionBuilder.Configuration.InvocationTransactionType == InvocationTransactionType.InvokeContract)
-            {
-                ((InvokeContractTransactionConfiguration)invocationTransactionBuilder.Configuration).InvokeContractTransactionParameters = new InvokeContractTransactionParameters(script);
-                invocationTransactionBuilder.BuildTransaction();
-            }*/
-
             var result = this.walletController.TestTransactionForGasUsage(transactionParameters);
+
+            if (result == null)
+            {
+                this.dialogManager.ShowMessageDialog("An error occurred!", Strings.ExecutionFailed);
+                return;
+            }
 
             this.Results = result.Result;
             this.Fee = $"{result.Fee} gas";
 
             this.InvokeEnabled = !result.TransactionExecutionFailed;
-
-            //byte[] script;
-            //try
-            //{
-            //    script = this.CustomScript.Trim().HexToBytes();
-            //}
-            //catch (FormatException ex)
-            //{
-            //    this.dialogManager.ShowMessageDialog("An error occurred!", ex.Message);
-            //    return;
-            //}
-
-            //if (this.transaction == null)
-            //{
-            //    this.transaction = new InvocationTransaction();
-            //}
-
-            //this.transaction.Version = 1;
-            //this.transaction.Script = script;
-
-            //// Load default transaction values if required
-            //if (this.transaction.Attributes == null) this.transaction.Attributes = new TransactionAttribute[0];
-            //if (this.transaction.Inputs == null) this.transaction.Inputs = new CoinReference[0];
-            //if (this.transaction.Outputs == null) this.transaction.Outputs = new TransactionOutput[0];
-            //if (this.transaction.Scripts == null) this.transaction.Scripts = new Witness[0];
-
-            //var engine = ApplicationEngine.Run(this.transaction.Script, this.transaction);
-
-            //// Get transaction test results
-            //var builder = new StringBuilder();
-            //builder.AppendLine($"VM State: {engine.State}");
-            //builder.AppendLine($"Gas Consumed: {engine.GasConsumed}");
-            //builder.AppendLine($"Evaluation Stack: {new JArray(engine.EvaluationStack.Select(p => p.ToParameter().ToJson()))}");
-
-            //this.Results = builder.ToString();
-
-            //if (!engine.State.HasFlag(VMState.FAULT))
-            //{
-            //    this.transaction.Gas = engine.GasConsumed - Fixed8.FromDecimal(10);
-
-            //    if (this.transaction.Gas < Fixed8.Zero) this.transaction.Gas = Fixed8.Zero;
-
-            //    this.transaction.Gas = this.transaction.Gas.Ceiling();
-
-            //    var transactionFee = this.transaction.Gas.Equals(Fixed8.Zero) ? this.walletController.NetworkFee : this.transaction.Gas;
-
-            //    this.Fee = transactionFee + " gas";
-            //    this.InvokeEnabled = true;
-            //}
-            //else
-            //{
-            //    this.dialogManager.ShowMessageDialog(string.Empty, Strings.ExecutionFailed);
-            //}
         }
 
         private void Invoke()
@@ -370,17 +333,6 @@ namespace Neo.Gui.ViewModels.Contracts
             var transactionParameters = new InvokeContractTransactionParameters(script);
 
             this.walletController.BuildSignAndRelayTransaction(transactionParameters);
-
-            //if (this.transaction == null) return;
-
-            //this.walletController.InvokeContract(this.transaction);
-
-            this.Close(this, EventArgs.Empty);
-        }
-
-        private void Cancel()
-        {
-            //this.transaction = null;
 
             this.Close(this, EventArgs.Empty);
         }

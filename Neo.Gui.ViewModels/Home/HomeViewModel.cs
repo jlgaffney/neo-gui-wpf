@@ -17,13 +17,12 @@ using Neo.Gui.Dialogs.LoadParameters.Updater;
 using Neo.Gui.Dialogs.LoadParameters.Voting;
 using Neo.Gui.Dialogs.LoadParameters.Wallets;
 using Neo.Gui.Dialogs.Results.Wallets;
-using Neo.UI.Core.Controllers.Interfaces;
-using Neo.UI.Core.Managers.Interfaces;
-using Neo.UI.Core.Messages;
 using Neo.UI.Core.Messaging.Interfaces;
 using Neo.UI.Core.Services.Interfaces;
 using Neo.UI.Core.Transactions.Parameters;
 using Neo.UI.Core.Transactions;
+using Neo.UI.Core.Wallet;
+using Neo.UI.Core.Wallet.Messages;
 
 namespace Neo.Gui.ViewModels.Home
 {
@@ -167,7 +166,7 @@ namespace Neo.Gui.ViewModels.Home
 
         public RelayCommand ClaimCommand => new RelayCommand(() => this.dialogManager.ShowDialog<ClaimLoadParameters>());
 
-        public RelayCommand RequestCertificateCommand => new RelayCommand(() => this.dialogManager.ShowDialog<CertificateApplicationLoadParameters>());
+        public RelayCommand RequestCertificateCommand => new RelayCommand(() => this.dialogManager.ShowDialog<CertificateRequestLoadParameters>());
 
         public RelayCommand AssetRegistrationCommand => new RelayCommand(() => this.dialogManager.ShowDialog<AssetRegistrationLoadParameters>());
 
@@ -250,7 +249,7 @@ namespace Neo.Gui.ViewModels.Home
             this.NextBlockProgressIsIndeterminate = status.BlockchainStatus.NextBlockProgressIsIndeterminate;
             this.NextBlockProgressFraction = status.BlockchainStatus.NextBlockProgressFraction;
 
-            this.NodeCount = status.NetworkStatus.NodeCount;
+            this.NodeCount = status.BlockchainStatus.NodeCount;
             this.BlockStatus = $"{Strings.WaitingForNextBlock}:"; // TODO Update property to return actual status
         }
         #endregion

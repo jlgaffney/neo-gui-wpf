@@ -88,11 +88,11 @@
     <Reference Include="Autofac, Version=4.6.2.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\packages\Autofac.4.6.2\lib\net45\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="GalaSoft.MvvmLight, Version=5.4.0.1, Culture=neutral, PublicKeyToken=d9452de2c18e9148, processorArchitecture=MSIL">
-      <HintPath>..\packages\MvvmLightLibsStd10.5.4.0.1-alpha\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
+    <Reference Include="GalaSoft.MvvmLight, Version=5.4.1.0, Culture=neutral, PublicKeyToken=0ffbc31322e9d308, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibsStd10.5.4.1\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
     </Reference>
-    <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.4.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MvvmLightLibsStd10.5.4.0.1-alpha\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
+    <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibsStd10.5.4.1\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
     </Reference>
     <Reference Include="MahApps.Metro, Version=1.5.0.23, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.5.0\lib\net45\MahApps.Metro.dll</HintPath>
@@ -301,7 +301,7 @@
     <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\MvvmLightLibsStd10.5.4.0.1-alpha\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <HintPath>..\packages\MvvmLightLibsStd10.5.4.1\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
@@ -321,18 +321,17 @@
     </Compile>
     <Compile Include="Converters\ColorToSolidColorBrushConverter.cs" />
     <Compile Include="Extensions\CollectionExtensions.cs" />
-    <Compile Include="Implementations\Managers\ClipboardManager.cs" />
-    <Compile Include="Implementations\Managers\SettingsManager.cs" />
-    <Compile Include="Implementations\Services\FileDialogService.cs" />
+    <Compile Include="Native\Services\ClipboardManager.cs" />
+    <Compile Include="Native\Services\SettingsManager.cs" />
+    <Compile Include="Native\Services\CertificateRequestService.cs" />
+    <Compile Include="Native\Services\FileDialogService.cs" />
     <Compile Include="Extensions\ColorExtensions.cs" />
-    <Compile Include="Implementations\Managers\DialogManager.cs" />
-    <Compile Include="Implementations\Managers\ProcessManager.cs" />
-    <Compile Include="RegistrationModules\ServicesRegistrationModule.cs" />
-    <Compile Include="RegistrationModules\ManagersRegistrationModule.cs" />
-    <Compile Include="RegistrationModules\HelpersRegistrationModule.cs" />
-    <Compile Include="Implementations\Services\NotificationService.cs" />
-    <Compile Include="Implementations\Services\DispatchService.cs" />
-    <Compile Include="RegistrationModules\ViewModelsRegistrationModule.cs" />
+    <Compile Include="Native\Services\DialogManager.cs" />
+    <Compile Include="Native\Services\ProcessManager.cs" />
+    <Compile Include="Native\NativeServicesRegistrationModule.cs" />
+    <Compile Include="Native\Services\NotificationService.cs" />
+    <Compile Include="Native\Services\DispatchService.cs" />
+    <Compile Include="Views\ViewModelsRegistrationModule.cs" />
     <Compile Include="RootCertificate.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -363,8 +362,8 @@
     <Compile Include="Controls\TransactionPropertyGrid.xaml.cs">
       <DependentUpon>TransactionPropertyGrid.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Implementations\Managers\ThemeManager.cs" />
-    <Compile Include="RegistrationModules\DialogsRegistrationModule.cs" />
+    <Compile Include="Native\Services\ThemeManager.cs" />
+    <Compile Include="Views\DialogsRegistrationModule.cs" />
     <Compile Include="Views\Home\TransactionsView.xaml.cs">
       <DependentUpon>TransactionsView.xaml</DependentUpon>
     </Compile>
@@ -413,7 +412,6 @@
     <Compile Include="Views\Wallets\TradeVerificationView.xaml.cs">
       <DependentUpon>TradeVerificationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Wallets\CertificateApplicationViewModel.cs" />
     <Compile Include="Views\Accounts\ViewContractView.xaml.cs">
       <DependentUpon>ViewContractView.xaml</DependentUpon>
     </Compile>
@@ -444,8 +442,8 @@
     <Compile Include="Views\Voting\ElectionView.xaml.cs">
       <DependentUpon>ElectionView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Wallets\CertificateApplicationView.xaml.cs">
-      <DependentUpon>CertificateApplicationView.xaml</DependentUpon>
+    <Compile Include="Views\Wallets\CertificateRequestView.xaml.cs">
+      <DependentUpon>CertificateRequestView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
@@ -482,7 +480,7 @@
     <Compile Include="Views\Wallets\TransferView.xaml.cs">
       <DependentUpon>TransferView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Implementations\Services\VersionService.cs" />
+    <Compile Include="Native\Services\VersionService.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -717,7 +715,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Wallets\CertificateApplicationView.xaml">
+    <Page Include="Views\Wallets\CertificateRequestView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -745,19 +743,35 @@
     <Resource Include="Resources\logo_72.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Neo.UI.Core.Data\Neo.UI.Core.Data.csproj">
+    <ProjectReference Include="..\Core\Neo.UI.Core.Converters\Neo.UI.Core.Converters.csproj">
+      <Project>{770047ab-b5e7-42ae-bacb-8585d382e3c9}</Project>
+      <Name>Neo.UI.Core.Converters</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Core\Neo.UI.Core.Data\Neo.UI.Core.Data.csproj">
       <Project>{5aaff4e8-108e-4b55-905b-a63ccf866046}</Project>
       <Name>Neo.UI.Core.Data</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Neo.UI.Core\Neo.UI.Core.csproj">
-      <Project>{929FDF79-F89D-4B4F-BB56-DBD1D31528B4}</Project>
-      <Name>Neo.UI.Core</Name>
+    <ProjectReference Include="..\Core\Neo.UI.Core.Helpers\Neo.UI.Core.Helpers.csproj">
+      <Project>{d3906ee1-a584-4ce7-8ed8-8b0de74aaea3}</Project>
+      <Name>Neo.UI.Core.Helpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Core\Neo.UI.Core.Services.Interfaces\Neo.UI.Core.Services.Interfaces.csproj">
+      <Project>{88d20ab7-f1f3-4684-85ea-7aa6b463b45a}</Project>
+      <Name>Neo.UI.Core.Services.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Core\Neo.UI.Core.Theming\Neo.UI.Core.Theming.csproj">
+      <Project>{d13b68b5-df14-4a80-b689-8e88f7b4c142}</Project>
+      <Name>Neo.UI.Core.Theming</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Core\Neo.UI.Core.Wallet\Neo.UI.Core.Wallet.csproj">
+      <Project>{93db834c-cf13-4d26-adee-3204bf44c7ce}</Project>
+      <Name>Neo.UI.Core.Wallet</Name>
     </ProjectReference>
     <ProjectReference Include="..\Neo.Gui.Dialogs\Neo.Gui.Dialogs.csproj">
       <Project>{595b7c9e-5df5-47e3-b953-abd422897a85}</Project>
       <Name>Neo.Gui.Dialogs</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Neo.UI.Core.Globalization\Neo.UI.Core.Globalization.csproj">
+    <ProjectReference Include="..\Core\Neo.UI.Core.Globalization\Neo.UI.Core.Globalization.csproj">
       <Project>{34501d6d-410c-4e1e-8c47-1a2ebbfbe611}</Project>
       <Name>Neo.UI.Core.Globalization</Name>
     </ProjectReference>

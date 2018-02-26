@@ -5,13 +5,13 @@ using GalaSoft.MvvmLight.Command;
 
 using Neo.UI.Core.Globalization.Resources;
 using Neo.Gui.Dialogs;
-using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Data;
-using Neo.UI.Core.Managers.Interfaces;
-using Neo.UI.Core.Messages;
 using Neo.UI.Core.Messaging.Interfaces;
 using System.Linq;
 using Neo.Gui.Dialogs.Interfaces;
+using Neo.UI.Core.Services.Interfaces;
+using Neo.UI.Core.Wallet;
+using Neo.UI.Core.Wallet.Messages;
 
 namespace Neo.Gui.ViewModels.Home
 {

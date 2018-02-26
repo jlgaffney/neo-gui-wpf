@@ -5,7 +5,7 @@ using GalaSoft.MvvmLight.Command;
 
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Accounts;
-using Neo.UI.Core.Controllers.Interfaces;
+using Neo.UI.Core.Wallet;
 
 namespace Neo.Gui.ViewModels.Accounts
 {
@@ -104,9 +104,9 @@ namespace Neo.Gui.ViewModels.Accounts
             var accountKeys = this.walletController.GetAccountKeys(parameters.ScriptHash);
 
             this.Address = accountKeys.Address;
-            this.PublicKeyHex = accountKeys.PublicHexKey;
-            this.PrivateKeyHex = accountKeys.PrivateHexKey;
-            this.PrivateKeyWif = accountKeys.PrivateWifKey;
+            this.PublicKeyHex = accountKeys.PublicKeyHex;
+            this.PrivateKeyHex = accountKeys.PrivateKeyHex;
+            this.PrivateKeyWif = accountKeys.PrivateKeyWif;
         }
         #endregion
     }

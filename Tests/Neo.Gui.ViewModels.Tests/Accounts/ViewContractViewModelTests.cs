@@ -3,8 +3,8 @@ using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Accounts;
 using Neo.Gui.TestHelpers;
 using Neo.Gui.ViewModels.Accounts;
-using Neo.UI.Core.Controllers.Interfaces;
 using Neo.UI.Core.Data;
+using Neo.UI.Core.Wallet;
 using Xunit;
 
 namespace Neo.Gui.ViewModels.Tests.Accounts
