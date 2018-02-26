@@ -18,11 +18,6 @@ namespace Neo.UI.Core.Services.Implementations
                 .As<IBlockchainService>()
                 .SingleInstance();
 
-            
-
-
-
-
             builder
                 .RegisterType<BlockchainImportService>()
                 .As<IBlockchainImportService>();
