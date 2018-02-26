@@ -34,6 +34,10 @@ namespace Neo.UniversalWallet.ViewModels
             {
                 this.PageContent = new DashboardView();
             }
+            else if(obj.DestinationPage == "AssetView")
+            {
+                this.PageContent = new AssetView();
+            }
         }
     }
 }
