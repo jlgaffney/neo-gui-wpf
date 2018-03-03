@@ -11,5 +11,7 @@
         void Delete(string path);
 
         void Move(string sourceFilePath, string destFilePath);
+
+        void ExtractZipFileToDirectory(string sourceZipFilePath, string destinationDirectoryPath);
     }
 }

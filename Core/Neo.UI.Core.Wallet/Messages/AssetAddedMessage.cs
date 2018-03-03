@@ -4,9 +4,9 @@ namespace Neo.UI.Core.Wallet.Messages
 {
     public class AssetAddedMessage
     {
-        public AssetItem Asset { get; }
+        public AssetSummary Asset { get; }
 
-        public AssetAddedMessage(AssetItem asset)
+        public AssetAddedMessage(AssetSummary asset)
         {
             this.Asset = asset;
         }

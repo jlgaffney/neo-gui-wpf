@@ -8,7 +8,7 @@ using Neo.Gui.Dialogs;
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Accounts;
 using Neo.Gui.Dialogs.LoadParameters.Voting;
-using Neo.UI.Core.Data;
+using Neo.Gui.ViewModels.Data;
 using Neo.UI.Core.Data.Enums;
 using Neo.UI.Core.Helpers.Extensions;
 using Neo.UI.Core.Messaging.Interfaces;
@@ -33,13 +33,13 @@ namespace Neo.Gui.ViewModels.Home
         private readonly IDialogManager dialogManager;
         private readonly ISettingsManager settingsManager;
 
-        private AccountItem selectedAccount;
+        private UiAccountSummary selectedAccount;
         #endregion
 
         #region Public Properties
-        public ObservableCollection<AccountItem> Accounts { get; }
+        public ObservableCollection<UiAccountSummary> Accounts { get; }
 
-        public AccountItem SelectedAccount
+        public UiAccountSummary SelectedAccount
         {
             get => this.selectedAccount;
             set
@@ -65,7 +65,7 @@ namespace Neo.Gui.ViewModels.Home
 
         public bool ViewContractEnabled => this.SelectedAccount != null && this.SelectedAccount.Type != AccountType.WatchOnly;
 
-        public bool ShowVotingDialogEnabled => this.SelectedAccount != null && this.SelectedAccount.Type != AccountType.WatchOnly && this.SelectedAccount.Neo > Fixed8.Zero;
+        public bool ShowVotingDialogEnabled => this.SelectedAccount != null && this.SelectedAccount.Type != AccountType.WatchOnly && this.SelectedAccount.Neo > 0;
 
         public bool CopyAddressToClipboardEnabled => this.SelectedAccount != null;
 
@@ -114,7 +114,7 @@ namespace Neo.Gui.ViewModels.Home
             this.processManager = processManager;
             this.settingsManager = settingsManager;
 
-            this.Accounts = new ObservableCollection<AccountItem>();
+            this.Accounts = new ObservableCollection<UiAccountSummary>();
         }
         #endregion
 
@@ -128,7 +128,9 @@ namespace Neo.Gui.ViewModels.Home
 
         public void HandleMessage(AccountAddedMessage message)
         {
-            this.Accounts.Add(message.Account);
+            var newAccount = new UiAccountSummary(message.AccountLabel, message.AccountAddress, message.AccountScriptHash, message.AccountType);
+
+            this.Accounts.Add(newAccount);
         }
         #endregion
 
@@ -169,6 +171,8 @@ namespace Neo.Gui.ViewModels.Home
             if (string.IsNullOrEmpty(addresses)) return;
 
             var addressArray = addresses.ToLines();
+
+            // TODO Validate address format
 
             this.walletController.ImportWatchOnlyAddress(addressArray);
         }
@@ -213,9 +217,7 @@ namespace Neo.Gui.ViewModels.Home
         {
             if (this.SelectedAccount == null) return;
 
-            var selectedAccountAddress = this.walletController.ScriptHashToAddress(this.SelectedAccount.ScriptHash);
-
-            this.clipboardManager.SetText(selectedAccountAddress);
+            this.clipboardManager.SetText(this.SelectedAccount.Address);
         }
 
         private void DeleteAccount()
@@ -232,7 +234,7 @@ namespace Neo.Gui.ViewModels.Home
 
             if (result != MessageDialogResult.Yes) return;
 
-            var deletedSuccessfully = this.walletController.DeleteAccount(accountToDelete);
+            var deletedSuccessfully = this.walletController.DeleteAccount(accountToDelete.ScriptHash);
 
             if (!deletedSuccessfully)
             {
@@ -248,9 +250,7 @@ namespace Neo.Gui.ViewModels.Home
         {
             if (this.SelectedAccount == null) return;
 
-            var selectedAccountAddress = this.walletController.ScriptHashToAddress(this.SelectedAccount.ScriptHash);
-
-            var url = string.Format(this.settingsManager.AddressURLFormat, selectedAccountAddress);
+            var url = string.Format(this.settingsManager.AddressURLFormat, this.SelectedAccount.Address);
             
             this.processManager.OpenInExternalBrowser(url);
         }

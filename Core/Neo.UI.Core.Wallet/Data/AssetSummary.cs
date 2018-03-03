@@ -1,9 +1,10 @@
 ﻿namespace Neo.UI.Core.Data
 {
-    public abstract class AssetItem : BindableClass
+    public abstract class AssetSummary : BindableClass
     {
         private string name;
         private string issuer;
+        private string totalBalance;
 
         public string Name
         {
@@ -31,7 +32,18 @@
             }
         }
 
-        public abstract string Value { get; }
+        public string TotalBalance
+        {
+            get => this.totalBalance;
+            set
+            {
+                if (this.totalBalance == value) return;
+
+                this.totalBalance = value;
+
+                NotifyPropertyChanged();
+            }
+        }
 
         public abstract string Type { get; }
     }

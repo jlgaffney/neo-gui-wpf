@@ -6,7 +6,7 @@ using Neo.Implementations.Blockchains.LevelDB;
 using Neo.IO;
 using Neo.UI.Core.Services.Interfaces;
 
-namespace Neo.UI.Core.Services.Implementations
+namespace Neo.UI.Core.Internal.Services.Implementations
 {
     internal class BlockchainImportService : IBlockchainImportService
     {

@@ -31,7 +31,7 @@ namespace Neo.UI.Core.Data
                 this.confirmations = value;
 
                 this.NotifyPropertyChanged();
-                this.NotifyPropertyChanged("ConfirmationsText");
+                this.NotifyPropertyChanged(nameof(this.ConfirmationsText));
             }
         }
 

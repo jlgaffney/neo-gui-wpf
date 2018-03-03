@@ -29,8 +29,7 @@ namespace Neo.Gui.Wpf.Views.Updater
         private const string DownloadPath = "update.zip";
 
         private readonly WebClient web = new WebClient();
-
-        private readonly ICompressedFileManager compressedFileManager;
+        
         private readonly IDirectoryManager directoryManager;
         private readonly IFileManager fileManager;
         private readonly IProcessManager processManager;
@@ -43,13 +42,11 @@ namespace Neo.Gui.Wpf.Views.Updater
         private bool buttonsEnabled;
 
         public UpdateViewModel(
-            ICompressedFileManager compressedFileManager,
             IDirectoryManager directoryManager,
             IFileManager fileManager,
             IProcessManager processManager,
             IVersionService versionService)
         {
-            this.compressedFileManager = compressedFileManager;
             this.directoryManager = directoryManager;
             this.fileManager = fileManager;
             this.processManager = processManager;
@@ -157,7 +154,7 @@ namespace Neo.Gui.Wpf.Views.Updater
             this.directoryManager.Create(update1DirectoryPath);
 
             // Extract update zip file to directory
-            this.compressedFileManager.ExtractZipFileToDirectory(DownloadPath, update1DirectoryPath);
+            this.fileManager.ExtractZipFileToDirectory(DownloadPath, update1DirectoryPath);
 
             var updateSubDirectories = this.directoryManager.GetSubDirectories(update1DirectoryPath);
 

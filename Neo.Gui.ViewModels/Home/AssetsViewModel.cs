@@ -29,13 +29,13 @@ namespace Neo.Gui.ViewModels.Home
         private readonly ISettingsManager settingsManager;
         private readonly IWalletController walletController;
 
-        private AssetItem selectedAsset;
+        private AssetSummary selectedAsset;
         #endregion
 
         #region Public Properties
-        public ObservableCollection<AssetItem> Assets { get; }
+        public ObservableCollection<AssetSummary> Assets { get; }
 
-        public AssetItem SelectedAsset
+        public AssetSummary SelectedAsset
         {
             get => this.selectedAsset;
             set
@@ -56,7 +56,7 @@ namespace Neo.Gui.ViewModels.Home
         {
             get
             {
-                var selectedFirstClassAsset = this.SelectedAsset as FirstClassAssetItem;
+                var selectedFirstClassAsset = this.SelectedAsset as FirstClassAssetSummary;
 
                 if (selectedFirstClassAsset == null) return false;
 
@@ -71,8 +71,8 @@ namespace Neo.Gui.ViewModels.Home
         // TODO Should this also check if the user issued the asset?
         public bool DeleteAssetEnabled => 
             this.SelectedAsset != null &&
-            this.SelectedAsset is FirstClassAssetItem &&
-            !((FirstClassAssetItem)this.SelectedAsset).IsSystemAsset;
+            this.SelectedAsset is FirstClassAssetSummary &&
+            !((FirstClassAssetSummary)this.SelectedAsset).IsSystemAsset;
 
         public RelayCommand ViewCertificateCommand => new RelayCommand(this.ViewCertificate);
 
@@ -95,7 +95,7 @@ namespace Neo.Gui.ViewModels.Home
             this.settingsManager = settingsManager;
             this.walletController = walletController;
 
-            this.Assets = new ObservableCollection<AssetItem>();
+            this.Assets = new ObservableCollection<AssetSummary>();
         }
         #endregion
 
@@ -149,7 +149,7 @@ namespace Neo.Gui.ViewModels.Home
         {
             if (!this.ViewCertificateEnabled) return;
             
-            var certificatePath = this.walletController.ViewCertificate(this.SelectedAsset as FirstClassAssetItem);
+            var certificatePath = this.walletController.ViewCertificate(this.SelectedAsset as FirstClassAssetSummary);
 
             if (string.IsNullOrEmpty(certificatePath))
             {
@@ -163,7 +163,7 @@ namespace Neo.Gui.ViewModels.Home
 
         private void DeleteAsset()
         {
-            var firstClassAssetItem = this.SelectedAsset as FirstClassAssetItem;
+            var firstClassAssetItem = this.SelectedAsset as FirstClassAssetSummary;
 
             if (firstClassAssetItem == null) return;
 
@@ -177,7 +177,7 @@ namespace Neo.Gui.ViewModels.Home
 
             if (result != MessageDialogResult.Yes) return;
 
-            this.walletController.DeleteFirstClassAsset(firstClassAssetItem);
+            this.walletController.DeleteFirstClassAsset(firstClassAssetItem.AssetId);
         }
         #endregion
     }

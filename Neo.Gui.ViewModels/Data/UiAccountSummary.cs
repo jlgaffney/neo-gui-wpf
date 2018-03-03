@@ -1,25 +1,25 @@
-﻿using Neo.UI.Core.Data.Enums;
-using Neo.Wallets;
+﻿using GalaSoft.MvvmLight;
+using Neo.UI.Core.Data.Enums;
 
-namespace Neo.UI.Core.Data
+namespace Neo.Gui.ViewModels.Data
 {
-    public class AccountItem : BindableClass
+    public class UiAccountSummary : ViewModelBase
     {
         #region Private Fields 
-        private Fixed8 neo;
-        private Fixed8 gas;
+        private int neo;
+        private decimal gas;
         #endregion
 
         #region Public Properties 
         public string Label { get; }
 
-        public string ScriptHash { get; }
+        public string Address { get; }
 
-        public string Address => Wallet.ToAddress(UInt160.Parse(this.ScriptHash));
+        public string ScriptHash { get; }
 
         public AccountType Type { get; }
 
-        public Fixed8 Neo
+        public int Neo
         {
             get => this.neo;
             set
@@ -28,11 +28,11 @@ namespace Neo.UI.Core.Data
 
                 this.neo = value;
 
-                NotifyPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
-        public Fixed8 Gas
+        public decimal Gas
         {
             get => this.gas;
             set
@@ -41,20 +41,18 @@ namespace Neo.UI.Core.Data
 
                 this.gas = value;
 
-                NotifyPropertyChanged();
+                RaisePropertyChanged();
             }
         }
         #endregion
 
         #region Constructor 
-        public AccountItem(string label, string scriptHash, AccountType accountType)
+        public UiAccountSummary(string label, string address, string scriptHash, AccountType accountType)
         {
             this.Label = label;
+            this.Address = address;
             this.ScriptHash = scriptHash;
             this.Type = accountType;
-
-            this.neo = Fixed8.Zero;
-            this.gas = Fixed8.Zero;
         }
         #endregion
     }

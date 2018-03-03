@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.IO.Compression;
 using Neo.UI.Core.Services.Interfaces;
 
 namespace Neo.UI.Core.Services.Implementations
@@ -34,6 +35,11 @@ namespace Neo.UI.Core.Services.Implementations
         public void Move(string sourceFilePath, string destFilePath)
         {
             File.Move(sourceFilePath, destFilePath);
+        }
+
+        public void ExtractZipFileToDirectory(string sourceZipFilePath, string destinationDirectoryPath)
+        {
+            ZipFile.ExtractToDirectory(sourceZipFilePath, destinationDirectoryPath);
         }
 
         #endregion

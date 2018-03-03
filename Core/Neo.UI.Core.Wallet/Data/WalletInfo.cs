@@ -6,18 +6,18 @@ namespace Neo.UI.Core.Wallet.Data
 {
     internal class WalletInfo
     {
-        private readonly IDictionary<UInt160, AccountItem> accounts;
-        private readonly IList<AssetItem> assets;
+        private readonly IDictionary<UInt160, AccountSummary> accounts;
+        private readonly IList<AssetSummary> assets;
         private readonly IList<TransactionItem> transactions;
 
         public WalletInfo()
         {
-            this.accounts = new Dictionary<UInt160, AccountItem>();
-            this.assets = new List<AssetItem>();
+            this.accounts = new Dictionary<UInt160, AccountSummary>();
+            this.assets = new List<AssetSummary>();
             this.transactions = new List<TransactionItem>();
         }
 
-        public IEnumerable<AccountItem> GetAccounts()
+        public IEnumerable<AccountSummary> GetAccounts()
         {
             return this.accounts.Values;
         }
@@ -27,12 +27,12 @@ namespace Neo.UI.Core.Wallet.Data
             return this.accounts.ContainsKey(scriptHash);
         }
 
-        public AccountItem GetAccount(UInt160 scriptHash)
+        public AccountSummary GetAccount(UInt160 scriptHash)
         {
             return this.ContainsAccount(scriptHash) ? this.accounts[scriptHash] : null;
         }
 
-        public void AddAccount(AccountItem account)
+        public void AddAccount(AccountSummary account)
         {
             this.accounts.Add(UInt160.Parse(account.ScriptHash), account);
         }
@@ -42,42 +42,42 @@ namespace Neo.UI.Core.Wallet.Data
             this.accounts.Remove(scriptHash);
         }
 
-        public IEnumerable<FirstClassAssetItem> GetFirstClassAssets()
+        public IEnumerable<FirstClassAssetSummary> GetFirstClassAssets()
         {
-            return this.assets.Where(item => item is FirstClassAssetItem).Cast<FirstClassAssetItem>();
+            return this.assets.Where(item => item is FirstClassAssetSummary).Cast<FirstClassAssetSummary>();
         }
 
-        public IEnumerable<NEP5AssetItem> GetNEP5Assets()
+        public IEnumerable<NEP5AssetSummary> GetNEP5Assets()
         {
-            return this.assets.Where(item => item is NEP5AssetItem).Cast<NEP5AssetItem>();
+            return this.assets.Where(item => item is NEP5AssetSummary).Cast<NEP5AssetSummary>();
         }
 
-        public FirstClassAssetItem GetFirstClassAsset(UInt256 assetId)
+        public FirstClassAssetSummary GetFirstClassAsset(UInt256 assetId)
         {
             if (assetId == null) return null;
 
             var assetIdStr = assetId.ToString();
 
-            return this.assets.FirstOrDefault(asset => asset is FirstClassAssetItem &&
-                assetIdStr.Equals(((FirstClassAssetItem) asset).AssetId)) as FirstClassAssetItem;
+            return this.assets.FirstOrDefault(asset => asset is FirstClassAssetSummary &&
+                assetIdStr.Equals(((FirstClassAssetSummary) asset).AssetId)) as FirstClassAssetSummary;
         }
 
-        public NEP5AssetItem GetNEP5Asset(UInt160 scriptHash)
+        public NEP5AssetSummary GetNEP5Asset(UInt160 scriptHash)
         {
             if (scriptHash == null) return null;
 
             var scriptHashStr = scriptHash.ToString();
 
-            return this.assets.FirstOrDefault(asset => asset is NEP5AssetItem &&
-                scriptHashStr.Equals(((NEP5AssetItem) asset).ScriptHash)) as NEP5AssetItem;
+            return this.assets.FirstOrDefault(asset => asset is NEP5AssetSummary &&
+                scriptHashStr.Equals(((NEP5AssetSummary) asset).ScriptHash)) as NEP5AssetSummary;
         }
 
-        public void AddAsset(AssetItem asset)
+        public void AddAsset(AssetSummary asset)
         {
             this.assets.Add(asset);
         }
 
-        public void RemoveAsset(AssetItem asset)
+        public void RemoveAsset(AssetSummary asset)
         {
             this.assets.Remove(asset);
         }

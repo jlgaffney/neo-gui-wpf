@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 using Neo.Core;
 using Neo.Network;
 using Neo.UI.Core.Data;
@@ -36,10 +37,7 @@ namespace Neo.UI.Core.Services.Interfaces
 
         Fixed8 CalculateBonus(IEnumerable<CoinReference> inputs, uint heightEnd);
 
-
-        NEP5AssetItem GetTotalNEP5Balance(UInt160 nep5ScriptHash, IEnumerable<UInt160> accountScriptHashes);
-
-        IDictionary<UInt160, BigDecimal> GetNEP5Balances(UInt160 nep5ScriptHash, IEnumerable<UInt160> accountScriptHashes);
+        IDictionary<UInt160, BigInteger> GetNEP5Balances(UInt160 nep5ScriptHash, IEnumerable<UInt160> accountScriptHashes, out byte decimals);
 
 
         void Relay(Transaction transaction);
