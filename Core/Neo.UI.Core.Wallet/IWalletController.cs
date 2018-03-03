@@ -96,9 +96,9 @@ namespace Neo.UI.Core.Wallet
 
         AssetStateDto GetAssetState(string assetId);
 
-        bool CanViewCertificate(FirstClassAssetSummary assetSummary);
+        bool CanViewCertificate(string assetId);
 
-        string ViewCertificate(FirstClassAssetSummary assetSummary);
+        string ViewCertificate(string assetId);
 
         Fixed8 CalculateBonus();
         
@@ -107,14 +107,14 @@ namespace Neo.UI.Core.Wallet
         bool WalletContainsAccount(string scriptHash);
 
         /// <summary>
-        /// NEP-5 assets
-        /// </summary>
-        string GetNEP5TokenAvailability(string assetId);
-
-        /// <summary>
         /// First class assets
         /// </summary>
         string GetFirstClassTokenAvailability(string assetId);
+
+        /// <summary>
+        /// NEP-5 assets
+        /// </summary>
+        string GetNEP5TokenAvailability(string scriptHash);
 
         void ImportWatchOnlyAddress(string[] addressesToWatch);
 

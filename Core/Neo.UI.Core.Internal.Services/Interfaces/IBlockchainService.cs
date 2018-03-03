@@ -5,7 +5,7 @@ using Neo.Core;
 using Neo.Network;
 using Neo.UI.Core.Data;
 
-namespace Neo.UI.Core.Services.Interfaces
+namespace Neo.UI.Core.Internal.Services.Interfaces
 {
     public interface IBlockchainService : IDisposable
     {

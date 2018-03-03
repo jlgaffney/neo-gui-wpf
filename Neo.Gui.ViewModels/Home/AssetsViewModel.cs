@@ -9,6 +9,8 @@ using Neo.UI.Core.Data;
 using Neo.UI.Core.Messaging.Interfaces;
 using System.Linq;
 using Neo.Gui.Dialogs.Interfaces;
+using Neo.Gui.ViewModels.Data;
+using Neo.UI.Core.Data.Enums;
 using Neo.UI.Core.Services.Interfaces;
 using Neo.UI.Core.Wallet;
 using Neo.UI.Core.Wallet.Messages;
@@ -29,13 +31,13 @@ namespace Neo.Gui.ViewModels.Home
         private readonly ISettingsManager settingsManager;
         private readonly IWalletController walletController;
 
-        private AssetSummary selectedAsset;
+        private UiAssetSummary selectedAsset;
         #endregion
 
         #region Public Properties
-        public ObservableCollection<AssetSummary> Assets { get; }
+        public ObservableCollection<UiAssetSummary> Assets { get; }
 
-        public AssetSummary SelectedAsset
+        public UiAssetSummary SelectedAsset
         {
             get => this.selectedAsset;
             set
@@ -56,23 +58,19 @@ namespace Neo.Gui.ViewModels.Home
         {
             get
             {
-                var selectedFirstClassAsset = this.SelectedAsset as FirstClassAssetSummary;
+                if (this.SelectedAsset == null) return false;
 
-                if (selectedFirstClassAsset == null) return false;
+                if (this.SelectedAsset.TokenType != TokenType.FirstClassToken) return false;
 
-                if (selectedFirstClassAsset.IsSystemAsset) return false;
-
-                if (selectedFirstClassAsset.AssetOwner == null) return false;
-
-                return this.walletController.CanViewCertificate(selectedFirstClassAsset);
+                return this.walletController.CanViewCertificate(this.SelectedAsset.AssetId);
             }
         }
 
         // TODO Should this also check if the user issued the asset?
         public bool DeleteAssetEnabled => 
             this.SelectedAsset != null &&
-            this.SelectedAsset is FirstClassAssetSummary &&
-            !((FirstClassAssetSummary)this.SelectedAsset).IsSystemAsset;
+            this.SelectedAsset.TokenType == TokenType.FirstClassToken &&
+            !this.SelectedAsset.IsSystemAsset;
 
         public RelayCommand ViewCertificateCommand => new RelayCommand(this.ViewCertificate);
 
@@ -95,7 +93,7 @@ namespace Neo.Gui.ViewModels.Home
             this.settingsManager = settingsManager;
             this.walletController = walletController;
 
-            this.Assets = new ObservableCollection<AssetSummary>();
+            this.Assets = new ObservableCollection<UiAssetSummary>();
         }
         #endregion
 
@@ -121,16 +119,18 @@ namespace Neo.Gui.ViewModels.Home
 
         public void HandleMessage(AssetAddedMessage message)
         {
-            var isAssetInTheList = this.Assets.Any(x => x.Name == message.Asset.Name);
+            var isAssetInTheList = this.Assets.Any(x => x.AssetId == message.AssetId);
 
             if (isAssetInTheList)
             {
-                var assetInList = this.Assets.Single(x => x.Name == message.Asset.Name);
+                var assetInList = this.Assets.Single(x => x.AssetId == message.AssetId);
                 
             }
             else
             {
-                this.Assets.Add(message.Asset);
+                var newAsset = new UiAssetSummary(message.AssetId, message.AssetName, message.AssetIssuer, message.Type, message.TokenType, message.IsSystemAsset, message.TotalBalance);
+
+                this.Assets.Add(newAsset);
             }
         }
         #endregion
@@ -140,7 +140,13 @@ namespace Neo.Gui.ViewModels.Home
         {
             if (this.SelectedAsset == null) return;
 
-            var url = string.Format(this.settingsManager.AssetURLFormat, this.SelectedAsset.Name.Substring(2));
+            var assetId = this.SelectedAsset.AssetId;
+            if (assetId.StartsWith("0x"))
+            {
+                assetId = assetId.Substring(2);
+            }
+
+            var url = string.Format(this.settingsManager.AssetURLFormat, assetId);
 
             this.processManager.OpenInExternalBrowser(url);
         }
@@ -149,7 +155,7 @@ namespace Neo.Gui.ViewModels.Home
         {
             if (!this.ViewCertificateEnabled) return;
             
-            var certificatePath = this.walletController.ViewCertificate(this.SelectedAsset as FirstClassAssetSummary);
+            var certificatePath = this.walletController.ViewCertificate(this.SelectedAsset.AssetId);
 
             if (string.IsNullOrEmpty(certificatePath))
             {
@@ -163,21 +169,17 @@ namespace Neo.Gui.ViewModels.Home
 
         private void DeleteAsset()
         {
-            var firstClassAssetItem = this.SelectedAsset as FirstClassAssetSummary;
-
-            if (firstClassAssetItem == null) return;
-
-            var value = this.walletController.GetFirstClassTokenAvailability(firstClassAssetItem.AssetId);
+            if (this.SelectedAsset == null || this.SelectedAsset.TokenType != TokenType.FirstClassToken) return;
 
             var result = this.dialogManager.ShowMessageDialog(
                 Strings.DeleteConfirmation,
-                $"{Strings.DeleteAssetConfirmationMessage}\n{string.Join("\n", $"{firstClassAssetItem.Name}:{value}")}",
+                $"{Strings.DeleteAssetConfirmationMessage}\n{string.Join("\n", $"{this.SelectedAsset.Name}:{this.SelectedAsset.TotalBalance}")}",
                 MessageDialogType.YesNo,
                 MessageDialogResult.No);
 
             if (result != MessageDialogResult.Yes) return;
 
-            this.walletController.DeleteFirstClassAsset(firstClassAssetItem.AssetId);
+            this.walletController.DeleteFirstClassAsset(this.SelectedAsset.AssetId);
         }
         #endregion
     }

@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Neo.UI.Core.Data\Neo.UI.Core.Data.csproj" />
-    <ProjectReference Include="..\Neo.UI.Core.Internal.Services.Interfaces\Neo.UI.Core.Internal.Services.Interfaces.csproj" />
     <ProjectReference Include="..\Neo.UI.Core.Messaging\Neo.UI.Core.Messaging.csproj" />
     <ProjectReference Include="..\Neo.UI.Core.Services.Interfaces\Neo.UI.Core.Services.Interfaces.csproj" />
   </ItemGroup>

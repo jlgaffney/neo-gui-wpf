@@ -4,7 +4,7 @@ using Neo.UI.Core.Messaging;
 using Neo.UI.Core.Services.Implementations;
 using Neo.UI.Core.Transactions;
 
-using InternalServicesRegistrationModule = Neo.UI.Core.Internal.Services.Implementations.ServicesRegistrationModule;
+using InternalServicesRegistrationModule = Neo.UI.Core.Internal.Services.ServicesRegistrationModule;
 
 namespace Neo.UI.Core.Wallet
 {

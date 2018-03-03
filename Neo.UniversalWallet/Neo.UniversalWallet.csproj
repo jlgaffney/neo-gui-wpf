@@ -76,12 +76,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Messages\NavigationMessage.cs" />
-    <Compile Include="ViewModels\DashboardViewModel.cs" />
     <Compile Include="ViewModels\LoadWalletViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
-    <Compile Include="Views\AssetView.xaml.cs">
-      <DependentUpon>AssetView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\DashboardView.xaml.cs">
       <DependentUpon>DashboardView.xaml</DependentUpon>
     </Compile>
@@ -100,10 +96,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\AssetView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\DashboardView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

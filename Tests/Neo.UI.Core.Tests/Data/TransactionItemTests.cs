@@ -8,7 +8,7 @@ namespace Neo.UI.Core.Tests.Data
 {
     public class TransactionItemTests
     {
-        [Fact]
+        /*[Fact]
         public void Ctor_WithValidHash_CreateValidTransactionItem()
         {
             // Arrange
@@ -44,6 +44,6 @@ namespace Neo.UI.Core.Tests.Data
 
             // Assert
             Assert.Equal(expectedConfirmations.ToString(), transactionItem.ConfirmationsText);
-        }
+        }*/
     }
 }

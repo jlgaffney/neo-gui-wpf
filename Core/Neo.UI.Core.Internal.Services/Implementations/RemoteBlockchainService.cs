@@ -4,7 +4,7 @@ using System.Numerics;
 using Neo.Core;
 using Neo.Network;
 using Neo.UI.Core.Data;
-using Neo.UI.Core.Services.Interfaces;
+using Neo.UI.Core.Internal.Services.Interfaces;
 
 namespace Neo.UI.Core.Internal.Services.Implementations
 {

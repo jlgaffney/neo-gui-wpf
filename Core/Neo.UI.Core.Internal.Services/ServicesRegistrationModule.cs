@@ -1,7 +1,8 @@
 ﻿using Autofac;
-using Neo.UI.Core.Services.Interfaces;
+using Neo.UI.Core.Internal.Services.Implementations;
+using Neo.UI.Core.Internal.Services.Interfaces;
 
-namespace Neo.UI.Core.Internal.Services.Implementations
+namespace Neo.UI.Core.Internal.Services
 {
     public class ServicesRegistrationModule : Module
     {

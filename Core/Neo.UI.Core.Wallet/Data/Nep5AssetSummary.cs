@@ -1,8 +1,8 @@
-﻿namespace Neo.UI.Core.Data
+﻿namespace Neo.UI.Core.Wallet.Data
 {
-    public class NEP5AssetSummary : AssetSummary
+    internal class NEP5AssetSummary : AssetSummary
     {
-        public NEP5AssetSummary(string scriptHash)
+        public NEP5AssetSummary(UInt160 scriptHash)
         {
             this.ScriptHash = scriptHash;
         }
@@ -11,6 +11,6 @@
 
         public override string Type => "NEP-5";
 
-        public string ScriptHash { get; }
+        public UInt160 ScriptHash { get; }
     }
 }

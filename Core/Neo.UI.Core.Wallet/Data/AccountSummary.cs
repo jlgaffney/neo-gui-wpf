@@ -1,17 +1,16 @@
 ﻿using Neo.UI.Core.Data.Enums;
-using Neo.UI.Core.Wallet.Data;
 using NeoWallet = Neo.Wallets.Wallet;
 
-namespace Neo.UI.Core.Data
+namespace Neo.UI.Core.Wallet.Data
 {
-    public class AccountSummary : BindableClass
+    internal class AccountSummary
     {
         #region Public Properties 
         public string Label { get; }
 
-        public string ScriptHash { get; }
+        public UInt160 ScriptHash { get; }
 
-        public string Address => NeoWallet.ToAddress(UInt160.Parse(this.ScriptHash));
+        public string Address => NeoWallet.ToAddress(this.ScriptHash);
 
         public AccountType Type { get; }
 
@@ -19,7 +18,7 @@ namespace Neo.UI.Core.Data
         #endregion
 
         #region Constructor 
-        public AccountSummary(string label, string scriptHash, AccountType accountType)
+        public AccountSummary(string label, UInt160 scriptHash, AccountType accountType)
         {
             this.Label = label;
             this.ScriptHash = scriptHash;

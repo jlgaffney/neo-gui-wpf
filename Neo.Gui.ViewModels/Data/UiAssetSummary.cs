@@ -1,12 +1,15 @@
 ﻿using GalaSoft.MvvmLight;
+using Neo.UI.Core.Data.Enums;
 
 namespace Neo.Gui.ViewModels.Data
 {
-    public class UiAssetSummary : ViewModelBase
+    public class UiAssetSummary : ObservableObject
     {
-        private decimal totalBalance;
+        private string totalBalance;
 
         #region Public properties
+
+        public string AssetId { get; }
 
         public string Name { get; }
 
@@ -14,7 +17,11 @@ namespace Neo.Gui.ViewModels.Data
 
         public string Type { get; }
 
-        public decimal TotalBalance
+        public TokenType TokenType { get; }
+
+        public bool IsSystemAsset { get; }
+
+        public string TotalBalance
         {
             get => this.totalBalance;
             set
@@ -29,11 +36,16 @@ namespace Neo.Gui.ViewModels.Data
 
         #region Constructor
 
-        public UiAssetSummary(string name, string issuer, string type)
+        public UiAssetSummary(string assetId, string name, string issuer, string type, TokenType tokenType, bool isSystemAsset, string totalBalance)
         {
+            this.AssetId = assetId;
             this.Name = name;
             this.Issuer = issuer;
             this.Type = type;
+            this.TokenType = tokenType;
+            this.IsSystemAsset = isSystemAsset;
+
+            this.TotalBalance = totalBalance;
         }
 
         #endregion

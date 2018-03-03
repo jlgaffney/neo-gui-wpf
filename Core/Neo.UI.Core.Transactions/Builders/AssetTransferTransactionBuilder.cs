@@ -5,7 +5,7 @@ using System.Numerics;
 using System.Text;
 using Neo.Core;
 using Neo.VM;
-using Neo.UI.Core.Services.Interfaces;
+using Neo.UI.Core.Internal.Services.Interfaces;
 using Neo.UI.Core.Transactions.Exceptions;
 using Neo.UI.Core.Transactions.Interfaces;
 using Neo.UI.Core.Transactions.Parameters;

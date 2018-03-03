@@ -4,7 +4,7 @@ using System.IO.Compression;
 using Neo.Core;
 using Neo.Implementations.Blockchains.LevelDB;
 using Neo.IO;
-using Neo.UI.Core.Services.Interfaces;
+using Neo.UI.Core.Internal.Services.Interfaces;
 
 namespace Neo.UI.Core.Internal.Services.Implementations
 {

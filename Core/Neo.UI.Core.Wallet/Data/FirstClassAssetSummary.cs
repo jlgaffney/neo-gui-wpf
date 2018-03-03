@@ -3,9 +3,9 @@ using Neo.Cryptography.ECC;
 using Neo.UI.Core.Data.Enums;
 using Neo.UI.Core.Globalization.Resources;
 
-namespace Neo.UI.Core.Data
+namespace Neo.UI.Core.Wallet.Data
 {
-    public class FirstClassAssetSummary : AssetSummary
+    internal class FirstClassAssetSummary : AssetSummary
     {
         public bool IssuerCertificateChecked { get; private set; }
 
@@ -15,13 +15,13 @@ namespace Neo.UI.Core.Data
 
         public override string Type => this.AssetType.ToString();
 
-        public string AssetId { get; }
+        public UInt256 AssetId { get; }
 
         public ECPoint AssetOwner { get; }
 
         public AssetType AssetType { get; }
 
-        public FirstClassAssetSummary(string assetId, ECPoint assetOwner, AssetType assetType)
+        public FirstClassAssetSummary(UInt256 assetId, ECPoint assetOwner, AssetType assetType)
         {
             this.AssetId = assetId;
             this.AssetOwner = assetOwner;

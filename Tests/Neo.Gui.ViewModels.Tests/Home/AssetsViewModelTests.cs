@@ -5,8 +5,7 @@ using Neo.Gui.Dialogs.Interfaces;
 using Neo.UI.Core.Globalization.Resources;
 using Neo.Gui.TestHelpers;
 using Neo.Gui.ViewModels.Home;
-using Neo.Gui.ViewModels.Tests.Builders;
-using Neo.UI.Core.Data;
+using Neo.UI.Core.Data.Enums;
 using Neo.UI.Core.Messaging.Interfaces;
 using Neo.UI.Core.Services.Interfaces;
 using Neo.UI.Core.Wallet;
@@ -17,6 +16,10 @@ namespace Neo.Gui.ViewModels.Tests.Home
 {
     public class AssetsViewModelTests : TestBase
     {
+        private const string TestFirstClassAssetId = "0xa32e21715c0b0dcd10fba7b38a6a13797a94ddfad8743d626512f454753570f9";
+        private const string TestNEP5AssetId = "0x4f05a52bc2b103886685e08cefb740cfe1bf82cd";
+        private const string TestAssetName = "NEO Asset";
+
         [Fact]
         public void Ctr_CreateValidAssetsViewModel()
         {
@@ -62,31 +65,27 @@ namespace Neo.Gui.ViewModels.Tests.Home
         public void AssetAddedMessageReceived_AssetAdded()
         {
             // Arrange
-            var expectedAssetItem = new FirstClassAssetSummaryBuilder().Build();
-
             var viewModel = this.AutoMockContainer.Create<AssetsViewModel>();
             var assetAddedMessageHandler = viewModel as IMessageHandler<AssetAddedMessage>;
 
             // Act
-            assetAddedMessageHandler.HandleMessage(new AssetAddedMessage(expectedAssetItem));
+            assetAddedMessageHandler.HandleMessage(GetTestAssetAddedMessage());
 
             // Assert
             Assert.True(viewModel.Assets.Count == 1);
-            Assert.Same(expectedAssetItem, viewModel.Assets.Single());
+            Assert.Equal(TestFirstClassAssetId, viewModel.Assets.Single().AssetId);
         }
 
         [Fact]
         public void ClearAssetsMessageReceived_AssetRemoved()
         {
             // Arrange
-            var expectedAssetItem = new FirstClassAssetSummaryBuilder().Build();
-
             var viewModel = this.AutoMockContainer.Create<AssetsViewModel>();
             var assetAddedMessageHandler = viewModel as IMessageHandler<AssetAddedMessage>;
             var currentWalletHasChangedMessageHandler = viewModel as IMessageHandler<CurrentWalletHasChangedMessage>;
 
             // Act
-            assetAddedMessageHandler.HandleMessage(new AssetAddedMessage(expectedAssetItem));
+            assetAddedMessageHandler.HandleMessage(GetTestAssetAddedMessage());
             var afterAddAssetsCount = viewModel.Assets.Count;
             currentWalletHasChangedMessageHandler.HandleMessage(new CurrentWalletHasChangedMessage());
 
@@ -101,24 +100,22 @@ namespace Neo.Gui.ViewModels.Tests.Home
             // Arrange
             var expectedCertificatePath = @"X:\";
 
-            var selectedAssetItem = new FirstClassAssetSummaryBuilder()
-                .WithCustomToken()
-                .Build();
-
             var processHelperMock = this.AutoMockContainer.GetMock<IProcessManager>();
 
             var walletControllerMock = this.AutoMockContainer.GetMock<IWalletController>();
             walletControllerMock
-                .Setup(x => x.ViewCertificate(selectedAssetItem as FirstClassAssetSummary))
+                .Setup(x => x.ViewCertificate(TestFirstClassAssetId))
                 .Returns(expectedCertificatePath);
             walletControllerMock
-                .Setup(x => x.CanViewCertificate(selectedAssetItem as FirstClassAssetSummary))
+                .Setup(x => x.CanViewCertificate(TestFirstClassAssetId))
                 .Returns(true);
 
             var viewModel = this.AutoMockContainer.Create<AssetsViewModel>();
+            var assetAddedMessageHandler = viewModel as IMessageHandler<AssetAddedMessage>;
 
             // Act
-            viewModel.SelectedAsset = selectedAssetItem;
+            assetAddedMessageHandler.HandleMessage(GetTestAssetAddedMessage());
+            viewModel.SelectedAsset = viewModel.Assets.Single();
             viewModel.ViewCertificateCommand.Execute(null);
 
             // Assert
@@ -126,20 +123,10 @@ namespace Neo.Gui.ViewModels.Tests.Home
         }
 
         [Fact]
-        public void DeleteAssetCommand_ShowCertificate()
+        public void DeleteAssetCommand_DeleteFirstClassAsset()
         {
             // Arrange
-            var tokenId = "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF";
-
-            var selectedAssetItem = new FirstClassAssetSummaryBuilder()
-                .WithAssetId(tokenId)
-                .WithCustomToken()
-                .Build();
-
             var walletControllerMock = this.AutoMockContainer.GetMock<IWalletController>();
-            walletControllerMock
-                .Setup(x => x.GetFirstClassTokenAvailability(tokenId))
-                .Returns("0");
 
             var dialogManagerMock = this.AutoMockContainer.GetMock<IDialogManager>();
             dialogManagerMock
@@ -147,13 +134,15 @@ namespace Neo.Gui.ViewModels.Tests.Home
                 .Returns(MessageDialogResult.Yes);
 
             var viewModel = this.AutoMockContainer.Create<AssetsViewModel>();
+            var assetAddedMessageHandler = viewModel as IMessageHandler<AssetAddedMessage>;
 
             // Act
-            viewModel.SelectedAsset = selectedAssetItem;
+            assetAddedMessageHandler.HandleMessage(GetTestAssetAddedMessage());
+            viewModel.SelectedAsset = viewModel.Assets.Single();
             viewModel.DeleteAssetCommand.Execute(null);
 
             // Assert
-            walletControllerMock.Verify(x => x.DeleteFirstClassAsset((selectedAssetItem as FirstClassAssetSummary).AssetId));
+            walletControllerMock.Verify(x => x.DeleteFirstClassAsset(viewModel.SelectedAsset.AssetId));
         }
 
         [Fact]
@@ -161,13 +150,6 @@ namespace Neo.Gui.ViewModels.Tests.Home
         {
             // Arrange
             var expectedAssetURLFormat = @"https://www.xpto.com/{0}";
-            var tokenName = "1234";
-            var tokenId = "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF";
-
-            var selectedAssetItem = new FirstClassAssetSummaryBuilder()
-                .WithAssetId(tokenId)
-                .WithName(tokenName)
-                .Build();
 
             var processHelperMock = this.AutoMockContainer.GetMock<IProcessManager>();
 
@@ -177,13 +159,20 @@ namespace Neo.Gui.ViewModels.Tests.Home
                 .Returns(expectedAssetURLFormat);
 
             var viewModel = this.AutoMockContainer.Create<AssetsViewModel>();
+            var assetAddedMessageHandler = viewModel as IMessageHandler<AssetAddedMessage>;
 
             // Act
-            viewModel.SelectedAsset = selectedAssetItem;
+            assetAddedMessageHandler.HandleMessage(GetTestAssetAddedMessage());
+            viewModel.SelectedAsset = viewModel.Assets.Single();
             viewModel.ViewSelectedAssetDetailsCommand.Execute(null);
 
             // Assert
-            processHelperMock.Verify(x => x.OpenInExternalBrowser(string.Format(expectedAssetURLFormat, tokenName.Substring(2))));
+            processHelperMock.Verify(x => x.OpenInExternalBrowser(string.Format(expectedAssetURLFormat, viewModel.SelectedAsset.AssetId.Substring(2))));
+        }
+
+        private static AssetAddedMessage GetTestAssetAddedMessage(TokenType tokenType = TokenType.FirstClassToken)
+        {
+            return new AssetAddedMessage(tokenType == TokenType.FirstClassToken ? TestFirstClassAssetId : TestNEP5AssetId, TestAssetName, string.Empty, string.Empty, tokenType, false, "0");
         }
     }
 }

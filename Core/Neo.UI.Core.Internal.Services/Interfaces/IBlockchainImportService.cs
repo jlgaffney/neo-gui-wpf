@@ -1,6 +1,6 @@
 ﻿using Neo.Core;
 
-namespace Neo.UI.Core.Services.Interfaces
+namespace Neo.UI.Core.Internal.Services.Interfaces
 {
     public interface IBlockchainImportService
     {

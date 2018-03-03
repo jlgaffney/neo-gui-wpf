@@ -10,7 +10,7 @@ using Neo.Network;
 using Neo.SmartContract;
 using Neo.UI.Core.Data;
 using Neo.UI.Core.Helpers;
-using Neo.UI.Core.Services.Interfaces;
+using Neo.UI.Core.Internal.Services.Interfaces;
 using Neo.VM;
 
 namespace Neo.UI.Core.Internal.Services.Implementations

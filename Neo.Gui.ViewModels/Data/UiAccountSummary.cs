@@ -3,7 +3,7 @@ using Neo.UI.Core.Data.Enums;
 
 namespace Neo.Gui.ViewModels.Data
 {
-    public class UiAccountSummary : ViewModelBase
+    public class UiAccountSummary : ObservableObject
     {
         #region Private Fields 
         private int neo;
