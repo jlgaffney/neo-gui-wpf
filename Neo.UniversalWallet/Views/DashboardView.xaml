@@ -646,8 +646,5 @@
                 </materialDesign:Card>
             </StackPanel>
         </Grid>
-
-    <Grid>
-        
     </Grid>
 </Page>
