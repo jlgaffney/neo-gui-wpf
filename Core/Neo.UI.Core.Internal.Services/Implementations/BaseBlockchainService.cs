@@ -1,6 +1,6 @@
 ﻿using Neo.Core;
 
-namespace Neo.UI.Core.Services.Implementations
+namespace Neo.UI.Core.Internal.Services.Implementations
 {
     internal abstract class BaseBlockchainService
     {

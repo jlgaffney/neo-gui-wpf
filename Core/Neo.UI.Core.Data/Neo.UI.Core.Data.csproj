@@ -5,10 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="NetworkStatus.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Neo" Version="2.6.0" />
     <PackageReference Include="Neo.VM" Version="2.0.4" />
   </ItemGroup>

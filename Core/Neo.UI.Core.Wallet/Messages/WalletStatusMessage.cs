@@ -4,11 +4,14 @@ namespace Neo.UI.Core.Wallet.Messages
 {
     public class WalletStatusMessage
     {
-        public WalletStatusMessage(WalletStatus status)
+        public WalletStatusMessage(uint walletHeight, BlockchainStatus blockchainStatus)
         {
-            this.Status = status;
+            this.WalletHeight = walletHeight;
+            this.BlockchainStatus = blockchainStatus;
         }
 
-        public WalletStatus Status { get; }
+        public uint WalletHeight { get; }
+
+        public BlockchainStatus BlockchainStatus { get; }
     }
 }

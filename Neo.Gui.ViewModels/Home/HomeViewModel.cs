@@ -242,14 +242,11 @@ namespace Neo.Gui.ViewModels.Home
 
         public void HandleMessage(WalletStatusMessage message)
         {
-            var status = message.Status;
+            this.HeightStatus = $"{message.WalletHeight}/{message.BlockchainStatus.Height}/{message.BlockchainStatus.HeaderHeight}";
+            this.NextBlockProgressIsIndeterminate = message.BlockchainStatus.NextBlockProgressIsIndeterminate;
+            this.NextBlockProgressFraction = message.BlockchainStatus.NextBlockProgressFraction;
 
-            // TODO
-            this.HeightStatus = $"{status.WalletHeight}/{status.BlockchainStatus.Height}/{status.BlockchainStatus.HeaderHeight}";
-            this.NextBlockProgressIsIndeterminate = status.BlockchainStatus.NextBlockProgressIsIndeterminate;
-            this.NextBlockProgressFraction = status.BlockchainStatus.NextBlockProgressFraction;
-
-            this.NodeCount = status.BlockchainStatus.NodeCount;
+            this.NodeCount = message.BlockchainStatus.NodeCount;
             this.BlockStatus = $"{Strings.WaitingForNextBlock}:"; // TODO Update property to return actual status
         }
         #endregion

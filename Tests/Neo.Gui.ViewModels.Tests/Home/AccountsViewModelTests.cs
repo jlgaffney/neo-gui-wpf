@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using System.Linq;
+using Moq;
 using Neo.Gui.Dialogs;
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.Dialogs.LoadParameters.Accounts;
@@ -6,8 +7,6 @@ using Neo.Gui.Dialogs.LoadParameters.Voting;
 using Neo.UI.Core.Globalization.Resources;
 using Neo.Gui.TestHelpers;
 using Neo.Gui.ViewModels.Home;
-using Neo.Gui.ViewModels.Tests.Builders;
-using Neo.UI.Core.Data;
 using Neo.UI.Core.Data.Enums;
 using Neo.UI.Core.Helpers.Extensions;
 using Neo.UI.Core.Messaging.Interfaces;
@@ -20,6 +19,10 @@ namespace Neo.Gui.ViewModels.Tests.Home
 {
     public class AccountsViewModelTests : TestBase
     {
+        private const string TestAccountLabel = "Test Account";
+        private const string TestAddress = "AWkWVcBwjE9aEqUd8Uzzp5jGteykvXJmsy";
+        private const string TestScriptHash = "d3cce84d0800172d09c88ccad61130611bd047a4";
+
         [Fact]
         public void Ctr_CreateAccountsViewModel()
         {
@@ -68,7 +71,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
 
             // Act
             var initialAccountsCount = viewModel.Accounts.Count;
-            accountAddedMessageHandler.HandleMessage(new AccountAddedMessage(new AccountItem("AccountLabel", null, AccountType.Standard)));
+            accountAddedMessageHandler.HandleMessage(GetTestAccountAddedMessage());
 
             // Assert
             Assert.Equal(0, initialAccountsCount);
@@ -85,7 +88,7 @@ namespace Neo.Gui.ViewModels.Tests.Home
             
             // Act
             var initialAccountsCount = viewModel.Accounts.Count;
-            accountAddedMessageHandler.HandleMessage(new AccountAddedMessage(new AccountItem("AccountLabel", null, AccountType.Standard)));
+            accountAddedMessageHandler.HandleMessage(GetTestAccountAddedMessage());
             var accountWithOneRecord = viewModel.Accounts.Count;
             currentWalletHasChangedMessageHandler.HandleMessage(new CurrentWalletHasChangedMessage());
 ;
@@ -237,19 +240,16 @@ address2";
             // Arrange
             var dialogManagerMock = this.AutoMockContainer.GetMock<IDialogManager>();
 
-            var selectedAccount = new AccountItemBuilder()
-              .StandardAccount()
-              .WithHash("d3cce84d0800172d09c88ccad61130611bd047a4")
-              .Build();
-
             var viewModel = this.AutoMockContainer.Create<AccountsViewModel>();
-            viewModel.SelectedAccount = selectedAccount;
+            var accountAddedMessageHandler = viewModel as IMessageHandler<AccountAddedMessage>;
 
             // Act
+            accountAddedMessageHandler.HandleMessage(GetTestAccountAddedMessage());
+            viewModel.SelectedAccount = viewModel.Accounts.First();
             viewModel.ViewPrivateKeyCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog(It.Is<ViewPrivateKeyLoadParameters>(p => p.ScriptHash == selectedAccount.ScriptHash)));
+            dialogManagerMock.Verify(x => x.ShowDialog(It.Is<ViewPrivateKeyLoadParameters>(p => p.ScriptHash == viewModel.SelectedAccount.ScriptHash)));
         }
 
         [Fact]
@@ -257,20 +257,17 @@ address2";
         {
             // Arrange
             var dialogManagerMock = this.AutoMockContainer.GetMock<IDialogManager>();
-
-            var selectedAccount = new AccountItemBuilder()
-              .NonStandardAccount()
-              .WithHash("d3cce84d0800172d09c88ccad61130611bd047a4")
-              .Build();
-
+            
             var viewModel = this.AutoMockContainer.Create<AccountsViewModel>();
-            viewModel.SelectedAccount = selectedAccount;
+            var accountAddedMessageHandler = viewModel as IMessageHandler<AccountAddedMessage>;
 
             // Act
+            accountAddedMessageHandler.HandleMessage(GetTestAccountAddedMessage(AccountType.NonStandard));
+            viewModel.SelectedAccount = viewModel.Accounts.First();
             viewModel.ViewPrivateKeyCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog(It.Is<ViewPrivateKeyLoadParameters>(p => p.ScriptHash == selectedAccount.ScriptHash)), Times.Never);
+            dialogManagerMock.Verify(x => x.ShowDialog(It.Is<ViewPrivateKeyLoadParameters>(p => p.ScriptHash == viewModel.SelectedAccount.ScriptHash)), Times.Never);
         }
 
         [Fact]
@@ -279,19 +276,16 @@ address2";
             // Arrange
             var dialogManagerMock = this.AutoMockContainer.GetMock<IDialogManager>();
 
-            var selectedAccount = new AccountItemBuilder()
-              .StandardAccount()
-              .WithHash("d3cce84d0800172d09c88ccad61130611bd047a4")
-              .Build();
-
             var viewModel = this.AutoMockContainer.Create<AccountsViewModel>();
-            viewModel.SelectedAccount = selectedAccount;
+            var accountAddedMessageHandler = viewModel as IMessageHandler<AccountAddedMessage>;
 
             // Act
+            accountAddedMessageHandler.HandleMessage(GetTestAccountAddedMessage());
+            viewModel.SelectedAccount = viewModel.Accounts.First();
             viewModel.ViewContractCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog(It.Is<ViewContractLoadParameters>(p => p.ScriptHash == selectedAccount.ScriptHash.ToString())), Times.Once);
+            dialogManagerMock.Verify(x => x.ShowDialog(It.Is<ViewContractLoadParameters>(p => p.ScriptHash == viewModel.SelectedAccount.ScriptHash.ToString())), Times.Once);
         }
 
         [Fact]
@@ -300,19 +294,16 @@ address2";
             // Arrange
             var dialogManagerMock = this.AutoMockContainer.GetMock<IDialogManager>();
 
-            var selectedAccount = new AccountItemBuilder()
-              .WatchOnlyAccount()
-              .WithHash("d3cce84d0800172d09c88ccad61130611bd047a4")
-              .Build();
-
             var viewModel = this.AutoMockContainer.Create<AccountsViewModel>();
-            viewModel.SelectedAccount = selectedAccount;
+            var accountAddedMessageHandler = viewModel as IMessageHandler<AccountAddedMessage>;
 
             // Act
+            accountAddedMessageHandler.HandleMessage(GetTestAccountAddedMessage(AccountType.WatchOnly));
+            viewModel.SelectedAccount = viewModel.Accounts.First();
             viewModel.ViewContractCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog(It.Is<ViewContractLoadParameters>(p => p.ScriptHash == selectedAccount.ScriptHash.ToString())), Times.Never);
+            dialogManagerMock.Verify(x => x.ShowDialog(It.Is<ViewContractLoadParameters>(p => p.ScriptHash == viewModel.SelectedAccount.ScriptHash)), Times.Never);
         }
 
         [Fact]
@@ -321,20 +312,17 @@ address2";
             // Arrange
             var dialogManagerMock = this.AutoMockContainer.GetMock<IDialogManager>();
 
-            var selectedAccount = new AccountItemBuilder()
-                .StandardAccount()
-                .WithHash("d3cce84d0800172d09c88ccad61130611bd047a4")
-                .AccountWithNeoBalance()
-                .Build();
-
             var viewModel = this.AutoMockContainer.Create<AccountsViewModel>();
-            viewModel.SelectedAccount = selectedAccount;
+            var accountAddedMessageHandler = viewModel as IMessageHandler<AccountAddedMessage>;
 
             // Act
+            accountAddedMessageHandler.HandleMessage(GetTestAccountAddedMessage());
+            viewModel.SelectedAccount = viewModel.Accounts.First();
+            viewModel.SelectedAccount.Neo = 1;
             viewModel.ShowVotingDialogCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog(It.Is<VotingLoadParameters>(p => p.VoterScriptHash == selectedAccount.ScriptHash)));
+            dialogManagerMock.Verify(x => x.ShowDialog(It.Is<VotingLoadParameters>(p => p.VoterScriptHash == viewModel.SelectedAccount.ScriptHash)));
         }
 
         [Fact]
@@ -343,19 +331,16 @@ address2";
             // Arrange
             var dialogManagerMock = this.AutoMockContainer.GetMock<IDialogManager>();
 
-            var selectedAccount = new AccountItemBuilder()
-                .StandardAccount()
-                .WithHash("d3cce84d0800172d09c88ccad61130611bd047a4")
-                .Build();
-
             var viewModel = this.AutoMockContainer.Create<AccountsViewModel>();
-            viewModel.SelectedAccount = selectedAccount;
+            var accountAddedMessageHandler = viewModel as IMessageHandler<AccountAddedMessage>;
 
             // Act
+            accountAddedMessageHandler.HandleMessage(GetTestAccountAddedMessage());
+            viewModel.SelectedAccount = viewModel.Accounts.First();
             viewModel.ShowVotingDialogCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog(new VotingLoadParameters(selectedAccount.ScriptHash)), Times.Never);
+            dialogManagerMock.Verify(x => x.ShowDialog(new VotingLoadParameters(viewModel.SelectedAccount.ScriptHash)), Times.Never);
         }
 
         [Fact]
@@ -364,19 +349,16 @@ address2";
             // Arrange
             var dialogManagerMock = this.AutoMockContainer.GetMock<IDialogManager>();
 
-            var selectedAccount = new AccountItemBuilder()
-                .WatchOnlyAccount()
-                .WithHash("d3cce84d0800172d09c88ccad61130611bd047a4")
-                .Build();
-
             var viewModel = this.AutoMockContainer.Create<AccountsViewModel>();
-            viewModel.SelectedAccount = selectedAccount;
+            var accountAddedMessageHandler = viewModel as IMessageHandler<AccountAddedMessage>;
 
             // Act
+            accountAddedMessageHandler.HandleMessage(GetTestAccountAddedMessage(AccountType.WatchOnly));
+            viewModel.SelectedAccount = viewModel.Accounts.First();
             viewModel.ShowVotingDialogCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog<VotingLoadParameters>(null), Times.Never);
+            dialogManagerMock.Verify(x => x.ShowDialog(new VotingLoadParameters(viewModel.SelectedAccount.ScriptHash)), Times.Never);
         }
 
         [Fact]
@@ -385,48 +367,35 @@ address2";
             // Arrange
             var dialogManagerMock = this.AutoMockContainer.GetMock<IDialogManager>();
 
-            var selectedAccount = new AccountItemBuilder()
-                .WatchOnlyAccount()
-                .WithHash("d3cce84d0800172d09c88ccad61130611bd047a4")
-                .AccountWithNeoBalance()
-                .Build();
-
             var viewModel = this.AutoMockContainer.Create<AccountsViewModel>();
-            viewModel.SelectedAccount = selectedAccount;
+            var accountAddedMessageHandler = viewModel as IMessageHandler<AccountAddedMessage>;
 
             // Act
+            accountAddedMessageHandler.HandleMessage(GetTestAccountAddedMessage(AccountType.WatchOnly));
+            viewModel.SelectedAccount = viewModel.Accounts.First();
+            viewModel.SelectedAccount.Neo = 1;
             viewModel.ShowVotingDialogCommand.Execute(null);
 
             // Assert
-            dialogManagerMock.Verify(x => x.ShowDialog(new VotingLoadParameters(selectedAccount.ScriptHash)), Times.Never);
+            dialogManagerMock.Verify(x => x.ShowDialog(new VotingLoadParameters(viewModel.SelectedAccount.ScriptHash)), Times.Never);
         }
 
         [Fact]
         public void CopyAddressToClipboardCommand_TextSetInClipboardManager()
         {
             // Arrange
-            var walletAddress = "walletAddress";
-
             var clipboardManagetMock = this.AutoMockContainer.GetMock<IClipboardManager>();
 
-            var selectedAccount = new AccountItemBuilder()
-                .StandardAccount()
-                .WithHash("d3cce84d0800172d09c88ccad61130611bd047a4")
-                .Build();
-
-            var walletControllerMock = this.AutoMockContainer.GetMock<IWalletController>();
-            walletControllerMock
-                .Setup(x => x.ScriptHashToAddress(selectedAccount.ScriptHash))
-                .Returns(walletAddress);
-
             var viewModel = this.AutoMockContainer.Create<AccountsViewModel>();
-            viewModel.SelectedAccount = selectedAccount;
+            var accountAddedMessageHandler = viewModel as IMessageHandler<AccountAddedMessage>;
 
             // Act
+            accountAddedMessageHandler.HandleMessage(GetTestAccountAddedMessage());
+            viewModel.SelectedAccount = viewModel.Accounts.First();
             viewModel.CopyAddressToClipboardCommand.Execute(null);
 
             // Assert
-            clipboardManagetMock.Verify(x => x.SetText(walletAddress));
+            clipboardManagetMock.Verify(x => x.SetText(TestAddress));
         }
 
         [Fact]
@@ -443,26 +412,21 @@ address2";
                         MessageDialogResult.No))
                 .Returns(MessageDialogResult.Yes);
 
-            var selectedAccount = new AccountItemBuilder()
-                .StandardAccount()
-                .WithHash("d3cce84d0800172d09c88ccad61130611bd047a4")
-                .Build();
-
             var walletControllerMock = this.AutoMockContainer.GetMock<IWalletController>();
             walletControllerMock
-                .Setup(x => x.DeleteAccount(selectedAccount))
+                .Setup(x => x.DeleteAccount(TestScriptHash))
                 .Returns(true);
 
             var viewModel = this.AutoMockContainer.Create<AccountsViewModel>();
             var accountAddedMessageHandler = viewModel as IMessageHandler<AccountAddedMessage>;
-            viewModel.SelectedAccount = selectedAccount;
 
             // Act
-            accountAddedMessageHandler.HandleMessage(new AccountAddedMessage(selectedAccount));
+            accountAddedMessageHandler.HandleMessage(GetTestAccountAddedMessage());
+            viewModel.SelectedAccount = viewModel.Accounts.First();
             viewModel.DeleteAccountCommand.Execute(null);
 
             // Assert
-            walletControllerMock.Verify(x => x.DeleteAccount(selectedAccount));
+            walletControllerMock.Verify(x => x.DeleteAccount(viewModel.SelectedAccount.ScriptHash));
             Assert.Empty(viewModel.Accounts);
         }
 
@@ -480,24 +444,18 @@ address2";
                         MessageDialogResult.No))
                 .Returns(MessageDialogResult.No);
 
-            var selectedAccount = new AccountItemBuilder()
-                .StandardAccount()
-                .WithHash("d3cce84d0800172d09c88ccad61130611bd047a4")
-                .Build();
-
             var walletControllerMock = this.AutoMockContainer.GetMock<IWalletController>();
 
             var viewModel = this.AutoMockContainer.Create<AccountsViewModel>();
             var accountAddedMessageHandler = viewModel as IMessageHandler<AccountAddedMessage>;
-            viewModel.SelectedAccount = selectedAccount;
 
             // Act
-            accountAddedMessageHandler.HandleMessage(new AccountAddedMessage(selectedAccount));
+            accountAddedMessageHandler.HandleMessage(GetTestAccountAddedMessage());
+            viewModel.SelectedAccount = viewModel.Accounts.First();
             viewModel.DeleteAccountCommand.Execute(null);
 
             // Assert
-            walletControllerMock.Verify(x => x.DeleteAccount(selectedAccount), Times.Never);
-            walletControllerMock.Verify(x => x.DeleteAccount(selectedAccount), Times.Never);
+            walletControllerMock.Verify(x => x.DeleteAccount(viewModel.SelectedAccount.ScriptHash), Times.Never);
             Assert.Single(viewModel.Accounts);
         }
 
@@ -505,9 +463,8 @@ address2";
         public void ViewSelectedAccountDetailsCommand_MessageResultDialogNo_AccountIsDeleted()
         {
             // Arrange
-            var walletAddress = "walletAddress";
             var urlFormat = @"x:\test\{0}";
-            var expectedUrl = string.Format(urlFormat, walletAddress);
+            var expectedUrl = string.Format(urlFormat, TestAddress);
 
             var settingsManagerMock = this.AutoMockContainer.GetMock<ISettingsManager>();
             settingsManagerMock
@@ -516,24 +473,21 @@ address2";
 
             var processManagerMock = this.AutoMockContainer.GetMock<IProcessManager>();
 
-            var selectedAccount = new AccountItemBuilder()
-                .StandardAccount()
-                .WithHash("d3cce84d0800172d09c88ccad61130611bd047a4")
-                .Build();
-
-            var walletControllerMock = this.AutoMockContainer.GetMock<IWalletController>();
-            walletControllerMock
-                .Setup(x => x.ScriptHashToAddress(selectedAccount.ScriptHash))
-                .Returns(walletAddress);
-
             var viewModel = this.AutoMockContainer.Create<AccountsViewModel>();
-            viewModel.SelectedAccount = selectedAccount;
+            var accountAddedMessageHandler = viewModel as IMessageHandler<AccountAddedMessage>;
 
             // Act
+            accountAddedMessageHandler.HandleMessage(GetTestAccountAddedMessage());
+            viewModel.SelectedAccount = viewModel.Accounts.First();
             viewModel.ViewSelectedAccountDetailsCommand.Execute(null);
 
             // Assert
             processManagerMock.Verify(x => x.OpenInExternalBrowser(expectedUrl));
+        }
+
+        private static AccountAddedMessage GetTestAccountAddedMessage(AccountType accountType = AccountType.Standard)
+        {
+            return new AccountAddedMessage(TestAccountLabel, TestAddress, TestScriptHash, accountType);
         }
     }
 }

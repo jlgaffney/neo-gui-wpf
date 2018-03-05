@@ -96,29 +96,29 @@ namespace Neo.UI.Core.Wallet
 
         AssetStateDto GetAssetState(string assetId);
 
-        bool CanViewCertificate(FirstClassAssetItem assetItem);
+        bool CanViewCertificate(string assetId);
 
-        string ViewCertificate(FirstClassAssetItem assetItem);
+        string ViewCertificate(string assetId);
 
         Fixed8 CalculateBonus();
         
         Fixed8 CalculateUnavailableBonusGas(uint height);
 
-        bool WalletContainsAccount(UInt160 scriptHash);
-
-        /// <summary>
-        /// NEP-5 assets
-        /// </summary>
-        string GetNEP5TokenAvailability(string assetId);
+        bool WalletContainsAccount(string scriptHash);
 
         /// <summary>
         /// First class assets
         /// </summary>
         string GetFirstClassTokenAvailability(string assetId);
 
+        /// <summary>
+        /// NEP-5 assets
+        /// </summary>
+        string GetNEP5TokenAvailability(string scriptHash);
+
         void ImportWatchOnlyAddress(string[] addressesToWatch);
 
-        bool DeleteAccount(AccountItem account);
+        bool DeleteAccount(string accountScriptHash);
 
         Transaction MakeTransaction(Transaction transaction, UInt160 changeAddress = null, Fixed8 fee = default(Fixed8));
         
@@ -130,7 +130,7 @@ namespace Neo.UI.Core.Wallet
 
         bool AddressIsValid(string address);
 
-        void DeleteFirstClassAsset(FirstClassAssetItem assetItem);
+        void DeleteFirstClassAsset(string assetId);
 
         void ClaimUtilityTokenAsset();
 

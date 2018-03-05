@@ -1,7 +1,7 @@
 ﻿using Neo.Cryptography.ECC;
 using Neo.UI.Core.Data;
 
-namespace Neo.UI.Core.Services.Interfaces
+namespace Neo.UI.Core.Internal.Services.Interfaces
 {
     public interface ICertificateQueryService
     {

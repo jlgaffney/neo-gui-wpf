@@ -1,14 +1,24 @@
-﻿using Neo.UI.Core.Data;
+﻿using System;
+using Neo.UI.Core.Data;
 
 namespace Neo.UI.Core.Wallet.Messages
 {
     public class TransactionAddedMessage
     {
-        public TransactionAddedMessage(TransactionItem transaction)
-        {
-            this.Transaction = transaction;
-        }
+        public string TransactionId { get; }
 
-        public TransactionItem Transaction { get; }
+        public DateTime TransactionTime { get; }
+
+        public uint TransactionHeight { get; }
+
+        public string TransactionType { get; }
+
+        public TransactionAddedMessage(string transactionId, DateTime transactionTime, uint transactionHeight, string transactionType)
+        {
+            this.TransactionId = transactionId;
+            this.TransactionTime = transactionTime;
+            this.TransactionHeight = transactionHeight;
+            this.TransactionType = transactionType;
+        }
     }
 }

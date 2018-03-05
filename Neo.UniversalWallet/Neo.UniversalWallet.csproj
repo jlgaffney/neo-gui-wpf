@@ -76,12 +76,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Messages\NavigationMessage.cs" />
-    <Compile Include="ViewModels\DashboardViewModel.cs" />
     <Compile Include="ViewModels\LoadWalletViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
-    <Compile Include="Views\AssetView.xaml.cs">
-      <DependentUpon>AssetView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\DashboardView.xaml.cs">
       <DependentUpon>DashboardView.xaml</DependentUpon>
     </Compile>

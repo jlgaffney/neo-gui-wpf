@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 using Neo.Core;
 using Neo.Network;
 using Neo.UI.Core.Data;
-using Neo.UI.Core.Services.Interfaces;
+using Neo.UI.Core.Internal.Services.Interfaces;
 
-namespace Neo.UI.Core.Services.Implementations
+namespace Neo.UI.Core.Internal.Services.Implementations
 {
     internal class RemoteBlockchainService :
         BaseBlockchainService,
@@ -65,14 +66,9 @@ namespace Neo.UI.Core.Services.Implementations
         {
             throw new NotImplementedException();
         }
+        
 
-
-        public NEP5AssetItem GetTotalNEP5Balance(UInt160 nep5ScriptHash, IEnumerable<UInt160> accountScriptHashes)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IDictionary<UInt160, BigDecimal> GetNEP5Balances(UInt160 nep5ScriptHash, IEnumerable<UInt160> accountScriptHashes)
+        public IDictionary<UInt160, BigInteger> GetNEP5Balances(UInt160 nep5ScriptHash, IEnumerable<UInt160> accountScriptHashes, out byte decimals)
         {
             throw new NotImplementedException();
         }

@@ -1,9 +1,7 @@
 ﻿using System.Collections.ObjectModel;
-using System.Linq;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-
-using Neo.UI.Core.Data;
+using Neo.Gui.ViewModels.Data;
 using Neo.UI.Core.Messaging.Interfaces;
 using Neo.UI.Core.Services.Interfaces;
 using Neo.UI.Core.Wallet.Messages;
@@ -16,7 +14,7 @@ namespace Neo.Gui.ViewModels.Home
         IUnloadable,
         IMessageHandler<CurrentWalletHasChangedMessage>,
         IMessageHandler<TransactionAddedMessage>,
-        IMessageHandler<TransactionConfirmationsUpdatedMessage>
+        IMessageHandler<WalletStatusMessage>
     {
         #region Private Fields 
         private readonly IMessageSubscriber messageSubscriber;
@@ -24,13 +22,13 @@ namespace Neo.Gui.ViewModels.Home
         private readonly IProcessManager processManager;
         private readonly ISettingsManager settingsManager;
 
-        private TransactionItem selectedTransaction;
+        private UiTransactionSummary selectedTransaction;
         #endregion
 
         #region Public Properties 
-        public ObservableCollection<TransactionItem> Transactions { get; }
+        public ObservableCollection<UiTransactionSummary> Transactions { get; }
 
-        public TransactionItem SelectedTransaction
+        public UiTransactionSummary SelectedTransaction
         {
             get => this.selectedTransaction;
             set
@@ -65,7 +63,7 @@ namespace Neo.Gui.ViewModels.Home
             this.processManager = processManager;
             this.settingsManager = settingsManager;
 
-            this.Transactions = new ObservableCollection<TransactionItem>();
+            this.Transactions = new ObservableCollection<UiTransactionSummary>();
         }
         #endregion
 
@@ -89,19 +87,21 @@ namespace Neo.Gui.ViewModels.Home
             this.Transactions.Clear();
         }
 
-        public void HandleMessage(TransactionConfirmationsUpdatedMessage message)
+        public void HandleMessage(WalletStatusMessage message)
         {
-            var blockHeight = message.BlockHeight;
+            var blockHeight = message.BlockchainStatus.Height;
 
-            foreach (var transactionItem in this.Transactions)
+            foreach (var transaction in this.Transactions)
             {
-                transactionItem.Confirmations = blockHeight - transactionItem.Height + 1;
+                transaction.ConfirmationsValue = blockHeight - transaction.Height + 1;
             }
         }
 
         public void HandleMessage(TransactionAddedMessage message)
         {
-            this.Transactions.Insert(0, message.Transaction);
+            var newTransaction = new UiTransactionSummary(message.TransactionId, message.TransactionTime, message.TransactionHeight, message.TransactionType);
+
+            this.Transactions.Insert(0, newTransaction);
         }
         #endregion
 
@@ -110,16 +110,21 @@ namespace Neo.Gui.ViewModels.Home
         {
             if (this.SelectedTransaction == null) return;
 
-            this.clipboardManager.SetText(this.SelectedTransaction.Hash.ToString());
+            this.clipboardManager.SetText(this.SelectedTransaction.Id);
         }
 
         private void ViewSelectedTransactionDetails()
         {
             if (this.SelectedTransaction == null) return;
 
-            if (string.IsNullOrEmpty(this.SelectedTransaction.Hash.ToString())) return;
+            var transactionId = this.SelectedTransaction.Id;
 
-            var url = string.Format(this.settingsManager.TransactionURLFormat, this.SelectedTransaction.Hash.ToString().Substring(2));
+            if (transactionId.StartsWith("0x"))
+            {
+                transactionId = transactionId.Substring(2);
+            }
+
+            var url = string.Format(this.settingsManager.TransactionURLFormat, transactionId);
 
             this.processManager.OpenInExternalBrowser(url);
         }

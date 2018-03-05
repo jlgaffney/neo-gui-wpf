@@ -1,17 +1,11 @@
 ﻿using System;
 using Neo.Core;
-using Neo.UI.Core.Globalization.Resources;
 using Neo.UI.Core.Helpers;
 
-namespace Neo.UI.Core.Data
+namespace Neo.UI.Core.Wallet.Data
 {
-    // TODO [AboimPinto]: Change BindableClass with ObservableObject from MvvmLight
-    public class TransactionItem : BindableClass
+    internal class TransactionItem
     {
-        #region Private Fields 
-        private uint confirmations;
-        #endregion
-
         #region Public Properties 
         public UInt256 Hash { get; }
 
@@ -21,21 +15,7 @@ namespace Neo.UI.Core.Data
 
         public TransactionType Type { get; }
 
-        public uint Confirmations
-        {
-            get => this.confirmations;
-            set
-            {
-                if (this.confirmations == value) return;
-
-                this.confirmations = value;
-
-                this.NotifyPropertyChanged();
-                this.NotifyPropertyChanged("ConfirmationsText");
-            }
-        }
-
-        public string ConfirmationsText => this.Confirmations > 0 ? this.Confirmations.ToString() : Strings.Unconfirmed;
+        public uint Confirmations { get; set; }
         #endregion
 
         #region Constructor 

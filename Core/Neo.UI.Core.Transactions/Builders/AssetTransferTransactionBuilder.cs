@@ -5,7 +5,7 @@ using System.Numerics;
 using System.Text;
 using Neo.Core;
 using Neo.VM;
-using Neo.UI.Core.Services.Interfaces;
+using Neo.UI.Core.Internal.Services.Interfaces;
 using Neo.UI.Core.Transactions.Exceptions;
 using Neo.UI.Core.Transactions.Interfaces;
 using Neo.UI.Core.Transactions.Parameters;
@@ -54,7 +54,7 @@ namespace Neo.UI.Core.Transactions.Builders
                         var nep5ScriptHash = output.AssetId;
 
                         // Get balances of each account
-                        var balanceDictionary = this.blockchainService.GetNEP5Balances(nep5ScriptHash, accountScriptHashes);
+                        var balanceDictionary = this.blockchainService.GetNEP5Balances(nep5ScriptHash, accountScriptHashes, out var decimals);
 
                         if (balanceDictionary == null)
                         {
@@ -66,11 +66,11 @@ namespace Neo.UI.Core.Transactions.Builders
                         var balances = balanceDictionary.Select(keyVal => new
                         {
                             Account = keyVal.Key,
-                            Value = keyVal.Value.Value
+                            Balance = keyVal.Value
                         }).ToArray();
 
                         // Check if total balance is high enough
-                        var sum = balances.Aggregate(BigInteger.Zero, (x, y) => x + y.Value);
+                        var sum = balances.Aggregate(BigInteger.Zero, (x, y) => x + y.Balance);
                         if (sum < output.Value)
                         {
                             throw new InsufficientNEP5BalanceException();
@@ -78,26 +78,26 @@ namespace Neo.UI.Core.Transactions.Builders
 
                         if (sum != output.Value)
                         {
-                            balances = balances.OrderByDescending(p => p.Value).ToArray();
+                            balances = balances.OrderByDescending(p => p.Balance).ToArray();
                             var amount = output.Value;
                             var i = 0;
-                            while (balances[i].Value <= amount)
+                            while (balances[i].Balance <= amount)
                             {
-                                amount -= balances[i++].Value;
+                                amount -= balances[i++].Balance;
                             }
 
                             balances = amount == BigInteger.Zero
                                 ? balances.Take(i).ToArray()
-                                : balances.Take(i).Concat(new[] { balances.Last(p => p.Value >= amount) }).ToArray();
+                                : balances.Take(i).Concat(new[] { balances.Last(p => p.Balance >= amount) }).ToArray();
 
-                            sum = balances.Aggregate(BigInteger.Zero, (x, y) => x + y.Value);
+                            sum = balances.Aggregate(BigInteger.Zero, (x, y) => x + y.Balance);
                         }
 
                         sAttributes.UnionWith(balances.Select(p => p.Account));
 
                         for (int i = 0; i < balances.Length; i++)
                         {
-                            var value = balances[i].Value;
+                            var value = balances[i].Balance;
                             if (i == 0)
                             {
                                 var change = sum - output.Value;

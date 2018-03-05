@@ -8,13 +8,13 @@ using Neo.Core;
 using Neo.SmartContract;
 using Neo.UI.Core.Data;
 using Neo.UI.Core.Data.Enums;
-using Neo.UI.Core.Services.Implementations.Exceptions;
+using Neo.UI.Core.Internal.Services.Interfaces;
 using Neo.UI.Core.Services.Interfaces;
 using Neo.Wallets;
 using ECCurve = Neo.Cryptography.ECC.ECCurve;
 using ECPoint = Neo.Cryptography.ECC.ECPoint;
 
-namespace Neo.UI.Core.Services.Implementations
+namespace Neo.UI.Core.Internal.Services.Implementations
 {
     internal class CertificateQueryService : ICertificateQueryService
     {
@@ -43,7 +43,8 @@ namespace Neo.UI.Core.Services.Implementations
         {
             if (this.initialized)
             {
-                throw new ObjectAlreadyInitializedException(nameof(ICertificateQueryService));
+                // TODO Add exception message to string resources
+                throw new Exception(nameof(ICertificateQueryService) + " has already been initialized!");
             }
 
             this.certCachePath = certificateCachePath;

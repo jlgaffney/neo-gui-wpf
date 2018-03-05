@@ -13,7 +13,7 @@
         <GridView>
             <GridViewColumn Header="{x:Static globalization:Strings.Asset}" Width="80" DisplayMemberBinding="{Binding Name}" />
             <GridViewColumn Header="{x:Static globalization:Strings.Type}" Width="120" DisplayMemberBinding="{Binding Type}" />
-            <GridViewColumn Header="{x:Static globalization:Strings.Balance}" Width="160" DisplayMemberBinding="{Binding Value}" />
+            <GridViewColumn Header="{x:Static globalization:Strings.Balance}" Width="160" DisplayMemberBinding="{Binding TotalBalance}" />
             <GridViewColumn Header="{x:Static globalization:Strings.Issuer}" Width="260" DisplayMemberBinding="{Binding Issuer}" />
         </GridView>
     </ListView.View>

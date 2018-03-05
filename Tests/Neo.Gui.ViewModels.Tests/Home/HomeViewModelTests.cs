@@ -87,15 +87,14 @@ namespace Neo.Gui.ViewModels.Tests.Home
 
             // Act
             walletStatusMessageHandler.HandleMessage(new WalletStatusMessage(
-                new WalletStatus(
-                    walletHeight, 
-                    new BlockchainStatus(
-                        blockChainHeight, 
-                        blockChainHeaderHeight, 
-                        nextBlockProgressIsIndeterminate, 
-                        nextBlockProgressFraction,
-                        timeSinceLastBlock,
-                        nodeCount))));
+                walletHeight, 
+                new BlockchainStatus(
+                    blockChainHeight, 
+                    blockChainHeaderHeight, 
+                    nextBlockProgressIsIndeterminate, 
+                    nextBlockProgressFraction,
+                    timeSinceLastBlock,
+                    nodeCount)));
 
             // Assert
             Assert.Equal(expectedHeightStatus, viewModel.HeightStatus);

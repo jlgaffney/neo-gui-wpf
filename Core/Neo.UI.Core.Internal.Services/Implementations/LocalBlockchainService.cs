@@ -10,11 +10,10 @@ using Neo.Network;
 using Neo.SmartContract;
 using Neo.UI.Core.Data;
 using Neo.UI.Core.Helpers;
-using Neo.UI.Core.Services.Implementations.Exceptions;
-using Neo.UI.Core.Services.Interfaces;
+using Neo.UI.Core.Internal.Services.Interfaces;
 using Neo.VM;
 
-namespace Neo.UI.Core.Services.Implementations
+namespace Neo.UI.Core.Internal.Services.Implementations
 {
     internal class LocalBlockchainService :
         BaseBlockchainService,
@@ -60,7 +59,8 @@ namespace Neo.UI.Core.Services.Implementations
 
             if (this.initialized)
             {
-                throw new ObjectAlreadyInitializedException(nameof(IBlockchainService));
+                // TODO Add exception message to string resources
+                throw new Exception(nameof(IBlockchainService) + " has already been initialized!");
             }
 
             try
@@ -178,49 +178,11 @@ namespace Neo.UI.Core.Services.Implementations
         {
             return Blockchain.CalculateBonus(inputs, heightEnd);
         }
-
-
-        public NEP5AssetItem GetTotalNEP5Balance(UInt160 nep5ScriptHash, IEnumerable<UInt160> accountScriptHashes)
+        
+        public IDictionary<UInt160, BigInteger> GetNEP5Balances(UInt160 nep5ScriptHash, IEnumerable<UInt160> accountScriptHashes, out byte decimals)
         {
-            byte[] script;
-            using (var builder = new ScriptBuilder())
-            {
-                foreach (var accountScriptHash in accountScriptHashes)
-                {
-                    builder.EmitAppCall(nep5ScriptHash, "balanceOf", accountScriptHash);
-                }
+            decimals = 0;
 
-                builder.Emit(OpCode.DEPTH, OpCode.PACK);
-
-                builder.EmitAppCall(nep5ScriptHash, "decimals");
-                builder.EmitAppCall(nep5ScriptHash, "name");
-
-                script = builder.ToArray();
-            }
-
-            var engine = ApplicationEngine.Run(script);
-            if (engine.State.HasFlag(VMState.FAULT)) return null;
-
-            var name = engine.EvaluationStack.Pop().GetString();
-            var decimals = (byte)engine.EvaluationStack.Pop().GetBigInteger();
-            var amount = engine.EvaluationStack.Pop().GetArray().Aggregate(BigInteger.Zero, (x, y) => x + y.GetBigInteger());
-
-            var balance = new BigDecimal();
-
-            if (amount != 0)
-            {
-                balance = new BigDecimal(amount, decimals);
-            }
-
-            // TODO Set issuer
-            return new NEP5AssetItem(nep5ScriptHash.ToString(), balance)
-            {
-                Name = name
-            };
-        }
-
-        public IDictionary<UInt160, BigDecimal> GetNEP5Balances(UInt160 nep5ScriptHash, IEnumerable<UInt160> accountScriptHashes)
-        {
             var acccountScriptHashArray = accountScriptHashes.ToArray();
 
             byte[] script;
@@ -241,12 +203,12 @@ namespace Neo.UI.Core.Services.Implementations
             var engine = ApplicationEngine.Run(script);
             if (engine.State.HasFlag(VMState.FAULT)) return null;
 
-            var decimals = (byte)engine.EvaluationStack.Pop().GetBigInteger();
+            decimals = (byte)engine.EvaluationStack.Pop().GetBigInteger();
 
             var balances = engine.EvaluationStack.Pop().GetArray().Reverse().Zip(acccountScriptHashArray, (i, a) => new
             {
                 Account = a,
-                Value = new BigDecimal(i.GetBigInteger(), decimals)
+                Value = i.GetBigInteger()
             }).ToDictionary(balance => balance.Account, balance => balance.Value);
 
             return balances;

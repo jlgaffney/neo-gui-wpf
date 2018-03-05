@@ -1,14 +1,23 @@
-﻿using Neo.UI.Core.Data;
+﻿using Neo.UI.Core.Data.Enums;
 
 namespace Neo.UI.Core.Wallet.Messages
 {
     public class AccountAddedMessage
     {
-        public AccountItem Account { get; }
+        public string AccountLabel { get; }
 
-        public AccountAddedMessage(AccountItem account)
+        public string AccountAddress { get; }
+
+        public string AccountScriptHash { get; }
+
+        public AccountType AccountType { get; }
+
+        public AccountAddedMessage(string label, string address, string scriptHash, AccountType type)
         {
-            this.Account = account;
+            this.AccountLabel = label;
+            this.AccountAddress = address;
+            this.AccountScriptHash = scriptHash;
+            this.AccountType = type;
         }
     }
 }

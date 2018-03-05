@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Neo.Core;
 using Neo.Gui.TestHelpers;
 using Neo.Gui.ViewModels.Home;
@@ -11,6 +12,8 @@ namespace Neo.Gui.ViewModels.Tests.Home
 {
     public class TransactionsViewModelTests : TestBase
     {
+        private const string TestTransactionId = "0x83ce6a47e8b38a925d421ddaec7c0e6f5b165edf63175b7cc94ef7dfe7c569fb";
+
         [Fact]
         public void Ctr_CreateValidHomeViewModel()
         {
@@ -57,12 +60,9 @@ namespace Neo.Gui.ViewModels.Tests.Home
             var viewModel = this.AutoMockContainer.Create<TransactionsViewModel>();
             var transactionAddedMessageHandler = viewModel as IMessageHandler<TransactionAddedMessage>;
 
-            var hash = UInt256.Parse("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF");
-            var transaction = new TransactionItem(hash, TransactionType.ContractTransaction, uint.MinValue, DateTime.Now);
-
             // Act
             var transactionsCount = viewModel.Transactions.Count;
-            transactionAddedMessageHandler.HandleMessage(new TransactionAddedMessage(transaction));
+            transactionAddedMessageHandler.HandleMessage(GetTestTransactionAddedMessage());
 
             // Assert
             Assert.Equal(0, transactionsCount);
@@ -75,20 +75,15 @@ namespace Neo.Gui.ViewModels.Tests.Home
             // Arrange
             var viewModel = this.AutoMockContainer.Create<TransactionsViewModel>();
             var transactionAddedMessageHandler = viewModel as IMessageHandler<TransactionAddedMessage>;
-            var transactionConfirmationsUpdatedMessageHandler = viewModel as IMessageHandler<TransactionConfirmationsUpdatedMessage>;
-
-            var hash = UInt256.Parse("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF");
-            var transaction = new TransactionItem(hash, TransactionType.ContractTransaction, uint.MinValue, DateTime.Now);
+            var walletStatusMessageHandler = viewModel as IMessageHandler<WalletStatusMessage>;
 
             // Act
-            transactionAddedMessageHandler.HandleMessage(new TransactionAddedMessage(transaction));
-
-            var transactionConfirmations = viewModel.Transactions[0].Confirmations;
-
-            transactionConfirmationsUpdatedMessageHandler.HandleMessage(new TransactionConfirmationsUpdatedMessage(10));
+            transactionAddedMessageHandler.HandleMessage(GetTestTransactionAddedMessage());
+            var transactionConfirmations = viewModel.Transactions.Single().ConfirmationsValue;
+            walletStatusMessageHandler.HandleMessage(new WalletStatusMessage(uint.MinValue + 10, new BlockchainStatus(uint.MinValue + 20, uint.MinValue + 30, true, 0.5, new TimeSpan(0, 0, 10), 5)));
 
             // Assert
-            Assert.True(transactionConfirmations < viewModel.Transactions[0].Confirmations);
+            Assert.True(transactionConfirmations < viewModel.Transactions.Single().ConfirmationsValue);
         }
 
         [Fact]
@@ -99,17 +94,19 @@ namespace Neo.Gui.ViewModels.Tests.Home
             var transactionAddedMessageHandler = viewModel as IMessageHandler<TransactionAddedMessage>;
             var currentWalletHasChangedMessageHandler = viewModel as IMessageHandler<CurrentWalletHasChangedMessage>;
 
-            var hash = UInt256.Parse("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF");
-            var transaction = new TransactionItem(hash, TransactionType.ContractTransaction, uint.MinValue, DateTime.Now);
-            
             // Act
-            transactionAddedMessageHandler.HandleMessage(new TransactionAddedMessage(transaction));
+            transactionAddedMessageHandler.HandleMessage(GetTestTransactionAddedMessage());
             var afterAddTransactionsCount = viewModel.Transactions.Count;
             currentWalletHasChangedMessageHandler.HandleMessage(new CurrentWalletHasChangedMessage());
 
             // Assert
             Assert.Equal(1, afterAddTransactionsCount);
             Assert.Empty(viewModel.Transactions);
+        }
+
+        private static TransactionAddedMessage GetTestTransactionAddedMessage(TransactionType transactionType = TransactionType.ContractTransaction)
+        {
+            return new TransactionAddedMessage(TestTransactionId, DateTime.UtcNow, uint.MinValue, transactionType.ToString());
         }
     }
 }

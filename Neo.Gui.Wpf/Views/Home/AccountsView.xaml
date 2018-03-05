@@ -15,8 +15,8 @@
         <GridView>
             <GridViewColumn Header="{x:Static globalization:Strings.Address}" Width="260" DisplayMemberBinding="{Binding Address}" />
             <GridViewColumn Header="{x:Static globalization:Strings.Type}" Width="Auto" DisplayMemberBinding="{Binding Type}" />
-            <GridViewColumn Header="NEO" Width="Auto" DisplayMemberBinding="{Binding Neo}" />
-            <GridViewColumn Header="GAS" Width="80" DisplayMemberBinding="{Binding Gas}" />
+            <GridViewColumn Header="NEO" Width="Auto" DisplayMemberBinding="{Binding BalanceSummary.Neo}" />
+            <GridViewColumn Header="GAS" Width="80" DisplayMemberBinding="{Binding BalanceSummary.Gas}" />
         </GridView>
     </ListView.View>
 
