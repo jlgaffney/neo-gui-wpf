@@ -7,202 +7,161 @@
 
     <Grid Background="#212146">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <!-- Address area -->
-        <Grid Grid.Row="0" Margin="30 50 30 0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-
-            <StackPanel Grid.Column="0" Orientation="Horizontal">
-                <TextBlock 
-                    Text="Address"
-                    Foreground="White"
-                    FontFamily="/Fonts/Orbitron-Black.ttf#Orbitron"
-                    FontSize="30"
-                    Margin="0 0 10 0">
-
-                    <TextBlock.Effect>
-                        <DropShadowEffect
-                            ShadowDepth="4"
-                            Direction="330"
-                            Color="Black"
-                            Opacity="0.5"
-                            BlurRadius="4"/>
-                    </TextBlock.Effect>
-                </TextBlock>
-
-                <TextBlock 
-                    Text="AK2nJJpJr6o664CWJKi1QRXjqeic2zRp8y"
-                    Foreground="Aqua"
-                    FontFamily="/Fonts/Orbitron-Black.ttf#Orbitron"
-                    FontSize="30"
-                    Margin="0 0 10 0">
-
-                    <TextBlock.Effect>
-                        <DropShadowEffect
-                            ShadowDepth="4"
-                            Direction="330"
-                            Color="Black"
-                            Opacity="0.5"
-                            BlurRadius="4"/>
-                    </TextBlock.Effect>
-                </TextBlock>
-
-                <Button Content="COPY" FontFamily="/Fonts/Orbitron-Black.ttf#Orbitron" />
-            </StackPanel>
-        </Grid>
-        
-        <!-- Token Area -->
-        <Grid Grid.Row="1">
-            <Grid Grid.Row="0">
+        <materialDesign:Card Padding="16" Margin="8" Background="#212146">
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition />
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <materialDesign:Card Grid.Column="0" Padding="16" Margin="8" Background="#212146">
-                    <StackPanel Orientation="Vertical">
-                        <Button Command="{Binding AssetSelectionCommand}" CommandParameter="NEO">
-                            <Button.Template>
-                                <ControlTemplate>
-                                    <TextBlock 
-                                        Text="NEO"
-                                        HorizontalAlignment="Center"
-                                        Foreground="White"
-                                        FontFamily="/Fonts/Orbitron-Black.ttf#Orbitron"
-                                        FontSize="30"
-                                        Margin="10 0 10 0">
+                <Image 
+                    Width="100"
+                    Grid.Column="0" 
+                    Source="/Resources/QRCode.png" />
 
-                                        <TextBlock.Effect>
-                                            <DropShadowEffect
-                                                ShadowDepth="4"
-                                                Direction="330"
-                                                Color="Black"
-                                                Opacity="0.5"
-                                                BlurRadius="4"/>
-                                        </TextBlock.Effect>
-                                    </TextBlock>
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
+                <Grid Grid.Column="2" >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
 
-                        <Rectangle Height="5" Fill="OrangeRed" Margin="0 10 0 10 " />
+                    <TextBlock 
+                        Grid.Row="0" 
+                        Text="Address"
+                        Foreground="White"
+                        FontFamily="/Fonts/Orbitron-Black.ttf#Orbitron"
+                        FontSize="30"
+                        Margin="0 10 0 10"/>
 
+                    <StackPanel Grid.Row="1" Orientation="Horizontal">
                         <TextBlock 
-                            Text="1.000"
-                            HorizontalAlignment="Center"
+                            Text="AK2nJJpJr6o664CWJKi1QRXjqeic2zRp8y"
+                            Foreground="Aqua"
+                            FontFamily="/Fonts/Orbitron-Black.ttf#Orbitron"
+                            FontSize="15"
+                            Margin="0 0 10 0">
+
+                            <TextBlock.Effect>
+                                <DropShadowEffect
+                                    ShadowDepth="4"
+                                    Direction="330"
+                                    Color="Black"
+                                    Opacity="0.5"
+                                    BlurRadius="4"/>
+                            </TextBlock.Effect>
+                        </TextBlock>
+
+                        <Button 
+                            Style="{StaticResource CopyIcon}" 
+                            Foreground="White"
+                            Width="16"
+                            Height="16"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2" Orientation="Horizontal">
+                        <TextBlock 
+                            Text="Balance" 
                             Foreground="White"
                             FontFamily="/Fonts/Orbitron-Black.ttf#Orbitron"
-                            FontSize="30"
-                            Margin="10 0 10 10">
-
-                            <TextBlock.Effect>
-                                <DropShadowEffect
-                                    ShadowDepth="4"
-                                    Direction="330"
-                                    Color="Black"
-                                    Opacity="0.5"
-                                    BlurRadius="4"/>
-                            </TextBlock.Effect>
-                        </TextBlock>
-
+                            FontSize="30"/>
                         <TextBlock 
-                                Text="($9.999.999)"
-                                HorizontalAlignment="Center"
-                                Foreground="White"
-                                FontFamily="/Fonts/Orbitron-Black.ttf#Orbitron"
-                                FontSize="20" 
-                                Margin="10 0 10 0">
-
-                            <TextBlock.Effect>
-                                <DropShadowEffect
-                                    ShadowDepth="4"
-                                    Direction="330"
-                                    Color="Black"
-                                    Opacity="0.5"
-                                    BlurRadius="4"/>
-                            </TextBlock.Effect>
-                        </TextBlock>
+                            Text="1.000"
+                            FontFamily="/Fonts/Orbitron-Black.ttf#Orbitron"
+                            FontSize="30"
+                            Foreground="OrangeRed"
+                            Margin="10 0 0 0"/>
+                        <TextBlock 
+                            Text="NEO"
+                            FontFamily="/Fonts/Orbitron-Black.ttf#Orbitron"
+                            FontSize="30"
+                            Foreground="OrangeRed"
+                            Margin="10 0 0 0"/>
                     </StackPanel>
-                </materialDesign:Card>
+                </Grid>
 
-                <materialDesign:Card Grid.Column="1" Padding="16" Margin="8" Background="#212146" VerticalAlignment="Stretch">
-                    <Grid VerticalAlignment="Stretch">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-                        
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
+                <Grid Grid.Column="4" VerticalAlignment="Stretch" HorizontalAlignment="Right">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
 
-                        <StackPanel Grid.Column="0">
-                            <TextBlock 
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock 
+                                Margin="0 10 0 10"
                                 Foreground="White"
                                 FontFamily="/Fonts/Orbitron-Black.ttf#Orbitron"
                                 FontSize="30"
                                 Text="Destination Address"  />
-                            <TextBox 
+                        <TextBox 
                                 Foreground="White"
                                 FontFamily="/Fonts/Orbitron-Black.ttf#Orbitron"
                                 FontSize="15" 
                                 materialDesign:HintAssist.Hint="Enter destination address" />
-                        </StackPanel>
+                    </StackPanel>
 
-                        <StackPanel Grid.Column="1" Margin="10 0 10 0">
-                            <TextBlock 
+                    <StackPanel Grid.Column="1" Margin="10 0 10 0">
+                        <TextBlock 
+                                Margin="0 10 0 10"
                                 Foreground="White"
                                 FontFamily="/Fonts/Orbitron-Black.ttf#Orbitron"
                                 FontSize="30"
                                 Text="Asset" 
                                 HorizontalAlignment="Center"/>
-                            <TextBlock
+                        <TextBlock
                                 Foreground="White"
                                 FontFamily="/Fonts/Orbitron-Black.ttf#Orbitron"
                                 FontSize="15" 
                                 Text="NEO" 
                                 HorizontalAlignment="Center"/>
-                        </StackPanel>
+                    </StackPanel>
 
-                        <StackPanel Grid.Row="0" Grid.Column="2">
-                            <TextBlock 
+                    <StackPanel Grid.Row="0" Grid.Column="2">
+                        <TextBlock 
+                                Margin="0 10 0 10"
                                 Foreground="White"
                                 FontFamily="/Fonts/Orbitron-Black.ttf#Orbitron"
                                 FontSize="30"
                                 Text="Quantity" 
                                 HorizontalAlignment="Center"/>
-                            <TextBox 
+                        <TextBox 
                                 Foreground="White"
                                 FontFamily="/Fonts/Orbitron-Black.ttf#Orbitron"
                                 FontSize="15" 
                                 materialDesign:HintAssist.Hint="Enter asset quantity" 
                                 HorizontalAlignment="Center" />
-                        </StackPanel>
+                    </StackPanel>
 
-                        <Button 
+                    <Button 
                             Grid.Row="1" 
                             Grid.ColumnSpan="3"
-                            HorizontalAlignment="Center" 
+                            HorizontalAlignment="Right" 
                             VerticalAlignment="Bottom"
                             Content="SEND" 
                             FontFamily="/Fonts/Orbitron-Black.ttf#Orbitron"
-                            FontSize="30"
-                            Height="48"/>
-                    </Grid>
-                </materialDesign:Card>
+                            FontSize="20"
+                            Height="30"/>
+                </Grid>
             </Grid>
-        </Grid>
-        
+        </materialDesign:Card>
+
         <!-- Asset latest Transactions -->
-        <Grid Grid.Row="2" Margin="30 50 30 20">
+        <Grid Grid.Row="1" Margin="30 50 30 20">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
