@@ -89,7 +89,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="MarkupExtensions\DataContextBindingExtension.cs" />
-    <Compile Include="Messages\NavigationMessage.cs" />
     <Compile Include="ViewsRegistrationModule.cs" />
     <Compile Include="Views\AssetView.xaml.cs">
       <DependentUpon>AssetView.xaml</DependentUpon>
