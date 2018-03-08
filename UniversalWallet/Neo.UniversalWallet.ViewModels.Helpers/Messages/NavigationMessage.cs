@@ -1,4 +1,4 @@
-﻿namespace Neo.UniversalWallet.Messages
+﻿namespace Neo.UniversalWallet.ViewModels.Helpers.Messages
 {
     public class NavigationMessage
     {

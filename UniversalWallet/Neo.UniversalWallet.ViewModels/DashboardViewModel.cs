@@ -2,26 +2,23 @@
 using System.Linq;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using Neo.UniversalWallet.Messages;
+using Neo.UniversalWallet.ViewModels.Helpers.Messages;
 
 namespace Neo.UniversalWallet.ViewModels
 {
     public class DashboardViewModel : ViewModelBase
     {
-        private string selectedAsset;
+        private string _selectedAsset;
 
         #region Public Properties 
-        public ObservableCollection<string> Assets { get; private set; }
+        public ObservableCollection<string> Assets { get; }
 
         public string SelectedAsset
         {
-            get
-            {
-                return this.selectedAsset;
-            }
+            get => this._selectedAsset;
             set
             {
-                this.selectedAsset = value;
+                this._selectedAsset = value;
                 this.RaisePropertyChanged();
             }
         }
