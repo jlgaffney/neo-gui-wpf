@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
-using Neo.UniversalWallet.ViewModels;
+using Neo.UniversalWallet.WPF.ViewModels;
 
-namespace Neo.UniversalWallet.Views
+namespace Neo.UniversalWallet.WPF.Views
 {
     /// <summary>
     /// Interaction logic for DashboardView.xaml

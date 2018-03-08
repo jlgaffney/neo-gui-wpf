@@ -1,7 +1,7 @@
-﻿using Neo.UniversalWallet.ViewModels;
-using System.Windows;
+﻿using System.Windows;
+using Neo.UniversalWallet.WPF.ViewModels;
 
-namespace Neo.UniversalWallet
+namespace Neo.UniversalWallet.WPF
 {
     public partial class MainWindow : Window
     {

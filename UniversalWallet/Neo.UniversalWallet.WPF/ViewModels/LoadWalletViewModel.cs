@@ -1,12 +1,10 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
-
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using Neo.UniversalWallet.WPF.Messages;
 
-using Neo.UniversalWallet.Messages;
-
-namespace Neo.UniversalWallet.ViewModels
+namespace Neo.UniversalWallet.WPF.ViewModels
 {
     public class LoadWalletViewModel : ViewModelBase
     {

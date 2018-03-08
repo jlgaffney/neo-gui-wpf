@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace Neo.UniversalWallet.Views
+namespace Neo.UniversalWallet.WPF.Views
 {
     public partial class AssetView : Page
     {

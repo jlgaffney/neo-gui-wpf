@@ -1,8 +1,9 @@
 ﻿using GalaSoft.MvvmLight;
-using Neo.UniversalWallet.Messages;
-using Neo.UniversalWallet.Views;
+using Neo.UniversalWallet.WPF.Messages;
+using Neo.UniversalWallet.WPF.Views;
+using AssetView = Neo.UniversalWallet.WPF.Views.AssetView;
 
-namespace Neo.UniversalWallet.ViewModels
+namespace Neo.UniversalWallet.WPF.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {

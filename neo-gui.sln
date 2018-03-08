@@ -5,8 +5,6 @@ VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo.Gui.Wpf", "Neo.Gui.Wpf\Neo.Gui.Wpf.csproj", "{CFC243F0-F4E3-4754-8E21-8BA17E1C1788}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo.UniversalWallet", "Neo.UniversalWallet\Neo.UniversalWallet.csproj", "{1D2B0762-C480-47E1-A3AA-56EA3C00405F}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo.Gui.ViewModels", "Neo.Gui.ViewModels\Neo.Gui.ViewModels.csproj", "{6B4C96B5-9B1A-45A4-BB30-827768EDE82C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo.Gui.Dialogs", "Neo.Gui.Dialogs\Neo.Gui.Dialogs.csproj", "{595B7C9E-5DF5-47E3-B953-ABD422897A85}"
@@ -43,6 +41,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo.UI.Core.Wallet", "Core\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo.UI.Core.Internal.Services", "Core\Neo.UI.Core.Internal.Services\Neo.UI.Core.Internal.Services.csproj", "{D5459DB5-3EA2-42DC-908A-E2E8D4AE6F93}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UniversalWallet", "UniversalWallet", "{CA69FA79-2B87-4FB7-B8A7-5036518C41E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo.UniversalWallet.WPF", "UniversalWallet\Neo.UniversalWallet.WPF\Neo.UniversalWallet.WPF.csproj", "{1D2B0762-C480-47E1-A3AA-56EA3C00405F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,16 +64,6 @@ Global
 		{CFC243F0-F4E3-4754-8E21-8BA17E1C1788}.DebugPrivateNet|Any CPU.Build.0 = DebugPrivateNet|Any CPU
 		{CFC243F0-F4E3-4754-8E21-8BA17E1C1788}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CFC243F0-F4E3-4754-8E21-8BA17E1C1788}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1D2B0762-C480-47E1-A3AA-56EA3C00405F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1D2B0762-C480-47E1-A3AA-56EA3C00405F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1D2B0762-C480-47E1-A3AA-56EA3C00405F}.DebugCoZTestNet|Any CPU.ActiveCfg = Debug|Any CPU
-		{1D2B0762-C480-47E1-A3AA-56EA3C00405F}.DebugCoZTestNet|Any CPU.Build.0 = Debug|Any CPU
-		{1D2B0762-C480-47E1-A3AA-56EA3C00405F}.DebugNeoTestNet|Any CPU.ActiveCfg = Debug|Any CPU
-		{1D2B0762-C480-47E1-A3AA-56EA3C00405F}.DebugNeoTestNet|Any CPU.Build.0 = Debug|Any CPU
-		{1D2B0762-C480-47E1-A3AA-56EA3C00405F}.DebugPrivateNet|Any CPU.ActiveCfg = Debug|Any CPU
-		{1D2B0762-C480-47E1-A3AA-56EA3C00405F}.DebugPrivateNet|Any CPU.Build.0 = Debug|Any CPU
-		{1D2B0762-C480-47E1-A3AA-56EA3C00405F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1D2B0762-C480-47E1-A3AA-56EA3C00405F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6B4C96B5-9B1A-45A4-BB30-827768EDE82C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6B4C96B5-9B1A-45A4-BB30-827768EDE82C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B4C96B5-9B1A-45A4-BB30-827768EDE82C}.DebugCoZTestNet|Any CPU.ActiveCfg = DebugCoZTestNet|Any CPU
@@ -232,6 +224,16 @@ Global
 		{D5459DB5-3EA2-42DC-908A-E2E8D4AE6F93}.DebugPrivateNet|Any CPU.Build.0 = Debug|Any CPU
 		{D5459DB5-3EA2-42DC-908A-E2E8D4AE6F93}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D5459DB5-3EA2-42DC-908A-E2E8D4AE6F93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D2B0762-C480-47E1-A3AA-56EA3C00405F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D2B0762-C480-47E1-A3AA-56EA3C00405F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D2B0762-C480-47E1-A3AA-56EA3C00405F}.DebugCoZTestNet|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D2B0762-C480-47E1-A3AA-56EA3C00405F}.DebugCoZTestNet|Any CPU.Build.0 = Debug|Any CPU
+		{1D2B0762-C480-47E1-A3AA-56EA3C00405F}.DebugNeoTestNet|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D2B0762-C480-47E1-A3AA-56EA3C00405F}.DebugNeoTestNet|Any CPU.Build.0 = Debug|Any CPU
+		{1D2B0762-C480-47E1-A3AA-56EA3C00405F}.DebugPrivateNet|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D2B0762-C480-47E1-A3AA-56EA3C00405F}.DebugPrivateNet|Any CPU.Build.0 = Debug|Any CPU
+		{1D2B0762-C480-47E1-A3AA-56EA3C00405F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D2B0762-C480-47E1-A3AA-56EA3C00405F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -251,6 +253,7 @@ Global
 		{770047AB-B5E7-42AE-BACB-8585D382E3C9} = {1BCCE14C-0A01-4DCE-A41E-743D32866CB0}
 		{93DB834C-CF13-4D26-ADEE-3204BF44C7CE} = {1BCCE14C-0A01-4DCE-A41E-743D32866CB0}
 		{D5459DB5-3EA2-42DC-908A-E2E8D4AE6F93} = {1BCCE14C-0A01-4DCE-A41E-743D32866CB0}
+		{1D2B0762-C480-47E1-A3AA-56EA3C00405F} = {CA69FA79-2B87-4FB7-B8A7-5036518C41E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A50C016C-BC54-4D2B-A8CE-7CFDDB84FCAA}
