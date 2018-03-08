@@ -1,13 +1,11 @@
-﻿using System.Windows.Controls;
-using Neo.UniversalWallet.WPF.ViewModels;
+﻿using Neo.UniversalWallet.ViewModels.Helpers;
 
 namespace Neo.UniversalWallet.WPF.Views
 {
-    public partial class LoadWalletView : Page
+    public partial class LoadWalletView : IView
     {
         public LoadWalletView()
         {
-            this.DataContext = new LoadWalletViewModel();
             InitializeComponent();
         }
     }

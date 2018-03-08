@@ -3,7 +3,11 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-    Title="NEO Universal Wallet - Dashboard">
+    xmlns:markupExtensions="clr-namespace:Neo.UniversalWallet.WPF.MarkupExtensions"
+    xmlns:viewModels="clr-namespace:Neo.UniversalWallet.ViewModels;assembly=Neo.UniversalWallet.ViewModels"
+    DataContext="{markupExtensions:DataContextBinding ViewModel=viewModels:DashboardViewModel}"
+    Title="NEO Universal Wallet - Dashboard"
+    Tag="DashboardView">
 
     <Grid Background="#212146">
         <Grid.RowDefinitions>

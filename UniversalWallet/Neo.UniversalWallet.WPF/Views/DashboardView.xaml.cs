@@ -1,16 +1,11 @@
-﻿using System.Windows.Controls;
-using Neo.UniversalWallet.WPF.ViewModels;
+﻿using Neo.UniversalWallet.ViewModels.Helpers;
 
 namespace Neo.UniversalWallet.WPF.Views
 {
-    /// <summary>
-    /// Interaction logic for DashboardView.xaml
-    /// </summary>
-    public partial class DashboardView : Page
+    public partial class DashboardView : IView
     {
         public DashboardView()
         {
-            this.DataContext = new DashboardViewModel();
             InitializeComponent();
         }
     }

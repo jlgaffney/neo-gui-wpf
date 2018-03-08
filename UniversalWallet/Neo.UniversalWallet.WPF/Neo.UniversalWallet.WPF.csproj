@@ -88,11 +88,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="MarkupExtensions\DataContextBindingExtension.cs" />
     <Compile Include="Messages\NavigationMessage.cs" />
-    <Compile Include="ViewModels\DashboardViewModel.cs" />
-    <Compile Include="ViewModels\LoadWalletViewModel.cs" />
-    <Compile Include="ViewModels\MainWindowViewModel.cs" />
-    <Compile Include="Views\AssetView.cs" />
+    <Compile Include="ViewsRegistrationModule.cs" />
+    <Compile Include="Views\AssetView.xaml.cs">
+      <DependentUpon>AssetView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\DashboardView.xaml.cs">
       <DependentUpon>DashboardView.xaml</DependentUpon>
     </Compile>
@@ -165,6 +166,16 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\QRCode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Neo.UniversalWallet.ViewModels.Helpers\Neo.UniversalWallet.ViewModels.Helpers.csproj">
+      <Project>{36638ae2-c551-4e2e-8ba5-001bf7eab32e}</Project>
+      <Name>Neo.UniversalWallet.ViewModels.Helpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Neo.UniversalWallet.ViewModels\Neo.UniversalWallet.ViewModels.csproj">
+      <Project>{d3578925-5768-43f6-94e0-d68d876adeb1}</Project>
+      <Name>Neo.UniversalWallet.ViewModels</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
