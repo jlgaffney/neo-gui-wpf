@@ -10,10 +10,7 @@ namespace Neo.UniversalWallet.ViewModels
 
         public object PageContent
         {
-            get
-            {
-                return this._pageContent;
-            }
+            get => this._pageContent;
             set
             {
                 this._pageContent = value;
