@@ -232,9 +232,7 @@ namespace Neo.UI.Core.Wallet.Implementations
 
                     var balance = await nep5Service.GetBalance(accountScriptHash.ToString(), decimals.ToString());
 
-                    var balanceBigInt = BigInteger.Parse(balance);
-
-                    var tokenBalance = new BigDecimal(balanceBigInt, decimals);
+                    var tokenBalance = BigDecimal.Parse(balance, decimals);
 
                     // Add account's asset balance to dictionary for summing total later
                     if (!nep5TokensInWallet.ContainsKey(nep5ScriptHash))
