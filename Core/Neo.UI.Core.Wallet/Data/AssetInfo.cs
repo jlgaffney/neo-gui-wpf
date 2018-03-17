@@ -1,31 +1,28 @@
-﻿using Neo.Core;
-using Neo.Cryptography.ECC;
+﻿using Neo.Cryptography.ECC;
 using Neo.UI.Core.Data.Enums;
 using Neo.UI.Core.Globalization.Resources;
 
 namespace Neo.UI.Core.Wallet.Data
 {
-    internal class FirstClassAssetSummary : AssetSummary
+    internal class AssetInfo
     {
-        public bool IssuerCertificateChecked { get; private set; }
-
-        public bool IsSystemAsset =>
-            this.AssetType == AssetType.GoverningToken ||
-            this.AssetType == AssetType.UtilityToken;
-
-        public override string Type => this.AssetType.ToString();
-
         public UInt256 AssetId { get; }
 
         public ECPoint AssetOwner { get; }
 
-        public AssetType AssetType { get; }
+        public string Issuer { get; private set; }
 
-        public FirstClassAssetSummary(UInt256 assetId, ECPoint assetOwner, AssetType assetType)
+        public string Name { get; set; }
+
+        public bool IssuerCertificateChecked { get; private set; }
+
+        public AssetInfo(UInt256 assetId, ECPoint assetOwner, string name)
         {
             this.AssetId = assetId;
             this.AssetOwner = assetOwner;
-            this.AssetType = assetType;
+            this.Name = name;
+
+            this.Issuer = $"{Strings.UnknownIssuer}[{assetOwner}]";
         }
 
         internal void SetIssuerCertificateQueryResult(CertificateQueryResultType resultType, string subject)

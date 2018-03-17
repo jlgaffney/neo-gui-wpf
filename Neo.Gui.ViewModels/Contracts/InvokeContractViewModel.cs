@@ -227,11 +227,9 @@ namespace Neo.Gui.ViewModels.Contracts
         #endregion
 
         #region Private Methods
-        private void GetContract()
+        private async void GetContract()
         {
-            this.scriptHash = UInt160.Parse(this.ScriptHash);
-
-            var contractState = this.walletController.GetContractState(this.scriptHash);
+            var contractState = await this.walletController.GetContractState(this.ScriptHash);
 
             if (contractState == null)
             {
@@ -239,11 +237,11 @@ namespace Neo.Gui.ViewModels.Contracts
                 return;
             }
 
-            this.contractParameters = contractState.ParameterList.Select(p => new ContractParameter(p)).ToArray();
+            this.contractParameters = contractState.Parameters.Select(p => new ContractParameter(p)).ToArray();
             this.ContractName = contractState.Name;
             this.ContractVersion = contractState.CodeVersion;
             this.ContractAuthor = contractState.Author;
-            this.ContractParameters = string.Join(", ", contractState.ParameterList);
+            this.ContractParameters = string.Join(", ", contractState.Parameters);
 
             this.EditParametersEnabled = this.contractParameters.Length > 0;
 
@@ -295,7 +293,7 @@ namespace Neo.Gui.ViewModels.Contracts
             this.CustomScript = hexString;
         }
 
-        private void Test()
+        private async void Test()
         {
             byte[] script;
             try
@@ -308,23 +306,21 @@ namespace Neo.Gui.ViewModels.Contracts
                 return;
             }
 
-            var transactionParameters = new InvokeContractTransactionParameters(script);
+            var invokeResult = await this.walletController.InvokeScript(script);
 
-            var result = this.walletController.TestTransactionForGasUsage(transactionParameters);
-
-            if (result == null)
+            if (invokeResult == null)
             {
                 this.dialogManager.ShowMessageDialog("An error occurred!", Strings.ExecutionFailed);
                 return;
             }
 
-            this.Results = result.Result;
-            this.Fee = $"{result.Fee} gas";
+            this.Results = invokeResult.Result;
+            this.Fee = $"{invokeResult.Fee} GAS";
 
-            this.InvokeEnabled = !result.TransactionExecutionFailed;
+            this.InvokeEnabled = invokeResult.ExecutionSucceeded;
         }
 
-        private void Invoke()
+        private async void Invoke()
         {
             if (!this.InvokeEnabled) return;
 
@@ -332,7 +328,7 @@ namespace Neo.Gui.ViewModels.Contracts
             
             var transactionParameters = new InvokeContractTransactionParameters(script);
 
-            this.walletController.BuildSignAndRelayTransaction(transactionParameters);
+            await this.walletController.BuildSignAndRelayTransaction(transactionParameters);
 
             this.Close(this, EventArgs.Empty);
         }

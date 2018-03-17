@@ -16,11 +16,13 @@ namespace Neo.UI.Core.Messaging
 
             builder
                 .RegisterType<MessageSubscriber>()
-                .As<IMessageSubscriber>();
+                .As<IMessageSubscriber>()
+                .SingleInstance();
 
             builder
                 .RegisterType<MessagePublisher>()
-                .As<IMessagePublisher>();
+                .As<IMessagePublisher>()
+                .SingleInstance();
             
 
             base.Load(builder);

@@ -1,117 +1,114 @@
 ﻿using System;
 using System.Collections.Generic;
-using Neo.UI.Core.Data;
+using System.Numerics;
 
 namespace Neo.UI.Core.Wallet.Data
 {
     internal class WalletInfo
     {
-        private readonly IDictionary<UInt160, AccountSummary> accounts;
-        private readonly IDictionary<UInt256, FirstClassAssetSummary> firstClassAssets;
-        private readonly IDictionary<UInt160, NEP5AssetSummary> nep5Assets;
-        private readonly IDictionary<UInt256, TransactionItem> transactions;
+
+        private readonly IDictionary<UInt256, Fixed8> assetTotalBalances;
+        private readonly IDictionary<UInt160, BigDecimal> nep5TokenTotalBalances;
+        
+        private readonly IDictionary<UInt256, TransactionMetadata> transactions;
 
         public WalletInfo()
         {
-            this.accounts = new Dictionary<UInt160, AccountSummary>();
-            this.firstClassAssets = new Dictionary<UInt256, FirstClassAssetSummary>();
-            this.nep5Assets = new Dictionary<UInt160, NEP5AssetSummary>();
-            this.transactions = new Dictionary<UInt256, TransactionItem>();
+            this.assetTotalBalances = new Dictionary<UInt256, Fixed8>();
+            this.nep5TokenTotalBalances = new Dictionary<UInt160, BigDecimal>();
+            
+            this.transactions = new Dictionary<UInt256, TransactionMetadata>();
         }
 
-        #region Accounts
+        #region Balances
 
-        public IEnumerable<AccountSummary> GetAccounts()
+        public IEnumerable<UInt256> GetAssetsInWallet()
         {
-            return this.accounts.Values;
+            return this.assetTotalBalances.Keys;
         }
 
-        public AccountSummary GetAccount(UInt160 scriptHash)
+        public Fixed8 GetAssetTotalBalance(UInt256 assetId)
         {
-            if (scriptHash == null) return null;
-
-            if (!this.accounts.ContainsKey(scriptHash)) return null;
-
-            return this.accounts[scriptHash];
+            return this.assetTotalBalances[assetId];
         }
 
-        public void AddAccount(AccountSummary account)
+        public bool WalletContainsAsset(UInt256 assetId)
         {
-            this.accounts.Add(account.ScriptHash, account);
+            return this.assetTotalBalances.ContainsKey(assetId);
         }
 
-        public void RemoveAccount(UInt160 scriptHash)
+        public void AddAssetToList(UInt256 assetId, Fixed8 totalBalance)
         {
-            this.accounts.Remove(scriptHash);
-        }
-
-        #endregion
-
-        #region Assets
-
-        public IEnumerable<FirstClassAssetSummary> GetFirstClassAssets()
-        {
-            return this.firstClassAssets.Values;
-        }
-
-        public IEnumerable<NEP5AssetSummary> GetNEP5Assets()
-        {
-            return this.nep5Assets.Values;
-        }
-
-        public FirstClassAssetSummary GetFirstClassAsset(UInt256 assetId)
-        {
-            if (assetId == null) return null;
-
-            if (!this.firstClassAssets.ContainsKey(assetId)) return null;
-
-            return this.firstClassAssets[assetId];
-        }
-
-        public NEP5AssetSummary GetNEP5Asset(UInt160 scriptHash)
-        {
-            if (scriptHash == null) return null;
-
-            if (!this.nep5Assets.ContainsKey(scriptHash)) return null;
-
-            return this.nep5Assets[scriptHash];
-        }
-
-        public void AddFirstClassAsset(FirstClassAssetSummary asset)
-        {
-            if (this.firstClassAssets.ContainsKey(asset.AssetId))
+            if (this.assetTotalBalances.ContainsKey(assetId))
             {
                 throw new InvalidOperationException("Asset has already been added!");
             }
 
-            this.firstClassAssets.Add(asset.AssetId, asset);
+            this.assetTotalBalances.Add(assetId, totalBalance);
         }
 
-        public void AddNEP5Asset(NEP5AssetSummary asset)
+        public void UpdateAssetTotalBalance(UInt256 assetId, Fixed8 updatedTotalBalance)
         {
-            if (this.nep5Assets.ContainsKey(asset.ScriptHash))
+            if (!this.assetTotalBalances.ContainsKey(assetId))
             {
-                throw new InvalidOperationException("Asset has already been added!");
+                throw new InvalidOperationException("Asset has not been added, balance cannot be updated!");
             }
 
-            this.nep5Assets.Add(asset.ScriptHash, asset);
+            this.assetTotalBalances[assetId] = updatedTotalBalance;
         }
 
-        public void RemoveFirstClassAsset(UInt256 assetId)
+        public void RemoveAssetFromList(UInt256 assetId)
         {
-            this.firstClassAssets.Remove(assetId);
+            this.assetTotalBalances.Remove(assetId);
         }
 
-        public void RemoveNEP5Asset(UInt160 scriptHash)
+        public IEnumerable<UInt160> GetNEP5TokensInWallet()
         {
-            this.nep5Assets.Remove(scriptHash);
+            return this.nep5TokenTotalBalances.Keys;
+        }
+
+        public bool WalletContainsNEP5Token(UInt160 scriptHash)
+        {
+            return this.nep5TokenTotalBalances.ContainsKey(scriptHash);
+        }
+
+        public BigDecimal GetNEP5TokenTotalBalance(UInt160 scriptHash)
+        {
+            return this.nep5TokenTotalBalances[scriptHash];
+        }
+
+        public void AddNEP5TokenToList(UInt160 scriptHash, BigInteger totalBalance, byte decimals)
+        {
+            if (this.nep5TokenTotalBalances.ContainsKey(scriptHash))
+            {
+                throw new InvalidOperationException("NEP-5 token has already been added!");
+            }
+
+            this.nep5TokenTotalBalances.Add(scriptHash, new BigDecimal(totalBalance, decimals));
+        }
+
+        public void UpdateNEP5TokenTotalBalance(UInt160 scriptHash, BigInteger updatedTotalBalance)
+        {
+            if (!this.nep5TokenTotalBalances.ContainsKey(scriptHash))
+            {
+                throw new InvalidOperationException("NEP-5 token has not been added, balance cannot be updated!");
+            }
+
+            var previousTotalBalance = this.nep5TokenTotalBalances[scriptHash];
+            
+            this.nep5TokenTotalBalances[scriptHash] = new BigDecimal(updatedTotalBalance, previousTotalBalance.Decimals);
+        }
+
+        public void RemoveNEP5TokenFromList(UInt160 scriptHash)
+        {
+            this.nep5TokenTotalBalances.Remove(scriptHash);
         }
 
         #endregion
 
         #region Transactions
 
-        public TransactionItem GetTransaction(UInt256 hash)
+        public TransactionMetadata GetTransaction(UInt256 hash)
         {
             if (hash == null) return null;
 
@@ -120,24 +117,14 @@ namespace Neo.UI.Core.Wallet.Data
             return this.transactions[hash];
         }
 
-        public void AddTransaction(TransactionItem transaction)
+        public void AddTransaction(TransactionMetadata transaction)
         {
-            if (this.transactions.ContainsKey(transaction.Hash))
+            if (this.transactions.ContainsKey(transaction.Id))
             {
                 throw new InvalidOperationException("Transaction has already been added!");
             }
 
-            this.transactions.Add(transaction.Hash, transaction);
-        }
-
-        public void UpdateTransactionConfirmations(uint blockHeight)
-        {
-            foreach (var transaction in this.transactions.Values)
-            {
-                var confirmations = blockHeight - transaction.Height + 1;
-
-                transaction.Confirmations = confirmations;
-            }
+            this.transactions.Add(transaction.Id, transaction);
         }
 
         #endregion

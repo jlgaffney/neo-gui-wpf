@@ -1,4 +1,5 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System.Globalization;
+using GalaSoft.MvvmLight;
 using Neo.UI.Core.Data.Enums;
 
 namespace Neo.Gui.ViewModels.Data
@@ -36,7 +37,7 @@ namespace Neo.Gui.ViewModels.Data
 
         #region Constructor
 
-        public UiAssetSummary(string assetId, string name, string issuer, string type, TokenType tokenType, bool isSystemAsset, string totalBalance)
+        public UiAssetSummary(string assetId, string name, string issuer, string type, TokenType tokenType, bool isSystemAsset)
         {
             this.AssetId = assetId;
             this.Name = name;
@@ -44,10 +45,22 @@ namespace Neo.Gui.ViewModels.Data
             this.Type = type;
             this.TokenType = tokenType;
             this.IsSystemAsset = isSystemAsset;
-
-            this.TotalBalance = totalBalance;
         }
 
         #endregion
+
+        public void SetAssetBalance(decimal balance, decimal bonus)
+        {
+            var balanceStr = balance % 1 == 0
+                ? ((int) balance).ToString(CultureInfo.CurrentUICulture)
+                : balance.ToString(CultureInfo.CurrentUICulture);
+
+            if (bonus > 0)
+            {
+                balanceStr += $"+({bonus})";
+            }
+
+            this.TotalBalance = balanceStr;
+        }
     }
 }

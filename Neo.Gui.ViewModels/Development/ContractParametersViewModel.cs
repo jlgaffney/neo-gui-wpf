@@ -196,15 +196,22 @@ namespace Neo.Gui.ViewModels.Development
             this.dialogManager.ShowInformationDialog("ParametersContext", "ParametersContext", context.ToString());
         }
 
-        private void Broadcast()
+        private async void Broadcast()
         {
             context.Verifiable.Scripts = context.GetScripts();
 
             var inventory = (IInventory) context.Verifiable;
 
-            this.walletController.Relay(inventory);
+            var success = await this.walletController.Relay(inventory);
 
-            this.dialogManager.ShowInformationDialog(Strings.RelaySuccessTitle, Strings.RelaySuccessText, inventory.Hash.ToString());
+            if (success)
+            {
+                this.dialogManager.ShowInformationDialog(Strings.RelaySuccessTitle, Strings.RelaySuccessText, inventory.Hash.ToString());
+            }
+            else
+            {
+                this.dialogManager.ShowMessageDialog("Broadcase Unsuccessful", "Data could not be broadcast");//Strings.RelayUnsuccessfulTitle, Strings.RelayUnsuccessfulMessage);
+            }
         }
 
         private void Update()

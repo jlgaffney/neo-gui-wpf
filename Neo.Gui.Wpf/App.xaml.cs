@@ -23,6 +23,7 @@ using Neo.Gui.Wpf.Views;
 using Neo.UI.Core.Globalization.Resources;
 using Neo.UI.Core.Services.Interfaces;
 using Neo.UI.Core.Wallet;
+using Neo.UI.Core.Wallet.Initialization;
 using SplashScreen = Neo.Gui.Wpf.Views.SplashScreen;
 using ViewModelsRegistrationModule = Neo.Gui.ViewModels.ViewModelsRegistrationModule;
 using WpfProjectViewModelsRegistrationModule = Neo.Gui.Wpf.Views.ViewModelsRegistrationModule;
@@ -56,7 +57,9 @@ namespace Neo.Gui.Wpf
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-            var containerLifetimeScope = BuildContainer();
+            var lightMode = Settings.Default.LightWalletMode;
+
+            var containerLifetimeScope = BuildContainer(lightMode);
 
             Debug.Assert(containerLifetimeScope != null);
 
@@ -109,7 +112,19 @@ namespace Neo.Gui.Wpf
                     // Application is starting normally
 
                     // Initialize wallet controller
-                    this.walletController.Initialize();
+                    IWalletInitializationParameters initializationParameters;
+                    if (lightMode)
+                    {
+                        initializationParameters = new LightWalletInitializationParameters(Settings.Default.LightWallet.RpcSeedList);
+                    }
+                    else
+                    {
+                        initializationParameters = new FullWalletInitializationParameters(
+                            Settings.Default.P2P.Port, Settings.Default.P2P.WsPort,
+                            Settings.Default.Paths.Chain, Settings.Default.Paths.CertCache);
+                    }
+
+                    this.walletController.Initialize(initializationParameters);
                     this.walletController.SetNEP5WatchScriptHashes(Settings.Default.NEP5Watched.ToArray());
 
                     await dispatchService.InvokeOnMainUIThread(() =>
@@ -137,10 +152,11 @@ namespace Neo.Gui.Wpf
             });
         }
 
-        private static ILifetimeScope BuildContainer()
+        private static ILifetimeScope BuildContainer(bool lightMode)
         {
             var autoFacContainerBuilder = new ContainerBuilder();
 
+            WalletRegistrationModule.LightMode = lightMode;
             autoFacContainerBuilder.RegisterModule<WalletRegistrationModule>();
 
             autoFacContainerBuilder.RegisterModule<NativeServicesRegistrationModule>();
@@ -159,7 +175,7 @@ namespace Neo.Gui.Wpf
         {
             // Only install if using a local node
             // TODO Is the root certificate required if connecting to a remote node?
-            if (Settings.Default.P2P.RemoteNodeMode) return;
+            if (Settings.Default.LightWalletMode) return;
 
             if (!Settings.Default.InstallCertificate) return;
 

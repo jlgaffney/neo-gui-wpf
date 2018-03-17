@@ -126,7 +126,7 @@ namespace Neo.Gui.ViewModels.Wallets
             this.ShowAdvancedSection = !this.ShowAdvancedSection;
         }
 
-        private void Ok()
+        private async void Ok()
         {
             if (!this.OkEnabled) return;
 
@@ -134,7 +134,7 @@ namespace Neo.Gui.ViewModels.Wallets
 
             var assetTransferParameters = new AssetTransferTransactionParameters(accountScriptHashes, this.Items, this.SelectedChangeAddress, this.remark, this.Fee);
 
-            this.walletController.BuildSignAndRelayTransaction(assetTransferParameters);
+            await this.walletController.BuildSignAndRelayTransaction(assetTransferParameters);
             
             this.Close(this, EventArgs.Empty);
         }

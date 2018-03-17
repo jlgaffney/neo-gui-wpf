@@ -4,30 +4,28 @@ using Neo.UI.Core.Helpers;
 
 namespace Neo.UI.Core.Wallet.Data
 {
-    internal class TransactionItem
+    internal class TransactionMetadata
     {
         #region Public Properties 
-        public UInt256 Hash { get; }
+        public UInt256 Id { get; }
 
-        public uint Height { get; }
+        public uint? Height { get; }
 
         public DateTime Time { get; }
 
         public TransactionType Type { get; }
-
-        public uint Confirmations { get; set; }
         #endregion
 
         #region Constructor 
-        public TransactionItem(
-            UInt256 transactionHash, 
+        public TransactionMetadata(
+            UInt256 transactionId, 
             TransactionType transactionType, 
-            uint height, 
+            uint? height, 
             DateTime time)
         {
-            Guard.ArgumentIsNotNull(transactionHash, () => transactionHash);
+            Guard.ArgumentIsNotNull(transactionId, () => transactionId);
 
-            this.Hash = transactionHash;
+            this.Id = transactionId;
             this.Type = transactionType;
             this.Height = height;
             this.Time = time;
@@ -38,16 +36,16 @@ namespace Neo.UI.Core.Wallet.Data
 
         public override int GetHashCode()
         {
-            return this.Hash.GetHashCode();
+            return this.Id.GetHashCode();
         }
 
         public override bool Equals(object obj)
         {
-            var transactionItem = obj as TransactionItem;
+            var transactionItem = obj as TransactionMetadata;
             
             if (transactionItem == null) return false;
 
-            return this.Hash.Equals(transactionItem.Hash);
+            return this.Id.Equals(transactionItem.Id);
         }
         #endregion
     }

@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
-
+using System.Diagnostics;
+using System.Globalization;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
@@ -22,7 +23,12 @@ namespace Neo.Gui.ViewModels.Home
         ILoadable,
         IUnloadable,
         IMessageHandler<CurrentWalletHasChangedMessage>,
-        IMessageHandler<AssetAddedMessage>
+        IMessageHandler<AssetTotalBalanceSummaryAddedMessage>,
+        IMessageHandler<AssetTotalBalanceSummaryRemovedMessage>,
+        IMessageHandler<AssetTotalBalanceChangedMessage>,
+        IMessageHandler<NEP5TokenTotalBalanceSummaryAddedMessage>,
+        IMessageHandler<NEP5TokenTotalBalanceSummaryRemovedMessage>,
+        IMessageHandler<NEP5TokenTotalBalanceChangedMessage>
     {
         #region Private Fields 
         private readonly IDialogManager dialogManager;
@@ -117,21 +123,60 @@ namespace Neo.Gui.ViewModels.Home
             this.Assets.Clear();
         }
 
-        public void HandleMessage(AssetAddedMessage message)
+        public void HandleMessage(AssetTotalBalanceSummaryAddedMessage message)
         {
-            var isAssetInTheList = this.Assets.Any(x => x.AssetId == message.AssetId);
+            Debug.Assert(!this.Assets.Any(a => a.TokenType == TokenType.FirstClassToken && a.AssetId == message.AssetId));
 
-            if (isAssetInTheList)
-            {
-                var assetInList = this.Assets.Single(x => x.AssetId == message.AssetId);
-                
-            }
-            else
-            {
-                var newAsset = new UiAssetSummary(message.AssetId, message.AssetName, message.AssetIssuer, message.Type, message.TokenType, message.IsSystemAsset, message.TotalBalance);
+            var newAsset = new UiAssetSummary(message.AssetId, message.AssetName, message.AssetIssuer, message.AssetType, TokenType.FirstClassToken, message.IsSystemAsset);
 
-                this.Assets.Add(newAsset);
-            }
+            newAsset.SetAssetBalance(message.TotalBalance, message.TotalBonus);
+
+            this.Assets.Add(newAsset);
+        }
+
+        public void HandleMessage(AssetTotalBalanceSummaryRemovedMessage message)
+        {
+            var asset = this.Assets.Single(a => a.TokenType == TokenType.FirstClassToken && a.AssetId == message.AssetId);
+
+            if (asset == null) return;
+
+            this.Assets.Remove(asset);
+        }
+
+        public void HandleMessage(AssetTotalBalanceChangedMessage message)
+        {
+            var asset = this.Assets.Single(a => a.TokenType == TokenType.FirstClassToken && a.AssetId == message.AssetId);
+
+            asset.SetAssetBalance(message.TotalBalance, message.TotalBonus);
+        }
+
+        public void HandleMessage(NEP5TokenTotalBalanceSummaryAddedMessage message)
+        {
+            Debug.Assert(!this.Assets.Any(a => a.TokenType == TokenType.NEP5Token && a.AssetId == message.ScriptHash));
+
+            var newAsset = new UiAssetSummary(message.ScriptHash, message.TokenName,
+                $"ScriptHash:{message.ScriptHash}", "NEP-5", TokenType.NEP5Token, false)
+            {
+                TotalBalance = message.TotalBalance
+            };
+
+            this.Assets.Add(newAsset);
+        }
+
+        public void HandleMessage(NEP5TokenTotalBalanceSummaryRemovedMessage message)
+        {
+            var asset = this.Assets.Single(a => a.TokenType == TokenType.NEP5Token && a.AssetId == message.ScriptHash);
+
+            if (asset == null) return;
+
+            this.Assets.Remove(asset);
+        }
+
+        public void HandleMessage(NEP5TokenTotalBalanceChangedMessage message)
+        {
+            var asset = this.Assets.Single(a => a.TokenType == TokenType.NEP5Token && a.AssetId == message.ScriptHash);
+
+            asset.TotalBalance = message.TotalBalance;
         }
         #endregion
 
@@ -155,7 +200,7 @@ namespace Neo.Gui.ViewModels.Home
         {
             if (!this.ViewCertificateEnabled) return;
             
-            var certificatePath = this.walletController.ViewCertificate(this.SelectedAsset.AssetId);
+            var certificatePath = this.walletController.GetAssetCertificateFilePath(this.SelectedAsset.AssetId);
 
             if (string.IsNullOrEmpty(certificatePath))
             {
@@ -167,7 +212,7 @@ namespace Neo.Gui.ViewModels.Home
             }
         }
 
-        private void DeleteAsset()
+        private async void DeleteAsset()
         {
             if (this.SelectedAsset == null || this.SelectedAsset.TokenType != TokenType.FirstClassToken) return;
 
@@ -179,7 +224,7 @@ namespace Neo.Gui.ViewModels.Home
 
             if (result != MessageDialogResult.Yes) return;
 
-            this.walletController.DeleteFirstClassAsset(this.SelectedAsset.AssetId);
+            await this.walletController.DeleteFirstClassAsset(this.SelectedAsset.AssetId);
         }
         #endregion
     }

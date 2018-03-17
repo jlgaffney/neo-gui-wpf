@@ -1,5 +1,11 @@
 ﻿{
   "ApplicationConfiguration": {
+    "LightWallet": {
+      "RpcSeedList": [
+        "http://seed5.neo.org:10332"
+      ]
+    },
+    
     "Paths": {
       "Chain": "Chain",
       "CertCache": "Certs"

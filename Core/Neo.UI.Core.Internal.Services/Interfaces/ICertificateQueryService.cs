@@ -7,7 +7,9 @@ namespace Neo.UI.Core.Internal.Services.Interfaces
     {
         void Initialize(string certificateCachePath);
 
-        CertificateQueryResult Query(ECPoint publickey);
+        CertificateQueryResult Query(ECPoint publicKey);
+
+        CertificateQueryResult Query(UInt160 scriptHash);
 
         string GetCachedCertificatePath(ECPoint publicKey);
     }

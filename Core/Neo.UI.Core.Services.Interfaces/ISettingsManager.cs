@@ -6,7 +6,9 @@
 
         string AppThemeJson { get; set; }
 
-        bool RemoteNodeMode { get; }
+        bool LightWalletMode { get; set; }
+
+        string[] LightWalletRpcSeedList { get; }
 
         string CertificateCachePath { get; }
 

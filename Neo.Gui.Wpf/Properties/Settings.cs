@@ -5,6 +5,8 @@ namespace Neo.Gui.Wpf.Properties
 {
     internal sealed partial class Settings
     {
+        public LightWalletSettings LightWallet { get; }
+
         public PathsSettings Paths { get; }
 
         public P2PSettings P2P { get; }
@@ -22,6 +24,8 @@ namespace Neo.Gui.Wpf.Properties
                 Save();
             }
             var section = new ConfigurationBuilder().AddJsonFile("config.json").Build().GetSection("ApplicationConfiguration");
+
+            this.LightWallet = new LightWalletSettings(section.GetSection("LightWallet"));
 
             this.Paths = new PathsSettings(section.GetSection("Paths"));
 
@@ -47,15 +51,11 @@ namespace Neo.Gui.Wpf.Properties
 
     internal class P2PSettings
     {
-        public bool RemoteNodeMode { get; }
         public ushort Port { get; }
         public ushort WsPort { get; }
 
         public P2PSettings(IConfigurationSection section)
         {
-            var remoteNodeModeSection = section.GetSection("RemoteNodeMode");
-            this.RemoteNodeMode = !string.IsNullOrEmpty(remoteNodeModeSection?.Value) && bool.Parse(remoteNodeModeSection.Value);
-
             this.Port = ushort.Parse(section.GetSection("Port").Value);
             this.WsPort = ushort.Parse(section.GetSection("WsPort").Value);
         }
@@ -82,6 +82,16 @@ namespace Neo.Gui.Wpf.Properties
         public ContractSettings(IConfigurationSection section)
         {
             this.NEP5 = section.GetSection("NEP5").GetChildren().Select(p => UInt160.Parse(p.Value)).ToArray();
+        }
+    }
+
+    internal class LightWalletSettings
+    {
+        public string[] RpcSeedList { get; }
+
+        public LightWalletSettings(IConfigurationSection section)
+        {
+            this.RpcSeedList = section.GetSection("RpcSeedList").GetChildren().Select(p => p.Value).ToArray();
         }
     }
 }

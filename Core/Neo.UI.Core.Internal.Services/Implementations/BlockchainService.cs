@@ -15,9 +15,7 @@ using Neo.VM;
 
 namespace Neo.UI.Core.Internal.Services.Implementations
 {
-    internal class LocalBlockchainService :
-        BaseBlockchainService,
-        IBlockchainService
+    internal class BlockchainService : IBlockchainService
     {
         #region Private Fields
         private const string PeerStatePath = "peers.dat";
@@ -37,7 +35,7 @@ namespace Neo.UI.Core.Internal.Services.Implementations
         #endregion
 
         #region Constructor 
-        public LocalBlockchainService(
+        public BlockchainService(
             IBlockchainImportService blockchainImportService)
         {
             this.blockchainImportService = blockchainImportService;
@@ -214,15 +212,51 @@ namespace Neo.UI.Core.Internal.Services.Implementations
             return balances;
         }
 
-
-        public void Relay(Transaction transaction)
+        public string GetNEP5TokenName(UInt160 nep5ScriptHash)
         {
-            this.localNode.Relay(transaction);
+            byte[] script;
+            using (var builder = new ScriptBuilder())
+            {
+                builder.EmitAppCall(nep5ScriptHash, "name");
+
+                script = builder.ToArray();
+            }
+
+            var engine = ApplicationEngine.Run(script);
+            if (engine.State.HasFlag(VMState.FAULT)) return null;
+
+            var name = engine.EvaluationStack.Pop().GetString();
+
+            return name;
         }
 
-        public void Relay(IInventory inventory)
+        public bool GetNEP5TokenNameAndDecimals(UInt160 nep5ScriptHash, out string name, out byte decimals)
         {
-            this.localNode.Relay(inventory);
+            name = null;
+            decimals = 0;
+
+            byte[] script;
+            using (var builder = new ScriptBuilder())
+            {
+                builder.EmitAppCall(nep5ScriptHash, "decimals");
+
+                builder.EmitAppCall(nep5ScriptHash, "name");
+
+                script = builder.ToArray();
+            }
+
+            var engine = ApplicationEngine.Run(script);
+            if (engine.State.HasFlag(VMState.FAULT)) return false;
+
+            name = engine.EvaluationStack.Pop().GetString();
+            decimals = (byte) engine.EvaluationStack.Pop().GetBigInteger();
+
+            return true;
+        }
+
+        public bool Relay(IInventory inventory)
+        {
+            return this.localNode.Relay(inventory);
         }
 
         #endregion
@@ -260,7 +294,7 @@ namespace Neo.UI.Core.Internal.Services.Implementations
             }
         }
 
-        ~LocalBlockchainService()
+        ~BlockchainService()
         {
             Dispose(false);
         }

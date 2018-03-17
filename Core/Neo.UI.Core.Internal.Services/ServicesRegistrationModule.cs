@@ -8,26 +8,20 @@ namespace Neo.UI.Core.Internal.Services
     {
         protected override void Load(ContainerBuilder builder)
         {
-            // TODO Implement a way of switching between remote and local blockchain controllers
-            const bool lightMode = false;
-            var blockChainControllerType = lightMode
-                ? typeof(RemoteBlockchainService)
-                : typeof(LocalBlockchainService);
-
-            builder
-                .RegisterType(blockChainControllerType)
-                .As<IBlockchainService>()
-                .SingleInstance();
-
-            
-
             builder
                 .RegisterType<BlockchainImportService>()
-                .As<IBlockchainImportService>();
+                .As<IBlockchainImportService>()
+                .SingleInstance();
 
             builder
                 .RegisterType<CertificateQueryService>()
-                .As<ICertificateQueryService>();
+                .As<ICertificateQueryService>()
+                .SingleInstance();
+
+            builder
+                .RegisterType<BlockchainService>()
+                .As<IBlockchainService>()
+                .SingleInstance();
 
             base.Load(builder);
         }

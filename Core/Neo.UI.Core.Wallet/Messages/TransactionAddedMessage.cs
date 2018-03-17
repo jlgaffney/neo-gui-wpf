@@ -9,11 +9,11 @@ namespace Neo.UI.Core.Wallet.Messages
 
         public DateTime TransactionTime { get; }
 
-        public uint TransactionHeight { get; }
+        public uint? TransactionHeight { get; }
 
         public string TransactionType { get; }
 
-        public TransactionAddedMessage(string transactionId, DateTime transactionTime, uint transactionHeight, string transactionType)
+        public TransactionAddedMessage(string transactionId, DateTime transactionTime, uint? transactionHeight, string transactionType)
         {
             this.TransactionId = transactionId;
             this.TransactionTime = transactionTime;

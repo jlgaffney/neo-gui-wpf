@@ -68,13 +68,13 @@ namespace Neo.Gui.ViewModels.Voting
         #endregion
 
         #region Private Methods 
-        private void HandleOkCommand()
+        private async void HandleOkCommand()
         {
             if (!this.OkEnabled) return;
 
             var transactionParameters = new ElectionTransactionParameters(this.SelectedPublicKey);
 
-            this.walletController.BuildSignAndRelayTransaction(transactionParameters);
+            await this.walletController.BuildSignAndRelayTransaction(transactionParameters);
 
             this.Close(this, EventArgs.Empty);
         }

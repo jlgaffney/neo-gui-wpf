@@ -121,7 +121,7 @@ namespace Neo.Gui.ViewModels.Transactions
             this.clipboardManager.SetText(this.output.ToString());
         }
 
-        private void Broadcast()
+        private async void Broadcast()
         {
             if (this.output == null) return;
 
@@ -129,9 +129,16 @@ namespace Neo.Gui.ViewModels.Transactions
 
             var inventory = (IInventory) this.output.Verifiable;
 
-            this.walletController.Relay(inventory);
+            var success = await this.walletController.Relay(inventory);
 
-            this.dialogManager.ShowInformationDialog(Strings.RelaySuccessTitle, Strings.RelaySuccessText, inventory.Hash.ToString());
+            if (success)
+            {
+                this.dialogManager.ShowInformationDialog(Strings.RelaySuccessTitle, Strings.RelaySuccessText, inventory.Hash.ToString());
+            }
+            else
+            {
+                this.dialogManager.ShowMessageDialog("Broadcase Unsuccessful", "Data could not be broadcast");//Strings.RelayUnsuccessfulTitle, Strings.RelayUnsuccessfulMessage);
+            }
 
             this.BroadcastVisible = false;
         }

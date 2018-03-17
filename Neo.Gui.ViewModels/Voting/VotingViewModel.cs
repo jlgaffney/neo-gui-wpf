@@ -78,26 +78,24 @@ namespace Neo.Gui.ViewModels.Voting
         #endregion
 
         #region Private Methods 
-        private void SetVoterScriptHash(string scriptHash)
+        private async void SetVoterScriptHash(string scriptHash)
         {
-            var voteStrings = this.walletController
-                .GetVotes(scriptHash)
-                .ToArray();
-
             // Set voter address
             this.VoterAddress = this.walletController.ScriptHashToAddress(scriptHash);
 
+            var voteStrings = await this.walletController.GetVotes(scriptHash);
+            
             // Concatenate votes into multi-line string
-            this.Votes = voteStrings.ToMultiLineString();
+            this.Votes = voteStrings.ToArray().ToMultiLineString();
         }
 
-        private void HandleOkCommand()
+        private async void HandleOkCommand()
         {
             var voterScriptHash = this.walletController.AddressToScriptHash(this.VoterAddress).ToString();
 
             var transactionParameters = new VotingTransactionParameters(voterScriptHash, this.Votes.ToLines());
 
-            this.walletController.BuildSignAndRelayTransaction(transactionParameters);
+            await this.walletController.BuildSignAndRelayTransaction(transactionParameters);
 
             this.Close(this, EventArgs.Empty);
         }

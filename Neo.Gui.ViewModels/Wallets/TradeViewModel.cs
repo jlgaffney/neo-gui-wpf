@@ -186,7 +186,7 @@ namespace Neo.Gui.ViewModels.Wallets
             this.SelectedTabIndex = 1;
         }
 
-        private void Validate()
+        private async void Validate()
         {
             IEnumerable<CoinReference> inputs;
             IEnumerable<TransactionOutput> outputs;
@@ -218,7 +218,17 @@ namespace Neo.Gui.ViewModels.Wallets
 
             try
             {
-                if (inputs.Select(p => this.walletController.GetTransaction(p.PrevHash).Outputs[p.PrevIndex].ScriptHash).Distinct().Any(p => this.walletController.WalletContainsAccount(p.ToString())))
+                var tradeIsValid = false;
+                foreach (var input in inputs)
+                {
+                    var transaction = await this.walletController.GetTransaction(input.PrevHash);
+
+                    if (!this.walletController.WalletContainsAccount(transaction.Outputs[input.PrevIndex].ScriptHash .ToString())) continue;
+                    tradeIsValid = true;
+                    break;
+                }
+
+                if (tradeIsValid)
                 {
                     this.dialogManager.ShowMessageDialog(Strings.Failed, Strings.TradeFailedInvalidDataMessage);
                     return;
@@ -238,7 +248,7 @@ namespace Neo.Gui.ViewModels.Wallets
             this.MergeEnabled = dialogResult.TradeAccepted;
         }
 
-        private void Merge()
+        private async void Merge()
         {
             ContractParametersContext context;
             var json1 = JObject.Parse(this.CounterPartyRequest);
@@ -265,9 +275,18 @@ namespace Neo.Gui.ViewModels.Wallets
                 context.Verifiable.Scripts = context.GetScripts();
 
                 var transaction = (ContractTransaction)context.Verifiable;
-                this.walletController.Relay(transaction);
 
-                this.dialogManager.ShowInformationDialog(Strings.TradeSuccessCaption, Strings.TradeSuccessMessage, transaction.Hash.ToString());
+                var success = await this.walletController.Relay(transaction);
+
+                if (success)
+                {
+                    this.dialogManager.ShowInformationDialog(Strings.TradeSuccessCaption, Strings.TradeSuccessMessage,
+                        transaction.Hash.ToString());
+                }
+                else
+                {
+                    
+                }
             }
             else
             {

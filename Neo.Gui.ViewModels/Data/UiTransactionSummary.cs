@@ -6,19 +6,19 @@ namespace Neo.Gui.ViewModels.Data
 {
     public class UiTransactionSummary : ObservableObject
     {
-        private uint confirmations;
+        private uint? confirmations;
 
         public string Id { get; }
 
         public DateTime Time { get; }
 
-        public uint Height { get; }
+        public uint? Height { get; }
 
         public string Type { get; }
 
-        public string Confirmations => this.confirmations > 0 ? this.confirmations.ToString() : Strings.Unconfirmed;
+        public string Confirmations => this.confirmations != null && this.confirmations.Value > 0 ? this.confirmations.ToString() : Strings.Unconfirmed;
 
-        public uint ConfirmationsValue
+        public uint? ConfirmationsValue
         {
             get => this.confirmations;
             set
@@ -32,19 +32,17 @@ namespace Neo.Gui.ViewModels.Data
             }
         }
 
-        public void SetConfirmations(uint confirmation)
-        {
-            this.confirmations = confirmation;
-
-            RaisePropertyChanged(this.Confirmations);
-        }
-
-        public UiTransactionSummary(string id, DateTime time, uint height, string type)
+        public UiTransactionSummary(string id, DateTime time, uint? height, string type)
         {
             this.Id = id;
             this.Time = time;
             this.Height = height;
             this.Type = type;
+
+            if (height.HasValue)
+            {
+                this.ConfirmationsValue = 0;
+            }
         }
     }
 }

@@ -237,7 +237,7 @@ namespace Neo.Gui.ViewModels.Assets
             this.formValid = adminAddressIsValid && issuerAddressIsValid;
         }
 
-        private void HandleOkCommand()
+        private async void HandleOkCommand()
         {
             this.CheckForm();
 
@@ -253,7 +253,7 @@ namespace Neo.Gui.ViewModels.Assets
                 this.SelectedAdmin,
                 this.SelectedIssuer);
 
-            this.walletController.BuildSignAndRelayTransaction(assetRegistrationParameters);
+            await this.walletController.BuildSignAndRelayTransaction(assetRegistrationParameters);
 
             this.Close(this, EventArgs.Empty);
         }

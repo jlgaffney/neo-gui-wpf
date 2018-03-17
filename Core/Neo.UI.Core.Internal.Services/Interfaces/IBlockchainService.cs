@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Threading.Tasks;
 using Neo.Core;
 using Neo.Network;
 using Neo.UI.Core.Data;
@@ -9,10 +10,6 @@ namespace Neo.UI.Core.Internal.Services.Interfaces
 {
     public interface IBlockchainService : IDisposable
     {
-        UInt256 GoverningTokenHash { get; }
-
-        UInt256 UtilityTokenHash { get; }
-
         event EventHandler BlockAdded;
 
         uint BlockHeight { get; }
@@ -39,9 +36,10 @@ namespace Neo.UI.Core.Internal.Services.Interfaces
 
         IDictionary<UInt160, BigInteger> GetNEP5Balances(UInt160 nep5ScriptHash, IEnumerable<UInt160> accountScriptHashes, out byte decimals);
 
+        string GetNEP5TokenName(UInt160 nep5ScriptHash);
 
-        void Relay(Transaction transaction);
+        bool GetNEP5TokenNameAndDecimals(UInt160 nep5ScriptHash, out string name, out byte decimals);
 
-        void Relay(IInventory inventory);
+        bool Relay(IInventory inventory);
     }
 }

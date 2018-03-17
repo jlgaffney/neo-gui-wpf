@@ -1,5 +1,11 @@
 ﻿{
   "ApplicationConfiguration": {
+    "LightWallet": {
+      "RpcSeedList": [
+        "http://test3.cityofzion.io:8880"
+      ]
+    },
+
     "Paths": {
       "Chain": "ChainTestNet",
       "CertCache": "Certs"

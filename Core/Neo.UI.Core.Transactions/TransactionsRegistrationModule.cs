@@ -12,7 +12,8 @@ namespace Neo.UI.Core.Transactions
         {
             builder
                 .RegisterType<TransactionBuilderFactory>()
-                .As<ITransactionBuilderFactory>();
+                .As<ITransactionBuilderFactory>()
+                .SingleInstance();
 
 
             // Register builders

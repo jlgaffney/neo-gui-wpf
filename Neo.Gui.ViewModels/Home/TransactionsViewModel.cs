@@ -91,9 +91,17 @@ namespace Neo.Gui.ViewModels.Home
         {
             var blockHeight = message.BlockchainStatus.Height;
 
+            // Update confirmations
             foreach (var transaction in this.Transactions)
             {
-                transaction.ConfirmationsValue = blockHeight - transaction.Height + 1;
+                if (transaction.Height == null)
+                {
+                    transaction.ConfirmationsValue = null;
+                }
+                else
+                {
+                    transaction.ConfirmationsValue = blockHeight - transaction.Height + 1;
+                }
             }
         }
 

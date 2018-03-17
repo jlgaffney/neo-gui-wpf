@@ -18,7 +18,13 @@ namespace Neo.Gui.Wpf.Native.Services
             set => Settings.Default.AppTheme = value;
         }
 
-        public bool RemoteNodeMode => Settings.Default.P2P.RemoteNodeMode;
+        public bool LightWalletMode
+        {
+            get => Settings.Default.LightWalletMode;
+            set => Settings.Default.LightWalletMode = value;
+        }
+
+        public string[] LightWalletRpcSeedList => Settings.Default.LightWallet.RpcSeedList;
 
         public string CertificateCachePath => Settings.Default.Paths.CertCache;
 

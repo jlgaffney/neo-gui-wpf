@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-
+using System.Threading;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
@@ -16,6 +16,8 @@ namespace Neo.Gui.ViewModels.Assets
     {
         #region Private Fields 
         private readonly IWalletController walletController;
+
+        private readonly object assetDetailsQueryLock = new object();
 
         private AssetDto asset;
         private string assetId;
@@ -169,39 +171,49 @@ namespace Neo.Gui.ViewModels.Assets
         #endregion
 
         #region Private Methods 
-        private void Confirm()
+        private async void Confirm()
         {
             var transactionParameters = new AssetDistributionTransactionParameters(this.Asset.Id, this.Items);
 
-            this.walletController.BuildSignAndRelayTransaction(transactionParameters);
+            await this.walletController.BuildSignAndRelayTransaction(transactionParameters);
 
             this.Close(this, EventArgs.Empty);
         }
 
-        private void UpdateAssetDetails()
+        private async void UpdateAssetDetails()
         {
-            var assetState = this.walletController.GetAssetState(this.AssetId);
-            this.Asset = new AssetDto { Id = this.AssetId };
+            Monitor.Enter(this.assetDetailsQueryLock);
 
-            if (assetState == null)
+            try
             {
-                this.Owner = string.Empty;
-                this.Admin = string.Empty;
-                this.Total = string.Empty;
-                this.Issued = string.Empty;
-                this.DistributionEnabled = false;
-            }
-            else
-            {
-                this.Owner = assetState.Owner;
-                this.Admin = assetState.Admin;
-                this.Total = assetState.Total;
-                this.Issued = assetState.Issued;
-                this.DistributionEnabled = assetState.DistributionEnabled;
-            }
+                var assetState = await this.walletController.GetAssetState(this.AssetId);
+                this.Asset = new AssetDto {Id = this.AssetId};
 
-            this.Items.Clear();
+                if (assetState == null)
+                {
+                    this.Owner = string.Empty;
+                    this.Admin = string.Empty;
+                    this.Total = string.Empty;
+                    this.Issued = string.Empty;
+                    this.DistributionEnabled = false;
+                }
+                else
+                {
+                    this.Owner = assetState.Owner;
+                    this.Admin = assetState.Admin;
+                    this.Total = assetState.Amount;
+                    this.Issued = assetState.Available;
+                    this.DistributionEnabled = true;
+                }
+
+                this.Items.Clear();
+            }
+            finally
+            {
+                Monitor.Exit(this.assetDetailsQueryLock);
+            }
         }
+
         #endregion
     }
 }

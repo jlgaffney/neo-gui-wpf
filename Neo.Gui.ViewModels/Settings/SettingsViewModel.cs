@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Input;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -40,6 +39,7 @@ namespace Neo.Gui.ViewModels.Settings
         private string currentThemeWindowBorderColorHex;
         private string themeWindowBorderColorHex;
 
+        private bool lightWalletModeEnabled;
 
         public SettingsViewModel(
             IDialogManager dialogManager,
@@ -61,9 +61,11 @@ namespace Neo.Gui.ViewModels.Settings
         {
             this.LoadNEP5Settings();
             this.LoadAppearanceSettings();
+            this.LoadGeneralSettings();
 
             RaisePropertyChanged(nameof(this.NEP5SettingsChanged));
             RaisePropertyChanged(nameof(this.AppearanceSettingsChanged));
+            RaisePropertyChanged(nameof(this.GeneralSettingsChanged));
         }
 
         private void LoadNEP5Settings()
@@ -104,6 +106,11 @@ namespace Neo.Gui.ViewModels.Settings
             var windowBorderColorHex = currentTheme.WindowBorderColor.ToHex();
             this.currentThemeWindowBorderColorHex = windowBorderColorHex;
             this.ThemeWindowBorderColorHex = windowBorderColorHex;
+        }
+
+        private void LoadGeneralSettings()
+        {
+            this.LightWalletModeEnabled = this.settingsManager.LightWalletMode;
         }
 
         #region NEP-5 Properties & Commands
@@ -269,9 +276,31 @@ namespace Neo.Gui.ViewModels.Settings
 
         #endregion Appearance Properties
 
-        public ICommand OkCommand => new RelayCommand(this.Ok);
+        #region General Settings Properties
 
-        public ICommand CancelCommand => new RelayCommand(this.Cancel);
+        public bool LightWalletModeEnabled
+        {
+            get => this.lightWalletModeEnabled;
+            set
+            {
+                if (this.lightWalletModeEnabled == value) return;
+
+                this.lightWalletModeEnabled = value;
+
+                RaisePropertyChanged();
+
+                // Update dependent properties
+                RaisePropertyChanged(nameof(this.GeneralSettingsChanged));
+            }
+        }
+
+        public bool GeneralSettingsChanged => this.LightWalletModeEnabled != this.settingsManager.LightWalletMode;
+
+        public RelayCommand SaveGeneralSettingsCommand => new RelayCommand(this.SaveGeneralSettings);
+
+        public RelayCommand ResetGeneralSettingsCommand => new RelayCommand(this.LoadGeneralSettings);
+
+        #endregion
 
         #region IDialogViewModel implementation 
         public event EventHandler Close;
@@ -280,23 +309,7 @@ namespace Neo.Gui.ViewModels.Settings
         {
         }
         #endregion
-
-        private void Ok()
-        {
-            if (this.NEP5SettingsChanged || this.AppearanceSettingsChanged)
-            {
-                // TODO Show message warning user their settings
-                // changes will be discarded if they continue
-            }
-
-            this.Close(this, EventArgs.Empty);
-        }
-
-        private void Cancel()
-        {
-            this.Close(this, EventArgs.Empty);
-        }
-
+        
         private void SaveNEP5Settings()
         {
             var nep5WatchScriptHashesHexLines =  string.IsNullOrEmpty(this.NEP5ContractsList)
@@ -323,7 +336,7 @@ namespace Neo.Gui.ViewModels.Settings
             RaisePropertyChanged(nameof(this.NEP5SettingsChanged));
         }
 
-        private  void ApplyAppearanceSettings()
+        private void ApplyAppearanceSettings()
         {
             var restartApprovedResult = this.dialogManager.ShowMessageDialog("App will need to be restarted",
                 "This application needs to be restarted for the new theme settings to be applied",
@@ -351,7 +364,7 @@ namespace Neo.Gui.ViewModels.Settings
             this.ThemeHighlightColorHex = defaultTheme.HighlightColor.ToHex();
             this.ThemeWindowBorderColorHex = defaultTheme.WindowBorderColor.ToHex();
         }
-
+        
         private void SaveAppearanceSettings()
         {
             // TODO Validate color values
@@ -389,6 +402,24 @@ namespace Neo.Gui.ViewModels.Settings
             this.currentThemeWindowBorderColorHex = this.ThemeWindowBorderColorHex;
 
             RaisePropertyChanged(nameof(this.AppearanceSettingsChanged));
+        }
+
+        private void SaveGeneralSettings()
+        {
+            var restartApprovedResult = this.dialogManager.ShowMessageDialog("App will need to be restarted",
+                "This application needs to be restarted for the new wallet mode settings to be applied",
+                MessageDialogType.YesNo, MessageDialogResult.No);
+
+            if (restartApprovedResult != MessageDialogResult.Yes) return;
+
+            // Application restart approved
+
+            // Save new setting
+            this.settingsManager.LightWalletMode = this.LightWalletModeEnabled;
+            this.settingsManager.Save();
+
+            // Restart application
+            this.processManager.Restart();
         }
     }
 }

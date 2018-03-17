@@ -173,7 +173,7 @@ namespace Neo.Gui.ViewModels.Contracts
                 {
                     var scriptBytes = this.Script.HexToBytes();
 
-                    return this.walletController.BytesToScriptHash(scriptBytes);
+                    return this.walletController.ScriptToScriptHash(scriptBytes);
                 }
                 catch (FormatException)
                 {
@@ -260,7 +260,7 @@ namespace Neo.Gui.ViewModels.Contracts
             this.Script = hexString;
         }
 
-        private void HandleDeployCommand()
+        private async void HandleDeployCommand()
         {
             var transactionParameters = new DeployContractTransactionParameters(
                 this.Script,
@@ -273,7 +273,7 @@ namespace Neo.Gui.ViewModels.Contracts
                 this.Email,
                 this.Description);
 
-            this.walletController.BuildSignAndRelayTransaction(transactionParameters);
+            await this.walletController.BuildSignAndRelayTransaction(transactionParameters);
 
             this.Close(this, EventArgs.Empty);
         }

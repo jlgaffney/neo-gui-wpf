@@ -1,19 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 using Neo.Core;
 using Neo.Network;
 using Neo.SmartContract;
 using Neo.UI.Core.Data;
 using Neo.UI.Core.Transactions.Parameters;
-using Neo.UI.Core.Transactions.Testing;
+using Neo.UI.Core.Wallet.Initialization;
 using Neo.Wallets;
 
 namespace Neo.UI.Core.Wallet
 {
     public interface IWalletController : IDisposable
     {
-        void Initialize();
+        void Initialize(IWalletInitializationParameters parameters);
+
+        void Refresh();
 
         bool WalletIsOpen { get; }
 
@@ -37,19 +40,25 @@ namespace Neo.UI.Core.Wallet
 
         void ImportCertificate(X509Certificate2 certificate);
 
-        TestForGasUsageResult TestTransactionForGasUsage(InvokeContractTransactionParameters parameters);
+        void ImportWatchOnlyAddress(string[] addressesToWatch);
 
-        void BuildSignAndRelayTransaction<TParameters>(TParameters transactionParameters) where TParameters : TransactionParameters;
+        void AddLockContractAccount(string publicKey, uint unlockDateTime);
 
-        void SignAndRelay(Transaction transaction);
+        void AddMultiSignatureContract(int minimunSignatureNumber, IEnumerable<string> publicKeys);
+
+        void AddContractWithParameters(string reedemScript, string parameterList);
+
+        bool DeleteAccount(string accountScriptHash);
+
+        Task<InvokeResult> InvokeScript(byte[] script);
+
+        Task BuildSignAndRelayTransaction<TParameters>(TParameters transactionParameters) where TParameters : TransactionParameters;
 
         bool Sign(ContractParametersContext context);
 
-        void Relay(Transaction transaction, bool saveTransaction = true);
+        Task<bool> Relay(IInventory inventory);
 
-        void Relay(IInventory inventory);
-
-        void SetNEP5WatchScriptHashes(IEnumerable<string> nep5WatchScriptHashesHex);
+        void SetNEP5WatchScriptHashes(IEnumerable<string> nep5ScriptHashes);
 
         IEnumerable<UInt160> GetNEP5WatchScriptHashes();
 
@@ -73,9 +82,7 @@ namespace Neo.UI.Core.Wallet
         /// </summary>
         IEnumerable<WalletAccount> GetStandardAccounts();
 
-        IEnumerable<AssetDto> GetWalletAssets();
-
-        IEnumerable<Coin> FindUnspentCoins();
+        Task<IEnumerable<AssetDto>> GetWalletAssets();
 
         UInt160 GetChangeAddress();
 
@@ -83,26 +90,26 @@ namespace Neo.UI.Core.Wallet
 
         AccountKeyInfo GetAccountKeys(string accountScriptHash);
 
-        Transaction GetTransaction(UInt256 hash);
+        Task<Transaction> GetTransaction(UInt256 hash);
 
         /// <summary>
         /// Gets the public keys that the specified script hash have voted for.
         /// </summary>
         /// <param name="voterScriptHash">Script hash of the account that voted</param>
         /// <returns>Enumerable collection of public keys</returns>
-        IEnumerable<string> GetVotes(string voterScriptHash);
+        Task<IEnumerable<string>> GetVotes(string voterScriptHash);
 
-        ContractState GetContractState(UInt160 scriptHash);
+        Task<ContractStateDto> GetContractState(string scriptHash);
 
-        AssetStateDto GetAssetState(string assetId);
+        Task<AssetStateDto> GetAssetState(string assetId);
 
         bool CanViewCertificate(string assetId);
 
-        string ViewCertificate(string assetId);
+        string GetAssetCertificateFilePath(string assetId);
 
-        Fixed8 CalculateBonus();
+        decimal CalculateBonus();
         
-        Fixed8 CalculateUnavailableBonusGas(uint height);
+        decimal CalculateUnavailableBonusGas(uint height);
 
         bool WalletContainsAccount(string scriptHash);
 
@@ -116,13 +123,9 @@ namespace Neo.UI.Core.Wallet
         /// </summary>
         string GetNEP5TokenAvailability(string scriptHash);
 
-        void ImportWatchOnlyAddress(string[] addressesToWatch);
-
-        bool DeleteAccount(string accountScriptHash);
-
         Transaction MakeTransaction(Transaction transaction, UInt160 changeAddress = null, Fixed8 fee = default(Fixed8));
         
-        string BytesToScriptHash(byte[] data);
+        string ScriptToScriptHash(byte[] data);
 
         UInt160 AddressToScriptHash(string address);
 
@@ -130,18 +133,12 @@ namespace Neo.UI.Core.Wallet
 
         bool AddressIsValid(string address);
 
-        void DeleteFirstClassAsset(string assetId);
+        Task DeleteFirstClassAsset(string assetId);
 
-        void ClaimUtilityTokenAsset();
-
-        void AddLockContractAccount(string publicKey, uint unlockDateTime);
+        Task ClaimUtilityTokenAsset();
 
         IEnumerable<string> GetPublicKeysFromStandardAccounts();
 
         IEnumerable<string> GetAddressesForNonWatchOnlyAccounts();
-
-        void AddMultiSignatureContract(int minimunSignatureNumber, IEnumerable<string> publicKeys);
-
-        void AddContractWithParameters(string reedemScript, string parameterList);
     }
 }

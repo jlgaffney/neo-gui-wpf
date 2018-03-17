@@ -1,13 +1,19 @@
 ﻿{
   "ApplicationConfiguration": {
+    "LightWallet": {
+      "RpcSeedList": [
+        "http://test3.cityofzion.io:8880"
+      ]
+    },
+
     "Paths": {
-      "Chain": "ChainPrivateNet",
+      "Chain": "ChainTestNet",
       "CertCache": "Certs"
     },
 
     "P2P": {
       "Port": 20333,
-      "WsPort": 10333
+      "WsPort": 20334
     },
 
     "Urls": {

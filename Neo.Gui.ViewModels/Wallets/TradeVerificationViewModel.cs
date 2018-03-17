@@ -43,18 +43,18 @@ namespace Neo.Gui.ViewModels.Wallets
 
         public event EventHandler<TradeVerificationDialogResult> SetDialogResultAndClose;
 
-        public void OnDialogLoad(TradeVerificationLoadParameters parameters)
+        public async void OnDialogLoad(TradeVerificationLoadParameters parameters)
         {
             if (parameters?.TransactionOutputs == null) return;
 
             // Set outputs
             foreach (var output in parameters.TransactionOutputs)
             {
-                var asset = this.walletController.GetAssetState(output.AssetId.ToString());
+                var asset = await this.walletController.GetAssetState(output.AssetId.ToString());
 
                 this.Items.Add(new TransactionOutputItem
                 {
-                    AssetName = $"{asset.GetName()} ({asset.Owner})",
+                    AssetName = $"{asset.Name} ({asset.Owner})",
                     AssetId = output.AssetId,
                     Value = new BigDecimal(output.Value.GetData(), 8),
                     ScriptHash = output.ScriptHash

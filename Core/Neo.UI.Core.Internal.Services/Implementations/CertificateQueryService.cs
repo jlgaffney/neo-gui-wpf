@@ -66,20 +66,25 @@ namespace Neo.UI.Core.Internal.Services.Implementations
 
             var hash = GetRedeemScriptHashFromPublicKey(publickey);
 
+            return this.Query(hash);
+        }
+
+        public CertificateQueryResult Query(UInt160 scriptHash)
+        {
             lock (results)
             {
-                if (results.ContainsKey(hash)) return results[hash];
-                results[hash] = new CertificateQueryResult { Type = CertificateQueryResultType.Querying };
+                if (results.ContainsKey(scriptHash)) return results[scriptHash];
+                results[scriptHash] = new CertificateQueryResult { Type = CertificateQueryResultType.Querying };
             }
 
-            var path = this.GetCachedCertificatePathFromScriptHash(hash);
-            var address = Wallet.ToAddress(hash);
+            var path = this.GetCachedCertificatePathFromScriptHash(scriptHash);
+            var address = Wallet.ToAddress(scriptHash);
 
             if (this.fileManager.FileExists(path))
             {
                 lock (results)
                 {
-                    UpdateResultFromFile(hash);
+                    UpdateResultFromFile(scriptHash);
                 }
             }
             else
@@ -87,9 +92,9 @@ namespace Neo.UI.Core.Internal.Services.Implementations
                 var url = $"http://cert.onchain.com/antshares/{address}.cer";
                 var web = new WebClient();
                 web.DownloadDataCompleted += this.Web_DownloadDataCompleted;
-                web.DownloadDataAsync(new Uri(url), hash);
+                web.DownloadDataAsync(new Uri(url), scriptHash);
             }
-            return results[hash];
+            return results[scriptHash];
         }
 
         public string GetCachedCertificatePath(ECPoint publicKey)

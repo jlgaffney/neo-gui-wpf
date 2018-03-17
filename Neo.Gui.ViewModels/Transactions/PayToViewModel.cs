@@ -159,7 +159,7 @@ namespace Neo.Gui.ViewModels.Transactions
 
         public event EventHandler<PayToDialogResult> SetDialogResultAndClose;
 
-        public void OnDialogLoad(PayToLoadParameters parameters)
+        public async void OnDialogLoad(PayToLoadParameters parameters)
         {
             var asset = parameters?.Asset;
             var scriptHash = parameters?.ScriptHash;
@@ -174,9 +174,9 @@ namespace Neo.Gui.ViewModels.Transactions
             }
             else
             {
-                var walletAssets = this.walletController.GetWalletAssets();
+                var walletAssets = await this.walletController.GetWalletAssets();
                 this.Assets.AddRange(walletAssets);
-
+                
                 this.AssetSelectionEnabled = this.Assets.Any();
             }
 

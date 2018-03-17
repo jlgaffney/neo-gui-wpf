@@ -2,31 +2,29 @@
 {
     public class AssetStateDto
     {
-        public string Id { get; private set; }
+        public string Id { get; }
 
-        public string Owner { get; private set; }
+        public string Owner { get; }
 
-        public string Admin { get; private set; }
+        public string Admin { get; }
 
-        public string Total { get; private set; }
+        public string Amount { get; }
 
-        public string Issued { get; private set; }
+        public string Available { get; }
 
-        public bool DistributionEnabled { get; private set; }
+        public int Precision { get; }
 
-        public AssetStateDto(string id, string owner, string admin, string total, string issued, bool distributionEnabled)
+        public string Name { get; }
+
+        public AssetStateDto(string id, string owner, string admin, string amount, string available, int precision, string name)
         {
             this.Id = id;
             this.Owner = owner;
             this.Admin = admin;
-            this.Total = total;
-            this.Issued = issued;
-            this.DistributionEnabled = distributionEnabled;
-        }
-
-        public string GetName()
-        {
-            return "Need to be implemented";
+            this.Amount = amount;
+            this.Available = available;
+            this.Precision = precision;
+            this.Name = name;
         }
     }
 }

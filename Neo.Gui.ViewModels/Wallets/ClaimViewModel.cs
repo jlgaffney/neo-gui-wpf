@@ -22,14 +22,14 @@ namespace Neo.Gui.ViewModels.Wallets
         private readonly IMessageSubscriber messageSubscriber;
         private readonly IWalletController walletController;
 
-        private Fixed8 availableGas = Fixed8.Zero;
-        private Fixed8 unavailableGas = Fixed8.Zero;
+        private decimal availableGas = decimal.Zero;
+        private decimal unavailableGas = decimal.Zero;
 
         private bool claimEnabled;
         #endregion
 
         #region Public Properties
-        public Fixed8 AvailableGas
+        public decimal AvailableGas
         {
             get => this.availableGas;
             set
@@ -42,7 +42,7 @@ namespace Neo.Gui.ViewModels.Wallets
             }
         }
 
-        public Fixed8 UnavailableGas
+        public decimal UnavailableGas
         {
             get => this.unavailableGas;
             set
@@ -119,7 +119,7 @@ namespace Neo.Gui.ViewModels.Wallets
             var bonusAvailable = this.walletController.CalculateBonus();
             this.AvailableGas = bonusAvailable;
 
-            if (bonusAvailable == Fixed8.Zero)
+            if (bonusAvailable == decimal.Zero)
             {
                 this.ClaimEnabled = false;
             }
@@ -134,10 +134,9 @@ namespace Neo.Gui.ViewModels.Wallets
            this.UnavailableGas = this.walletController.CalculateUnavailableBonusGas(height);
         }        
 
-        private void Claim()
+        private async void Claim()
         {
-
-            this.walletController.ClaimUtilityTokenAsset();
+            await this.walletController.ClaimUtilityTokenAsset();
 
             this.Close(this, EventArgs.Empty);
         }

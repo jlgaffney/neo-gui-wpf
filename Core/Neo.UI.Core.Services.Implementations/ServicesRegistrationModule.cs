@@ -19,7 +19,8 @@ namespace Neo.UI.Core.Services.Implementations
 
             builder
                 .RegisterType<StoreCertificateService>()
-                .As<IStoreCertificateService>();
+                .As<IStoreCertificateService>()
+                .SingleInstance();
 
             base.Load(builder);
         }

@@ -19,8 +19,6 @@ using Neo.Gui.Dialogs.LoadParameters.Wallets;
 using Neo.Gui.Dialogs.Results.Wallets;
 using Neo.UI.Core.Messaging.Interfaces;
 using Neo.UI.Core.Services.Interfaces;
-using Neo.UI.Core.Transactions.Parameters;
-using Neo.UI.Core.Transactions;
 using Neo.UI.Core.Wallet;
 using Neo.UI.Core.Wallet.Messages;
 
@@ -223,6 +221,8 @@ namespace Neo.Gui.ViewModels.Home
             this.messageSubscriber.Subscribe(this);
 
             this.CheckForNewerApplicationVersion();
+
+            this.walletController.Refresh();
         }
         #endregion
 
@@ -242,7 +242,7 @@ namespace Neo.Gui.ViewModels.Home
 
         public void HandleMessage(WalletStatusMessage message)
         {
-            this.HeightStatus = $"{message.WalletHeight}/{message.BlockchainStatus.Height}/{message.BlockchainStatus.HeaderHeight}";
+            this.HeightStatus = this.settingsManager.LightWalletMode ? message.BlockchainStatus.Height.ToString() : $"{message.WalletHeight}/{message.BlockchainStatus.Height}/{message.BlockchainStatus.HeaderHeight}";
             this.NextBlockProgressIsIndeterminate = message.BlockchainStatus.NextBlockProgressIsIndeterminate;
             this.NextBlockProgressFraction = message.BlockchainStatus.NextBlockProgressFraction;
 

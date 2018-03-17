@@ -9,6 +9,7 @@
     <PackageReference Include="Autofac" Version="4.6.2" />
     <PackageReference Include="Neo" Version="2.6.0" />
     <PackageReference Include="Neo.VM" Version="2.0.4" />
+    <PackageReference Include="NeoModules.RPC" Version="1.0.6" />
   </ItemGroup>
 
   <ItemGroup>

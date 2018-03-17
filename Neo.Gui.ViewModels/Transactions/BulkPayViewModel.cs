@@ -93,7 +93,7 @@ namespace Neo.Gui.ViewModels.Transactions
 
         public event EventHandler<BulkPayDialogResult> SetDialogResultAndClose;
 
-        public void OnDialogLoad(BulkPayLoadParameters parameters)
+        public async void OnDialogLoad(BulkPayLoadParameters parameters)
         {
             var asset = parameters?.Asset;
 
@@ -107,30 +107,9 @@ namespace Neo.Gui.ViewModels.Transactions
             }
             else
             {
-                // Add first-class assets to list
-                foreach (var assetId in this.walletController.FindUnspentCoins()
-                    .Select(p => p.Output.AssetId).Distinct())
-                {
-                    this.Assets.Add(new AssetDto { Id = assetId.ToString(), TokenType = TokenType.FirstClassToken });
-                }
+                var walletAssets = await this.walletController.GetWalletAssets();
 
-                // Add NEP-5 assets to list
-                var nep5WatchScriptHashes = this.walletController.GetNEP5WatchScriptHashes();
-
-                foreach (var assetId in nep5WatchScriptHashes)
-                {
-                    AssetDto nep5Asset;
-                    try
-                    {
-                        nep5Asset = new AssetDto { Id = assetId.ToString(), TokenType = TokenType.NEP5Token };
-                    }
-                    catch (ArgumentException)
-                    {
-                        continue;
-                    }
-
-                    this.Assets.Add(nep5Asset);
-                }
+                this.Assets.AddRange(walletAssets);
 
                 this.AssetSelectionEnabled = this.Assets.Any();
             }

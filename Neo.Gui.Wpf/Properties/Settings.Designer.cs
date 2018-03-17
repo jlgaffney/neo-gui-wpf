@@ -83,5 +83,17 @@ namespace Neo.Gui.Wpf.Properties {
                 this["AppTheme"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LightWalletMode {
+            get {
+                return ((bool)(this["LightWalletMode"]));
+            }
+            set {
+                this["LightWalletMode"] = value;
+            }
+        }
     }
 }

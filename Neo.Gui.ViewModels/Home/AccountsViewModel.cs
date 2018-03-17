@@ -1,5 +1,5 @@
 ﻿using System.Collections.ObjectModel;
-
+using System.Linq;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
@@ -23,7 +23,8 @@ namespace Neo.Gui.ViewModels.Home
         ILoadable,
         IUnloadable,
         IMessageHandler<CurrentWalletHasChangedMessage>,
-        IMessageHandler<AccountAddedMessage>
+        IMessageHandler<AccountAddedMessage>,
+        IMessageHandler<AccountBalanceRefreshedMessage>
     {
         #region Private Fields 
         private readonly IWalletController walletController;
@@ -131,6 +132,14 @@ namespace Neo.Gui.ViewModels.Home
             var newAccount = new UiAccountSummary(message.AccountLabel, message.AccountAddress, message.AccountScriptHash, message.AccountType);
 
             this.Accounts.Add(newAccount);
+        }
+
+        public void HandleMessage(AccountBalanceRefreshedMessage message)
+        {
+            var account = this.Accounts.First(a => a.ScriptHash == message.ScriptHash);
+
+            account.Neo = message.Neo;
+            account.Gas = message.Gas;
         }
         #endregion
 
