@@ -115,7 +115,9 @@ namespace Neo.Gui.Wpf
                     IWalletInitializationParameters initializationParameters;
                     if (lightMode)
                     {
-                        initializationParameters = new LightWalletInitializationParameters(Settings.Default.LightWallet.RpcSeedList);
+                        initializationParameters = new LightWalletInitializationParameters(
+                            Settings.Default.LightWallet.RpcSeedList,
+                            Settings.Default.Paths.CertCache);
                     }
                     else
                     {

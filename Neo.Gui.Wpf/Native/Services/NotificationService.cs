@@ -11,12 +11,16 @@ namespace Neo.Gui.Wpf.Native.Services
     public class NotificationService : INotificationService
     {
         #region Private Fields 
+        private readonly IDispatchService dispatchService;
         private readonly Notifier notifier;
         #endregion
 
         #region Constructor 
-        public NotificationService()
+        public NotificationService(
+            IDispatchService dispatchService)
         {
+            this.dispatchService = dispatchService;
+
             this.notifier = new Notifier(cfg =>
             {
                 cfg.PositionProvider = new WindowPositionProvider(
@@ -37,22 +41,22 @@ namespace Neo.Gui.Wpf.Native.Services
         #region INotificationService implementation 
         public void ShowErrorNotification(string message)
         {
-            this.notifier.ShowError(message);
+            this.dispatchService.InvokeOnMainUIThread(() => this.notifier.ShowError(message));
         }
 
         public void ShowInformationNotification(string message)
         {
-            this.notifier.ShowInformation(message);
+            this.dispatchService.InvokeOnMainUIThread(() => this.notifier.ShowInformation(message));
         }
 
         public void ShowSuccessNotification(string message)
         {
-            this.notifier.ShowSuccess(message);
+            this.dispatchService.InvokeOnMainUIThread(() => this.notifier.ShowSuccess(message));
         }
 
         public void ShowWarningNotification(string message)
         {
-            this.notifier.ShowWarning(message);
+            this.dispatchService.InvokeOnMainUIThread(() => this.notifier.ShowWarning(message));
         }
         #endregion
     }

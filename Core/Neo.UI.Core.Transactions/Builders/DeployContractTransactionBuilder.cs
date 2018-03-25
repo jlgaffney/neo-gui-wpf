@@ -13,7 +13,13 @@ namespace Neo.UI.Core.Transactions.Builders
 
         public Transaction Build(DeployContractTransactionParameters parameters)
         {
-            var script = parameters.ContractSourceCode.HexToBytes();
+            var name = parameters.Name;
+            var version = parameters.Version;
+            var author = parameters.Author;
+            var email = parameters.Email;
+            var description = parameters.Description;
+
+            var script = parameters.ScriptHex.HexToBytes();
             var parameterListBytes = string.IsNullOrEmpty(parameters.ParameterList) ? new byte[0] : parameters.ParameterList.HexToBytes();
 
             ContractParameterType returnType;
@@ -28,17 +34,21 @@ namespace Neo.UI.Core.Transactions.Builders
                                  .Select(p => (ContractParameterType?)p).FirstOrDefault() ?? ContractParameterType.Void;
             }
 
-            var needsStorage = parameters.NeedsStorage;
-            var name = parameters.Name;
-            var version = parameters.Version;
-            var author = parameters.Author;
-            var email = parameters.Email;
-            var description = parameters.Description;
+            var properties = ContractPropertyState.NoProperty;
+            if (parameters.NeedsStorage)
+            {
+                properties |= ContractPropertyState.HasStorage;
+            }
+
+            if (parameters.NeedsDynamicCall)
+            {
+                properties |= ContractPropertyState.HasDynamicInvoke;
+            }
 
             InvocationTransaction transaction;
             using (var builder = new ScriptBuilder())
             {
-                builder.EmitSysCall(ContractCreateApi, script, parameterListBytes, returnType, needsStorage, name, version, author, email, description);
+                builder.EmitSysCall(ContractCreateApi, script, parameterListBytes, returnType, properties, name, version, author, email, description);
                 transaction = new InvocationTransaction
                 {
                     Script = builder.ToArray()

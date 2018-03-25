@@ -6,6 +6,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
+using Neo.Cryptography.ECC;
 using Neo.IO;
 using Neo.IO.Json;
 using Neo.Network;
@@ -74,7 +75,9 @@ namespace Neo.UI.Core.Wallet.Implementations
                 throw new ArgumentException();
             }
 
-            var initializationParameters = (LightWalletInitializationParameters)parameters;
+            var initializationParameters = (LightWalletInitializationParameters) parameters;
+
+            base.Initialize(initializationParameters);
 
             // TODO Determine an appropriate RPC seed node
             var seedNodeUrl = initializationParameters.RpcSeedList.First();
@@ -103,19 +106,31 @@ namespace Neo.UI.Core.Wallet.Implementations
 
             var refreshTask = Task.Run(async () =>
             {
-                var blockService = new NeoApiBlockService(this.rpcClient);
-                var nodeService = new NeoApiNodeService(this.rpcClient);
+                try
+                {
+                    var blockService = new NeoApiBlockService(this.rpcClient);
+                    var nodeService = new NeoApiNodeService(this.rpcClient);
 
-                var blockHeight = (uint)await blockService.GetBlockCount.SendRequestAsync();
-                var nodeCount = await nodeService.GetConnectionCount.SendRequestAsync();
+                    var blockHeight = (uint) await blockService.GetBlockCount.SendRequestAsync();
+                    var nodeCount = await nodeService.GetConnectionCount.SendRequestAsync();
 
-                this.messagePublisher.Publish(new WalletStatusMessage(this.WalletIsOpen ? this.currentWallet.WalletHeight : 0, new BlockchainStatus(blockHeight, blockHeight, true, 0.0, TimeSpan.Zero, nodeCount)));
+                    this.messagePublisher.Publish(new WalletStatusMessage(
+                        this.WalletIsOpen ? this.currentWallet.WalletHeight : 0,
+                        new BlockchainStatus(blockHeight, blockHeight, true, 0.0, TimeSpan.Zero, nodeCount)));
 
-                if (!this.WalletIsOpen) return;
+                    if (!this.WalletIsOpen) return;
 
-                await this.UpdateWalletBalances();
+                    await this.UpdateWalletBalances();
 
-                // TODO Refresh transaction list
+                    this.CheckAssetIssuerCertificates();
+
+                    // TODO Refresh transaction list
+
+                }
+                catch (Exception e)
+                {
+                    this.notificationService.ShowErrorNotification("An error occurred refreshing!" + Environment.NewLine + e.Message);
+                }
             });
 
             refreshTask.Wait();
@@ -290,13 +305,18 @@ namespace Neo.UI.Core.Wallet.Implementations
                         isSystemAsset = false;
                     }
 
-                    // TODO Query for asset owner certificate
+                    var assetOwner = isSystemAsset ? null : ECPoint.Parse(assetState.Owner, ECCurve.Secp256k1);
+
+                    var assetInfo = new AssetInfo(assetId, assetOwner, assetName);
+
+                    this.assetInfoCache.AddAssetInfo(assetInfo);
 
                     this.currentWalletInfo.AddAssetToList(assetId, totalBalance);
 
+                    var issuer = isSystemAsset ? Strings.SystemIssuer : $"{Strings.UnknownIssuer}[{assetOwner}]";
+
                     this.messagePublisher.Publish(new AssetTotalBalanceSummaryAddedMessage(assetId.ToString(),
-                        assetName, $"{Strings.UnknownIssuer}[{assetState.Owner}]", assetState.Type, isSystemAsset,
-                        (decimal) totalBalance, (decimal) totalBonus));
+                        assetName, issuer, assetState.Type, isSystemAsset, (decimal) totalBalance, (decimal) totalBonus));
                 }
                 else
                 {

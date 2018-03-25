@@ -4,6 +4,8 @@
     {
         public byte[] Script { get; }
 
+        public string ChangeAddress { get; }
+
         public InvokeContractTransactionParameters(byte[] script)
         {
             this.Script = script;

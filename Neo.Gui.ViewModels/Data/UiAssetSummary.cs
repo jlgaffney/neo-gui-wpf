@@ -6,6 +6,7 @@ namespace Neo.Gui.ViewModels.Data
 {
     public class UiAssetSummary : ObservableObject
     {
+        private string issuer;
         private string totalBalance;
 
         #region Public properties
@@ -14,7 +15,15 @@ namespace Neo.Gui.ViewModels.Data
 
         public string Name { get; }
 
-        public string Issuer { get; }
+        public string Issuer {
+            get => this.issuer;
+            set
+            {
+                if (this.issuer == value) return;
+                this.issuer = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public string Type { get; }
 

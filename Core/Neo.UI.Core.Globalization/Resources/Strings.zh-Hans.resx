@@ -457,6 +457,9 @@
   <data name="NeedsStorage" xml:space="preserve">
     <value>需要创建存储区</value>
   </data>
+  <data name="NeedsDynamicCall" xml:space="preserve">
+    <value>需要动态调用</value>
+  </data>
   <data name="NEP5ContractsList" xml:space="preserve">
     <value>NEP-5 合约列表</value>
   </data>

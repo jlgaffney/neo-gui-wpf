@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Threading;
@@ -30,7 +31,6 @@ namespace Neo.UI.Core.Wallet.Implementations
     {
         #region Private Fields 
         private readonly IBlockchainService blockchainService;
-        private readonly ICertificateQueryService certificateQueryService;
         private readonly IMessagePublisher messagePublisher;
         private readonly INotificationService notificationService;
 
@@ -56,7 +56,6 @@ namespace Neo.UI.Core.Wallet.Implementations
             : base(certificateQueryService, messagePublisher, notificationService, transactionBuilderFactory)
         {
             this.blockchainService = blockchainService;
-            this.certificateQueryService = certificateQueryService;
             this.messagePublisher = messagePublisher;
             this.notificationService = notificationService;
 
@@ -97,13 +96,12 @@ namespace Neo.UI.Core.Wallet.Implementations
 
             var initializationParameters = (FullWalletInitializationParameters) parameters;
 
+            base.Initialize(initializationParameters);
+
             this.blockchainService.Initialize(
                 initializationParameters.LocalNodePort,
                 initializationParameters.LocalWSPort,
                 initializationParameters.BlockchainDataDirectoryPath);
-
-            this.certificateQueryService.Initialize(
-                initializationParameters.CertificateCachePath);
 
             this.blockchainService.BlockAdded += this.OnBlockAdded;
 
@@ -519,31 +517,34 @@ namespace Neo.UI.Core.Wallet.Implementations
                                 isSystemAsset = false;
                             }
 
-                            // TODO Query for asset owner certificate
+                            var assetInfo = new AssetInfo(assetId, isSystemAsset ? null : assetTotalBalance.Asset.Owner, assetName);
+
+                            this.assetInfoCache.AddAssetInfo(assetInfo);
 
                             this.currentWalletInfo.AddAssetToList(assetId, assetTotalBalance.Value);
 
+                            var issuer = isSystemAsset ? Strings.SystemIssuer : $"{Strings.UnknownIssuer}[{assetTotalBalance.Asset.Owner}]";
+
                             this.messagePublisher.Publish(new AssetTotalBalanceSummaryAddedMessage(assetId.ToString(),
-                                assetName, $"{Strings.UnknownIssuer}[{assetTotalBalance.Asset.Owner}]",
-                                    assetTotalBalance.Asset.AssetType.ToString(), isSystemAsset,
-                                        (decimal)assetTotalBalance.Value, (decimal)assetTotalBalance.Claim));
+                                assetName, issuer, assetTotalBalance.Asset.AssetType.ToString(), isSystemAsset,
+                                    (decimal) assetTotalBalance.Value, (decimal) assetTotalBalance.Claim));
                         }
                         else
                         {
                             this.currentWalletInfo.UpdateAssetTotalBalance(assetId, assetTotalBalance.Value);
 
                             this.messagePublisher.Publish(new AssetTotalBalanceChangedMessage(assetId.ToString(),
-                                (decimal)assetTotalBalance.Value, (decimal)assetTotalBalance.Claim));
+                                (decimal) assetTotalBalance.Value, (decimal) assetTotalBalance.Claim));
                         }
                     }
 
                     this.ClearWalletBalanceChangedFlag();
                 }
-
-                this.CheckAssetIssuerCertificates();
             }
 
             this.UpdateNEP5TokenTotalBalances(timeSinceLastBlock);
+
+            this.CheckAssetIssuerCertificates();
         }
 
         private void UpdateNEP5TokenTotalBalances(TimeSpan timeSinceLastBlock)
@@ -687,7 +688,17 @@ namespace Neo.UI.Core.Wallet.Implementations
 
             if (transaction is InvocationTransaction invocationTransaction)
             {
+                var invocationParameters = parameters as InvokeContractTransactionParameters;
+
+                Debug.Assert(invocationParameters != null);
+
                 var transactionFee = invocationTransaction.Gas.Equals(Fixed8.Zero) ? NetworkFee : Fixed8.Zero;
+                
+                UInt160 changeAddress = null;
+                if (!string.IsNullOrEmpty(invocationParameters.ChangeAddress))
+                {
+                    changeAddress = BaseWallet.ToScriptHash(invocationParameters.ChangeAddress);
+                }
 
                 transaction = this.MakeTransaction(new InvocationTransaction
                 {

@@ -1,15 +1,14 @@
 ﻿namespace Neo.UI.Core.Wallet.Initialization
 {
-    public class FullWalletInitializationParameters : IWalletInitializationParameters
+    public class FullWalletInitializationParameters : BaseWalletInitializationParameters
     {
         public FullWalletInitializationParameters(int localNodePort, int localWSPort,
-            string blockchainDataDirectoryPath, string certificateCachePath)
+            string blockchainDataDirectoryPath, string certificateCachePath) : base(certificateCachePath)
         {
             this.LocalNodePort = localNodePort;
             this.LocalWSPort = localWSPort;
 
             this.BlockchainDataDirectoryPath = blockchainDataDirectoryPath;
-            this.CertificateCachePath = certificateCachePath;
         }
 
         internal int LocalNodePort { get; }
@@ -17,7 +16,5 @@
         internal int LocalWSPort { get; }
 
         internal string BlockchainDataDirectoryPath { get; }
-
-        internal string CertificateCachePath { get; }
     }
 }

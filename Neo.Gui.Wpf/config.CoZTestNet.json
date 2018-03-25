@@ -16,7 +16,7 @@
 
     "Urls": {
       "AddressUrl": "https://coz.neoscan-testnet.io/address/{0}",
-      "AssetUrl": "http://coz.neoscan-testnet.io/asset/{0}",
+      "AssetUrl": "https://coz.neoscan-testnet.io/api/main_net/v1/get_asset/{0}",
       "TransactionUrl": "https://coz.neoscan-testnet.io/transaction/{0}"
     }
   }

@@ -24,6 +24,7 @@ using Neo.UI.Core.Transactions.Parameters;
 using Neo.UI.Core.Wallet.Data;
 using Neo.UI.Core.Wallet.Exceptions;
 using Neo.UI.Core.Wallet.Helpers;
+using Neo.UI.Core.Wallet.Initialization;
 using Neo.UI.Core.Wallet.Messages;
 using Neo.VM;
 using Neo.Wallets;
@@ -78,6 +79,11 @@ namespace Neo.UI.Core.Wallet.Implementations
             Task.Run(() => this.RefreshWallet());
         }
 
+        protected void Initialize(BaseWalletInitializationParameters parameters)
+        {
+            this.certificateQueryService.Initialize(parameters.CertificateCachePath);
+        }
+
         protected virtual void SetCurrentWallet(BaseWallet wallet, IDisposable walletLocker)
         {
             if (this.WalletIsOpen)
@@ -99,6 +105,14 @@ namespace Neo.UI.Core.Wallet.Implementations
         protected abstract void RefreshWallet();
 
         public abstract Task<bool> Relay(IInventory inventory);
+
+        public decimal GetTransactionFee<TParameters>(TParameters transactionParameters)
+            where TParameters : TransactionParameters
+        {
+            var transaction = this.BuildTransaction(transactionParameters);
+
+            return (decimal) transaction.SystemFee;
+        }
 
         protected async Task SignAndRelay(Transaction transaction)
         {
@@ -597,6 +611,8 @@ namespace Neo.UI.Core.Wallet.Implementations
 
             var asset = this.assetInfoCache.GetAssetInfo(assetId);
 
+            if (asset?.AssetOwner == null) return null;
+
             return this.certificateQueryService.GetCachedCertificatePath(asset.AssetOwner);
         }
 
@@ -719,22 +735,53 @@ namespace Neo.UI.Core.Wallet.Implementations
 
         protected void CheckAssetIssuerCertificates()
         {
-            /*foreach (var asset in this.assetInfoCache.GetAllAssetInfo()
-                .Where(item => !item.IssuerCertificateChecked))
+            foreach (var assetId in this.currentWalletInfo.GetAssetsInWallet())
             {
-                if (asset.AssetOwner == null) continue;
+                var assetInfo = this.assetInfoCache.GetAssetInfo(assetId);
 
-                var queryResult = this.GetCertificateQueryResult(asset.AssetOwner);
+                if (assetInfo.IssuerCertificateChecked || assetInfo.AssetOwner == null) continue;
+
+                var queryResult = this.GetCertificateQueryResult(assetInfo.AssetOwner);
 
                 if (queryResult == null) continue;
 
-                using (queryResult)
+                switch (queryResult.Type)
                 {
-                    asset.SetIssuerCertificateQueryResult(queryResult.Type, queryResult.Certificate?.Subject);
+                    case CertificateQueryResultType.System:
+                    case CertificateQueryResultType.Missing:
+                    case CertificateQueryResultType.Good:
+                    case CertificateQueryResultType.Expired:
+                    case CertificateQueryResultType.Invalid:
+                        assetInfo.IssuerCertificateChecked = true;
+                        break;
                 }
-            }*/
 
-            // TODO Fix this
+                if (queryResult.Type == CertificateQueryResultType.Good ||
+                    queryResult.Type == CertificateQueryResultType.Expired ||
+                    queryResult.Type == CertificateQueryResultType.Invalid)
+                {
+                    assetInfo.OwnerCertificate = queryResult.Certificate;
+
+                    string issuer = null;
+                    switch (queryResult.Type)
+                    {
+                        case CertificateQueryResultType.Good:
+                            issuer = $"{queryResult.Certificate.Subject}[{assetInfo.AssetOwner}]";
+                            break;
+                        case CertificateQueryResultType.Expired:
+                            issuer = $"[{Strings.ExpiredCertificate}]{queryResult.Certificate.Subject}[{assetInfo.AssetOwner}]";
+                            break;
+                        case CertificateQueryResultType.Invalid:
+                            issuer = $"[{Strings.InvalidCertificate}][{assetInfo.AssetOwner}]";
+                            break;
+                    }
+
+                    if (issuer != null)
+                    {
+                        this.messagePublisher.Publish(new AssetIssuerInfoUpdatedMessage(assetId.ToString(), issuer));
+                    }
+                }
+            }
         }
 
         private CertificateQueryResult GetCertificateQueryResult(ECPoint publicKey)

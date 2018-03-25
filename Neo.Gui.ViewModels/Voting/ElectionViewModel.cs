@@ -15,7 +15,6 @@ namespace Neo.Gui.ViewModels.Voting
     public class ElectionViewModel : ViewModelBase, IDialogViewModel<ElectionLoadParameters>
     {
         #region Private Fields 
-        private readonly IDialogManager dialogManager;
         private readonly IWalletController walletController;
 
         private string selectedPublicKey;
@@ -36,7 +35,29 @@ namespace Neo.Gui.ViewModels.Voting
                 RaisePropertyChanged();
 
                 // Update dependent properties
+                RaisePropertyChanged(nameof(this.TransactionFee));
+
                 RaisePropertyChanged(nameof(this.OkEnabled));
+            }
+        }
+
+        public string TransactionFee
+        {
+            get
+            {
+                decimal fee;
+                if (string.IsNullOrEmpty(this.SelectedPublicKey))
+                {
+                    fee = 0;
+                }
+                else
+                {
+                    var transactionParameters = new ElectionTransactionParameters(this.SelectedPublicKey);
+
+                    fee = this.walletController.GetTransactionFee(transactionParameters);
+                }
+
+                return $"{fee} GAS";
             }
         }
 
@@ -47,10 +68,8 @@ namespace Neo.Gui.ViewModels.Voting
 
         #region Constructor 
         public ElectionViewModel(
-            IDialogManager dialogManager,
             IWalletController walletController)
         {
-            this.dialogManager = dialogManager;
             this.walletController = walletController;
 
             this.PublicKeys = new ObservableCollection<string>();

@@ -16,7 +16,6 @@ namespace Neo.Gui.ViewModels.Contracts
         IDialogViewModel<DeployContractLoadParameters>
     {
         #region Private Fields 
-        private readonly IDialogManager dialogManager;
         private readonly IFileManager fileManager;
         private readonly IFileDialogService fileDialogService;
         private readonly IWalletController walletController;
@@ -29,8 +28,9 @@ namespace Neo.Gui.ViewModels.Contracts
         private string parameterList;
         private string returnTypeStr;
 
-        private string script;
+        private string scriptHex;
         private bool needsStorage;
+        private bool needsDynamicCall;
         #endregion
 
         #region Public Properties 
@@ -146,14 +146,14 @@ namespace Neo.Gui.ViewModels.Contracts
             }
         }
 
-        public string Script
+        public string ScriptHex
         {
-            get => this.script;
+            get => this.scriptHex;
             set
             {
-                if (this.script == value) return;
+                if (this.scriptHex == value) return;
 
-                this.script = value;
+                this.scriptHex = value;
 
                 RaisePropertyChanged();
 
@@ -167,11 +167,11 @@ namespace Neo.Gui.ViewModels.Contracts
         {
             get
             {
-                if (string.IsNullOrEmpty(this.Script)) return string.Empty;
+                if (string.IsNullOrEmpty(this.ScriptHex)) return string.Empty;
 
                 try
                 {
-                    var scriptBytes = this.Script.HexToBytes();
+                    var scriptBytes = this.ScriptHex.HexToBytes();
 
                     return this.walletController.ScriptToScriptHash(scriptBytes);
                 }
@@ -195,13 +195,26 @@ namespace Neo.Gui.ViewModels.Contracts
             }
         }
 
+        public bool NeedsDynamicCall
+        {
+            get => this.needsDynamicCall;
+            set
+            {
+                if (this.needsDynamicCall == value) return;
+
+                this.needsDynamicCall = value;
+
+                RaisePropertyChanged();
+            }
+        }
+
         public bool DeployEnabled =>
             !string.IsNullOrEmpty(this.Name) &&
             !string.IsNullOrEmpty(this.Version) &&
             !string.IsNullOrEmpty(this.Author) &&
             !string.IsNullOrEmpty(this.Email) &&
             !string.IsNullOrEmpty(this.Description) &&
-            !string.IsNullOrEmpty(this.Script);
+            !string.IsNullOrEmpty(this.ScriptHex);
 
         public RelayCommand LoadCommand => new RelayCommand(this.HandleLoadCommand);
 
@@ -212,12 +225,10 @@ namespace Neo.Gui.ViewModels.Contracts
 
         #region Constructor 
         public DeployContractViewModel(
-            IDialogManager dialogManager,
             IFileManager fileManager,
             IFileDialogService fileDialogService,
             IWalletController walletController)
         {
-            this.dialogManager = dialogManager;
             this.fileManager = fileManager;
             this.fileDialogService = fileDialogService;
             this.walletController = walletController;
@@ -257,21 +268,22 @@ namespace Neo.Gui.ViewModels.Contracts
                 hexString = loadedBytes.ToHexString();
             }
 
-            this.Script = hexString;
+            this.ScriptHex = hexString;
         }
 
         private async void HandleDeployCommand()
         {
             var transactionParameters = new DeployContractTransactionParameters(
-                this.Script,
-                this.parameterList,
-                this.ReturnType,
-                this.NeedsStorage,
                 this.Name,
                 this.Version,
                 this.Author,
                 this.Email,
-                this.Description);
+                this.Description,
+                this.ScriptHex,
+                this.ParameterList,
+                this.ReturnType,
+                this.NeedsStorage,
+                this.NeedsDynamicCall);
 
             await this.walletController.BuildSignAndRelayTransaction(transactionParameters);
 

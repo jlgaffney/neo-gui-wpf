@@ -222,6 +222,8 @@ namespace Neo.Gui.ViewModels.Contracts
 
         public void OnDialogLoad(InvokeContractLoadParameters parameters)
         {
+            if (parameters.Script == null) return;
+
             this.CustomScript = parameters.Script.ToHexString();
         }
         #endregion

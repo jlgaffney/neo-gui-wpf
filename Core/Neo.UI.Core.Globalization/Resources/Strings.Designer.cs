@@ -1132,7 +1132,7 @@ namespace Neo.UI.Core.Globalization.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid.
+        ///   Looks up a localized string similar to Invalid Certificate.
         /// </summary>
         public static string InvalidCertificate {
             get {
@@ -1300,6 +1300,15 @@ namespace Neo.UI.Core.Globalization.Resources {
         public static string Name {
             get {
                 return ResourceManager.GetString("Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Needs Dynamic Call.
+        /// </summary>
+        public static string NeedsDynamicCall {
+            get {
+                return ResourceManager.GetString("NeedsDynamicCall", resourceCulture);
             }
         }
         

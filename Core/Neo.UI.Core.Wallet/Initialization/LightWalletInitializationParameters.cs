@@ -1,8 +1,8 @@
 ﻿namespace Neo.UI.Core.Wallet.Initialization
 {
-    public class LightWalletInitializationParameters : IWalletInitializationParameters
+    public class LightWalletInitializationParameters : BaseWalletInitializationParameters
     {
-        public LightWalletInitializationParameters(string[] rpcSeedList)
+        public LightWalletInitializationParameters(string[] rpcSeedList, string certificateCachePath) : base(certificateCachePath)
         {
             this.RpcSeedList = rpcSeedList;
         }

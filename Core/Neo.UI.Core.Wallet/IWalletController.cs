@@ -52,6 +52,8 @@ namespace Neo.UI.Core.Wallet
 
         Task<InvokeResult> InvokeScript(byte[] script);
 
+        decimal GetTransactionFee<TParameters>(TParameters transactionParameters) where TParameters : TransactionParameters;
+
         Task BuildSignAndRelayTransaction<TParameters>(TParameters transactionParameters) where TParameters : TransactionParameters;
 
         bool Sign(ContractParametersContext context);

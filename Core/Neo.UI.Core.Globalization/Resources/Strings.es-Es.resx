@@ -409,7 +409,7 @@
     <value>Fondos insuficientes, la transacción no se puede iniciar.</value>
   </data>
   <data name="InvalidCertificate" xml:space="preserve">
-    <value>Inválido</value>
+    <value>Certificado inválido</value>
   </data>
   <data name="Invoke" xml:space="preserve">
     <value>Invocar</value>
@@ -456,6 +456,9 @@ Aviso: los ficheros actualizados no podran ser abiertos por clientes de versione
   </data>
   <data name="NeedsStorage" xml:space="preserve">
     <value>Es necesario almacenamiento</value>
+  </data>
+  <data name="NeedsDynamicCall" xml:space="preserve">
+    <value>Necesita llamada dinámica</value>
   </data>
   <data name="NEP5ContractsList" xml:space="preserve">
     <value>Lista de contratos NEP-5</value>

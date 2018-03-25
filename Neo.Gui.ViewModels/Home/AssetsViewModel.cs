@@ -1,17 +1,15 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Globalization;
+using System.Linq;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
 using Neo.UI.Core.Globalization.Resources;
 using Neo.Gui.Dialogs;
-using Neo.UI.Core.Data;
-using Neo.UI.Core.Messaging.Interfaces;
-using System.Linq;
 using Neo.Gui.Dialogs.Interfaces;
 using Neo.Gui.ViewModels.Data;
 using Neo.UI.Core.Data.Enums;
+using Neo.UI.Core.Messaging.Interfaces;
 using Neo.UI.Core.Services.Interfaces;
 using Neo.UI.Core.Wallet;
 using Neo.UI.Core.Wallet.Messages;
@@ -26,6 +24,7 @@ namespace Neo.Gui.ViewModels.Home
         IMessageHandler<AssetTotalBalanceSummaryAddedMessage>,
         IMessageHandler<AssetTotalBalanceSummaryRemovedMessage>,
         IMessageHandler<AssetTotalBalanceChangedMessage>,
+        IMessageHandler<AssetIssuerInfoUpdatedMessage>,
         IMessageHandler<NEP5TokenTotalBalanceSummaryAddedMessage>,
         IMessageHandler<NEP5TokenTotalBalanceSummaryRemovedMessage>,
         IMessageHandler<NEP5TokenTotalBalanceChangedMessage>
@@ -148,6 +147,13 @@ namespace Neo.Gui.ViewModels.Home
             var asset = this.Assets.Single(a => a.TokenType == TokenType.FirstClassToken && a.AssetId == message.AssetId);
 
             asset.SetAssetBalance(message.TotalBalance, message.TotalBonus);
+        }
+
+        public void HandleMessage(AssetIssuerInfoUpdatedMessage message)
+        {
+            var asset = this.Assets.Single(a => a.TokenType == TokenType.FirstClassToken && a.AssetId == message.AssetId);
+
+            asset.Issuer = message.Issuer;
         }
 
         public void HandleMessage(NEP5TokenTotalBalanceSummaryAddedMessage message)

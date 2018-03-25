@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Threading;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
@@ -180,16 +179,17 @@ namespace Neo.Gui.ViewModels.Assets
             this.Close(this, EventArgs.Empty);
         }
 
-        private async void UpdateAssetDetails()
+        private void UpdateAssetDetails()
         {
-            Monitor.Enter(this.assetDetailsQueryLock);
-
-            try
+            lock (this.assetDetailsQueryLock)
             {
-                var assetState = await this.walletController.GetAssetState(this.AssetId);
-                this.Asset = new AssetDto {Id = this.AssetId};
+                var getAssetStateTask = this.walletController.GetAssetState(this.AssetId);
 
-                if (assetState == null)
+                var stateRetrieved = getAssetStateTask.Wait(10000);
+
+                this.Asset = new AssetDto { Id = this.AssetId };
+
+                if (!stateRetrieved)
                 {
                     this.Owner = string.Empty;
                     this.Admin = string.Empty;
@@ -199,6 +199,8 @@ namespace Neo.Gui.ViewModels.Assets
                 }
                 else
                 {
+                    var assetState = getAssetStateTask.Result;
+
                     this.Owner = assetState.Owner;
                     this.Admin = assetState.Admin;
                     this.Total = assetState.Amount;
@@ -207,10 +209,6 @@ namespace Neo.Gui.ViewModels.Assets
                 }
 
                 this.Items.Clear();
-            }
-            finally
-            {
-                Monitor.Exit(this.assetDetailsQueryLock);
             }
         }
 

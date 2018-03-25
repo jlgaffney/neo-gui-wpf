@@ -409,7 +409,7 @@
     <value>Insufficient funds, transaction cannot be initiated.</value>
   </data>
   <data name="InvalidCertificate" xml:space="preserve">
-    <value>Invalid</value>
+    <value>Invalid Certificate</value>
   </data>
   <data name="Invoke" xml:space="preserve">
     <value>Invoke</value>
@@ -456,6 +456,9 @@ Note: updated files cannot be openned by clients in older versions!</value>
   </data>
   <data name="NeedsStorage" xml:space="preserve">
     <value>Needs Storage</value>
+  </data>
+  <data name="NeedsDynamicCall" xml:space="preserve">
+    <value>Needs Dynamic Call</value>
   </data>
   <data name="NEP5ContractsList" xml:space="preserve">
     <value>NEP-5 Contracts List</value>
