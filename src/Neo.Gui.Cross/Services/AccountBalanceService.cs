@@ -23,18 +23,18 @@ namespace Neo.Gui.Cross.Services
         {
             if (!globalAssetBalances.ContainsKey(accountId))
             {
-                return new Dictionary<UInt256, Fixed8>
-                {
+                return new Dictionary<UInt256, Fixed8>()
+                /*{
                     { Blockchain.GoverningToken.Hash, Fixed8.FromDecimal(123) },
                     { Blockchain.UtilityToken.Hash, Fixed8.FromDecimal(1234) }
-                };
+                }*/;
             }
 
             return new Dictionary<UInt256, Fixed8>(globalAssetBalances[accountId])
-            {
+            /*{
                 { Blockchain.GoverningToken.Hash, Fixed8.FromDecimal(123) },
                 { Blockchain.UtilityToken.Hash, Fixed8.FromDecimal(1234) }
-            };
+            }*/;
         }
 
         public IReadOnlyDictionary<UInt160, BigDecimal> GetNEP5TokenBalances(UInt160 accountId)

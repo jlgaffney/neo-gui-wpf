@@ -11,13 +11,5 @@ namespace Neo.Gui.Cross.Services
         {
             this.blockchainService = blockchainService;
         }
-
-        public AssetState GetAssetState(UInt256 assetId)
-        {
-            using (var snapshot = blockchainService.GetSnapshot())
-            {
-                return snapshot.Assets.TryGet(assetId);
-            }
-        }
     }
 }

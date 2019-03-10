@@ -9,7 +9,7 @@ namespace Neo.Gui.Cross.ViewModels.Contracts
 {
     public class InvokeContractViewModel : ViewModelBase
     {
-        private readonly IContractService contractService;
+        private readonly IBlockchainService blockchainService;
         private readonly IFileDialogService fileDialogService;
         private readonly IFileService fileService;
         private readonly IWindowService windowService;
@@ -36,12 +36,12 @@ namespace Neo.Gui.Cross.ViewModels.Contracts
 
 
         public InvokeContractViewModel(
-            IContractService contractService,
+            IBlockchainService blockchainService,
             IFileDialogService fileDialogService,
             IFileService fileService,
             IWindowService windowService)
         {
-            this.contractService = contractService;
+            this.blockchainService = blockchainService;
             this.fileDialogService = fileDialogService;
             this.fileService = fileService;
             this.windowService = windowService;
@@ -252,7 +252,7 @@ namespace Neo.Gui.Cross.ViewModels.Contracts
 
             scriptHash = UInt160.Parse(ScriptHash);
 
-            var contractState = contractService.GetContractState(scriptHash);
+            var contractState = blockchainService.GetContractState(scriptHash);
 
             if (contractState == null)
             {

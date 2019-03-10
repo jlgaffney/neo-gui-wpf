@@ -10,23 +10,6 @@ namespace Neo.Gui.Cross.Services
 {
     public class ContractService : IContractService
     {
-        private readonly IBlockchainService blockchainService;
-
-        public ContractService(
-            IBlockchainService blockchainService)
-        {
-            this.blockchainService = blockchainService;
-        }
-
-        public ContractState GetContractState(UInt160 scriptHash)
-        {
-            using (var snapshot = blockchainService.GetSnapshot())
-            {
-                return snapshot.Contracts.TryGet(scriptHash);
-            }
-        }
-
-
         public Contract CreateContract(byte[] script, IReadOnlyList<ContractParameterType> parameters)
         {
             return Contract.Create(parameters.ToArray(), script);

@@ -20,7 +20,7 @@ namespace Neo.Gui.Cross.ViewModels.Home
     {
         private readonly IAccountBalanceService accountBalanceService;
         private readonly IAccountService accountService;
-        private readonly IAssetService assetService;
+        private readonly IBlockchainService blockchainService;
         private readonly IMessageAggregator messageAggregator;
         private readonly INEP5TokenService nep5TokenService;
         private readonly IWalletService walletService;
@@ -31,14 +31,14 @@ namespace Neo.Gui.Cross.ViewModels.Home
         public AssetsViewModel(
             IAccountBalanceService accountBalanceService,
             IAccountService accountService,
-            IAssetService assetService,
+            IBlockchainService blockchainService,
             IMessageAggregator messageAggregator,
             INEP5TokenService nep5TokenService,
             IWalletService walletService)
         {
             this.accountBalanceService = accountBalanceService;
             this.accountService = accountService;
-            this.assetService = assetService;
+            this.blockchainService = blockchainService;
             this.walletService = walletService;
             this.nep5TokenService = nep5TokenService;
             this.messageAggregator = messageAggregator;
@@ -152,7 +152,7 @@ namespace Neo.Gui.Cross.ViewModels.Home
 
             foreach (var assetId in globalAssetTotalBalances.Keys)
             {
-                var asset = assetService.GetAssetState(assetId);
+                var asset = blockchainService.GetAssetState(assetId);
 
                 bool isSystemAsset;
                 string assetName;

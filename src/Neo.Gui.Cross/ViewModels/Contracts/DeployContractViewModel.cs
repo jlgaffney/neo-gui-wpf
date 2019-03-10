@@ -280,7 +280,7 @@ namespace Neo.Gui.Cross.ViewModels.Contracts
 
         private async void Deploy()
         {
-            // TODO Build invocation transaction, sign it, and relay transaction to the network
+            // TODO Build transaction, sign it, and relay transaction to the network
 
             /*var transactionParameters = new DeployContractTransactionParameters(
                 this.Name,

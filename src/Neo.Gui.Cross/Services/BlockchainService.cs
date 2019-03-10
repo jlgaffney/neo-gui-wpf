@@ -42,5 +42,31 @@ namespace Neo.Gui.Cross.Services
 
             return Blockchain.Singleton.GetSnapshot();
         }
+
+
+        
+        public AssetState GetAssetState(UInt256 assetId)
+        {
+            using (var snapshot = GetSnapshot())
+            {
+                return snapshot.Assets.TryGet(assetId);
+            }
+        }
+
+        public AccountState GetAccountState(UInt160 scriptHash)
+        {
+            using (var snapshot = GetSnapshot())
+            {
+                return snapshot.Accounts.TryGet(scriptHash);
+            }
+        }
+
+        public ContractState GetContractState(UInt160 scriptHash)
+        {
+            using (var snapshot = GetSnapshot())
+            {
+                return snapshot.Contracts.TryGet(scriptHash);
+            }
+        }
     }
 }
