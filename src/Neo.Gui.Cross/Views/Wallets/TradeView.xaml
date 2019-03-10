@@ -1,0 +1,59 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:walletsVm="clr-namespace:Neo.Gui.Cross.ViewModels.Wallets;assembly:Neo.Gui.Cross"
+        xmlns:resources="clr-namespace:Neo.Gui.Cross.Resources;assembly:Neo.Gui.Cross"
+        Icon="resm:Neo.Gui.Cross.Assets.logo.ico"
+        Title="{x:Static resources:Strings.TradeTitle}"
+        Width="520"
+        Height="580"
+        CanResize="False">
+
+  <Design.DataContext>
+    <walletsVm:TradeViewModel/>
+  </Design.DataContext>
+
+  <Grid>
+    <TabControl x:Name="TabControl" SelectedIndex="{Binding SelectedTabIndex}"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+      <!-- Initiate Tab -->
+      <TabItem Header="{x:Static resources:Strings.InitiateTxRequest}">
+        <Grid RowDefinitions="Auto,*,Auto" Margin="8">
+          <Grid Grid.Row="0" ColumnDefinitions="Auto,*" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <TextBlock Grid.Column="0" Text="{x:Static resources:Strings.PayTo}" Margin="0 0 8 0" VerticalAlignment="Center" />
+            <TextBox Grid.Column="1" Text="{Binding PayToAddress}" Margin="0 8" Padding="4" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+          </Grid>
+
+          <!--<GroupBox Grid.Row="1" Header="{x:Static resources:Strings.AssetsTheCounterpartyWillAcquire}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <controls:TransactionOutputListBox
+                Items="{Binding Items}"
+                ScriptHash="{Binding ScriptHash}"
+                IsEnabled="{Binding ItemsListEnabled}"
+                ItemsChanged="TxOutListBox_OnItemsChanged"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch" />
+          </GroupBox>-->
+
+          <Button Grid.Row="2" Content="{x:Static resources:Strings.InitiateRequest}" Width="70" Margin="0 6 0 0" HorizontalAlignment="Right" Command="{Binding InitiateCommand}" IsEnabled="{Binding InitiateEnabled}" />
+        </Grid>
+      </TabItem>
+
+      <!-- Merge Tab -->
+      <TabItem Header="{x:Static resources:Strings.MergeTxRequest}">
+        <Grid RowDefinitions="1.4*,*,Auto" Margin="8" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+          <GroupBox Grid.Row="0" Header="{x:Static resources:Strings.CounterpartyRequest}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid RowDefinitions="*,Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+              <TextBox Grid.Row="0" Text="{Binding CounterPartyRequest}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" />
+              <Button Grid.Row="1" Content="{x:Static resources:Strings.Validate}" Width="70" HorizontalAlignment="Right" Margin="0 6 0 2" Command="{Binding ValidateCommand}" IsEnabled="{Binding ValidateEnabled}" />
+            </Grid>
+          </GroupBox>
+
+          <GroupBox Grid.Row="1" Header="{x:Static resources:Strings.MyTradeRequest}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <TextBox Text="{Binding MyRequest}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" />
+          </GroupBox>
+
+          <Button Grid.Row="2" Content="{x:Static resources:Strings.Merge}" Width="70" Margin="0 6 0 0" HorizontalAlignment="Right" Command="{Binding MergeCommand}" IsEnabled="{Binding MergeEnabled}" />
+        </Grid>
+      </TabItem>
+    </TabControl>
+  </Grid>
+
+</Window>

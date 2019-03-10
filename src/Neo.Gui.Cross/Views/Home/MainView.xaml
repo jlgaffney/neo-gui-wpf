@@ -1,0 +1,17 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:homeVm="clr-namespace:Neo.Gui.Cross.ViewModels.Home;assembly:Neo.Gui.Cross"
+        xmlns:homeViews="clr-namespace:Neo.Gui.Cross.Views.Home;assembly:Neo.Gui.Cross">
+
+  <Design.DataContext>
+    <homeVm:MainViewModel/>
+  </Design.DataContext>
+  
+  <Grid RowDefinitions="Auto,*,Auto">
+    <homeViews:MenuView Grid.Row="0" HorizontalAlignment="Stretch" />
+
+    <homeViews:WalletView Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+    
+    <homeViews:StatusBarView Grid.Row="2" HorizontalAlignment="Stretch" />
+  </Grid>
+</UserControl>

@@ -1,0 +1,19 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:Neo.Gui.Cross.ViewModels;assembly:Neo.Gui.Cross"
+        xmlns:home="clr-namespace:Neo.Gui.Cross.Views.Home;assembly:Neo.Gui.Cross"
+        xmlns:resources="clr-namespace:Neo.Gui.Cross.Resources;assembly:Neo.Gui.Cross"
+        Icon="resm:Neo.Gui.Cross.Assets.logo.ico"
+        Title="{x:Static resources:Strings.GuiTitle}"
+        Width="600"
+        Height="400"
+        MinWidth="600"
+        MinHeight="400">
+
+  <Design.DataContext>
+    <vm:ShellWindowViewModel/>
+  </Design.DataContext>
+
+  <home:MainView />
+  
+</Window>

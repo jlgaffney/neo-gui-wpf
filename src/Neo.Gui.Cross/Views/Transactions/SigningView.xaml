@@ -1,0 +1,38 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:transactionsVm="clr-namespace:Neo.Gui.Cross.ViewModels.Transactions;assembly:Neo.Gui.Cross"
+        xmlns:resources="clr-namespace:Neo.Gui.Cross.Resources;assembly:Neo.Gui.Cross"
+        Icon="resm:Neo.Gui.Cross.Assets.logo.ico"
+        Title="{x:Static resources:Strings.Signature}"
+        Width="480"
+        SizeToContent="Height"
+        CanResize="False">
+
+  <Design.DataContext>
+    <transactionsVm:SigningViewModel/>
+  </Design.DataContext>
+
+  <Grid RowDefinitions="180,Auto,230,Auto" Margin="12">
+    <GroupBox Grid.Row="0" Header="{x:Static resources:Strings.Input}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+      <TextBox Text="{Binding Input}" AcceptsReturn="True" HorizontalAlignment="Stretch"
+          VerticalAlignment="Stretch" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" />
+    </GroupBox>
+
+    <Button Grid.Row="1" Content="{x:Static resources:Strings.Signature}" Width="80" Margin="0 8"
+            HorizontalAlignment="Center" Command="{Binding SignatureCommand}" />
+
+    <GroupBox Grid.Row="2" Header="{x:Static resources:Strings.Output}">
+      <TextBox Text="{Binding Output}" IsReadOnly="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+               HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" />
+    </GroupBox>
+
+    <Button Grid.Row="3" Content="{x:Static resources:Strings.Broadcast}" Width="60" Margin="0 8 0 0" HorizontalAlignment="Left"
+        Command="{Binding BroadcastCommand}" Visibility="{Binding Path=BroadcastVisible, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Hidden}" />
+
+    <DockPanel Grid.Row="3" Margin="0 8 0 0" HorizontalAlignment="Right">
+      <Button Content="{x:Static resources:Strings.Copy}" Width="60" Margin="0 0 8 0" Command="{Binding CopyCommand}" />
+      <Button Content="{x:Static resources:Strings.Close}" Width="60" Command="{Binding CloseCommand}" />
+    </DockPanel>
+  </Grid>
+
+</Window>

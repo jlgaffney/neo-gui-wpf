@@ -1,0 +1,30 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:walletsVm="clr-namespace:Neo.Gui.Cross.ViewModels.Wallets;assembly:Neo.Gui.Cross"
+        xmlns:resources="clr-namespace:Neo.Gui.Cross.Resources;assembly:Neo.Gui.Cross"
+        Icon="resm:Neo.Gui.Cross.Assets.logo.ico"
+        Title="{x:Static resources:Strings.CreateWalletTitle}"
+        Width="525"
+        SizeToContent="Height"
+        CanResize="False">
+
+  <Design.DataContext>
+    <walletsVm:NewWalletViewModel/>
+  </Design.DataContext>
+
+  <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="60,*,60" Margin="12">
+    
+    <TextBlock Grid.Row="0" Grid.Column="0" Text="File Path" />
+    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding FilePath}" />
+    <Button Grid.Row="0" Grid.Column="2" Content="Browse" Command="{Binding BrowseFileCommand}" />
+
+    <TextBlock Grid.Row="1" Grid.Column="0" Text="Password" />
+    <TextBox Grid.Row="1" Grid.Column="1" PasswordChar="*" Text="{Binding Password}" />
+
+    <TextBlock Grid.Row="2" Grid.Column="0" Text="Re-enter Password" />
+    <TextBox Grid.Row="2" Grid.Column="1" PasswordChar="*" Text="{Binding ReEnteredPassword}" />
+
+    <Button Grid.Row="3" Grid.Column="2" Content="Create" Command="{Binding CreateCommand}" />
+  </Grid>
+  
+</Window>

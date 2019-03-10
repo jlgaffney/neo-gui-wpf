@@ -1,0 +1,26 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:walletsVm="clr-namespace:Neo.Gui.Cross.ViewModels.Wallets;assembly:Neo.Gui.Cross"
+        xmlns:resources="clr-namespace:Neo.Gui.Cross.Resources;assembly:Neo.Gui.Cross"
+        Icon="resm:Neo.Gui.Cross.Assets.logo.ico"
+        Title="{x:Static resources:Strings.TransactionVerificationTitle}"
+        Width="600"
+        Height="500"
+        CanResize="False">
+
+  <Design.DataContext>
+    <walletsVm:TradeVerificationViewModel/>
+  </Design.DataContext>
+
+  <Grid RowDefinitions="*,Auto" Margin="12">
+    <!--<GroupBox Grid.Row="0" Header="{x:Static resources:Strings.AssetsYouWillAcquire}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+      <controls:TransactionOutputListBox Items="{Binding Items}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+    </GroupBox>-->
+
+    <DockPanel Grid.Row="1" Margin="0 8 0 0" HorizontalAlignment="Right" VerticalAlignment="Stretch">
+      <Button Content="{x:Static resources:Strings.Accept}" Width="70" Margin="0 0 8 0" Command="{Binding AcceptCommand}" />
+      <Button Content="{x:Static resources:Strings.Refuse}" Width="70" Command="{Binding RefuseCommand}" />
+    </DockPanel>
+  </Grid>
+
+</Window>

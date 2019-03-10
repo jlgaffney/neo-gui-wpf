@@ -1,0 +1,17 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:contractsVm="clr-namespace:Neo.Gui.Cross.ViewModels.Contracts;assembly:Neo.Gui.Cross"
+        xmlns:resources="clr-namespace:Neo.Gui.Cross.Resources;assembly:Neo.Gui.Cross"
+        Icon="resm:Neo.Gui.Cross.Assets.logo.ico"
+        Title="{x:Static resources:Strings.SetParametersTitle}"
+        Width="720"
+        Height="480"
+        CanResize="False">
+
+  <Design.DataContext>
+    <contractsVm:ContractParametersEditorViewModel/>
+  </Design.DataContext>
+
+
+
+</Window>

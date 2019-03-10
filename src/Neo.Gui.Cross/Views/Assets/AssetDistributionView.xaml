@@ -1,0 +1,46 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:assetsVm="clr-namespace:Neo.Gui.Cross.ViewModels.Assets;assembly:Neo.Gui.Cross"
+        xmlns:resources="clr-namespace:Neo.Gui.Cross.Resources;assembly:Neo.Gui.Cross"
+        Icon="resm:Neo.Gui.Cross.Assets.logo.ico"
+        Title="{x:Static resources:Strings.AssetDistributionTitle}"
+        Width="540"
+        Height="490"
+        CanResize="False">
+
+  <Design.DataContext>
+    <assetsVm:AssetDistributionViewModel/>
+  </Design.DataContext>
+
+  <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="12">
+    <GroupBox Grid.Row="0" Header="{x:Static resources:Strings.AssetId}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+      <TextBox Text="{Binding AssetId}" IsEnabled="{Binding AssetIdEnabled}" MaxLength="66" Margin="3" Padding="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+    </GroupBox>
+
+    <GroupBox Grid.Row="1" Header="{x:Static resources:Strings.AssetDetails}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+      <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="Auto,*">
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static resources:Strings.Owner}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Owner}" IsReadOnly="True" Margin="0 4" Padding="2" HorizontalAlignment="Stretch" />
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Static resources:Strings.Admin}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Admin}" IsReadOnly="True" Margin="0 4" Padding="2" HorizontalAlignment="Stretch" />
+
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="{x:Static resources:Strings.Total}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Total}" IsReadOnly="True" Margin="0 4" Padding="2" HorizontalAlignment="Stretch" />
+
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="{x:Static resources:Strings.Issued}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Issued}" IsReadOnly="True" Margin="0 4" Padding="2" HorizontalAlignment="Stretch" />
+      </Grid>
+    </GroupBox>
+
+    <!--<GroupBox Grid.Row="2" Header="{x:Static resources:Strings.Distribution}" IsEnabled="{Binding DistributionEnabled}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+      <controls:TransactionOutputListBox Items="{Binding Items}" Asset="{Binding Asset}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+    </GroupBox>-->
+
+    <DockPanel Grid.Row="3" Margin="0 8 0 0" HorizontalAlignment="Right" VerticalAlignment="Stretch">
+      <Button Content="{x:Static resources:Strings.Confirm}" Width="70" Margin="0 0 8 0" Command="{Binding DistributeCommand}" IsEnabled="{Binding DistributionEnabled}" />
+      <Button Content="{x:Static resources:Strings.Cancel}" Width="70" Command="{Binding CancelCommand}" />
+    </DockPanel>
+  </Grid>
+
+</Window>

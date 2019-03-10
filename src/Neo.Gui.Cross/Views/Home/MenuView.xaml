@@ -1,0 +1,55 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:homeVm="clr-namespace:Neo.Gui.Cross.ViewModels.Home;assembly:Neo.Gui.Cross"
+        xmlns:views="clr-namespace:Neo.Gui.Cross.Views;assembly:Neo.Gui.Cross"
+        xmlns:resources="clr-namespace:Neo.Gui.Cross.Resources;assembly:Neo.Gui.Cross">
+
+  <Design.DataContext>
+    <homeVm:MenuViewModel/>
+  </Design.DataContext>
+
+  <Menu HorizontalAlignment="Stretch">
+    <MenuItem Header="{x:Static resources:Strings.WalletMenuHeader}">
+      <MenuItem Header="{x:Static resources:Strings.NewWalletMenuHeader}" Command="{Binding NewWalletCommand}" /><!-- InputGestureText="Ctrl+N" -->
+      <MenuItem Header="{x:Static resources:Strings.OpenWalletMenuHeader}" Command="{Binding OpenWalletCommand}" /><!-- InputGestureText="Ctrl+O" -->
+      <Separator />
+      <!--<MenuItem Header="Change Password" Command="{Binding ChangeWalletPasswordCommand}" />-->
+      <MenuItem Header="{x:Static resources:Strings.CloseWalletMenuHeader}" Command="{Binding CloseWalletCommand}" IsEnabled="{Binding WalletIsOpen}" />
+      <Separator />
+      <MenuItem Header="{x:Static resources:Strings.ExitMenuHeader}" Command="{Binding ExitApplicationCommand}" />
+    </MenuItem>
+    
+    <MenuItem Header="{x:Static resources:Strings.TransactionMenuHeader}" IsEnabled="{Binding WalletIsOpen}">
+      <MenuItem Header="{x:Static resources:Strings.TransferMenuHeader}" Command="{Binding TransferCommand}" />
+      <MenuItem Header="{x:Static resources:Strings.TransactionsMenuHeader}" Command="{Binding TransactionsCommand}" />
+      <Separator />
+      <MenuItem Header="{x:Static resources:Strings.SignatureMenuHeader}" Command="{Binding SignatureCommand}" />
+    </MenuItem>
+
+    <MenuItem Header="{x:Static resources:Strings.AdvancedMenuHeader}">
+      <MenuItem Header="{x:Static resources:Strings.GasClaimMenuHeader}" Command="{Binding GasClaimCommand}" IsEnabled="{Binding WalletIsOpen}" />
+      <Separator />
+      <MenuItem Header="{x:Static resources:Strings.RequestCertificateMenuHeader}" Command="{Binding RequestCertificateCommand}" IsEnabled="{Binding WalletIsOpen}" />
+      <MenuItem Header="{x:Static resources:Strings.AssetRegistrationMenuHeader}" Command="{Binding AssetRegistrationCommand}" IsEnabled="{Binding WalletIsOpen}" />
+      <MenuItem Header="{x:Static resources:Strings.AssetDistributionMenuHeader}" Command="{Binding AssetDistributionCommand}" IsEnabled="{Binding WalletIsOpen}" />
+      <Separator />
+      <MenuItem Header="{x:Static resources:Strings.DeployContractMenuHeader}" Command="{Binding DeployContractCommand}" IsEnabled="{Binding WalletIsOpen}" />
+      <MenuItem Header="{x:Static resources:Strings.InvokeContractMenuHeader}" Command="{Binding InvokeContractCommand}" IsEnabled="{Binding WalletIsOpen}" />
+      <Separator />
+      <MenuItem Header="{x:Static resources:Strings.ElectionMenuHeader}" Command="{Binding ElectionCommand}" IsEnabled="{Binding WalletIsOpen}" />
+      <MenuItem Header="Sign Message" Command="{Binding SignMessageCommand}" IsEnabled="{Binding WalletIsOpen}" />
+      <Separator />
+      <MenuItem Header="{x:Static resources:Strings.SettingsMenuHeader}" Command="{Binding SettingsCommand}" />
+    </MenuItem>
+
+    <MenuItem Header="{x:Static resources:Strings.HelpMenuHeader}">
+      <!--<MenuItem Header="Check for Help" Command="{Binding CheckForHelpCommand}" />-->
+      <MenuItem Header="{x:Static resources:Strings.OfficialWebMenuHeader}" Command="{Binding OfficialWebsiteCommand}" />
+      <Separator />
+      <MenuItem Header="{x:Static resources:Strings.DeveloperToolsMenuHeader}" Command="{Binding DeveloperToolsCommand}" /> <!-- InputGestureText="F12" -->
+      <Separator />
+      <MenuItem Header="{x:Static resources:Strings.AboutNeoMenuHeader}" Command="{Binding AboutNEOGUICommand}" />
+    </MenuItem>
+  </Menu>
+  
+</UserControl>

@@ -1,0 +1,34 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:accountsVm="clr-namespace:Neo.Gui.Cross.ViewModels.Accounts;assembly:Neo.Gui.Cross"
+        xmlns:resources="clr-namespace:Neo.Gui.Cross.Resources;assembly:Neo.Gui.Cross"
+        Icon="resm:Neo.Gui.Cross.Assets.logo.ico"
+        Title="{x:Static resources:Strings.ViewContractTitle}"
+        Width="480"
+        Height="460">
+
+  <Design.DataContext>
+    <accountsVm:ViewContractViewModel/>
+  </Design.DataContext>
+
+  <Grid RowDefinitions="Auto,*,Auto" Margin="12">
+    <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="Auto,*" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+      <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static resources:Strings.Address}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+      <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Address}" IsReadOnly="True" Margin="4" Padding="2" HorizontalAlignment="Stretch" />
+
+      <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Static resources:Strings.ScriptHash}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+      <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ScriptHash}" IsReadOnly="True" Margin="4" Padding="2" HorizontalAlignment="Stretch" />
+
+      <TextBlock Grid.Row="2" Grid.Column="0" Text="{x:Static resources:Strings.ParameterList}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+      <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ParameterList, Mode=OneWay}" IsReadOnly="True" Margin="4" Padding="2" HorizontalAlignment="Stretch" />
+    </Grid>
+
+    <GroupBox Grid.Row="1" Header="{x:Static resources:Strings.RedeemScript}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+      <TextBox Text="{Binding RedeemScriptHex}" IsReadOnly="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextWrapping="Wrap"
+               HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Visible" />
+    </GroupBox>
+
+    <Button Grid.Row="2" Grid.ColumnSpan="2" Content="{x:Static resources:Strings.Close}" Width="60" Margin="0 8 0 0" HorizontalAlignment="Right" Command="{Binding CloseCommand}" />
+  </Grid>
+
+</Window>

@@ -1,0 +1,46 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:walletsVm="clr-namespace:Neo.Gui.Cross.ViewModels.Wallets;assembly:Neo.Gui.Cross"
+        xmlns:resources="clr-namespace:Neo.Gui.Cross.Resources;assembly:Neo.Gui.Cross"
+        Icon="resm:Neo.Gui.Cross.Assets.logo.ico"
+        Title="{x:Static resources:Strings.CertificateApplicationTitle}"
+        Width="560"
+        SizeToContent="Height"
+        CanResize="False">
+
+  <Design.DataContext>
+    <walletsVm:CertificateRequestViewModel/>
+  </Design.DataContext>
+
+  <Grid RowDefinitions="Auto,Auto,Auto" Margin="12">
+    <GroupBox Grid.Row="0" Header="{x:Static resources:Strings.Account}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+      <Grid ColumnDefinitions="110,*" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <TextBlock Grid.Column="0" Content="{x:Static resources:Strings.PublicKey}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <DropDown Grid.Column="1" Items="{Binding KeyPairs}" SelectedItem="{Binding SelectedKeyPair}" Margin="4" Padding="4" HorizontalAlignment="Stretch" />
+      </Grid>
+    </GroupBox>
+
+    <GroupBox Grid.Row="1" Header="{x:Static resources:Strings.Organization}">
+      <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="110,*" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="CN:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding CN}" Margin="4" Padding="4" HorizontalAlignment="Stretch" />
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="C:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding C}" Margin="4" Padding="4" HorizontalAlignment="Left" Width="200" />
+
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="S:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding S}" Margin="4" Padding="4" HorizontalAlignment="Left" Width="200" />
+
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="SERIALNUMBER:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding SerialNumber}" Margin="4" Padding="4" HorizontalAlignment="Stretch" />
+      </Grid>
+    </GroupBox>
+
+    <DockPanel Grid.Row="2" HorizontalAlignment="Right" Margin="0 8 0 0">
+      <Button Content="{x:Static resources:Strings.OK}" Width="60" Margin="0 0 8 0" Command="{Binding RequestCertificateCommand}" IsEnabled="{Binding RequestCertificateEnabled}" />
+      <Button Content="{x:Static resources:Strings.Cancel}" Width="60" Command="{Binding CancelCommand}" />
+    </DockPanel>
+  </Grid>
+
+</Window>

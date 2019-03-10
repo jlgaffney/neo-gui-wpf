@@ -1,0 +1,68 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:Neo.Gui.Cross.Converters;assembly:Neo.Gui.Cross"
+        xmlns:homeVm="clr-namespace:Neo.Gui.Cross.ViewModels.Home;assembly:Neo.Gui.Cross"
+        xmlns:models="clr-namespace:Neo.Gui.Cross.Models;assembly:Neo.Gui.Cross"
+        xmlns:resources="clr-namespace:Neo.Gui.Cross.Resources;assembly:Neo.Gui.Cross">
+
+  <Design.DataContext>
+    <homeVm:AccountsViewModel/>
+  </Design.DataContext>
+
+  <UserControl.Resources>
+    <converters:IsNotNullToBooleanConverter x:Key="IsNotNullToBooleanConverter" />
+  </UserControl.Resources>
+
+  <ListBox
+    Items="{Binding Accounts}"
+    SelectedItem="{Binding SelectedAccount}"
+    AutoScrollToSelectedItem="True"
+    HorizontalAlignment="Stretch"
+    VerticalAlignment="Stretch">
+    <ListBox.ItemTemplate>
+      <DataTemplate DataType="{x:Type models:AccountSummary}">
+        <StackPanel Orientation="Vertical" Margin="20">
+          <TextBlock Text="{Binding Address}" />
+          <TextBlock Text="{Binding Type}" />
+          <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="Auto,*">
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="NEO:" />
+            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding NeoBalance}" />
+
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="GAS:" />
+            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding GasBalance}" />
+          </Grid>
+        </StackPanel>
+      </DataTemplate>
+    </ListBox.ItemTemplate>
+
+    <ListBox.ContextMenu>
+      <ContextMenu>
+        <MenuItem Header="{x:Static resources:Strings.CreateNewAddressMenuHeader}" Command="{Binding CreateNewAccountCommand}" IsEnabled="{Binding WalletIsOpen}" />
+        <MenuItem Header="{x:Static resources:Strings.ImportMenuHeader}" IsEnabled="{Binding WalletIsOpen}">
+          <MenuItem Header="{x:Static resources:Strings.ImportFromWifMenuHeader}" Command="{Binding ImportPrivateKeyCommand}" />
+          <MenuItem Header="{x:Static resources:Strings.ImportFromCertificateMenuHeader}" Command="{Binding ImportCertificateCommand}" />
+
+          <Separator />
+
+          <MenuItem Header="{x:Static resources:Strings.ImportWatchOnlyAddressMenuHeader}" Command="{Binding ImportWatchOnlyAddressCommand}" />
+        </MenuItem>
+        <MenuItem Header="{x:Static resources:Strings.CreateContractAddressMenuHeader}" IsEnabled="{Binding WalletIsOpen}">
+          <MenuItem Header="{x:Static resources:Strings.MultiSignatureMenuHeader}" Command="{Binding CreateMultiSignatureContractCommand}" />
+          <MenuItem Header="{x:Static resources:Strings.LockMenuHeader}" Command="{Binding CreateLockContractCommand}" />
+
+          <Separator />
+
+          <MenuItem Header="{x:Static resources:Strings.CustomMenuHeader}" Command="{Binding CreateCustomContractCommand}" />
+        </MenuItem>
+
+        <Separator />
+
+        <MenuItem Header="{x:Static resources:Strings.ViewPrivateKeyMenuHeader}" Command="{Binding ViewPrivateKeyCommand}" IsEnabled="{Binding ViewPrivateKeyEnabled}" />
+        <MenuItem Header="{x:Static resources:Strings.ViewContractMenuHeader}" Command="{Binding ViewContractCommand}" IsEnabled="{Binding ViewContractEnabled}" />
+        <MenuItem Header="{x:Static resources:Strings.VoteMenuHeader}" Command="{Binding VoteCommand}" IsEnabled="{Binding ShowVotingDialogEnabled}" />
+        <MenuItem Header="{x:Static resources:Strings.CopyToClipboardMenuHeader}" Command="{Binding CopyAddressToClipboardCommand}" IsEnabled="{Binding SelectedAccount, Converter={StaticResource IsNotNullToBooleanConverter}}" />
+        <MenuItem Header="{x:Static resources:Strings.DeleteMenuHeader}" Command="{Binding DeleteAccountCommand}" IsEnabled="{Binding SelectedAccount, Converter={StaticResource IsNotNullToBooleanConverter}}" />
+      </ContextMenu>
+    </ListBox.ContextMenu>
+  </ListBox>
+</UserControl>

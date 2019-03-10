@@ -1,0 +1,47 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:walletsVm="clr-namespace:Neo.Gui.Cross.ViewModels.Wallets;assembly:Neo.Gui.Cross"
+        xmlns:resources="clr-namespace:Neo.Gui.Cross.Resources;assembly:Neo.Gui.Cross"
+        Icon="resm:Neo.Gui.Cross.Assets.logo.ico"
+        Title="{x:Static resources:Strings.Transfer}"
+        Width="600"
+        Height="410"
+        CanResize="False">
+
+  <Design.DataContext>
+    <walletsVm:CertificateRequestViewModel/>
+  </Design.DataContext>
+
+  <Grid RowDefinitions="*,Auto,Auto" Margin="12">
+    <GroupBox Grid.Row="0" Header="{x:Static resources:Strings.RecipientList}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+      <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <!--<controls:TransactionOutputListBox
+            Items="{Binding Items}"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch" />-->
+
+        <Button ToolTip="{x:Static resources:Strings.Remark}" Width="28" Height="28" Padding="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Command="{Binding RemarkCommand}">
+          <Image Source="resm:Neo.Gui.Cross.Assets.remark.png" Width="20" Height="20" />
+        </Button>
+      </Grid>
+    </GroupBox>
+
+    <GroupBox Grid.Row="1" Header="{x:Static resources:Strings.Advanced}" Visibility="{Binding ShowAdvancedSection, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Hidden}">
+      <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="Auto,*" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static resources:Strings.Fee}" Margin="0 0 4 0" VerticalAlignment="Center" />
+        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Fee}" Margin="4" Padding="4" HorizontalAlignment="Stretch" />
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Static resources:Strings.ChangeAddress}" Margin="0 0 4 0" VerticalAlignment="Center" />
+        <DropDown Grid.Row="1" Grid.Column="1" Items="{Binding Addresses}" SelectedItem="{Binding SelectedChangeAddress}" Height="26" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+      </Grid>
+    </GroupBox>
+
+    <Button Grid.Row="2" Width="70" Margin="0 8 0 0" Content="{x:Static resources:Strings.Advanced}" HorizontalAlignment="Left" Command="{Binding AdvancedCommand}" />
+
+    <DockPanel Grid.Row="2" Margin="0 8 0 0" HorizontalAlignment="Right" VerticalAlignment="Stretch">
+      <Button Content="{x:Static resources:Strings.OK}" Width="70" Margin="0 0 8 0" Command="{Binding OkCommand}" IsEnabled="{Binding OkEnabled}" />
+      <Button Content="{x:Static resources:Strings.Cancel}" Width="70" Command="{Binding CancelCommand}" />
+    </DockPanel>
+  </Grid>
+
+</Window>

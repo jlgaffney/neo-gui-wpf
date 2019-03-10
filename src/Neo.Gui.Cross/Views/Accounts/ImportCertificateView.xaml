@@ -1,0 +1,21 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:accountsVm="clr-namespace:Neo.Gui.Cross.ViewModels.Accounts;assembly:Neo.Gui.Cross"
+        xmlns:resources="clr-namespace:Neo.Gui.Cross.Resources;assembly:Neo.Gui.Cross"
+        Icon="resm:Neo.Gui.Cross.Assets.logo.ico"
+        Title="{x:Static resources:Strings.SelectCertificateTitle}"
+        Width="470"
+        Height="450">
+
+  <Design.DataContext>
+    <accountsVm:ImportCertificateViewModel/>
+  </Design.DataContext>
+
+  <Grid RowDefinitions="*,Auto" Margin="12">
+    <ListBox Grid.Row="0" Items="{Binding Certificates}" SelectedItem="{Binding SelectedCertificate}"
+              HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+
+    <Button Grid.Row="1" Content="{x:Static globalization:Strings.OK}" Width="60" Margin="0 8 0 0" Command="{Binding OkCommand}" IsEnabled="{Binding OkEnabled}" HorizontalAlignment="Right" />
+  </Grid>
+
+</Window>

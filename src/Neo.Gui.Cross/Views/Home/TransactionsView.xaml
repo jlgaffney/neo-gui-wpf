@@ -1,0 +1,30 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:homeVm="clr-namespace:Neo.Gui.Cross.ViewModels.Home;assembly:Neo.Gui.Cross"
+        xmlns:models="clr-namespace:Neo.Gui.Cross.Models;assembly:Neo.Gui.Cross"
+        xmlns:resources="clr-namespace:Neo.Gui.Cross.Resources;assembly:Neo.Gui.Cross">
+
+  <Design.DataContext>
+    <homeVm:TransactionsViewModel/>
+  </Design.DataContext>
+
+  <ListBox
+    Items="{Binding Transactions}"
+    SelectedItem="{Binding SelectedTransaction}"
+    HorizontalAlignment="Stretch"
+    VerticalAlignment="Stretch">
+    <ListBox.ItemTemplate>
+      <DataTemplate DataType="{x:Type models:TransactionSummary}">
+        <StackPanel Orientation="Vertical" Margin="20">
+          <TextBlock Text="{Binding Id}" />
+        </StackPanel>
+      </DataTemplate>
+    </ListBox.ItemTemplate>
+
+    <ListBox.ContextMenu>
+      <ContextMenu>
+        <MenuItem Header="{x:Static resources:Strings.CopyTxIdMenuHeader}" Command="{Binding CopySelectedTransactionIdCommand}" IsEnabled="{Binding TransactionIsSelected}" />
+      </ContextMenu>
+    </ListBox.ContextMenu>
+  </ListBox>
+</UserControl>

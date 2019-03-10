@@ -1,0 +1,37 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:accountsVm="clr-namespace:Neo.Gui.Cross.ViewModels.Accounts;assembly:Neo.Gui.Cross"
+        xmlns:resources="clr-namespace:Neo.Gui.Cross.Resources;assembly:Neo.Gui.Cross"
+        Icon="resm:Neo.Gui.Cross.Assets.logo.ico"
+        Title="{x:Static resources:Strings.CreateMultiSigContractTitle}"
+        Width="570"
+        Height="350">
+
+  <Design.DataContext>
+    <accountsVm:CreateMultiSignatureContractViewModel/>
+  </Design.DataContext>
+
+  <Grid RowDefinitions="Auto,*,Auto,Auto" ColumnDefinitions="Auto,*" Margin="12">
+    <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static resources:Strings.MinimumSignatureNumber}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+    <NumericUpDown Grid.Row="0" Grid.Column="1" Value="{Binding MinimumSignatureNumber}" Minimum="0" Maximum="{Binding MinimumSignatureNumberMaxValue}" Width="180"  Margin="0 4" HorizontalAlignment="Left" VerticalAlignment="Stretch" />
+
+    <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Static resources:Strings.PublicKeyList}" HorizontalAlignment="Right" VerticalAlignment="Top" />
+    <ListBox Grid.Row="1" Grid.Column="1" Items="{Binding PublicKeys}" SelectedItem="{Binding SelectedPublicKey}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+
+    <Grid Grid.Row="2" Grid.Column="1" ColumnDefinitions="*,Auto,Auto" Margin="0 6 0 0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+      <TextBox Grid.Column="0" Text="{Binding NewPublicKey}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+      <Button Grid.Column="1" Width="28" Height="24" Command="{Binding AddPublicKeyCommand}" IsEnabled="{Binding AddPublicKeyEnabled}">
+        <Image Source="resm:Neo.Gui.Cross.Assets.add.png" Width="12" Height="12" />
+      </Button>
+      <Button Grid.Column="2" Width="28" Height="24" Command="{Binding RemovePublicKeyCommand}" IsEnabled="{Binding RemovePublicKeyEnabled}">
+        <Image Source="resm:Neo.Gui.Cross.Assets.remove.png" Width="12" Height="12" />
+      </Button>
+    </Grid>
+
+    <DockPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Stretch" Margin="0 8 0 0">
+      <Button Content="{x:Static resources:Strings.Confirm}" Width="60" Margin="0 0 8 0" Command="{Binding ConfirmCommand}" IsEnabled="{Binding ConfirmEnabled}" />
+      <Button Content="{x:Static resources:Strings.Cancel}" Width="60" Command="{Binding CancelCommand}" />
+    </DockPanel>
+  </Grid>
+
+</Window>

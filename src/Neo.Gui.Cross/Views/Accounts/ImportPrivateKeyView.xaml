@@ -1,0 +1,27 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:accountsVm="clr-namespace:Neo.Gui.Cross.ViewModels.Accounts;assembly:Neo.Gui.Cross"
+        xmlns:resources="clr-namespace:Neo.Gui.Cross.Resources;assembly:Neo.Gui.Cross"
+        Icon="resm:Neo.Gui.Cross.Assets.logo.ico"
+        Title="{x:Static resources:Strings.ImportPrivateKeyTitle}"
+        Width="500"
+        SizeToContent="Height"
+        CanResize="False">
+
+  <Design.DataContext>
+    <accountsVm:ImportPrivateKeyViewModel/>
+  </Design.DataContext>
+
+  <Grid RowDefinitions="100,Auto" Margin="8">
+    <GroupBox Grid.Row="0" Header="{x:Static resources:Strings.WifPrivateKey}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+      <TextBox Text="{Binding PrivateKeysWif}" AcceptsReturn="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+               HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible"/>
+    </GroupBox>
+
+    <DockPanel Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Stretch">
+      <Button Content="{x:Static resources:Strings.OK}" Width="70" Margin="0 8 6 0" Command="{Binding OkCommand}" IsEnabled="{Binding OkEnabled}" />
+      <Button Content="{x:Static resources:Strings.Cancel}" Width="70" Margin="0 8 0 0" Command="{Binding CancelCommand}" />
+    </DockPanel>
+  </Grid>
+
+</Window>

@@ -1,0 +1,10 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:developmentVm="clr-namespace:Neo.Gui.Cross.ViewModels.Development;assembly:Neo.Gui.Cross">
+
+  <Design.DataContext>
+    <developmentVm:TransactionBuilderViewModel/>
+  </Design.DataContext>
+  
+  
+</UserControl>

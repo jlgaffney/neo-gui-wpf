@@ -1,0 +1,31 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:transactionsVm="clr-namespace:Neo.Gui.Cross.ViewModels.Transactions;assembly:Neo.Gui.Cross"
+        xmlns:resources="clr-namespace:Neo.Gui.Cross.Resources;assembly:Neo.Gui.Cross"
+        Icon="resm:Neo.Gui.Cross.Assets.logo.ico"
+        Title="{x:Static resources:Strings.Payment}"
+        Width="560"
+        SizeToContent="Height"
+        CanResize="False">
+
+  <Design.DataContext>
+    <transactionsVm:PayToViewModel/>
+  </Design.DataContext>
+
+  <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="Auto,*" Margin="12">
+    <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static resources:Strings.Asset}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+    <DropDown Grid.Row="0" Grid.Column="1" Items="{Binding Assets}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedAsset}" IsEnabled="{Binding AssetSelectionEnabled}" Margin="0 4" Height="26" HorizontalAlignment="Stretch" />
+
+    <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Static resources:Strings.Balance}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding AssetBalance}" IsReadOnly="True" Margin="0 4" Padding="4" HorizontalAlignment="Stretch" />
+
+    <TextBlock Grid.Row="2" Grid.Column="0" Text="{x:Static resources:Strings.PayTo}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding PayToAddress}" IsReadOnly="{Binding PayToAddressReadOnly}" Margin="0 4" Padding="4" HorizontalAlignment="Stretch" />
+
+    <TextBlock Grid.Row="3" Grid.Column="0" Text="{x:Static resources:Strings.Amount}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Amount}" Margin="0 4" Padding="4" HorizontalAlignment="Stretch" />
+
+    <Button Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Content="{x:Static resources:Strings.OK}" Width="60" Margin="0 8 0 0" HorizontalAlignment="Right" Command="{Binding OkCommand}" IsEnabled="{Binding OkEnabled}" />
+  </Grid>
+
+</Window>

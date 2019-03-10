@@ -1,0 +1,30 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:accountsVm="clr-namespace:Neo.Gui.Cross.ViewModels.Accounts;assembly:Neo.Gui.Cross"
+        xmlns:resources="clr-namespace:Neo.Gui.Cross.Resources;assembly:Neo.Gui.Cross"
+        Icon="resm:Neo.Gui.Cross.Assets.logo.ico"
+        Title="{x:Static resources:Strings.ImportCustomContractTitle}"
+        Width="600"
+        Height="520"
+        CanResize="False">
+
+  <Design.DataContext>
+    <accountsVm:ImportCustomContractViewModel/>
+  </Design.DataContext>
+
+  <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="Auto,*" Margin="12">
+    <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static resources:Strings.ParameterList}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding ParameterList}" Margin="0 4" Padding="4" HorizontalAlignment="Stretch" />
+
+    <GroupBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Header="{x:Static resources:Strings.Script}">
+      <TextBox Text="{Binding Script}" AcceptsReturn="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+               HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" />
+    </GroupBox>
+
+    <DockPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 8 0 0" HorizontalAlignment="Right">
+      <Button Content="{x:Static resources:Strings.Confirm}" Width="60" Margin="0 0 8 0" Command="{Binding ConfirmCommand}" IsEnabled="{Binding ConfirmEnabled}" />
+      <Button Content="{x:Static resources:Strings.Cancel}" Width="60" Command="{Binding CancelCommand}" />
+    </DockPanel>
+  </Grid>
+
+</Window>

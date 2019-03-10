@@ -1,0 +1,36 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:homeVm="clr-namespace:Neo.Gui.Cross.ViewModels.Home;assembly:Neo.Gui.Cross"
+        xmlns:models="clr-namespace:Neo.Gui.Cross.Models;assembly:Neo.Gui.Cross"
+        xmlns:resources="clr-namespace:Neo.Gui.Cross.Resources;assembly:Neo.Gui.Cross">
+
+  <Design.DataContext>
+    <homeVm:AssetsViewModel/>
+  </Design.DataContext>
+
+  <ListBox
+    Items="{Binding Assets}"
+    SelectedItem="{Binding SelectedAsset}"
+    HorizontalAlignment="Stretch"
+    VerticalAlignment="Stretch">
+    <ListBox.ItemTemplate>
+      <DataTemplate DataType="{x:Type models:AssetSummary}">
+        <StackPanel Orientation="Vertical" Margin="20">
+          <TextBlock Text="{Binding Name}" />
+          <TextBlock Text="{Binding Type}" />
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Balance:" />
+            <TextBlock Text="{Binding Balance}" />
+          </StackPanel>
+        </StackPanel>
+      </DataTemplate>
+    </ListBox.ItemTemplate>
+
+    <ListBox.ContextMenu>
+      <ContextMenu>
+        <MenuItem Header="{x:Static resources:Strings.ViewCertificateMenuHeader}" Command="{Binding ViewCertificateCommand}" IsEnabled="{Binding CanViewSelectedAssetCertificate}" />
+        <MenuItem Header="{x:Static resources:Strings.DeleteMenuHeader}" Command="{Binding DeleteAssetCommand}" IsEnabled="{Binding DeleteAssetEnabled}" />
+      </ContextMenu>
+    </ListBox.ContextMenu>
+  </ListBox>
+</UserControl>

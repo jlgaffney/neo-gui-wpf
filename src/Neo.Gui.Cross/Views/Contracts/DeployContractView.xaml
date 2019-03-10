@@ -1,0 +1,72 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:contractsVm="clr-namespace:Neo.Gui.Cross.ViewModels.Contracts;assembly:Neo.Gui.Cross"
+        xmlns:resources="clr-namespace:Neo.Gui.Cross.Resources;assembly:Neo.Gui.Cross"
+        Icon="resm:Neo.Gui.Cross.Assets.logo.ico"
+        Title="{x:Static resources:Strings.DeployContractTitle}"
+        Width="500"
+        MinWidth="500"
+        MinHeight="592"
+        SizeToContent="Height">
+
+  <Design.DataContext>
+    <contractsVm:DeployContractViewModel/>
+  </Design.DataContext>
+
+  <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="12">
+    <GroupBox Grid.Row="0" Header="{x:Static resources:Strings.Information}">
+      <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="Auto,*" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static resources:Strings.Name}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Name}" HorizontalAlignment="Stretch" Margin="0 4" Padding="2" />
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Static resources:Strings.Version}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Version}" HorizontalAlignment="Stretch" Margin="0 4" Padding="2" />
+
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="{x:Static resources:Strings.Author}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Author}" HorizontalAlignment="Stretch" Margin="0 4" Padding="2" />
+
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="{x:Static resources:Strings.Email}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Email}" HorizontalAlignment="Stretch" Margin="0 4" Padding="2" />
+
+        <TextBlock Grid.Row="4" Grid.Column="0" Text="{x:Static resources:Strings.Description}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 2 0 0" />
+        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Description}" AcceptsReturn="True" AcceptsTab="True"
+            Height="80" HorizontalAlignment="Stretch" Margin="0 4" Padding="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" />
+      </Grid>
+    </GroupBox>
+
+    <GroupBox Grid.Row="1" Header="{x:Static resources:Strings.Metadata}" Margin="0 4 0 0">
+      <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="Auto,*" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static resources:Strings.ParameterList}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding ParameterList}" HorizontalAlignment="Stretch" Margin="0 4" Padding="2" />
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Static resources:Strings.ReturnType}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ReturnType}" HorizontalAlignment="Stretch" Margin="0 4" Padding="2" />
+      </Grid>
+    </GroupBox>
+
+    <GroupBox Grid.Row="2" Header="{x:Static resources:Strings.Script}" Margin="0 4 0 0">
+      <Grid RowDefinitions="*,Auto,Auto">
+        <TextBox Grid.Row="0" Text="{Binding ScriptHex}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Margin="0 4" Padding="2" AcceptsReturn="False" AcceptsTab="False" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" />
+
+        <Grid Grid.Row="1" ColumnDefinitions="Auto,*">
+          <TextBlock Grid.Column="0" Text="{x:Static resources:Strings.ScriptHash}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+          <TextBox Grid.Column="1" Text="{Binding ScriptHash}" IsReadOnly="True" Margin="8 0" HorizontalAlignment="Stretch" VerticalAlignment="Center" BorderThickness="0" />
+        </Grid>
+
+        <Grid Grid.Row="2" ColumnDefinitions="Auto,Auto,*,Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+          <CheckBox Grid.Column="0" Content="{x:Static resources:Strings.NeedsStorage}" IsChecked="{Binding NeedsStorage}" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0 0 14 0" />
+
+          <CheckBox Grid.Column="1" Content="{x:Static resources:Strings.NeedsDynamicCall}" IsChecked="{Binding NeedsDynamicCall}" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+
+          <Button Grid.Column="3" Content="{x:Static resources:Strings.Load}" Width="70" HorizontalAlignment="Stretch" VerticalAlignment="Center" Command="{Binding LoadCommand}" />
+        </Grid>
+      </Grid>
+    </GroupBox>
+
+    <DockPanel Grid.Row="3" HorizontalAlignment="Right" Margin="0 8 0 0">
+      <Button Content="{x:Static resources:Strings.Deploy}" Width="70" Margin="0 0 8 0" Command="{Binding DeployCommand}" IsEnabled="{Binding DeployEnabled}" />
+      <Button Content="{x:Static resources:Strings.Cancel}" Width="70" Command="{Binding CancelCommand}" />
+    </DockPanel>
+  </Grid>
+
+</Window>

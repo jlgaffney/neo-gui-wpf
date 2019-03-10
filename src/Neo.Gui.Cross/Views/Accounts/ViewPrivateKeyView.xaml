@@ -1,0 +1,36 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:accountsVm="clr-namespace:Neo.Gui.Cross.ViewModels.Accounts;assembly:Neo.Gui.Cross"
+        xmlns:resources="clr-namespace:Neo.Gui.Cross.Resources;assembly:Neo.Gui.Cross"
+        Icon="resm:Neo.Gui.Cross.Assets.logo.ico"
+        Title="{x:Static resources:Strings.ViewPrivateKeyTitle}"
+        SizeToContent="WidthAndHeight"
+        CanResize="False">
+
+  <Design.DataContext>
+    <accountsVm:ViewPrivateKeyViewModel/>
+  </Design.DataContext>
+
+  <Grid RowDefinitions="Auto,12,Auto,Auto" Margin="8">
+    <Grid Grid.Row="0" RowDefinitions="Auto,Auto" ColumnDefinitions="Auto,*" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+      <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static resources:Strings.Address}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+      <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Address}" IsReadOnly="True" Margin="4" Padding="4" HorizontalAlignment="Stretch" BorderThickness="0" />
+
+      <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Static resources:Strings.PublicKey}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+      <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding PublicKeyHex}" IsReadOnly="True" Margin="4" Padding="4" HorizontalAlignment="Stretch" BorderThickness="0" />
+    </Grid>
+
+    <GroupBox Grid.Row="2" Header="{x:Static resources:Strings.PrivateKey}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+      <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="Auto,*" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="HEX:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding PrivateKeyHex}" ReadOnly="True" Margin="4" Padding="4" HorizontalAlignment="Stretch" />
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="WIF:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding PrivateKeyWif}" ReadOnly="True" Margin="4" Padding="4" HorizontalAlignment="Stretch" />
+      </Grid>
+    </GroupBox>
+
+    <Button Grid.Row="3" Grid.ColumnSpan="2" Content="{x:Static resources:Strings.Close}" Width="60" Margin="0 8 0 0" HorizontalAlignment="Right" Command="{Binding CloseCommand}" />
+  </Grid>
+
+</Window>

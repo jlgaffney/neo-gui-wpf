@@ -1,0 +1,91 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:contractsVm="clr-namespace:Neo.Gui.Cross.ViewModels.Contracts;assembly:Neo.Gui.Cross"
+        xmlns:resources="clr-namespace:Neo.Gui.Cross.Resources;assembly:Neo.Gui.Cross"
+        Icon="resm:Neo.Gui.Cross.Assets.logo.ico"
+        Title="{x:Static resources:Strings.InvokeContractTitle}"
+        Width="500"
+        MinWidth="500"
+        MinHeight="540">
+
+  <Design.DataContext>
+    <contractsVm:InvokeContractViewModel/>
+  </Design.DataContext>
+
+  <Grid RowDefinitions="Auto,*,Auto" Margin="12">
+    <TabControl x:Name="TabControl" Grid.Row="0" Height="240" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+      <TabItem Header="ABI">
+        <Grid RowDefinitions="Auto,Auto,Auto,*" ColumnDefinitions="Auto,*" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="8">
+          <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static resources:Strings.ScriptHash}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+          <Grid Grid.Row="0" Grid.Column="1" ColumnDefinitions="*,Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <TextBox Grid.Column="0" Text="{Binding ScriptHash}" HorizontalAlignment="Stretch" Margin="0 4 8 4" Padding="2" />
+            <Button Grid.Column="1" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="6" Command="{Binding GetContractCommand}" IsEnabled="{Binding GetContractEnabled}">
+              <Image Source="resm:Neo.Gui.Cross.Assets.search.png" Width="12" Height="12" />
+            </Button>
+          </Grid>
+
+          <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Static resources:Strings.Name}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+          <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ContractName}" IsReadOnly="True" HorizontalAlignment="Stretch" Margin="0 4" Padding="2" />
+
+          <TextBlock Grid.Row="2" Grid.Column="0" Text="{x:Static resources:Strings.Version}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+          <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ContractVersion}" IsReadOnly="True" HorizontalAlignment="Stretch" Margin="0 4" Padding="2"/>
+        </Grid>
+      </TabItem>
+
+      <TabItem Header="{x:Static resources:Strings.Function}">
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,*" ColumnDefinitions="Auto,*" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="8">
+          <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static resources:Strings.ScriptHash}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+          <Grid Grid.Row="0" Grid.Column="1" ColumnDefinitions="*,Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <TextBox Grid.Column="0" Text="{Binding ScriptHash}" HorizontalAlignment="Stretch" Margin="0 4 8 4" Padding="2" />
+            <Button Grid.Column="1" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="6" Command="{Binding GetContractCommand}" IsEnabled="{Binding GetContractEnabled}">
+              <Image Source="resm:Neo.Gui.Cross.Assets.search.png" Width="12" Height="12" />
+            </Button>
+          </Grid>
+
+          <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Static resources:Strings.Name}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+          <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ContractName}" IsReadOnly="True" HorizontalAlignment="Stretch" Margin="0 4" Padding="2" />
+
+          <TextBlock Grid.Row="2" Grid.Column="0" Text="{x:Static resources:Strings.Version}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+          <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ContractVersion}" IsReadOnly="True" HorizontalAlignment="Stretch" Margin="0 4" Padding="2"/>
+
+          <TextBlock Grid.Row="3" Grid.Column="0" Text="{x:Static resources:Strings.Author}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+          <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding ContractAuthor}" IsReadOnly="True" HorizontalAlignment="Stretch" Margin="0 4" Padding="2" />
+
+          <TextBlock Grid.Row="4" Grid.Column="0" Text="{x:Static resources:Strings.Parameters}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+          <Grid Grid.Row="4" Grid.Column="1" ColumnDefinitions="*,Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <TextBox Grid.Column="0" Text="{Binding ContractParameters}" IsReadOnly="True" HorizontalAlignment="Stretch" Margin="0 4 8 4" Padding="2" />
+            <Button Grid.Column="1" Content="{x:Static resources:Strings.Edit}" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="6" Command="{Binding EditParametersCommand}" IsEnabled="{Binding EditParametersEnabled}" />
+          </Grid>
+        </Grid>
+      </TabItem>
+
+      <TabItem Header="{x:Static resources:Strings.Custom}">
+        <Grid RowDefinitions="*,Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="6">
+          <TextBox Grid.Row="0" Text="{Binding CustomScript}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                   HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" Margin="0,0,0.333,0"/>
+
+          <Button Grid.Row="1" Content="{x:Static resources:Strings.Load}" Width="70" HorizontalAlignment="Right" Margin="0 6 0 0" Command="{Binding LoadCommand}" />
+        </Grid>
+      </TabItem>
+    </TabControl>
+
+    <GroupBox Grid.Row="1" Header="{x:Static resources:Strings.Results}">
+      <TextBox Text="{Binding Results}" IsReadOnly="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+               HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible"/>
+    </GroupBox>
+
+    <DockPanel Grid.Row="2" HorizontalAlignment="Stretch" Margin="0 4 0 0">
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+        <TextBlock Text="{x:Static resources:Strings.Fee}" />
+        <TextBlock Text="{Binding Fee}" />
+      </StackPanel>
+
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin=" 0 8 0 0">
+        <Button Content="{x:Static resources:Strings.Test}" Width="70" Margin="0 0 8 0" Command="{Binding TestCommand}" IsEnabled="{Binding TestEnabled}" />
+        <Button Content="{x:Static resources:Strings.Invoke}" Width="70" Margin="0 0 8 0" Command="{Binding InvokeCommand}" IsEnabled="{Binding InvokeEnabled}" />
+        <Button Content="{x:Static resources:Strings.Cancel}" Width="70" Command="{Binding CancelCommand}" />
+      </StackPanel>
+    </DockPanel>
+  </Grid>
+
+</Window>

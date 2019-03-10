@@ -1,0 +1,28 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:homeVm="clr-namespace:Neo.Gui.Cross.ViewModels.Home;assembly:Neo.Gui.Cross"
+        xmlns:models="clr-namespace:Neo.Gui.Cross.Models;assembly:Neo.Gui.Cross"
+        Background="#BBBBBB"
+        Height="22">
+
+  <Design.DataContext>
+    <homeVm:StatusBarViewModel/>
+  </Design.DataContext>
+
+  <Grid ColumnDefinitions="Auto,Auto,*,Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="8,0" VerticalAlignment="Center">
+      <TextBlock Text="Height:" Margin="0,0,6,0" />
+      <TextBlock Text="{Binding HeightStatus}" />
+    </StackPanel>
+    
+    <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="8,0" VerticalAlignment="Center">
+      <TextBlock Text="Connected:" Margin="0,0,6,0" />
+      <TextBlock Text="{Binding ConnectedNodeCount}" />
+    </StackPanel>
+    
+    <StackPanel Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Right">
+      <TextBlock Text="{Binding BlockStatus}" Margin="0,0,8,0" VerticalAlignment="Center" />
+      <ProgressBar Width="60" Value="60" />
+    </StackPanel>
+  </Grid>
+</UserControl>
