@@ -23,13 +23,13 @@
       <Button Grid.Column="1" Width="28" Height="24" Command="{Binding AddPublicKeyCommand}" IsEnabled="{Binding AddPublicKeyEnabled}">
         <Image Source="resm:Neo.Gui.Cross.Assets.add.png" Width="12" Height="12" />
       </Button>
-      <Button Grid.Column="2" Width="28" Height="24" Command="{Binding RemovePublicKeyCommand}" IsEnabled="{Binding RemovePublicKeyEnabled}">
+      <Button Grid.Column="2" Width="28" Height="24" Command="{Binding RemoveSelectedPublicKeyCommand}" IsEnabled="{Binding RemoveSelectedPublicKeyEnabled}">
         <Image Source="resm:Neo.Gui.Cross.Assets.remove.png" Width="12" Height="12" />
       </Button>
     </Grid>
 
     <DockPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Stretch" Margin="0 8 0 0">
-      <Button Content="{x:Static resources:Strings.Confirm}" Width="60" Margin="0 0 8 0" Command="{Binding ConfirmCommand}" IsEnabled="{Binding ConfirmEnabled}" />
+      <Button Content="{x:Static resources:Strings.Confirm}" Width="60" Margin="0 0 8 0" Command="{Binding CreateCommand}" IsEnabled="{Binding CreateEnabled}" />
       <Button Content="{x:Static resources:Strings.Cancel}" Width="60" Command="{Binding CancelCommand}" />
     </DockPanel>
   </Grid>

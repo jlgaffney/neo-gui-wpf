@@ -10,6 +10,7 @@ namespace Neo.Gui.Cross.Services
             builder.RegisterType<AccountService>().AsImplementedInterfaces();
             builder.RegisterType<AssetService>().AsImplementedInterfaces().InstancePerLifetimeScope();
             builder.RegisterType<BlockchainService>().AsImplementedInterfaces();
+            builder.RegisterType<CertificateStoreService>().AsImplementedInterfaces();
             builder.RegisterType<ClipboardService>().AsImplementedInterfaces();
             builder.RegisterType<ContractCreator>().AsImplementedInterfaces();
             builder.RegisterType<NEP5TokenService>().AsImplementedInterfaces();

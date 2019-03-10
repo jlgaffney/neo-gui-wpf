@@ -19,7 +19,7 @@
     </GroupBox>
 
     <DockPanel Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Stretch">
-      <Button Content="{x:Static resources:Strings.OK}" Width="70" Margin="0 8 6 0" Command="{Binding OkCommand}" IsEnabled="{Binding OkEnabled}" />
+      <Button Content="{x:Static resources:Strings.OK}" Width="70" Margin="0 8 6 0" Command="{Binding ImportCommand}" IsEnabled="{Binding ImportEnabled}" />
       <Button Content="{x:Static resources:Strings.Cancel}" Width="70" Margin="0 8 0 0" Command="{Binding CancelCommand}" />
     </DockPanel>
   </Grid>

@@ -88,7 +88,7 @@ namespace Neo.Gui.Cross.ViewModels.Home
 
         public ReactiveCommand ViewPrivateKeyCommand => ReactiveCommand.Create(() => windowService.ShowDialog<ViewPrivateKeyViewModel>());
 
-        public ReactiveCommand ViewContractCommand => ReactiveCommand.Create(() => windowService.ShowDialog<ViewContractViewModel>());
+        public ReactiveCommand ViewContractCommand => ReactiveCommand.Create(() => windowService.ShowDialog<ViewContractViewModel, UInt160>(SelectedAccount.Address.ToScriptHash()));
 
         public ReactiveCommand VoteCommand => ReactiveCommand.Create(() => windowService.ShowDialog<VotingViewModel>());
 

@@ -10,6 +10,11 @@ namespace Neo.Gui.Cross.Services
 {
     public class ContractCreator : IContractCreator
     {
+        public Contract CreateContract(byte[] script, IReadOnlyList<ContractParameterType> parameters)
+        {
+            return Contract.Create(parameters.ToArray(), script);
+        }
+
         public Contract GetLockAccountContract(ECPoint publicKey, DateTime unlockDate)
         {
             uint timestamp = unlockDate.ToTimestamp();

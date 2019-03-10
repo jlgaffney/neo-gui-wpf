@@ -27,6 +27,13 @@ namespace Neo.Gui.Cross.Services
             this.walletService = walletService;
         }
 
+        public WalletAccount GetAccount(UInt160 scriptHash)
+        {
+            ThrowIfWalletNotOpen();
+
+            return walletService.CurrentWallet.GetAccount(scriptHash);
+        }
+
         public IEnumerable<WalletAccount> GetAllAccounts()
         {
             ThrowIfWalletNotOpen();
@@ -55,6 +62,22 @@ namespace Neo.Gui.Cross.Services
             ThrowIfWalletNotOpen();
 
             var account = walletService.CurrentWallet.CreateAccount();
+
+            if (account != null)
+            {
+                walletService.SaveWallet();
+            }
+
+            return account;
+        }
+
+        public WalletAccount CreateContractAccount(byte[] script, IReadOnlyList<ContractParameterType> parameters)
+        {
+            ThrowIfWalletNotOpen();
+
+            var contract = contractCreator.CreateContract(script, parameters);
+
+            var account = walletService.CurrentWallet.CreateAccount(contract);
 
             if (account != null)
             {

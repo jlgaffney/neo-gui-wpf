@@ -8,7 +8,9 @@ using ReactiveUI;
 
 namespace Neo.Gui.Cross.ViewModels.Accounts
 {
-    public class CreateLockAccountViewModel : ViewModelBase
+    public class CreateLockAccountViewModel :
+        ViewModelBase,
+        ILoadable
     {
         private const int HoursInDay = 24;
         private const int MinutesInHour = 60;
@@ -114,9 +116,7 @@ namespace Neo.Gui.Cross.ViewModels.Accounts
 
         public ReactiveCommand CancelCommand => ReactiveCommand.Create(OnClose);
         
-        
-        
-        public void OnLoad()
+        public void Load()
         {
             PublicKeys.Clear();
             PublicKeys.AddRange(accountService.GetStandardAccounts().Select(account => account.GetKey().PublicKey.ToString()));
@@ -135,13 +135,23 @@ namespace Neo.Gui.Cross.ViewModels.Accounts
         
         private void CreateAccount()
         {
-            if (!CreateEnabled) return;
+            if (!CreateEnabled)
+            {
+                return;
+            }
 
             var unlockDateTime = UnlockDate.Date
                 .AddHours(UnlockHour)
                 .AddMinutes(UnlockMinute);
 
-            accountService.CreateLockContractAccount(SelectedPublicKey, unlockDateTime);
+            var account = accountService.CreateLockContractAccount(SelectedPublicKey, unlockDateTime);
+
+            if (account == null)
+            {
+                // TODO Inform user
+
+                return;
+            }
 
             OnClose();
         }

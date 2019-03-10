@@ -22,7 +22,7 @@
     </GroupBox>
 
     <DockPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 8 0 0" HorizontalAlignment="Right">
-      <Button Content="{x:Static resources:Strings.Confirm}" Width="60" Margin="0 0 8 0" Command="{Binding ConfirmCommand}" IsEnabled="{Binding ConfirmEnabled}" />
+      <Button Content="{x:Static resources:Strings.Import}" Width="60" Margin="0 0 8 0" Command="{Binding ImportCommand}" IsEnabled="{Binding ImportEnabled}" />
       <Button Content="{x:Static resources:Strings.Cancel}" Width="60" Command="{Binding CancelCommand}" />
     </DockPanel>
   </Grid>

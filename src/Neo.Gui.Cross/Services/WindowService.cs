@@ -1,23 +1,36 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Avalonia.Controls;
-using CommonServiceLocator;
 using Neo.Gui.Cross.ViewModels;
 
 namespace Neo.Gui.Cross.Services
 {
+    // TODO Reduce duplication in methods
     public class WindowService : IWindowService
     {
         private const string ViewModelSuffix = "ViewModel";
         private const string ViewSuffix = "View";
         private const string WindowSuffix = "Window";
 
+        public void Show<TViewModel, TLoadParameters>(TLoadParameters parameters) where TViewModel : ViewModelBase, ILoadable<TLoadParameters>
+        {
+            var window = GetWindow<TViewModel, TLoadParameters>(parameters);
+
+            window.Show();
+        }
 
         public void Show<TViewModel>() where TViewModel : ViewModelBase
         {
             var window = GetWindow<TViewModel>();
 
             window.Show();
+        }
+
+        public async Task ShowDialog<TViewModel, TLoadParameters>(TLoadParameters parameters) where TViewModel : ViewModelBase, ILoadable<TLoadParameters>
+        {
+            var window = GetWindow<TViewModel, TLoadParameters>(parameters);
+
+            await window.ShowDialog();
         }
 
         public async Task ShowDialog<TViewModel>() where TViewModel : ViewModelBase
@@ -27,31 +40,40 @@ namespace Neo.Gui.Cross.Services
             await window.ShowDialog();
         }
 
-        /* // TODO Implement better handling of dialogs
-         public Task<TResult> ShowDialog<TViewModel, TResult>() where TViewModel : DialogViewModelBase<TResult>
-         {
-             var window = GetWindow<TViewModel>();
+        private static Window GetWindow<TViewModel, TLoadParameters>(TLoadParameters parameters)
+            where TViewModel : ViewModelBase, ILoadable<TLoadParameters>
+        {
+            var viewType = GetViewType<TViewModel>();
 
+            var view = (Control)Activator.CreateInstance(viewType);
 
-             var tcs = new TaskCompletionSource<TResult>();
+            if (!(view.DataContext is TViewModel viewModel))
+            {
+                viewModel = ViewModelLocator.GetDataContext<TViewModel, TLoadParameters>(parameters);
 
-             window.Closed += (sender, args) =>
-             {
-                 // TODO Handle closing by user (i.e. set result as null)
-             };
+                view.DataContext = viewModel;
+            }
 
-             viewModel.Closed += (sender, args) =>
-             {
-                 window.Close();
-                 tcs.SetResult(args);
-             };
+            if (!(view is Window window))
+            {
+                // TODO Get window title from somewhere
+                window = new Window
+                {
+                    Content = view
+                };
+            }
 
-             window.ShowDialog();
+            // TODO Handle user initiated closing (e.g. clicking X button)
+            viewModel.Close += (sender, e) =>
+            {
+                window.Close();
+            };
 
-             return tcs.Task;
-         }*/
-
-        private static Window GetWindow<TViewModel>() where TViewModel : ViewModelBase
+            return window;
+        }
+        
+        private static Window GetWindow<TViewModel>()
+            where TViewModel : ViewModelBase
         {
             var viewType = GetViewType<TViewModel>();
 
@@ -59,7 +81,7 @@ namespace Neo.Gui.Cross.Services
             
             if (!(view.DataContext is TViewModel viewModel))
             {
-                viewModel = (TViewModel) ServiceLocator.Current.GetInstance(typeof(TViewModel));
+                viewModel = ViewModelLocator.GetDataContext<TViewModel>();
 
                 view.DataContext = viewModel;
             }

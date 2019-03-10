@@ -8,6 +8,8 @@ namespace Neo.Gui.Cross.Services
 {
     public interface IAccountService
     {
+        WalletAccount GetAccount(UInt160 scriptHash);
+
         IEnumerable<WalletAccount> GetAllAccounts();
 
         IEnumerable<WalletAccount> GetStandardAccounts();
@@ -16,6 +18,8 @@ namespace Neo.Gui.Cross.Services
 
 
         WalletAccount CreateStandardAccount();
+
+        WalletAccount CreateContractAccount(byte[] script, IReadOnlyList<ContractParameterType> parameters);
 
         WalletAccount CreateLockContractAccount(string publicKey, DateTime unlockTime);
 

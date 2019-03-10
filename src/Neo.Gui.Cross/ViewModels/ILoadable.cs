@@ -4,4 +4,9 @@
     {
         void Load();
     }
+
+    public interface ILoadable<TLoadParameters>
+    {
+        void Load(TLoadParameters parameters);
+    }
 }
