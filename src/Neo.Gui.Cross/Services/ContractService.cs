@@ -1,23 +1,40 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Neo.Cryptography.ECC;
+using Neo.Ledger;
 using Neo.SmartContract;
 using Neo.VM;
 
 namespace Neo.Gui.Cross.Services
 {
-    public class ContractCreator : IContractCreator
+    public class ContractService : IContractService
     {
+        private readonly IBlockchainService blockchainService;
+
+        public ContractService(
+            IBlockchainService blockchainService)
+        {
+            this.blockchainService = blockchainService;
+        }
+
+        public ContractState GetContractState(UInt160 scriptHash)
+        {
+            using (var snapshot = blockchainService.GetSnapshot())
+            {
+                return snapshot.Contracts.TryGet(scriptHash);
+            }
+        }
+
+
         public Contract CreateContract(byte[] script, IReadOnlyList<ContractParameterType> parameters)
         {
             return Contract.Create(parameters.ToArray(), script);
         }
 
-        public Contract GetLockAccountContract(ECPoint publicKey, DateTime unlockDate)
+        public Contract CreateLockAccountContract(ECPoint publicKey, DateTime unlockDate)
         {
-            uint timestamp = unlockDate.ToTimestamp();
+            var timestamp = unlockDate.ToTimestamp();
             using (var builder = new ScriptBuilder())
             {
                 builder.EmitPush(publicKey);
@@ -28,9 +45,12 @@ namespace Neo.Gui.Cross.Services
             }
         }
 
-        public Contract GetMultiSignatureContract(int minimumSignatures, IEnumerable<ECPoint> publicKeys)
+        public Contract CreateMultiSignatureContract(int minimumSignatures, IEnumerable<ECPoint> publicKeys)
         {
             return Contract.CreateMultiSigContract(minimumSignatures, publicKeys.ToArray());
         }
+
+
+
     }
 }

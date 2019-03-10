@@ -1,5 +1,4 @@
 ﻿using System.Windows.Input;
-using Avalonia.Controls;
 using Neo.Gui.Cross.Services;
 using ReactiveUI;
 
@@ -7,6 +6,7 @@ namespace Neo.Gui.Cross.ViewModels.Wallets
 {
     public class NewWalletViewModel : ViewModelBase
     {
+        private readonly IFileDialogService fileDialogService;
         private readonly ISettings settings;
         private readonly IWalletService walletService;
 
@@ -16,9 +16,11 @@ namespace Neo.Gui.Cross.ViewModels.Wallets
 
         public NewWalletViewModel() { }
         public NewWalletViewModel(
+            IFileDialogService fileDialogService,
             ISettings settings,
             IWalletService walletService)
         {
+            this.fileDialogService = fileDialogService;
             this.settings = settings;
             this.walletService = walletService;
         }
@@ -77,10 +79,7 @@ namespace Neo.Gui.Cross.ViewModels.Wallets
         
         private async void BrowseFile()
         {
-            var sfd = new SaveFileDialog();
-            // TODO Title and Filters
-
-            FilePath = await sfd.ShowAsync(null);
+            FilePath = await fileDialogService.SaveFileDialog();
         }
 
         private void Create()
@@ -95,7 +94,7 @@ namespace Neo.Gui.Cross.ViewModels.Wallets
             walletService.CreateWallet(FilePath, Password);
             
             settings.LastWalletPath = FilePath;
-            //settings.Save();
+            settings.Save();
 
             OnClose();
         }

@@ -8,21 +8,26 @@ namespace Neo.Gui.Cross
     {
         public Settings(IConfiguration configuration)
         {
-            this.LastWalletPath = configuration.GetSection("LastWalletPath").Value;
+            LastWalletPath = configuration.GetSection("LastWalletPath").Value;
 
-            this.Paths = new PathsSettings(configuration.GetSection("Paths"));
-            this.P2P = new P2PSettings(configuration.GetSection("P2P"));
-            this.Urls = new BrowserSettings(configuration.GetSection("Urls"));
-            this.Contracts = new ContractSettings(configuration.GetSection("Contracts"));
+            Paths = new PathsSettings(configuration.GetSection("Paths"));
+            P2P = new P2PSettings(configuration.GetSection("P2P"));
+            Urls = new BrowserSettings(configuration.GetSection("Urls"));
+            Contracts = new ContractSettings(configuration.GetSection("Contracts"));
         }
 
         public string LastWalletPath { get; set; }
-        public bool InstallCertificate { get; }
 
         public PathsSettings Paths { get; }
         public P2PSettings P2P { get; }
         public BrowserSettings Urls { get; }
         public ContractSettings Contracts { get; }
+
+
+        public void Save()
+        {
+            // TODO Implement
+        }
     }
 
     public class PathsSettings

@@ -14,16 +14,16 @@ namespace Neo.Gui.Cross.Services
     public class AccountService : IAccountService
     {
         private readonly IAccountBalanceService accountBalanceService;
-        private readonly IContractCreator contractCreator;
+        private readonly IContractService contractService;
         private readonly IWalletService walletService;
 
         public AccountService(
             IAccountBalanceService accountBalanceService,
-            IContractCreator contractCreator,
+            IContractService contractService,
             IWalletService walletService)
         {
             this.accountBalanceService = accountBalanceService;
-            this.contractCreator = contractCreator;
+            this.contractService = contractService;
             this.walletService = walletService;
         }
 
@@ -75,7 +75,7 @@ namespace Neo.Gui.Cross.Services
         {
             ThrowIfWalletNotOpen();
 
-            var contract = contractCreator.CreateContract(script, parameters);
+            var contract = contractService.CreateContract(script, parameters);
 
             var account = walletService.CurrentWallet.CreateAccount(contract);
 
@@ -93,7 +93,7 @@ namespace Neo.Gui.Cross.Services
 
             var publicKey = ECPoint.Parse(publicKeyString, ECCurve.Secp256r1);
 
-            var contract = contractCreator.GetLockAccountContract(publicKey, unlockTime);
+            var contract = contractService.CreateLockAccountContract(publicKey, unlockTime);
 
             var account = walletService.CurrentWallet.CreateAccount(contract, walletService.CurrentWallet.GetAccount(publicKey).GetKey());
 
@@ -111,7 +111,7 @@ namespace Neo.Gui.Cross.Services
 
             var publicKeys = new HashSet<ECPoint>(publicKeyStrings.Select(publicKeyString => ECPoint.Parse(publicKeyString, ECCurve.Secp256r1)));
 
-            var contract = contractCreator.GetMultiSignatureContract(minimumSignatures, publicKeys);
+            var contract = contractService.CreateMultiSignatureContract(minimumSignatures, publicKeys);
 
             var account = walletService.CurrentWallet.CreateAccount(contract, walletService.CurrentWallet.GetAccounts()
                 .FirstOrDefault(p => p.HasKey && publicKeys.Contains(p.GetKey().PublicKey))?.GetKey());
