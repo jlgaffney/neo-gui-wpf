@@ -1,4 +1,5 @@
-﻿using Neo.Wallets;
+﻿using Neo.Network.P2P.Payloads;
+using Neo.Wallets;
 
 namespace Neo.Gui.Cross.Services
 {
@@ -13,9 +14,12 @@ namespace Neo.Gui.Cross.Services
 
         bool OpenWallet(string filePath, string password, out string upgradedWalletPath);
 
-
+        
         void SaveWallet();
 
         void CloseWallet();
+
+
+        bool SignTransaction(Transaction transaction);
     }
 }

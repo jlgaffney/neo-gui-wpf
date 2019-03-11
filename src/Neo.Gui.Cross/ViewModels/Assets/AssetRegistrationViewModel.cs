@@ -1,8 +1,10 @@
 ﻿using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using Neo.Gui.Cross.Extensions;
 using Neo.Gui.Cross.Services;
 using Neo.Network.P2P.Payloads;
+using Neo.Wallets;
 using ReactiveUI;
 
 namespace Neo.Gui.Cross.ViewModels.Assets
@@ -12,6 +14,9 @@ namespace Neo.Gui.Cross.ViewModels.Assets
         ILoadable
     {
         private readonly IAccountService accountService;
+        private readonly ILocalNodeService localNodeService;
+        private readonly ITransactionService transactionService;
+        private readonly IWalletService walletService;
 
         private AssetType assetType;
         private string owner;
@@ -27,9 +32,15 @@ namespace Neo.Gui.Cross.ViewModels.Assets
 
         public AssetRegistrationViewModel() { }
         public AssetRegistrationViewModel(
-            IAccountService accountService)
+            IAccountService accountService,
+            ILocalNodeService localNodeService,
+            ITransactionService transactionService,
+            IWalletService walletService)
         {
             this.accountService = accountService;
+            this.localNodeService = localNodeService;
+            this.transactionService = transactionService;
+            this.walletService = walletService;
 
             AssetTypes = new ObservableCollection<AssetType>();
             Owners = new ObservableCollection<string>();
@@ -226,19 +237,22 @@ namespace Neo.Gui.Cross.ViewModels.Assets
                 return;
             }
 
-            // TODO Build invocation transaction, sign it, and relay transaction to the network
+            // TODO Use TryParse instead to validate input
+            var amount = TotalIsLimited ? Fixed8.Parse(TotalLimit) : -Fixed8.Satoshi;
 
-            /*var assetRegistrationParameters = new AssetRegistrationTransactionParameters(
-                AssetType,
-                Name,
-                TotalIsLimited,
-                TotalLimit,
-                Precision,
-                Owner,
-                Admin,
-                Issuer);
+            var localizedName = string.IsNullOrWhiteSpace(Name) ? string.Empty : $"[{{\"lang\":\"{CultureInfo.CurrentCulture.Name}\",\"name\":\"{Name}\"}}]";
 
-            await this.walletController.BuildSignAndRelayTransaction(assetRegistrationParameters);*/
+            var assetRegistrationTransaction = transactionService.CreateAssetRegistrationTransaction(
+                assetType, localizedName, amount, (byte) Precision, Owner.ToECPoint(), Admin.ToScriptHash(), Issuer.ToScriptHash());
+
+            if (walletService.SignTransaction(assetRegistrationTransaction))
+            {
+                localNodeService.RelayTransaction(assetRegistrationTransaction);
+            }
+            else
+            {
+                // TODO Notify user
+            }
 
             OnClose();
         }

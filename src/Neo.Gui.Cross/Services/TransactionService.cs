@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Neo.Cryptography.ECC;
 using Neo.Gui.Cross.Exceptions;
@@ -7,6 +9,9 @@ using Neo.IO;
 using Neo.Ledger;
 using Neo.Network.P2P.Payloads;
 using Neo.Persistence;
+using Neo.SmartContract;
+using Neo.VM;
+using AssetType = Neo.Network.P2P.Payloads.AssetType;
 
 namespace Neo.Gui.Cross.Services
 {
@@ -45,6 +50,7 @@ namespace Neo.Gui.Cross.Services
             }
         }
 
+
         public ClaimTransaction CreateClaimTransaction()
         {
             ThrowIfWalletNotOpen();
@@ -74,6 +80,60 @@ namespace Neo.Gui.Cross.Services
                     }
                 };
             }
+        }
+
+        public InvocationTransaction CreateContractCreationTransaction(byte[] script, byte[] parameterList, ContractParameterType returnType, ContractPropertyState properties, string name, string version, string author, string email, string description)
+        {
+            using (var sb = new ScriptBuilder())
+            {
+                sb.EmitSysCall("Neo.Contract.Create", script, parameterList, returnType, properties, name, version, author, email, description);
+                return new InvocationTransaction
+                {
+                    Script = sb.ToArray()
+                };
+            }
+        }
+
+        public InvocationTransaction CreateAssetRegistrationTransaction(AssetType assetType, string name, Fixed8 amount, byte precision, ECPoint owner, UInt160 admin, UInt160 issuer)
+        {
+            ThrowIfWalletNotOpen();
+            
+            using (var sb = new ScriptBuilder())
+            {
+                sb.EmitSysCall("Neo.Asset.Create", assetType, name, amount, precision, owner, admin, issuer);
+                return new InvocationTransaction
+                {
+                    Attributes = new[]
+                    {
+                        new TransactionAttribute
+                        {
+                            Usage = TransactionAttributeUsage.Script,
+                            Data = Contract.CreateSignatureRedeemScript(owner).ToScriptHash().ToArray()
+                        }
+                    },
+                    Script = sb.ToArray()
+                };
+            }
+        }
+
+        public StateTransaction CreateElectionTransaction(ECPoint publicKey)
+        {
+            ThrowIfWalletNotOpen();
+
+            return walletService.CurrentWallet.MakeTransaction(new StateTransaction
+            {
+                Version = 0,
+                Descriptors = new[]
+                {
+                    new StateDescriptor
+                    {
+                        Type = StateType.Validator,
+                        Key = publicKey.ToArray(),
+                        Field = "Registered",
+                        Value = BitConverter.GetBytes(true)
+                    }
+                }
+            });
         }
 
         public StateTransaction CreateVotingTransaction(UInt160 accountScriptHash, IEnumerable<ECPoint> votes)

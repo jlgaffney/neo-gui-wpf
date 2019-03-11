@@ -279,23 +279,23 @@ namespace Neo.Gui.Cross.ViewModels.Contracts
             ScriptHex = hexString;
         }
 
-        private async void Deploy()
+        private void Deploy()
         {
-            // TODO Build transaction, sign it, and relay transaction to the network
+            if (!DeployEnabled)
+            {
+                return;
+            }
 
-            /*var transactionParameters = new DeployContractTransactionParameters(
-                this.Name,
-                this.Version,
-                this.Author,
-                this.Email,
-                this.Description,
-                this.ScriptHex,
-                this.ParameterList,
-                this.ReturnType,
-                this.NeedsStorage,
-                this.NeedsDynamicCall);
+            /*var invocationTransaction = transactionService.CreateContractCreationTransaction();
 
-            await this.walletController.BuildSignAndRelayTransaction(transactionParameters);*/
+            if (walletService.SignTransaction(invocationTransaction))
+            {
+                localNodeService.RelayTransaction(invocationTransaction);
+            }
+            else
+            {
+                // TODO Notify user
+            }*/
 
             OnClose();
         }

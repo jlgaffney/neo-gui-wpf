@@ -357,7 +357,7 @@ namespace Neo.Gui.Cross.ViewModels.Contracts
             InvokeEnabled = invokeResult.ExecutionSucceeded;*/
         }
 
-        private async void Invoke()
+        private void Invoke()
         {
             if (!InvokeEnabled)
             {
@@ -365,12 +365,17 @@ namespace Neo.Gui.Cross.ViewModels.Contracts
             }
 
             var script = CustomScript.Trim().HexToBytes();
-            
-            // TODO Build invocation transaction, sign it, and relay transaction to the network
 
-            /*var transactionParameters = new InvokeContractTransactionParameters(script);
+            /*var invocationTransaction = transactionService.CreateInvocationTransaction();
 
-            await this.walletController.BuildSignAndRelayTransaction(transactionParameters);*/
+            if (walletService.SignTransaction(invocationTransaction))
+            {
+                localNodeService.RelayTransaction(invocationTransaction);
+            }
+            else
+            {
+                // TODO Notify user
+            }*/
 
             OnClose();
         }

@@ -12,14 +12,23 @@ namespace Neo.Gui.Cross.ViewModels.Voting
         ILoadable
     {
         private readonly IAccountService accountService;
+        private readonly ILocalNodeService localNodeService;
+        private readonly ITransactionService transactionService;
+        private readonly IWalletService walletService;
 
         private string selectedPublicKey;
 
         public ElectionViewModel() { }
         public ElectionViewModel(
-            IAccountService accountService)
+            IAccountService accountService,
+            ILocalNodeService localNodeService,
+            ITransactionService transactionService,
+            IWalletService walletService)
         {
             this.accountService = accountService;
+            this.localNodeService = localNodeService;
+            this.transactionService = transactionService;
+            this.walletService = walletService;
 
             PublicKeys = new ObservableCollection<string>();
         }
@@ -81,19 +90,24 @@ namespace Neo.Gui.Cross.ViewModels.Voting
             PublicKeys.AddRange(accountPublicKeys);
         }
 
-        private async void Submit()
+        private void Submit()
         {
             if (!SubmitEnabled)
             {
                 return;
             }
-
-            // TODO Build transaction, sign it, and relay transaction to the network
-
-            /*var transactionParameters = new ElectionTransactionParameters(this.SelectedPublicKey);
-
-            await this.walletController.BuildSignAndRelayTransaction(transactionParameters);*/
             
+            var electionTransaction = transactionService.CreateElectionTransaction(SelectedPublicKey.ToECPoint());
+
+            if (walletService.SignTransaction(electionTransaction))
+            {
+                localNodeService.RelayTransaction(electionTransaction);
+            }
+            else
+            {
+                // TODO Notify user
+            }
+
             OnClose();
         }
     }

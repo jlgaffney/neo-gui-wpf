@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Neo.Gui.Cross.Extensions;
 using Neo.Gui.Cross.Services;
 using Neo.Wallets;
@@ -12,21 +11,25 @@ namespace Neo.Gui.Cross.ViewModels.Voting
         ILoadable<UInt160>
     {
         private readonly IBlockchainService blockchainService;
+        private readonly ILocalNodeService localNodeService;
         private readonly ITransactionService transactionService;
+        private readonly IWalletService walletService;
 
         private string voterAddress;
         private string votes;
-
-
+        
         public VotingViewModel() { }
         public VotingViewModel(
             IBlockchainService blockchainService,
-            ITransactionService transactionService)
+            ILocalNodeService localNodeService,
+            ITransactionService transactionService,
+            IWalletService walletService)
         {
             this.blockchainService = blockchainService;
+            this.localNodeService = localNodeService;
             this.transactionService = transactionService;
+            this.walletService = walletService;
         }
-        
 
         public string VoterAddress
         {
@@ -85,15 +88,21 @@ namespace Neo.Gui.Cross.ViewModels.Voting
             Votes = accountState.Votes.Select(x => x.ToString()).ToArray().ToMultiLineString();
         }
 
-        private async void Submit()
+        private void Submit()
         {
             var voterScriptHash = VoterAddress.ToScriptHash();
 
             var voteTransaction = transactionService.CreateVotingTransaction(
                 voterScriptHash, Votes.ToLines().Select(p => p.ToECPoint()));
-            
-            // TODO Sign transaction and relay it to the network
-            // await this.walletController.BuildSignAndRelayTransaction(transactionParameters);
+
+            if (walletService.SignTransaction(voteTransaction))
+            {
+                localNodeService.RelayTransaction(voteTransaction);
+            }
+            else
+            {
+                // TODO Notify user
+            }
 
             OnClose();
         }

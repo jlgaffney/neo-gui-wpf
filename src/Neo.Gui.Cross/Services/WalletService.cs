@@ -1,8 +1,12 @@
 ﻿using System;
 using System.IO;
 using System.Security.Cryptography;
+using Neo.Gui.Cross.Helpers;
 using Neo.Gui.Cross.Messages;
 using Neo.Gui.Cross.Messaging;
+using Neo.Network.P2P;
+using Neo.Network.P2P.Payloads;
+using Neo.SmartContract;
 using Neo.Wallets;
 using Neo.Wallets.NEP6;
 using Neo.Wallets.SQLite;
@@ -13,15 +17,18 @@ namespace Neo.Gui.Cross.Services
     {
         private readonly IAccountBalanceService accountBalanceService;
         private readonly IMessageAggregator messageAggregator;
+        private readonly NeoSystem neoSystem;
         private readonly ISettings settings;
 
         public WalletService(
             IAccountBalanceService accountBalanceService,
             IMessageAggregator messageAggregator,
+            NeoSystem neoSystem,
             ISettings settings)
         {
             this.accountBalanceService = accountBalanceService;
             this.messageAggregator = messageAggregator;
+            this.neoSystem = neoSystem;
             this.settings = settings;
         }
 
@@ -149,6 +156,34 @@ namespace Neo.Gui.Cross.Services
             CurrentWallet = null;
 
             messageAggregator.Publish(new WalletClosedMessage());
+        }
+
+        public bool SignTransaction(Transaction transaction)
+        {
+            Guard.ArgumentIsNotNull(transaction, nameof(transaction));
+
+            ContractParametersContext context;
+            try
+            {
+                context = new ContractParametersContext(transaction);
+            }
+            catch (InvalidOperationException)
+            {
+                //MessageBox.Show(Strings.UnsynchronizedBlock);
+                return false;
+            }
+
+            CurrentWallet.Sign(context);
+
+            if (context.Completed)
+            {
+                context.Verifiable.Witnesses = context.GetWitnesses();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
 

@@ -12,8 +12,10 @@ namespace Neo.Gui.Cross.ViewModels.Wallets
         IMessageHandler<BlockchainHeightChangedMessage>
     {
         private readonly IGasClaimCalculationService gasClaimCalculationService;
+        private readonly ILocalNodeService localNodeService;
         private readonly IMessageAggregator messageAggregator;
         private readonly ITransactionService transactionService;
+        private readonly IWalletService walletService;
 
         private decimal availableGas = decimal.Zero;
         private decimal unavailableGas = decimal.Zero;
@@ -23,12 +25,16 @@ namespace Neo.Gui.Cross.ViewModels.Wallets
         public GasClaimViewModel() { }
         public GasClaimViewModel(
             IGasClaimCalculationService gasClaimCalculationService,
+            ILocalNodeService localNodeService,
             IMessageAggregator messageAggregator,
-            ITransactionService transactionService)
+            ITransactionService transactionService,
+            IWalletService walletService)
         {
             this.gasClaimCalculationService = gasClaimCalculationService;
+            this.localNodeService = localNodeService;
             this.messageAggregator = messageAggregator;
             this.transactionService = transactionService;
+            this.walletService = walletService;
         }
 
         public decimal AvailableGas
@@ -36,7 +42,10 @@ namespace Neo.Gui.Cross.ViewModels.Wallets
             get => availableGas;
             set
             {
-                if (availableGas == value) return;
+                if (Equals(availableGas, value))
+                {
+                    return;
+                }
 
                 availableGas = value;
 
@@ -49,7 +58,10 @@ namespace Neo.Gui.Cross.ViewModels.Wallets
             get => unavailableGas;
             set
             {
-                if (unavailableGas == value) return;
+                if (Equals(unavailableGas, value))
+                {
+                    return;
+                }
 
                 unavailableGas = value;
 
@@ -59,12 +71,15 @@ namespace Neo.Gui.Cross.ViewModels.Wallets
 
         public bool ClaimEnabled
         {
-            get => this.claimEnabled;
+            get => claimEnabled;
             set
             {
-                if (this.claimEnabled == value) return;
+                if (Equals(claimEnabled, value))
+                {
+                    return;
+                }
 
-                this.claimEnabled = value;
+                claimEnabled = value;
 
                 this.RaisePropertyChanged();
             }
@@ -76,7 +91,7 @@ namespace Neo.Gui.Cross.ViewModels.Wallets
         {
             messageAggregator.Subscribe(this);
 
-            this.CalculateBonusAvailable();
+            CalculateBonusAvailable();
         }
 
         public void Unload()
@@ -110,12 +125,23 @@ namespace Neo.Gui.Cross.ViewModels.Wallets
             UnavailableGas = (decimal) gasClaimCalculationService.CalculateUnavailableBonusGas();
         }
 
-        private async void Claim()
+        private void Claim()
         {
+            if (!ClaimEnabled)
+            {
+                return;
+            }
+
             var claimTransaction = transactionService.CreateClaimTransaction();
 
-            // TODO Sign transaction and relay it to the network
-            // await this.walletController.BuildSignAndRelayTransaction(transactionParameters);
+            if (walletService.SignTransaction(claimTransaction))
+            {
+                localNodeService.RelayTransaction(claimTransaction);
+            }
+            else
+            {
+                // TODO Notify user
+            }
 
             OnClose();
         }
