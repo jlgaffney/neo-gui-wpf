@@ -22,6 +22,7 @@ namespace Neo.Gui.Cross.ViewModels.Accounts
         private int unlockHour;
         private int unlockMinute;
 
+        public CreateLockAccountViewModel() { }
         public CreateLockAccountViewModel(
             IAccountService accountService)
         {

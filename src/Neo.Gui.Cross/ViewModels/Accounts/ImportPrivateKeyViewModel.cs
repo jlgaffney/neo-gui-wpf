@@ -11,6 +11,7 @@ namespace Neo.Gui.Cross.ViewModels.Accounts
 
         private string privateKeysWif;
 
+        public ImportPrivateKeyViewModel() { }
         public ImportPrivateKeyViewModel(
             IAccountService accountService)
         {

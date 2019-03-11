@@ -12,6 +12,7 @@ namespace Neo.Gui.Cross.ViewModels.Accounts
         private string parameterList;
         private string script;
 
+        public ImportCustomContractViewModel() { }
         public ImportCustomContractViewModel(
             IAccountService accountService)
         {

@@ -22,6 +22,7 @@ namespace Neo.Gui.Cross.ViewModels.Wallets
         private string s;
         private string serialNumber;
 
+        public CertificateRequestViewModel() { }
         public CertificateRequestViewModel(
             IAccountService accountService,
             ICertificateService certificateService,

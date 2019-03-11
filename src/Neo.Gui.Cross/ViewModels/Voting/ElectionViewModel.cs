@@ -14,7 +14,8 @@ namespace Neo.Gui.Cross.ViewModels.Voting
         private readonly IAccountService accountService;
 
         private string selectedPublicKey;
-        
+
+        public ElectionViewModel() { }
         public ElectionViewModel(
             IAccountService accountService)
         {

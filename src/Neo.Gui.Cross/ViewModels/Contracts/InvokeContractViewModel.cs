@@ -35,6 +35,7 @@ namespace Neo.Gui.Cross.ViewModels.Contracts
         private bool invokeEnabled;
 
 
+        public InvokeContractViewModel() { }
         public InvokeContractViewModel(
             IBlockchainService blockchainService,
             IFileDialogService fileDialogService,

@@ -17,6 +17,7 @@ namespace Neo.Gui.Cross.ViewModels.Accounts
 
         private string newPublicKey;
 
+        public CreateMultiSignatureContractViewModel() { }
         public CreateMultiSignatureContractViewModel(
             IAccountService accountService)
         {

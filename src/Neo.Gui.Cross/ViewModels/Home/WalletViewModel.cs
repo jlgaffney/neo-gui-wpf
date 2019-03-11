@@ -18,7 +18,6 @@ namespace Neo.Gui.Cross.ViewModels.Home
         private readonly IWindowService windowService;
 
         public WalletViewModel() { }
-
         public WalletViewModel(
             IMessageAggregator messageAggregator,
             IWalletService walletService,

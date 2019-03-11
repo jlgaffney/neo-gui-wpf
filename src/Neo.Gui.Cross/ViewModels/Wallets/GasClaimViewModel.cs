@@ -20,6 +20,7 @@ namespace Neo.Gui.Cross.ViewModels.Wallets
 
         private bool claimEnabled;
 
+        public GasClaimViewModel() { }
         public GasClaimViewModel(
             IGasClaimCalculationService gasClaimCalculationService,
             IMessageAggregator messageAggregator,

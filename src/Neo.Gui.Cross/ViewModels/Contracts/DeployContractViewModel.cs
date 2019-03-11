@@ -23,6 +23,7 @@ namespace Neo.Gui.Cross.ViewModels.Contracts
         private bool needsDynamicCall;
 
 
+        public DeployContractViewModel() { }
         public DeployContractViewModel(
             IFileDialogService fileDialogService,
             IFileService fileService)

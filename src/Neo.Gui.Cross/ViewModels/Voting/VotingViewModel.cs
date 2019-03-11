@@ -17,7 +17,8 @@ namespace Neo.Gui.Cross.ViewModels.Voting
         private string voterAddress;
         private string votes;
 
-        
+
+        public VotingViewModel() { }
         public VotingViewModel(
             IBlockchainService blockchainService,
             ITransactionService transactionService)

@@ -16,7 +16,6 @@ namespace Neo.Gui.Cross.ViewModels.Home
         private string blockStatus;
 
         public StatusBarViewModel() { }
-
         public StatusBarViewModel(
             IWalletService walletService)
         {

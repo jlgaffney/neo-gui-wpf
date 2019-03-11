@@ -14,7 +14,8 @@ namespace Neo.Gui.Cross.ViewModels.Accounts
         private readonly ICertificateService certificateService;
 
         private X509Certificate2 selectedCertificate;
-        
+
+        public ImportCertificateViewModel() { }
         public ImportCertificateViewModel(
             IAccountService accountService,
             ICertificateService certificateService)
