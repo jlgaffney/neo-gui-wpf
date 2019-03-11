@@ -12,6 +12,9 @@ namespace Neo.Gui.Cross.Services
         Snapshot GetSnapshot();
 
 
+        bool ContainsTransaction(UInt256 transactionId);
+
+
         AssetState GetAssetState(UInt256 assetId);
 
         AccountState GetAccountState(UInt160 scriptHash);

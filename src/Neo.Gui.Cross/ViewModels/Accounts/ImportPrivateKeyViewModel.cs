@@ -22,7 +22,10 @@ namespace Neo.Gui.Cross.ViewModels.Accounts
             get => privateKeysWif;
             set
             {
-                if (privateKeysWif == value) return;
+                if (Equals(privateKeysWif, value))
+                {
+                    return;
+                }
 
                 privateKeysWif = value;
 

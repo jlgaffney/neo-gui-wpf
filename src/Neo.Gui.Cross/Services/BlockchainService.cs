@@ -44,6 +44,11 @@ namespace Neo.Gui.Cross.Services
         }
 
 
+        public bool ContainsTransaction(UInt256 transactionId)
+        {
+            return Blockchain.Singleton.ContainsTransaction(transactionId);
+        }
+
         
         public AssetState GetAssetState(UInt256 assetId)
         {

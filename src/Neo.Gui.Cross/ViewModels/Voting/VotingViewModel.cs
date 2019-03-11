@@ -12,15 +12,18 @@ namespace Neo.Gui.Cross.ViewModels.Voting
         ILoadable<UInt160>
     {
         private readonly IBlockchainService blockchainService;
+        private readonly ITransactionService transactionService;
 
         private string voterAddress;
         private string votes;
 
         
         public VotingViewModel(
-            IBlockchainService blockchainService)
+            IBlockchainService blockchainService,
+            ITransactionService transactionService)
         {
             this.blockchainService = blockchainService;
+            this.transactionService = transactionService;
         }
         
 
@@ -83,13 +86,13 @@ namespace Neo.Gui.Cross.ViewModels.Voting
 
         private async void Submit()
         {
-            var voterScriptHash = VoterAddress.ToScriptHash().ToString();
+            var voterScriptHash = VoterAddress.ToScriptHash();
 
-            // TODO Build transaction, sign it, and relay transaction to the network
-
-            /*var transactionParameters = new VotingTransactionParameters(voterScriptHash, Votes.ToLines());
-
-            await this.walletController.BuildSignAndRelayTransaction(transactionParameters);*/
+            var voteTransaction = transactionService.CreateVotingTransaction(
+                voterScriptHash, Votes.ToLines().Select(p => p.ToECPoint()));
+            
+            // TODO Sign transaction and relay it to the network
+            // await this.walletController.BuildSignAndRelayTransaction(transactionParameters);
 
             OnClose();
         }

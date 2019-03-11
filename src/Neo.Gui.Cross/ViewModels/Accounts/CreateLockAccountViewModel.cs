@@ -33,8 +33,6 @@ namespace Neo.Gui.Cross.ViewModels.Accounts
             Minutes = Enumerable.Range(0, MinutesInHour).ToList();
         }
 
-
-
         public ObservableCollection<string> PublicKeys { get; }
 
         public string SelectedPublicKey

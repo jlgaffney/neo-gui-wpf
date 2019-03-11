@@ -11,16 +11,16 @@ namespace Neo.Gui.Cross.ViewModels.Accounts
         ILoadable
     {
         private readonly IAccountService accountService;
-        private readonly ICertificateStoreService certificateStoreService;
+        private readonly ICertificateService certificateService;
 
         private X509Certificate2 selectedCertificate;
         
         public ImportCertificateViewModel(
             IAccountService accountService,
-            ICertificateStoreService certificateStoreService)
+            ICertificateService certificateService)
         {
             this.accountService = accountService;
-            this.certificateStoreService = certificateStoreService;
+            this.certificateService = certificateService;
             
             Certificates = new ObservableCollection<X509Certificate2>();
         }
@@ -51,7 +51,7 @@ namespace Neo.Gui.Cross.ViewModels.Accounts
         
         public void Load()
         {
-            var storeCertificates = certificateStoreService.GetCertificates();
+            var storeCertificates = certificateService.GetStoreCertificates();
 
             Certificates.AddRange(storeCertificates);
         }

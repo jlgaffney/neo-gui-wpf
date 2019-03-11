@@ -59,7 +59,7 @@ namespace Neo.Gui.Cross.ViewModels.Accounts
             get => parameterList;
             private set
             {
-                if (parameterList == value)
+                if (Equals(parameterList, value))
                 {
                     return;
                 }

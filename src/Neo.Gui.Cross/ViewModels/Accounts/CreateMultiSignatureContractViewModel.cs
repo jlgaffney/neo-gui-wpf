@@ -110,9 +110,7 @@ namespace Neo.Gui.Cross.ViewModels.Accounts
         public ReactiveCommand CreateCommand => ReactiveCommand.Create(Create);
 
         public ReactiveCommand CancelCommand => ReactiveCommand.Create(OnClose);
-
-
-
+        
         private void Create()
         {
             if (!CreateEnabled)
